@@ -33,12 +33,12 @@ export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; 
   async function submit(e: FormEvent) {
     e.preventDefault();
     const parsed = schema.safeParse(v);
-    if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Dados inválidos"); return; }
     setBusy(true);
-    const payload = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x.trim() || null])) as Record<string, string | null>;
+    const payload = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x.trim() || null])) as unknown as Partial<Customer> & { company_name: string };
     const q = initial
       ? supabase.from("customers").update(payload).eq("id", initial.id).select().single()
-      : supabase.from("customers").insert({ ...payload, company_name: payload.company_name! }).select().single();
+      : supabase.from("customers").insert(payload).select().single();
     const { data, error } = await q;
     setBusy(false);
     if (error) { toast.error("Não foi possível salvar o cliente."); return; }

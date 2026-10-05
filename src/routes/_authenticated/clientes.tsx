@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/clientes")({
   component: Customers,
 });
 
-export function selectCustomerForOrder(c: Customer) {
+function selectCustomerForOrder(c: Customer) {
   draftActions.update({ customerId: c.id, customerName: c.trade_name || c.company_name,
     buyer: c.buyer ?? "", carrier: c.carrier ?? "" });
 }

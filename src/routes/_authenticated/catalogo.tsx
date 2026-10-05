@@ -76,7 +76,7 @@ function Chip({ active, children, onClick }: { active: boolean; children: React.
   );
 }
 
-function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOrder?: number }) {
+function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOrder?: number | undefined }) {
   const [qty, setQty] = useState(1);
   const [open, setOpen] = useState(false);
   const prices: Record<PaymentTerm, number | null> = {

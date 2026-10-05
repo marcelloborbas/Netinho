@@ -6,7 +6,8 @@ export async function downloadOrderPdf(order: Order, items: OrderItem[], sellerN
   const { default: jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
   const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const c = (order.customer_snapshot ?? {}) as Record<string, string | null>;
+  type Snap = Partial<Record<"company_name"|"trade_name"|"address"|"district"|"city"|"state"|"cep"|"cnpj"|"state_registration"|"carrier"|"carrier_phone"|"email"|"phone"|"buyer", string | null>>;
+  const c = (order.customer_snapshot ?? {}) as Snap;
   const v = (x: unknown) => (x == null || x === "" ? "-" : String(x));
 
   doc.setFillColor(28, 29, 32); doc.rect(0, 0, 210, 28, "F");
