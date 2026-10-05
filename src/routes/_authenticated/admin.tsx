@@ -38,7 +38,9 @@ const PRICE_FIELDS = [["price_cash", "À vista"], ["price_30", "30"], ["price_30
 
 function ProductEditor({ p }: { p: Product }) {
   const qc = useQueryClient();
-  const [v, setV] = useState({ stock: String(p.stock), ...Object.fromEntries(PRICE_FIELDS.map(([k]) => [k, p[k]?.toString() ?? ""])) } as Record<string, string>);
+  type F = "stock" | (typeof PRICE_FIELDS)[number][0];
+  const [v, setV] = useState<Record<F, string>>({ stock: String(p.stock), price_cash: p.price_cash?.toString() ?? "",
+    price_30: p.price_30?.toString() ?? "", price_30_45_60: p.price_30_45_60?.toString() ?? "", price_30_45_60_75: p.price_30_45_60_75?.toString() ?? "" });
   const [busy, setBusy] = useState(false);
   const num = (s: string) => (s.trim() === "" ? null : Number(s.replace(",", ".")));
 
