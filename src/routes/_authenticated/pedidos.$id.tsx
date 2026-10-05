@@ -28,7 +28,7 @@ function OrderDetail() {
   if (isLoading) return <div className="surface-card h-48 animate-pulse" />;
   if (error || !data) return <p className="surface-card p-5 text-sm">Pedido não encontrado.</p>;
   const { order, items } = data;
-  const c = order.customer_snapshot as Record<string, string | null>;
+  const c = order.customer_snapshot as { company_name?: string; trade_name?: string | null; cnpj?: string | null; city?: string | null; state?: string | null };
   const st = ORDER_STATUS[order.status];
 
   const summary = [`*${order.kind === "orcamento" ? "ORÇAMENTO" : "PEDIDO"} Nº ${order.number}* – ${BRAND.name}`,
@@ -43,7 +43,7 @@ function OrderDetail() {
       draftActions.addItem({ productId: p.id, code: p.code, category: i.category, application: p.application, quantity: i.quantity,
         prices: { cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 } });
     }
-    draftActions.update({ customerId: order.customer_id, customerName: c.trade_name || c.company_name, paymentTerm: order.payment_term as PaymentTerm });
+    draftActions.update({ customerId: order.customer_id, customerName: c.trade_name || c.company_name || null, paymentTerm: order.payment_term as PaymentTerm });
     toast.success("Itens copiados para um novo pedido (preços atualizados).");
     navigate({ to: "/pedido" });
   }

@@ -35,7 +35,7 @@ export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; 
     const parsed = schema.safeParse(v);
     if (!parsed.success) { toast.error(parsed.error.issues[0]?.message ?? "Dados inválidos"); return; }
     setBusy(true);
-    const payload = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x.trim() || null])) as Partial<Customer> & { company_name: string };
+    const payload = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x.trim() || null])) as unknown as Partial<Customer> & { company_name: string };
     const q = initial
       ? supabase.from("customers").update(payload).eq("id", initial.id).select().single()
       : supabase.from("customers").insert(payload).select().single();
