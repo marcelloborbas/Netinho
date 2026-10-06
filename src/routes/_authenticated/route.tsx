@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 const NAV = [
-  { to: "/", label: "Início", icon: Home },
+  { to: "/painel", label: "Início", icon: Home },
   { to: "/catalogo", label: "Produtos", icon: Search },
   { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
@@ -41,10 +41,10 @@ function AppShell() {
     <div className="min-h-screen pb-36 md:pb-24">
       <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/"><Logo /></Link>
+          <Link to="/painel"><Logo /></Link>
           <nav className="hidden items-center gap-1 md:flex">
             {NAV.map((n) => (
-              <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
+              <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/painel" }}
                 className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                 activeProps={{ className: "text-foreground bg-secondary" }}>{n.label}</Link>
             ))}
