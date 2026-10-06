@@ -77,7 +77,7 @@ function AppShell() {
 
       <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
         {NAV.map((n) => (
-          <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
+          <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/painel" }}
             className="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted-foreground"
             activeProps={{ className: "text-primary" }}>
             <n.icon className="h-5 w-5" />{n.label}
