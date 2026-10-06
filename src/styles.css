@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* NETINHO design system — grafite, branco e vermelho de destaque. */
+/* NETINHO design system — azul celeste em degradê. */
 
 @theme inline {
   --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
@@ -40,40 +40,40 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.17 0.004 260);
-  --surface: oklch(0.205 0.005 260);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.225 0.006 260);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.225 0.006 260);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.6 0.22 27);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.28 0.006 260);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.27 0.005 260);
-  --muted-foreground: oklch(0.7 0.01 260);
-  --accent: oklch(0.3 0.008 260);
-  --accent-foreground: oklch(0.97 0 0);
-  --destructive: oklch(0.62 0.22 25);
+  --background: oklch(0.97 0.025 220);
+  --surface: oklch(0.94 0.035 220);
+  --foreground: oklch(0.22 0.035 225);
+  --card: oklch(0.985 0.015 215);
+  --card-foreground: oklch(0.22 0.035 225);
+  --popover: oklch(0.985 0.015 215);
+  --popover-foreground: oklch(0.22 0.035 225);
+  --primary: oklch(0.62 0.16 225);
+  --primary-foreground: oklch(0.99 0.005 220);
+  --secondary: oklch(0.88 0.07 215);
+  --secondary-foreground: oklch(0.24 0.045 225);
+  --muted: oklch(0.9 0.04 220);
+  --muted-foreground: oklch(0.46 0.04 225);
+  --accent: oklch(0.84 0.09 215);
+  --accent-foreground: oklch(0.2 0.04 225);
+  --destructive: oklch(0.58 0.2 25);
   --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.72 0.16 150);
   --warning: oklch(0.8 0.15 80);
-  --metal: oklch(0.78 0.01 260);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.6 0.22 27);
-  --gradient-metal: linear-gradient(180deg, oklch(0.26 0.006 260), oklch(0.2 0.005 260));
-  --gradient-red: linear-gradient(135deg, oklch(0.62 0.22 27), oklch(0.52 0.21 25));
-  --shadow-card: 0 1px 0 oklch(1 0 0 / 5%) inset, 0 8px 24px -12px oklch(0 0 0 / 60%);
-  --shadow-glow: 0 10px 30px -10px oklch(0.6 0.22 27 / 55%);
+  --metal: oklch(0.72 0.04 215);
+  --border: oklch(0.72 0.08 220 / 28%);
+  --input: oklch(0.55 0.08 220 / 20%);
+  --ring: oklch(0.62 0.16 225);
+  --gradient-sky: linear-gradient(135deg, oklch(0.97 0.025 215) 0%, oklch(0.9 0.08 220) 48%, oklch(0.78 0.13 225) 100%);
+  --gradient-sky-strong: linear-gradient(135deg, oklch(0.72 0.16 220) 0%, oklch(0.58 0.18 225) 52%, oklch(0.46 0.17 230) 100%);
+  --shadow-card: 0 1px 0 oklch(1 0 0 / 55%) inset, 0 8px 24px -12px oklch(0.35 0.08 225 / 28%);
+  --shadow-glow: 0 10px 30px -10px oklch(0.58 0.18 225 / 55%);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
   html { color-scheme: dark; }
   body {
-    background-color: var(--color-background);
+    background: var(--gradient-sky);\n    background-attachment: fixed;\n    min-height: 100vh;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-tap-highlight-color: transparent;
@@ -82,7 +82,7 @@
 }
 
 @utility surface-card {
-  background: var(--gradient-metal);
+  background: color-mix(in oklch, var(--color-card) 86%, white 14%);
   box-shadow: var(--shadow-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
