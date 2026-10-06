@@ -100,8 +100,8 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
     <li className="surface-card flex flex-col gap-3 p-4">
       <div className="grid grid-cols-[96px_1fr] gap-3">
         <button type="button" onClick={() => (sprite || fallbackImage) && setImageOpen(true)}
-          className={cn("relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border bg-white shadow-sm",
-            (sprite || fallbackImage) ? "cursor-zoom-in" : "cursor-default")} aria-label="Ampliar imagem da peça">
+          className={cn("relative flex w-24 items-center justify-center overflow-hidden rounded-xl border bg-white shadow-sm",
+            (sprite || fallbackImage) ? "cursor-zoom-in" : "cursor-default")} aria-label="Ampliar imagem da peça" style={{ aspectRatio: sprite?.aspectRatio ?? "1 / 1" }}>
           {sprite ? (
             <span className="block h-full w-full bg-no-repeat" style={{ backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
           ) : fallbackImage ? (
@@ -130,8 +130,8 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6" onClick={() => setImageOpen(false)}>
           <div className="relative max-h-[85vh] max-w-[85vw] rounded-2xl bg-white p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             {sprite ? (
-              <div className="h-[70vh] w-[70vw] max-w-[760px] bg-no-repeat bg-contain bg-center"
-                style={{ backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: `${sprite.size.replace(/100%/g, "100%")}` }} />
+              <div className="w-[70vw] max-w-[760px] bg-no-repeat bg-contain bg-center"
+                style={{ aspectRatio: sprite.aspectRatio, backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
             ) : (
               <img src={fallbackImage!} alt={`Imagem de ${p.code}`} className="max-h-[70vh] max-w-[70vw] object-contain" />
             )}
