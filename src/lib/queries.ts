@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { FOCO_CATALOG } from "@/lib/foco-catalog";
 
 export type Product = Database["public"]["Tables"]["products"]["Row"] & { categories: { name: string } | null };
 export type Customer = Database["public"]["Tables"]["customers"]["Row"];
@@ -13,7 +14,13 @@ export const categoriesQuery = queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase.from("categories").select("*").eq("active", true).order("sort_order");
     if (error) throw error;
-    return data;
+
+    const focoCategories = [
+      { id: "foco-bicos", name: "Bicos de Injeção", sort_order: 8, active: true, created_at: "", updated_at: "" },
+      { id: "foco-atuadores", name: "Atuador Eletropneumático", sort_order: 9, active: true, created_at: "", updated_at: "" },
+    ];
+    const names = new Set(data.map((c) => c.name));
+    return [...data, ...focoCategories.filter((c) => !names.has(c.name))];
   },
 });
 
@@ -23,7 +30,31 @@ export const productsQuery = queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase.from("products").select("*, categories(name)").eq("active", true).order("code");
     if (error) throw error;
-    return data as Product[];
+
+    const existingCodes = new Set(data.map((p) => p.code));
+    const focoProducts = FOCO_CATALOG
+      .filter((p) => !existingCodes.has(p.code))
+      .map((p) => ({
+        id: p.id,
+        category_id: p.category === "Bicos de Injeção" ? "foco-bicos" : "foco-atuadores",
+        code: p.code,
+        refs: p.refs,
+        application: p.application,
+        brand: "FOCO",
+        stock: 0,
+        price_cash: null,
+        price_30: null,
+        price_30_45_60: null,
+        price_30_45_60_75: null,
+        price_note: "Preço sob consulta",
+        active: true,
+        search_text: (p.code + " " + p.refs + " " + p.application).toLowerCase(),
+        created_at: "",
+        updated_at: "",
+        categories: { name: p.category },
+      }));
+
+    return [...(data as Product[]), ...focoProducts] as Product[];
   },
 });
 
