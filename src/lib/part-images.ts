@@ -25,7 +25,7 @@ const BICO_CODES = [
 
 const ATUADOR_CODES = ["A050J-1600006","A051J-1600006","A052J-1600006","A053J-1600006","A054J-1600006","A055J-1600006"];
 
-export type CatalogSprite = { url: string; position: string; size: string };
+export type CatalogSprite = { url: string; position: string; size: string; aspectRatio: string };
 
 function sprite(code: string, codes: string[], columns: number, rows: number, url: string): CatalogSprite | null {
   const index = codes.indexOf(code);
@@ -34,7 +34,7 @@ function sprite(code: string, codes: string[], columns: number, rows: number, ur
   const row = Math.floor(index / columns);
   const x = columns === 1 ? 0 : (col / (columns - 1)) * 100;
   const y = rows === 1 ? 0 : (row / (rows - 1)) * 100;
-  return { url, position: `${x}% ${y}%`, size: `${columns * 100}% ${rows * 100}%` };
+  return { url, position: `${x}% ${y}%`, size: `${columns * 100}% ${rows * 100}%`, aspectRatio: columns === 9 ? "8 / 7" : "18 / 13" };
 }
 
 export function catalogSprite(code: string | null | undefined): CatalogSprite | null {
