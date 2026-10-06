@@ -1,19 +1,10 @@
 import { cn } from "@/lib/utils";
 import { BRAND } from "@/lib/brand";
+import logoAsset from "@/assets/netinho-logo.png.asset.json";
 
-/** Marca de obturador vermelha (inspirada no logo de referência). */
+/** Emblema oficial da NETINHO (enviado pelo cliente). */
 export function LogoMark({ className }: { className?: string }) {
-  const blades = Array.from({ length: 6 }, (_, i) => i * 60);
-  return (
-    <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-      <circle cx="50" cy="50" r="48" className="fill-primary" />
-      {blades.map((a) => (
-        <line key={a} x1="50" y1="50" x2="50" y2="2" transform={`rotate(${a} 50 50) translate(14 0)`}
-          className="stroke-background" strokeWidth="5" />
-      ))}
-      <circle cx="50" cy="50" r="13" className="fill-background" />
-    </svg>
-  );
+  return <img src={logoAsset.url} alt="" aria-hidden="true" className={cn("rounded-full object-contain", className)} />;
 }
 
 interface LogoProps { className?: string; showPhone?: boolean; size?: "sm" | "lg" }
@@ -22,7 +13,7 @@ export function Logo({ className, showPhone = false, size = "sm" }: LogoProps) {
   const lg = size === "lg";
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <LogoMark className={lg ? "h-16 w-16" : "h-9 w-9"} />
+      <LogoMark className={lg ? "h-28 w-28" : "h-10 w-10"} />
       <div className="leading-none">
         <div className={cn("font-display font-extrabold tracking-wide text-foreground", lg ? "text-5xl" : "text-2xl")}>
           {BRAND.name}
