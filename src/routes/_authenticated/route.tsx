@@ -68,7 +68,7 @@ function AppShell() {
 
       {draft.items.length > 0 && (
         <Link to="/pedido"
-          className="fixed inset-x-3 bottom-[4.5rem] z-30 flex items-center justify-between rounded-xl bg-gradient-sky px-4 py-3 text-primary-foreground shadow-glow md:bottom-4 md:left-auto md:right-6 md:w-96">
+          className="fixed inset-x-3 bottom-[4.5rem] z-30 flex items-center justify-between rounded-xl bg-gradient-red px-4 py-3 text-primary-foreground shadow-glow md:bottom-4 md:left-auto md:right-6 md:w-96">
           <span className="flex items-center gap-2 font-semibold"><ShoppingCart className="h-5 w-5" />
             Meu pedido · {draft.items.length} {draft.items.length === 1 ? "item" : "itens"}</span>
           <span className="font-display text-xl font-bold">{brl(totals.net)}</span>
