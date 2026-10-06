@@ -41,12 +41,22 @@ function AuthPage() {
         if (error) throw error;
         navigate({ to: "/painel" });
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email, password,
           options: { data: { full_name: name }, emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success("Cadastro criado! Confirme pelo link enviado ao seu e-mail.");
+
+        // Quando a confirmação de e-mail estiver desativada no Supabase,
+        // o cadastro já retorna uma sessão e o usuário entra imediatamente.
+        if (data.session) {
+          toast.success("Cadastro realizado! Acesso liberado.");
+          navigate({ to: "/painel" });
+          return;
+        }
+
+        // Mantém compatibilidade caso o Supabase ainda exija confirmação.
+        toast.success("Cadastro criado! Verifique seu e-mail para liberar o acesso.");
         setMode("in");
       }
     } catch (err) {
