@@ -1,7 +1,6 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Home, Search, Users, ClipboardList, ShoppingCart, LogOut, Shield } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Home, Search, Users, ClipboardList, ShoppingCart, Shield } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals } from "@/lib/order-store";
@@ -23,13 +22,7 @@ const NAV = [
 function AppShell() {
   const draft = useDraft();
   const totals = draftTotals(draft);
-  const navigate = useNavigate();
   const { data: me } = useQuery(meQuery);
-
-  async function logout() {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth" });
-  }
 
   return (
     <div className="min-h-screen pb-36 md:pb-24">
