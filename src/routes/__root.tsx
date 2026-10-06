@@ -80,8 +80,14 @@ function RootComponent() {
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      router.invalidate();
-      if (event === "SIGNED_OUT") queryClient.clear(); else queryClient.invalidateQueries();
+      // O login já atualiza a sessão local; invalidar o roteador em SIGNED_IN
+      // adiciona uma segunda rodada de navegação e deixa a entrada mais lenta.
+      if (event === "SIGNED_OUT") {
+        queryClient.clear();
+        router.invalidate();
+      } else if (event === "USER_UPDATED") {
+        queryClient.invalidateQueries();
+      }
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
