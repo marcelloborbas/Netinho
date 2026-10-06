@@ -29,7 +29,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/" }); });
+    supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/painel" }); });
   }, [navigate]);
 
   async function submit(e: FormEvent) {
@@ -39,7 +39,7 @@ function AuthPage() {
       if (mode === "in") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/" });
+        navigate({ to: "/painel" });
       } else {
         const { error } = await supabase.auth.signUp({
           email, password,
