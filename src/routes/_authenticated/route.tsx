@@ -9,13 +9,7 @@ import { meQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    // Sessão local (sem ida ao servidor a cada navegação); o banco valida o token via RLS.
-    const { data } = await supabase.auth.getSession();
-    const user = data.session?.user;
-    if (!user) throw redirect({ to: "/auth" });
-    return { user };
-  },
+  // A autenticação está temporariamente desativada para permitir acesso direto ao catálogo.  // O fluxo de login permanece no projeto e pode ser reativado posteriormente.
   component: AppShell,
 });
 
@@ -57,9 +51,7 @@ function AppShell() {
             {me?.isAdmin && (
               <Link to="/admin" className="rounded-md p-2 text-muted-foreground md:hidden" aria-label="Administração"><Shield className="h-5 w-5" /></Link>
             )}
-            <button onClick={logout} className="rounded-md p-2 text-muted-foreground hover:text-foreground" aria-label="Sair">
-              <LogOut className="h-5 w-5" />
-            </button>
+ 
           </div>
         </div>
       </header>
