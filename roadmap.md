@@ -6,3 +6,7 @@
 - [x] Admin básico (status, estoque, preços)
 - [ ] Envio automático de e-mail (aguarda confirmar destino e configurar domínio de envio)
 - [ ] Reimportar planilha pelo painel, PWA, relatórios
+
+- [ ] E-mail de confirmação no cadastro não chega
+- [ ] Lentidão no acesso/login
+- [x] Logo enviada como ícone e marca
