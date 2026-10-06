@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
 import { BRAND } from "@/lib/brand";
-import logoAsset from "@/assets/netinho-logo.png.asset.json";
+import iconAsset from "@/assets/netinho-icon.webp.asset.json";
 
-/** Emblema oficial da NETINHO (enviado pelo cliente). */
+/** Ícone oficial da NETINHO (imagem enviada pelo cliente). */
 export function LogoMark({ className }: { className?: string }) {
-  return <img src={logoAsset.url} alt="" aria-hidden="true" className={cn("rounded-full object-contain", className)} />;
+  return <img src={iconAsset.url} alt="" aria-hidden="true" width={192} height={192}
+    className={cn("rounded-full object-contain", className)} />;
 }
 
 interface LogoProps { className?: string; showPhone?: boolean; size?: "sm" | "lg" }
@@ -13,7 +14,7 @@ export function Logo({ className, showPhone = false, size = "sm" }: LogoProps) {
   const lg = size === "lg";
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <LogoMark className={lg ? "h-28 w-28" : "h-10 w-10"} />
+      <LogoMark className={lg ? "h-24 w-24" : "h-10 w-10"} />
       <div className="leading-none">
         <div className={cn("font-display font-extrabold tracking-wide text-foreground", lg ? "text-5xl" : "text-2xl")}>
           {BRAND.name}
