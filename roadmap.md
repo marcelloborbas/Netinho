@@ -12,3 +12,4 @@
 - [x] Logo enviada como ícone e marca
 - [x] Fotos das peças no catálogo
 - [x] Estoque em cinza no campo de quantidade
+- [ ] Reativar login (temporariamente desativado; acesso anônimo ligado)
