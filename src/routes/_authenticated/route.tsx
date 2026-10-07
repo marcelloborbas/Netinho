@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Home, Search, Users, ClipboardList, ShoppingCart, LogOut, Shield } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals } from "@/lib/order-store";
@@ -9,24 +8,13 @@ import { meQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: () => {
     if (typeof window !== "undefined" && !localStorage.getItem("netinho-vendedor")) {
       throw redirect({ to: "/auth" });
     }
-
-    // A sessão anônima é opcional; o acesso ao catálogo não deve falhar por causa dela.
-    let user = null;
-    try {
-      const { data } = await supabase.auth.getSession();
-      user = data.session?.user ?? null;
-      if (!user) {
-        const anon = await supabase.auth.signInAnonymously();
-        user = anon.data.user ?? null;
-      }
-    } catch {
-      // Continua normalmente sem sessão anônima.
-    }
-    return { user };
+    // O catálogo é público após a identificação local do visitante.
+    // Não depende de sessão Supabase para montar a rota.
+    return { user: null };
   },
   component: AppShell,
 });
@@ -44,8 +32,8 @@ function AppShell() {
   const navigate = useNavigate();
   const { data: me } = useQuery(meQuery);
 
-  async function logout() {
-    await supabase.auth.signOut();
+  function logout() {
+    localStorage.removeItem("netinho-vendedor");
     navigate({ to: "/auth" });
   }
 
