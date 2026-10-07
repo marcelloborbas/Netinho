@@ -20,7 +20,7 @@ export function Logo({ className, showPhone = false, size = "sm" }: LogoProps) {
           {BRAND.name}
         </div>
         <div className={cn("mt-1 font-semibold uppercase tracking-[0.2em] text-metal", lg ? "text-xs" : "text-[9px]")}>
-          {BRAND.tagline}
+          {BRAND.tagline.replace("Representações · ", "")}
         </div>
         {showPhone && <div className="mt-1.5 text-sm font-semibold text-primary">{BRAND.phone}</div>}
       </div>
