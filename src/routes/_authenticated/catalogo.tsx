@@ -42,31 +42,17 @@ function Catalog() {
           <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} inputMode="search"
             placeholder="Código, referência ou veículo (ex: gol 1.0)" className="h-12 pl-10 text-base" />
         </div>
-        <div className="-mx-4 overflow-x-auto px-4 pb-1">
-          <div className="grid min-w-max grid-flow-col auto-cols-[128px] gap-3">
-            <CategoryCard
-              name="Todas"
-              active={!cat}
-              onClick={() => setCat(null)}
-              sprite={catalogSprite("701018")}
-            />
-            {cats?.map((c) => (
-              <CategoryCard
-                key={c.id}
-                name={c.name}
-                active={cat === c.id}
-                onClick={() => setCat(c.id)}
-                sprite={
-                  c.name.toLowerCase().includes("bico")
-                    ? catalogSprite("701018")
-                    : c.name.toLowerCase().includes("atuador")
-                      ? catalogSprite("A050J-1600006")
-                      : null
-                }
-              />
-            ))}
-          </div>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <CategoryCard name="Todas" active={!cat} onClick={() => setCat(null)} sprite={catalogSprite("701018")} />
+          {cats?.map((c) => (
+            <CategoryCard key={c.id} name={c.name} active={cat === c.id} onClick={() => setCat(c.id)}
+              sprite={c.name.toLowerCase().includes("bico") ? catalogSprite("701018")
+                : c.name.toLowerCase().includes("atuador") ? catalogSprite("A050J-1600006")
+                : null} />
+          ))}
         </div>
+
         <p className="text-xs text-muted-foreground">
           Preços na condição: <b className="text-foreground">{PAYMENT_TERMS.find((t) => t.value === draft.paymentTerm)?.label}</b>
           {" · "}{list.length} produtos
@@ -77,14 +63,10 @@ function Catalog() {
       {isLoading ? (
         <div className="space-y-2">{[0, 1, 2, 3].map((i) => <div key={i} className="surface-card h-32 animate-pulse" />)}</div>
       ) : list.length === 0 ? (
-        <div className="surface-card p-6 text-center">
-          <p className="font-semibold">Nenhum produto encontrado.</p>
-          <p className="text-sm text-muted-foreground">Tente pesquisar por código, referência ou veículo.</p>
-        </div>
+        <div className="surface-card p-6 text-center"><p className="font-semibold">Nenhum produto encontrado.</p><p className="text-sm text-muted-foreground">Tente pesquisar por código, referência ou veículo.</p></div>
       ) : (
         <ul className="grid gap-3 md:grid-cols-2">
-          {list.slice(0, 120).map((p) => <ProductCard key={p.id} p={p} term={draft.paymentTerm}
-            inOrder={draft.items.find((i) => i.productId === p.id)?.quantity} />)}
+          {list.slice(0, 120).map((p) => <ProductCard key={p.id} p={p} term={draft.paymentTerm} inOrder={draft.items.find((i) => i.productId === p.id)?.quantity} />)}
         </ul>
       )}
     </div>
@@ -92,42 +74,19 @@ function Catalog() {
 }
 
 function CategoryCard({ name, active, onClick, sprite }: {
-  name: string;
-  active: boolean;
-  onClick: () => void;
-  sprite: ReturnType<typeof catalogSprite>;
+  name: string; active: boolean; onClick: () => void; sprite: ReturnType<typeof catalogSprite>;
 }) {
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "surface-card flex w-32 flex-col overflow-hidden rounded-xl border p-2 text-left transition",
-        active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
-      )}
-    >
-      <div
-        className="h-20 w-full rounded-lg bg-white bg-no-repeat"
-        style={sprite ? {
-          backgroundImage: `url(${sprite.url})`,
-          backgroundPosition: sprite.position,
-          backgroundSize: sprite.size,
-          aspectRatio: sprite.aspectRatio,
-        } : undefined}
-      />
-      <span className={cn(
-        "mt-2 line-clamp-2 text-center text-xs font-bold leading-tight",
-        active ? "text-primary" : "text-foreground"
-      )}>
-        {name}
-      </span>
+    <button onClick={onClick} className={cn(
+      "surface-card flex min-w-0 flex-col overflow-hidden rounded-xl border p-1.5 text-left transition",
+      active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
+    )}>
+      <div className="h-16 w-full rounded-lg bg-white bg-no-repeat sm:h-20"
+        style={sprite ? { backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size, aspectRatio: sprite.aspectRatio } : undefined}>
+        {!sprite && <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>}
+      </div>
+      <span className={cn("mt-1 line-clamp-2 text-center text-[11px] font-bold leading-tight sm:text-xs", active ? "text-primary" : "text-foreground")}>{name}</span>
     </button>
-  );
-}
-
-function Chip({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
-  return (
-    <button onClick={onClick} className={cn("shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium",
-      active ? "border-primary bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground")}>{children}</button>
   );
 }
 
@@ -144,8 +103,7 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
   const out = p.stock <= 0;
 
   function add() {
-    draftActions.addItem({ productId: p.id, code: p.code, category: p.categories?.name ?? "",
-      application: p.application, prices, quantity: qty });
+    draftActions.addItem({ productId: p.id, code: p.code, category: p.categories?.name ?? "", application: p.application, prices, quantity: qty });
     toast.success(`${p.code} adicionado (${qty})`);
     setQtyText("");
   }
@@ -153,35 +111,21 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
   return (
     <li className="surface-card flex flex-col gap-3 p-4">
       <div className="flex items-start justify-between gap-3">
-        {img && <img src={img} alt={p.categories?.name ?? "Peça"} loading="lazy" width={64} height={64}
-          className="h-16 w-16 shrink-0 rounded-lg border object-cover" />}
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-xl font-bold tracking-wide">{p.code}</p>
-          <p className="text-[11px] uppercase tracking-wider text-metal">{p.categories?.name}</p>
-        </div>
-        <div className="text-right">
-          <p className="font-display text-2xl font-bold">{price == null ? "Consulte" : brl(price)}</p>
-          <p className={cn("text-xs font-semibold", out ? "text-destructive" : "text-success")}>
-            {out ? "Sem estoque" : `Estoque: ${p.stock}`}</p>
-        </div>
+        {img && <img src={img} alt={p.categories?.name ?? "Peça"} loading="lazy" width={64} height={64} className="h-16 w-16 shrink-0 rounded-lg border object-cover" />}
+        <div className="min-w-0 flex-1"><p className="font-display text-xl font-bold tracking-wide">{p.code}</p><p className="text-[11px] uppercase tracking-wider text-metal">{p.categories?.name}</p></div>
+        <div className="text-right"><p className="font-display text-2xl font-bold">{price == null ? "Consulte" : brl(price)}</p><p className={cn("text-xs font-semibold", out ? "text-destructive" : "text-success")}>{out ? "Sem estoque" : `Estoque: ${p.stock}`}</p></div>
       </div>
       <p className="text-sm leading-snug">{open ? p.application : p.application.slice(0, 140) + (p.application.length > 140 ? "…" : "")}</p>
       {open && <p className="text-xs text-muted-foreground"><b>Referências:</b> {p.refs}</p>}
       {p.price_note && <p className="text-xs font-semibold text-warning">{p.price_note}</p>}
-      <button onClick={() => setOpen(!open)} className="self-start text-xs font-semibold text-primary">
-        {open ? "Menos detalhes" : "Ver aplicação e referências"}</button>
+      <button onClick={() => setOpen(!open)} className="self-start text-xs font-semibold text-primary">{open ? "Menos detalhes" : "Ver aplicação e referências"}</button>
       <div className="flex items-center gap-2">
         <div className="flex items-center rounded-lg border bg-secondary">
           <button aria-label="Diminuir" onClick={() => setQty(Math.max(1, qty - 1))} className="p-3"><Minus className="h-4 w-4" /></button>
-          <input aria-label="Quantidade" inputMode="numeric" value={qtyText}
-            placeholder={String(Math.max(0, p.stock))} title={`Estoque: ${p.stock}`}
-            onChange={(e) => setQtyText(e.target.value.replace(/\D/g, ""))}
-            className="w-14 bg-transparent text-center font-semibold outline-none placeholder:text-muted-foreground/60" />
+          <input aria-label="Quantidade" inputMode="numeric" value={qtyText} placeholder={String(Math.max(0, p.stock))} title={`Estoque: ${p.stock}`} onChange={(e) => setQtyText(e.target.value.replace(/\D/g, ""))} className="w-14 bg-transparent text-center font-semibold outline-none placeholder:text-muted-foreground/60" />
           <button aria-label="Aumentar" onClick={() => setQty(qty + 1)} className="p-3"><Plus className="h-4 w-4" /></button>
         </div>
-        <Button onClick={add} disabled={price == null} className="h-12 flex-1 bg-gradient-red font-semibold">
-          {inOrder ? <><Check className="h-4 w-4" /> No pedido ({inOrder}) · +</> : "Adicionar"}
-        </Button>
+        <Button onClick={add} disabled={price == null} className="h-12 flex-1 bg-gradient-red font-semibold">{inOrder ? <><Check className="h-4 w-4" /> No pedido ({inOrder}) · +</> : "Adicionar"}</Button>
       </div>
       {out && price != null && <p className="text-[11px] text-muted-foreground">Sem estoque — pode ser pedido sob consulta.</p>}
     </li>
