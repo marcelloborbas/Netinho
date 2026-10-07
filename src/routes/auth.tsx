@@ -1,12 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, UserRound, Phone, Mail, BriefcaseBusiness, Store, Truck } from "lucide-react";
+import { UserRound, Phone, Mail, BriefcaseBusiness, Store, Truck } from "lucide-react";
 
 const PROFILE_KEY = "netinho-vendedor";
 type AccessType = "Vendedor" | "Visitante" | "Distribuidor" | "Auto-Peças";
@@ -91,12 +90,8 @@ function AuthPage() {
       };
       localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) await supabase.auth.signInAnonymously();
-      await supabase.auth.updateUser({
-        data: { full_name: profile.name, phone: profile.phone, email_contact: profile.email, access_type: profile.accessType },
-      }).catch(() => undefined);
-
+      // A identificação é local e não depende de autenticação Supabase.
+      // Isso mantém o catálogo acessível mesmo quando o projeto não permite sessão anônima.
       navigate({ to: "/catalogo" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível entrar.");
