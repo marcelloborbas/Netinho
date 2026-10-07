@@ -10,10 +10,13 @@ import { meQuery } from "@/lib/queries";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    // Sessão local (sem ida ao servidor a cada navegação); o banco valida o token via RLS.
+    if (typeof window !== "undefined" && !localStorage.getItem("netinho-vendedor")) {
+      throw redirect({ to: "/auth" });
+    }
+
+    // Sessão anônima para manter o acesso ao banco sem exigir senha.
     const { data } = await supabase.auth.getSession();
     let user = data.session?.user;
-    // TEMPORÁRIO: login desativado a pedido do cliente — entra com acesso anônimo automático.
     if (!user) {
       const anon = await supabase.auth.signInAnonymously();
       user = anon.data.user ?? undefined;
