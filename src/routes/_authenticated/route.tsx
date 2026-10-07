@@ -12,7 +12,12 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     // Sessão local (sem ida ao servidor a cada navegação); o banco valida o token via RLS.
     const { data } = await supabase.auth.getSession();
-    const user = data.session?.user;
+    let user = data.session?.user;
+    // TEMPORÁRIO: login desativado a pedido do cliente — entra com acesso anônimo automático.
+    if (!user) {
+      const anon = await supabase.auth.signInAnonymously();
+      user = anon.data.user ?? undefined;
+    }
     if (!user) throw redirect({ to: "/auth" });
     return { user };
   },

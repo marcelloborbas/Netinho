@@ -29,7 +29,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/" }); });
+    // TEMPORÁRIO: login desativado — a tela de entrada redireciona direto ao app.
+    navigate({ to: "/", replace: true });
   }, [navigate]);
 
   async function submit(e: FormEvent) {
