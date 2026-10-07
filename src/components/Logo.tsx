@@ -14,9 +14,9 @@ export function Logo({ className, showPhone = false, size = "sm" }: LogoProps) {
   const lg = size === "lg";
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <LogoMark className={lg ? "h-24 w-24" : "h-10 w-10"} />
+      <LogoMark className={lg ? "h-24 w-24" : "h-14 w-14"} />
       <div className="leading-none">
-        <div className={cn("font-display font-extrabold tracking-wide text-foreground", lg ? "text-5xl" : "text-2xl")}>
+        <div className={cn("font-display font-extrabold tracking-wide text-foreground", lg ? "text-5xl" : "text-[2rem]")}>
           {BRAND.name}
         </div>
         <div className={cn("mt-1 font-semibold uppercase tracking-[0.2em] text-metal", lg ? "text-xs" : "text-[9px]")}>
