@@ -29,6 +29,7 @@ function OrderPage() {
   const d = useDraft();
   const t = draftTotals(d);
   const { data: customers } = useQuery(customersQuery);
+  const selectedCustomer = customers?.find((x) => x.id === d.customerId);
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [review, setReview] = useState(false);
@@ -66,7 +67,7 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold uppercase">{review ? "Conferir pedido" : "Meu pedido"}</h1>
+        <h1 className="text-3xl font-bold uppercase">{review ? "Revisar pedido" : "Fazer pedido"}</h1>
         <button onClick={() => { if (confirm("Descartar o pedido?")) draftActions.clear(); }} className="text-sm text-muted-foreground">Descartar</button>
       </div>
 
@@ -83,6 +84,15 @@ function OrderPage() {
             </SelectContent>
           </Select>
           <Link to="/clientes" className="text-xs font-semibold text-primary">+ Cadastrar novo cliente</Link>
+          {selectedCustomer && (
+            <div className="rounded-lg bg-secondary/40 p-3 text-xs leading-5 text-muted-foreground">
+              <b className="text-foreground">{selectedCustomer.trade_name || selectedCustomer.company_name}</b>
+              {[selectedCustomer.cnpj && `CNPJ: ${selectedCustomer.cnpj}`,
+                selectedCustomer.phone && `Tel.: ${selectedCustomer.phone}`,
+                selectedCustomer.email && selectedCustomer.email,
+                [selectedCustomer.address, selectedCustomer.city, selectedCustomer.state].filter(Boolean).join(", ")].filter(Boolean).map((item) => <div key={item}>{item}</div>)}
+            </div>
+          )}
         </div>
         <div className="space-y-1.5">
           <Label>Condição de pagamento</Label>
@@ -161,12 +171,17 @@ function OrderPage() {
         <div className="grid grid-cols-2 gap-3">
           <Button variant="secondary" className="h-12" onClick={() => setReview(false)}>Voltar e editar</Button>
           <Button className="h-12 bg-gradient-red font-semibold shadow-glow" disabled={busy} onClick={finalize}>
-            {busy ? "Enviando..." : "Confirmar e enviar"}</Button>
+            {busy ? "Enviando..." : "Enviar pedido à distribuidora"}</Button>
         </div>
       ) : (
-        <Button className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow"
-          onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } setReview(true); window.scrollTo(0, 0); }}>
-          Conferir pedido</Button>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Button variant="secondary" className="h-12 text-base font-semibold"
+            onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } setReview(true); window.scrollTo(0, 0); }}>
+            Revisar pedido</Button>
+          <Button className="h-12 bg-gradient-red text-base font-semibold shadow-glow" disabled={busy}
+            onClick={finalize}>
+            {busy ? "Enviando..." : "Enviar pedido à distribuidora"}</Button>
+        </div>
       )}
     </div>
   );
