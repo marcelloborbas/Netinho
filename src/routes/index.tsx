@@ -67,11 +67,8 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-md">
-            <div className="absolute inset-8 rounded-full bg-primary/15 blur-3xl" />
-            <div className="relative surface-card flex min-h-[330px] items-center justify-center p-8">
-              <LogoMark className="h-56 w-56 md:h-72 md:w-72" />
-            </div>
+          <div className="flex w-full items-center justify-center">
+            <LogoMark className="h-64 w-64 md:h-80 md:w-80" />
           </div>
         </div>
       </section>
