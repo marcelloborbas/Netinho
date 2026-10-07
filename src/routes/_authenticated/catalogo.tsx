@@ -70,8 +70,8 @@ function Catalog() {
   );
 }
 
-function CategoryCard({ name, active, onClick, sprite }: {
-  name: string; active: boolean; onClick: () => void; sprite: ReturnType<typeof catalogSprite>;
+function CategoryCard({ name, active, onClick }: {
+  name: string; active: boolean; onClick: () => void;
 }) {
   const fallbackImage = partImage(name);
   return (
@@ -80,11 +80,8 @@ function CategoryCard({ name, active, onClick, sprite }: {
       active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
     )}>
       <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-white sm:h-20">
-        {sprite ? (
-          <div className="h-full w-full bg-no-repeat"
-            style={{ backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
-        ) : fallbackImage ? (
-          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1" />
+        {fallbackImage ? (
+          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 mix-blend-darken" />
         ) : (
           <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
         )}
