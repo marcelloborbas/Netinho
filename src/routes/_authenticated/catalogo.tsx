@@ -1,13 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useMemo, useState } from "react";
-import { Search, Plus, Minus, Check } from "lucide-react";
+import { Search, Plus, Minus, Check, ClipboardEdit, Send, ShoppingCart, UserRound, Users } from "lucide-react";
 import { toast } from "sonner";
-import { categoriesQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
+import { categoriesQuery, customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl, PAYMENT_TERMS, type PaymentTerm } from "@/lib/brand";
 import { draftActions, useDraft } from "@/lib/order-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { partImage } from "@/lib/part-images";
 
@@ -29,13 +30,62 @@ function Catalog() {
   const dq = useDeferredValue(q);
   const { data: products, isLoading, error } = useQuery(productsQuery);
   const { data: cats } = useQuery(categoriesQuery);
+  const { data: customers } = useQuery(customersQuery);
   const draft = useDraft();
+
+  function chooseCustomer(id: string) {
+    const customer = customers?.find((x) => x.id === id);
+    if (customer) draftActions.update({
+      customerId: customer.id,
+      customerName: customer.trade_name || customer.company_name,
+      buyer: customer.buyer ?? "",
+      carrier: customer.carrier ?? "",
+    });
+  }
 
   const list = useMemo(() => (products ?? []).filter((p) =>
     (!cat || p.category_id === cat) && (!dq.trim() || productMatches(p, dq))), [products, cat, dq]);
 
   return (
     <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-2">
+        <Link to="/catalogo" className="flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary bg-primary/10 p-2 text-center text-xs font-bold text-primary">
+          <ShoppingCart className="h-6 w-6" />Fazer pedido
+        </Link>
+        <Link to="/pedido" className="flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-secondary/40 p-2 text-center text-xs font-bold hover:border-primary/50">
+          <ClipboardEdit className="h-6 w-6" />Ver / editar pedido
+        </Link>
+        <Link to="/pedido" className="flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-secondary/40 p-2 text-center text-xs font-bold hover:border-primary/50">
+          <Send className="h-6 w-6" />Enviar à distribuidora
+        </Link>
+      </div>
+
+      <section className="surface-card space-y-3 p-4">
+        <div className="flex items-center gap-2">
+          <UserRound className="h-5 w-5 text-primary" />
+          <div>
+            <h2 className="font-bold">Cliente do pedido</h2>
+            <p className="text-xs text-muted-foreground">Identifique o cliente antes de adicionar as peças.</p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Select value={draft.customerId ?? ""} onValueChange={chooseCustomer}>
+            <SelectTrigger className="h-12 flex-1"><SelectValue placeholder="Selecione um cliente cadastrado" /></SelectTrigger>
+            <SelectContent>
+              {customers?.map((customer) => (
+                <SelectItem key={customer.id} value={customer.id}>
+                  {customer.favorite ? "★ " : ""}{customer.trade_name || customer.company_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Link to="/clientes" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary hover:bg-primary/10">
+            <Users className="h-4 w-4" />Cadastrar / editar
+          </Link>
+        </div>
+        {draft.customerName && <p className="text-sm font-semibold text-primary">Cliente selecionado: {draft.customerName}</p>}
+      </section>
+
       <div className="sticky top-[61px] z-20 -mx-4 space-y-3 bg-background/95 px-4 pb-3 pt-1 backdrop-blur">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -104,6 +154,10 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
   const out = p.stock <= 0;
 
   function add() {
+    if (!draftActions.get().customerId) {
+      toast.error("Selecione ou cadastre o cliente antes de fazer o pedido.");
+      return;
+    }
     draftActions.addItem({ productId: p.id, code: p.code, category: p.categories?.name ?? "", application: p.application, prices, quantity: qty });
     toast.success(`${p.code} adicionado (${qty})`);
     setQtyText("");
