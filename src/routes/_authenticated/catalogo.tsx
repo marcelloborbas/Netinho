@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { partImage } from "@/lib/part-images";
+import { LogoMark } from "@/components/Logo";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
@@ -64,7 +65,7 @@ function Catalog() {
         <div className="flex items-center gap-2">
           <UserRound className="h-5 w-5 text-primary" />
           <div>
-            <h2 className="font-bold">Cliente do pedido</h2>
+            <h2 className="font-bold">Cliente</h2>
             <p className="text-xs text-muted-foreground">Identifique o cliente antes de adicionar as peças.</p>
           </div>
         </div>
@@ -130,11 +131,13 @@ function CategoryCard({ name, active, onClick }: {
       active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
     )}>
       <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-transparent sm:h-20">
-        {fallbackImage ? (
+        {name === "Todas" ? (
+          <LogoMark className="h-14 w-14 sm:h-16 sm:w-16" />
+        ) : fallbackImage ? (
           <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 image-transparent" />
         ) : (
           <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
-        )}
+        )
       </div>
       <span className={cn("mt-1 line-clamp-2 text-center text-[11px] font-bold leading-tight sm:text-xs", active ? "text-primary" : "text-foreground")}>{name}</span>
     </button>
@@ -168,7 +171,7 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
       <div className="flex items-start justify-between gap-3">
         {img && <img src={img} alt={p.categories?.name ?? "Peça"} loading="lazy" width={64} height={64} className="h-16 w-16 shrink-0 rounded-lg border object-cover" />}
         <div className="min-w-0 flex-1"><p className="font-display text-xl font-bold tracking-wide">{p.code}</p><p className="text-[11px] uppercase tracking-wider text-metal">{p.categories?.name}</p></div>
-        <div className="text-right"><p className="font-display text-2xl font-bold">{price == null ? "Consulte" : brl(price)}</p><p className={cn("text-xs font-semibold", out ? "text-destructive" : "text-success")}>{out ? "Sem estoque" : `Estoque: ${p.stock}`}</p></div>
+        <div className="text-right"><p className="font-display text-2xl font-bold">{price == null ? "Consulte" : brl(price)}</p><p className={cn("text-sm font-bold", out ? "text-destructive" : "text-success")}>{out ? "Sem estoque" : `Estoque: ${p.stock}`}</p></div>
       </div>
       <p className="text-sm leading-snug">{open ? p.application : p.application.slice(0, 140) + (p.application.length > 140 ? "…" : "")}</p>
       {open && <p className="text-xs text-muted-foreground"><b>Referências:</b> {p.refs}</p>}
