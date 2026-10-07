@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, Building2, Handshake, PackageSearch, Truck } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
+import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
+import { useEffect, useState } from "react";
 import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/")({
@@ -29,20 +31,48 @@ const cases = [
 ];
 
 function HomePage() {
+  const [profile, setProfile] = useState<{ name: string; accessType: AccessType } | null>(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("netinho-vendedor");
+      if (raw) {
+        const p = JSON.parse(raw) as { name?: string; accessType?: AccessType };
+        if (p.name && p.accessType) setProfile({ name: p.name, accessType: p.accessType });
+      }
+    } catch { /* perfil inválido: ignora */ }
+  }, []);
+
   return (
     <main className="min-h-screen overflow-hidden">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <Logo />
-          <Link to="/auth" className="rounded-xl bg-gradient-red px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-glow transition hover:scale-[1.02]">
-            Entrar
-          </Link>
+          {profile ? (
+            <div className="flex items-center gap-2">
+              <ProfileAvatar type={profile.accessType} className="h-10 w-10" />
+              <div className="hidden text-right sm:block">
+                <p className="text-sm font-bold">{greeting(profile.name)}</p>
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{profile.accessType}</p>
+              </div>
+            </div>
+          ) : (
+            <Link to="/auth" className="rounded-xl bg-gradient-red px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-glow transition hover:scale-[1.02]">Entrar</Link>
+          )}
         </div>
       </header>
 
       <section className="relative">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.05fr_.95fr] md:py-20">
           <div>
+            {profile && (
+              <div className="mb-4 flex items-center gap-3">
+                <ProfileAvatar type={profile.accessType} className="h-14 w-14" />
+                <div>
+                  <p className="text-xl font-extrabold">{greeting(profile.name)}</p>
+                  <p className="text-sm text-muted-foreground">Seja bem-vindo à Netinho Auto Parts.</p>
+                </div>
+              </div>
+            )}
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-primary">
               Netinho Auto Parts
             </span>
