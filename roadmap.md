@@ -10,5 +10,5 @@
 - [ ] E-mail de confirmação no cadastro não chega
 - [ ] Lentidão no acesso/login
 - [x] Logo enviada como ícone e marca
-- [ ] Fotos das peças no catálogo
-- [ ] Estoque em cinza no campo de quantidade
+- [x] Fotos das peças no catálogo
+- [x] Estoque em cinza no campo de quantidade

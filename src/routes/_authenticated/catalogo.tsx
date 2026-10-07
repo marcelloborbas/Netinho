@@ -9,6 +9,7 @@ import { draftActions, useDraft } from "@/lib/order-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
@@ -77,7 +78,10 @@ function Chip({ active, children, onClick }: { active: boolean; children: React.
 }
 
 function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOrder?: number | undefined }) {
-  const [qty, setQty] = useState(1);
+  const [qtyText, setQtyText] = useState("");
+  const qty = Math.max(1, parseInt(qtyText) || 1);
+  const setQty = (n: number) => setQtyText(String(n));
+  const img = partImage(p.categories?.name);
   const [open, setOpen] = useState(false);
   const prices: Record<PaymentTerm, number | null> = {
     cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75,
@@ -89,13 +93,15 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
     draftActions.addItem({ productId: p.id, code: p.code, category: p.categories?.name ?? "",
       application: p.application, prices, quantity: qty });
     toast.success(`${p.code} adicionado (${qty})`);
-    setQty(1);
+    setQtyText("");
   }
 
   return (
     <li className="surface-card flex flex-col gap-3 p-4">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+        {img && <img src={img} alt={p.categories?.name ?? "Peça"} loading="lazy" width={64} height={64}
+          className="h-16 w-16 shrink-0 rounded-lg border object-cover" />}
+        <div className="min-w-0 flex-1">
           <p className="font-display text-xl font-bold tracking-wide">{p.code}</p>
           <p className="text-[11px] uppercase tracking-wider text-metal">{p.categories?.name}</p>
         </div>
@@ -113,9 +119,10 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
       <div className="flex items-center gap-2">
         <div className="flex items-center rounded-lg border bg-secondary">
           <button aria-label="Diminuir" onClick={() => setQty(Math.max(1, qty - 1))} className="p-3"><Minus className="h-4 w-4" /></button>
-          <input aria-label="Quantidade" inputMode="numeric" value={qty}
-            onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-12 bg-transparent text-center font-semibold outline-none" />
+          <input aria-label="Quantidade" inputMode="numeric" value={qtyText}
+            placeholder={String(Math.max(0, p.stock))} title={`Estoque: ${p.stock}`}
+            onChange={(e) => setQtyText(e.target.value.replace(/\D/g, ""))}
+            className="w-14 bg-transparent text-center font-semibold outline-none placeholder:text-muted-foreground/60" />
           <button aria-label="Aumentar" onClick={() => setQty(qty + 1)} className="p-3"><Plus className="h-4 w-4" /></button>
         </div>
         <Button onClick={add} disabled={price == null} className="h-12 flex-1 bg-gradient-red font-semibold">
