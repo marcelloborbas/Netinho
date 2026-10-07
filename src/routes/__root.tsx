@@ -15,7 +15,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Página não encontrada</h2>
-        <Link to="/auth" className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+        <Link to="/" className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
           Voltar ao início
         </Link>
       </div>
@@ -80,14 +80,8 @@ function RootComponent() {
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      // O login já atualiza a sessão local; invalidar o roteador em SIGNED_IN
-      // adiciona uma segunda rodada de navegação e deixa a entrada mais lenta.
-      if (event === "SIGNED_OUT") {
-        queryClient.clear();
-        router.invalidate();
-      } else if (event === "USER_UPDATED") {
-        queryClient.invalidateQueries();
-      }
+      router.invalidate();
+      if (event === "SIGNED_OUT") queryClient.clear(); else queryClient.invalidateQueries();
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);

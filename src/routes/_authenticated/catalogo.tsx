@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useMemo, useState } from "react";
-import { Search, Plus, Minus, Check, Maximize2 } from "lucide-react";
+import { Search, Plus, Minus, Check } from "lucide-react";
 import { toast } from "sonner";
 import { categoriesQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl, PAYMENT_TERMS, type PaymentTerm } from "@/lib/brand";
@@ -9,7 +9,7 @@ import { draftActions, useDraft } from "@/lib/order-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { catalogSprite, partImage } from "@/lib/part-images";
+import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
@@ -78,68 +78,40 @@ function Chip({ active, children, onClick }: { active: boolean; children: React.
 }
 
 function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOrder?: number | undefined }) {
-  const [qty, setQty] = useState(1);
+  const [qtyText, setQtyText] = useState("");
+  const qty = Math.max(1, parseInt(qtyText) || 1);
+  const setQty = (n: number) => setQtyText(String(n));
+  const img = partImage(p.categories?.name);
   const [open, setOpen] = useState(false);
-  const [imageOpen, setImageOpen] = useState(false);
   const prices: Record<PaymentTerm, number | null> = {
     cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75,
   };
   const price = prices[term];
   const out = p.stock <= 0;
-  const sprite = catalogSprite(p.code);
-  const fallbackImage = partImage(p.categories?.name);
 
   function add() {
     draftActions.addItem({ productId: p.id, code: p.code, category: p.categories?.name ?? "",
       application: p.application, prices, quantity: qty });
     toast.success(`${p.code} adicionado (${qty})`);
-    setQty(1);
+    setQtyText("");
   }
 
   return (
     <li className="surface-card flex flex-col gap-3 p-4">
-      <div className="grid grid-cols-[96px_1fr] gap-3">
-        <button type="button" onClick={() => (sprite || fallbackImage) && setImageOpen(true)}
-          className={cn("relative flex w-24 items-center justify-center overflow-hidden rounded-xl border bg-white shadow-sm",
-            (sprite || fallbackImage) ? "cursor-zoom-in" : "cursor-default")} aria-label="Ampliar imagem da peça" style={{ aspectRatio: sprite?.aspectRatio ?? "1 / 1" }}>
-          {sprite ? (
-            <span className="block h-full w-full bg-no-repeat" style={{ backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
-          ) : fallbackImage ? (
-            <img src={fallbackImage} alt={`Imagem ilustrativa de ${p.categories?.name ?? "peça"}`} className="h-full w-full object-contain p-2" />
-          ) : (
-            <span className="px-2 text-center text-[10px] font-semibold text-muted-foreground">Imagem não disponível</span>
-          )}
-          {(sprite || fallbackImage) && <Maximize2 className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded bg-background/85 p-0.5" />}
-        </button>
-        <div className="min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p className="font-display text-xl font-bold tracking-wide">{p.code}</p>
-              <p className="text-[11px] uppercase tracking-wider text-metal">{p.categories?.name}</p>
-            </div>
-            <div className="shrink-0 text-right">
-              <p className="font-display text-xl font-bold">{price == null ? "Consulte" : brl(price)}</p>
-              <p className={cn("text-xs font-semibold", out ? "text-destructive" : "text-success")}>
-                {out ? "Sem estoque" : `Estoque: ${p.stock}`}</p>
-            </div>
-          </div>
-          <p className="mt-2 text-sm leading-snug">{open ? p.application : p.application.slice(0, 140) + (p.application.length > 140 ? "…" : "")}</p>
+      <div className="flex items-start justify-between gap-3">
+        {img && <img src={img} alt={p.categories?.name ?? "Peça"} loading="lazy" width={64} height={64}
+          className="h-16 w-16 shrink-0 rounded-lg border object-cover" />}
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-xl font-bold tracking-wide">{p.code}</p>
+          <p className="text-[11px] uppercase tracking-wider text-metal">{p.categories?.name}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-display text-2xl font-bold">{price == null ? "Consulte" : brl(price)}</p>
+          <p className={cn("text-xs font-semibold", out ? "text-destructive" : "text-success")}>
+            {out ? "Sem estoque" : `Estoque: ${p.stock}`}</p>
         </div>
       </div>
-      {imageOpen && (sprite || fallbackImage) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6" onClick={() => setImageOpen(false)}>
-          <div className="relative max-h-[85vh] max-w-[85vw] rounded-2xl bg-white p-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            {sprite ? (
-              <div className="w-[70vw] max-w-[760px] bg-no-repeat bg-contain bg-center"
-                style={{ aspectRatio: sprite.aspectRatio, backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
-            ) : (
-              <img src={fallbackImage!} alt={`Imagem de ${p.code}`} className="max-h-[70vh] max-w-[70vw] object-contain" />
-            )}
-            <button type="button" onClick={() => setImageOpen(false)} className="absolute right-2 top-2 rounded-full bg-black/75 px-3 py-1 text-sm font-bold text-white">×</button>
-          </div>
-        </div>
-      )}
-
+      <p className="text-sm leading-snug">{open ? p.application : p.application.slice(0, 140) + (p.application.length > 140 ? "…" : "")}</p>
       {open && <p className="text-xs text-muted-foreground"><b>Referências:</b> {p.refs}</p>}
       {p.price_note && <p className="text-xs font-semibold text-warning">{p.price_note}</p>}
       <button onClick={() => setOpen(!open)} className="self-start text-xs font-semibold text-primary">
@@ -147,9 +119,10 @@ function ProductCard({ p, term, inOrder }: { p: Product; term: PaymentTerm; inOr
       <div className="flex items-center gap-2">
         <div className="flex items-center rounded-lg border bg-secondary">
           <button aria-label="Diminuir" onClick={() => setQty(Math.max(1, qty - 1))} className="p-3"><Minus className="h-4 w-4" /></button>
-          <input aria-label="Quantidade" inputMode="numeric" value={qty}
-            onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-12 bg-transparent text-center font-semibold outline-none" />
+          <input aria-label="Quantidade" inputMode="numeric" value={qtyText}
+            placeholder={String(Math.max(0, p.stock))} title={`Estoque: ${p.stock}`}
+            onChange={(e) => setQtyText(e.target.value.replace(/\D/g, ""))}
+            className="w-14 bg-transparent text-center font-semibold outline-none placeholder:text-muted-foreground/60" />
           <button aria-label="Aumentar" onClick={() => setQty(qty + 1)} className="p-3"><Plus className="h-4 w-4" /></button>
         </div>
         <Button onClick={add} disabled={price == null} className="h-12 flex-1 bg-gradient-red font-semibold">

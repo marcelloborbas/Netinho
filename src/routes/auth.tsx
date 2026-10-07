@@ -29,7 +29,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/painel" }); });
+    supabase.auth.getSession().then(({ data }) => { if (data.session) navigate({ to: "/" }); });
   }, [navigate]);
 
   async function submit(e: FormEvent) {
@@ -39,24 +39,14 @@ function AuthPage() {
       if (mode === "in") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/painel" });
+        navigate({ to: "/" });
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email, password,
           options: { data: { full_name: name }, emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-
-        // Quando a confirmação de e-mail estiver desativada no Supabase,
-        // o cadastro já retorna uma sessão e o usuário entra imediatamente.
-        if (data.session) {
-          toast.success("Cadastro realizado! Acesso liberado.");
-          navigate({ to: "/painel" });
-          return;
-        }
-
-        // Mantém compatibilidade caso o Supabase ainda exija confirmação.
-        toast.success("Cadastro criado! Verifique seu e-mail para liberar o acesso.");
+        toast.success("Cadastro criado! Confirme pelo link enviado ao seu e-mail.");
         setMode("in");
       }
     } catch (err) {

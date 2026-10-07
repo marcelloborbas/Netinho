@@ -6,7 +6,7 @@ import { BRAND, ORDER_STATUS, brl } from "@/lib/brand";
 import { useDraft } from "@/lib/order-store";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/_authenticated/painel")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Painel – NETINHO Representações" },
