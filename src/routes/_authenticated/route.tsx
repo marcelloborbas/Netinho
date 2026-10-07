@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/
 import { useQuery } from "@tanstack/react-query";
 import { Home, Search, Users, ClipboardList, ShoppingCart, LogOut, Shield } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals } from "@/lib/order-store";
 import { meQuery } from "@/lib/queries";
@@ -40,6 +41,9 @@ function AppShell() {
   const totals = draftTotals(draft);
   const navigate = useNavigate();
   const { data: me } = useQuery(meQuery);
+  const rawProfile = typeof window !== "undefined" ? localStorage.getItem("netinho-vendedor") : null;
+  let profile: { name: string; accessType: AccessType } | null = null;
+  try { if (rawProfile) { const p = JSON.parse(rawProfile) as { name?: string; accessType?: AccessType }; if (p.name && p.accessType) profile = { name: p.name, accessType: p.accessType }; } } catch { /* ignora */ }
 
   function logout() {
     localStorage.removeItem("netinho-vendedor");
@@ -73,6 +77,17 @@ function AppShell() {
         </div>
       </header>
 
+      <div className="mx-auto max-w-6xl px-4 pt-4">
+        {profile && (
+          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+            <ProfileAvatar type={profile.accessType} className="h-12 w-12" />
+            <div className="min-w-0">
+              <p className="font-bold">{greeting(profile.name)}</p>
+              <p className="text-xs text-muted-foreground">Seja bem-vindo à Netinho Auto Parts · {profile.accessType}</p>
+            </div>
+          </div>
+        )}
+      </div>
       <main className="mx-auto max-w-6xl px-4 py-5"><Outlet /></main>
 
       {draft.items.length > 0 && (
