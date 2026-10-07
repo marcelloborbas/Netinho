@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, Building2, Handshake, PackageSearch, Truck } from "lucide-react";
-import { Logo } from "@/components/Logo";
+import { Logo, LogoMark } from "@/components/Logo";
 import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/")({
@@ -70,7 +70,7 @@ function HomePage() {
           <div className="relative mx-auto w-full max-w-md">
             <div className="absolute inset-8 rounded-full bg-primary/15 blur-3xl" />
             <div className="relative surface-card flex min-h-[330px] items-center justify-center p-8">
-              <Logo size="lg" />
+              <LogoMark className="h-56 w-56 md:h-72 md:w-72" />
             </div>
           </div>
         </div>
