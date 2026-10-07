@@ -9,7 +9,7 @@ import { draftActions, useDraft } from "@/lib/order-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { partImage } from "@/lib/part-images";
+import { partImage, catalogSprite } from "@/lib/part-images";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
@@ -42,9 +42,30 @@ function Catalog() {
           <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} inputMode="search"
             placeholder="Código, referência ou veículo (ex: gol 1.0)" className="h-12 pl-10 text-base" />
         </div>
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-          <Chip active={!cat} onClick={() => setCat(null)}>Todas</Chip>
-          {cats?.map((c) => <Chip key={c.id} active={cat === c.id} onClick={() => setCat(c.id)}>{c.name}</Chip>)}
+        <div className="-mx-4 overflow-x-auto px-4 pb-1">
+          <div className="grid min-w-max grid-flow-col auto-cols-[128px] gap-3">
+            <CategoryCard
+              name="Todas"
+              active={!cat}
+              onClick={() => setCat(null)}
+              sprite={catalogSprite("701018")}
+            />
+            {cats?.map((c) => (
+              <CategoryCard
+                key={c.id}
+                name={c.name}
+                active={cat === c.id}
+                onClick={() => setCat(c.id)}
+                sprite={
+                  c.name.toLowerCase().includes("bico")
+                    ? catalogSprite("701018")
+                    : c.name.toLowerCase().includes("atuador")
+                      ? catalogSprite("A050J-1600006")
+                      : null
+                }
+              />
+            ))}
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           Preços na condição: <b className="text-foreground">{PAYMENT_TERMS.find((t) => t.value === draft.paymentTerm)?.label}</b>
@@ -67,6 +88,39 @@ function Catalog() {
         </ul>
       )}
     </div>
+  );
+}
+
+function CategoryCard({ name, active, onClick, sprite }: {
+  name: string;
+  active: boolean;
+  onClick: () => void;
+  sprite: ReturnType<typeof catalogSprite>;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "surface-card flex w-32 flex-col overflow-hidden rounded-xl border p-2 text-left transition",
+        active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
+      )}
+    >
+      <div
+        className="h-20 w-full rounded-lg bg-white bg-no-repeat"
+        style={sprite ? {
+          backgroundImage: `url(${sprite.url})`,
+          backgroundPosition: sprite.position,
+          backgroundSize: sprite.size,
+          aspectRatio: sprite.aspectRatio,
+        } : undefined}
+      />
+      <span className={cn(
+        "mt-2 line-clamp-2 text-center text-xs font-bold leading-tight",
+        active ? "text-primary" : "text-foreground"
+      )}>
+        {name}
+      </span>
+    </button>
   );
 }
 
