@@ -50,7 +50,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  return <html lang="pt-BR" className="dark"><head><HeadContent /></head><body>{children}<Scripts /></body></html>;
+  return <html lang="pt-BR" className="dark"><head><HeadContent /></head><body>{children}<svg aria-hidden="true" className="hidden"><filter id="remove-white-background" colorInterpolationFilters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -0.2126 -0.7152 -0.0722 0 1" /></filter></svg><Scripts /></body></html>;
 }
 
 function RootComponent() {
