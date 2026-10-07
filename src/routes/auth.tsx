@@ -6,18 +6,26 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, UserRound, Phone, Mail, Smartphone } from "lucide-react";
+import { Download, UserRound, Phone, Mail, Smartphone, BriefcaseBusiness, Store, Truck, ShoppingBag } from "lucide-react";
 
 const PROFILE_KEY = "netinho-vendedor";
-type SellerProfile = { name: string; phone: string; email: string };
+type AccessType = "Vendedor" | "Visitante" | "Distribuidor" | "Auto-Peças";
+type SellerProfile = { name: string; phone: string; email: string; accessType: AccessType };
+
+const ACCESS_OPTIONS: { value: AccessType; description: string; icon: typeof BriefcaseBusiness }[] = [
+  { value: "Vendedor", description: "Representa clientes e monta pedidos", icon: BriefcaseBusiness },
+  { value: "Visitante", description: "Consulta o catálogo", icon: UserRound },
+  { value: "Distribuidor", description: "Compra para distribuição", icon: Truck },
+  { value: "Auto-Peças", description: "Compra para sua loja", icon: Store },
+];
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Acesso – Netinho Auto Parts" },
-      { name: "description", content: "Identificação do vendedor para acessar o catálogo Netinho Auto Parts." },
+      { name: "description", content: "Escolha seu perfil e acesse a Netinho Auto Parts." },
       { property: "og:title", content: "Netinho Auto Parts" },
-      { property: "og:description", content: "Acesso do vendedor ao catálogo e pedidos." },
+      { property: "og:description", content: "Catálogo e pedidos para Vendedores, Visitantes, Distribuidores e Auto-Peças." },
     ],
   }),
   component: AuthPage,
@@ -25,6 +33,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const [accessType, setAccessType] = useState<AccessType | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -38,6 +47,7 @@ function AuthPage() {
     if (saved) {
       try {
         const profile = JSON.parse(saved) as SellerProfile;
+        setAccessType(profile.accessType ?? null);
         setName(profile.name ?? "");
         setPhone(profile.phone ?? "");
         setEmail(profile.email ?? "");
@@ -57,7 +67,6 @@ function AuthPage() {
       setDeferredPrompt(null);
       toast.success("Netinho Auto Parts instalado no celular.");
     };
-
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
     window.addEventListener("appinstalled", onInstalled);
     return () => {
@@ -68,9 +77,14 @@ function AuthPage() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (!accessType) {
+      toast.error("Selecione como você acessará a Netinho.");
+      return;
+    }
     setBusy(true);
     try {
       const profile: SellerProfile = {
+        accessType,
         name: name.trim(),
         phone: phone.trim(),
         email: email.trim().toLowerCase(),
@@ -80,7 +94,7 @@ function AuthPage() {
       const { data } = await supabase.auth.getSession();
       if (!data.session) await supabase.auth.signInAnonymously();
       await supabase.auth.updateUser({
-        data: { full_name: profile.name, phone: profile.phone, email_contact: profile.email },
+        data: { full_name: profile.name, phone: profile.phone, email_contact: profile.email, access_type: profile.accessType },
       }).catch(() => undefined);
 
       navigate({ to: "/catalogo" });
@@ -106,33 +120,52 @@ function AuthPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-5 py-8">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-lg">
         <Logo size="lg" showPhone className="mb-8 justify-center" />
-        <form onSubmit={submit} className="surface-card space-y-4 p-6">
+        <form onSubmit={submit} className="surface-card space-y-5 p-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Acesso do vendedor</p>
-            <h1 className="mt-1 text-2xl font-bold">Seus dados</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Informe seus dados para acessar o catálogo e montar seus pedidos.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Acesso</p>
+            <h1 className="mt-1 text-2xl font-bold">Como você acessa a Netinho?</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Selecione seu perfil e informe seus dados.</p>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
-            <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
+          <div className="grid grid-cols-2 gap-3">
+            {ACCESS_OPTIONS.map((option) => {
+              const Icon = option.icon;
+              const active = accessType === option.value;
+              return (
+                <button key={option.value} type="button" onClick={() => setAccessType(option.value)}
+                  className={active
+                    ? "rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20"
+                    : "rounded-xl border border-border bg-secondary/40 p-4 text-left hover:border-primary/50"}>
+                  <Icon className={active ? "h-6 w-6 text-primary" : "h-6 w-6 text-muted-foreground"} />
+                  <span className="mt-3 block font-bold">{option.value}</span>
+                  <span className="mt-1 block text-xs leading-snug text-muted-foreground">{option.description}</span>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Telefone</Label>
-            <Input id="phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-12" />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="email" className="flex items-center gap-2"><Mail className="h-4 w-4" />E-mail</Label>
-            <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
-          </div>
-
-          <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
-            {busy ? "Entrando..." : "Entrar no catálogo"}
-          </Button>
+          {accessType && (
+            <div className="space-y-4 border-t pt-4">
+              <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
+              <div className="space-y-1.5">
+                <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
+                <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Telefone</Label>
+                <Input id="phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-12" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="flex items-center gap-2"><Mail className="h-4 w-4" />E-mail</Label>
+                <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
+              </div>
+              <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
+                {busy ? "Entrando..." : "Entrar no catálogo"}
+              </Button>
+            </div>
+          )}
         </form>
 
         <button type="button" onClick={installApp} disabled={installing}
@@ -145,7 +178,6 @@ function AuthPage() {
             <span className="block text-xs text-muted-foreground">{canInstall ? "Adicionar o ícone Netinho Auto Parts à tela inicial" : "Adicionar à tela inicial pelo navegador"}</span>
           </span>
         </button>
-
         <p className="mt-5 text-center text-[11px] leading-relaxed text-muted-foreground">
           O ícone abre o site oficial. Atualizações de catálogo e dados publicados pela Netinho ficam disponíveis automaticamente.
         </p>
