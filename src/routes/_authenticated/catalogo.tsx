@@ -76,14 +76,21 @@ function Catalog() {
 function CategoryCard({ name, active, onClick, sprite }: {
   name: string; active: boolean; onClick: () => void; sprite: ReturnType<typeof catalogSprite>;
 }) {
+  const fallbackImage = partImage(name);
   return (
     <button onClick={onClick} className={cn(
       "surface-card flex min-w-0 flex-col overflow-hidden rounded-xl border p-1.5 text-left transition",
       active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
     )}>
-      <div className="h-16 w-full rounded-lg bg-white bg-no-repeat sm:h-20"
-        style={sprite ? { backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size, aspectRatio: sprite.aspectRatio } : undefined}>
-        {!sprite && <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>}
+      <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-white sm:h-20">
+        {sprite ? (
+          <div className="h-full w-full bg-no-repeat"
+            style={{ backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
+        ) : fallbackImage ? (
+          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1" />
+        ) : (
+          <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
+        )}
       </div>
       <span className={cn("mt-1 line-clamp-2 text-center text-[11px] font-bold leading-tight sm:text-xs", active ? "text-primary" : "text-foreground")}>{name}</span>
     </button>
