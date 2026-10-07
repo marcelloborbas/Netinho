@@ -87,10 +87,12 @@ function OrderPage() {
           {selectedCustomer && (
             <div className="rounded-lg bg-secondary/40 p-3 text-xs leading-5 text-muted-foreground">
               <b className="text-foreground">{selectedCustomer.trade_name || selectedCustomer.company_name}</b>
-              {[selectedCustomer.cnpj && `CNPJ: ${selectedCustomer.cnpj}`,
-                selectedCustomer.phone && `Tel.: ${selectedCustomer.phone}`,
-                selectedCustomer.email && selectedCustomer.email,
-                [selectedCustomer.address, selectedCustomer.city, selectedCustomer.state].filter(Boolean).join(", ")].filter(Boolean).map((item) => <div key={item}>{item}</div>)}
+              {selectedCustomer.cnpj && <div>CNPJ: {selectedCustomer.cnpj}</div>}
+              {selectedCustomer.phone && <div>Tel.: {selectedCustomer.phone}</div>}
+              {selectedCustomer.email && <div>{selectedCustomer.email}</div>}
+              {(selectedCustomer.address || selectedCustomer.city || selectedCustomer.state) && (
+                <div>{[selectedCustomer.address, selectedCustomer.city, selectedCustomer.state].filter(Boolean).join(", ")}</div>
+              )}
             </div>
           )}
         </div>
