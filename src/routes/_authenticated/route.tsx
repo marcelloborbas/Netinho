@@ -9,8 +9,16 @@ import { meQuery } from "@/lib/queries";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: () => {
-    if (typeof window !== "undefined" && !localStorage.getItem("netinho-vendedor")) {
-      throw redirect({ to: "/auth" });
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem("netinho-vendedor");
+      if (!raw) throw redirect({ to: "/auth" });
+      try {
+        const profile = JSON.parse(raw) as { accessType?: string };
+        if (profile.accessType !== "Vendedor") throw redirect({ to: "/" });
+      } catch (error) {
+        if (error && typeof error === "object" && "isRedirect" in error) throw error;
+        throw redirect({ to: "/auth" });
+      }
     }
     // O catálogo é público após a identificação local do visitante.
     // Não depende de sessão Supabase para montar a rota.
