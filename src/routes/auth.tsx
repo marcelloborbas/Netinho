@@ -119,7 +119,7 @@ function AuthPage() {
         <Logo size="lg" showPhone className="mb-8 justify-center" />
         <form onSubmit={submit} className="surface-card space-y-5 p-6">
           <div>
-            <h1 className="mt-1 text-2xl font-bold">Como você acessa a Netinho?</h1>
+            <h1 className="mt-1 text-2xl font-bold">Qual seu perfil ?</h1>
             <p className="mt-1 text-sm text-muted-foreground">Selecione seu perfil e informe seus dados.</p>
           </div>
 
