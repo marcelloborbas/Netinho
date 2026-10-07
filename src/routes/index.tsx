@@ -135,6 +135,7 @@ function HomePage() {
       <footer className="border-t border-border/60 px-4 py-8 text-center text-xs text-muted-foreground">
         <Logo className="justify-center" />
         <p className="mt-4">Netinho Auto Parts · Representação e soluções para o mercado automotivo.</p>
+        <a href="mailto:netinhoautoparts@gmail.com" className="mt-2 inline-block font-semibold text-primary hover:underline">netinhoautoparts@gmail.com</a>
       </footer>
     </main>
   );
