@@ -13,9 +13,9 @@ type SellerProfile = { name: string; phone: string; email: string; accessType: A
 
 const ACCESS_OPTIONS: { value: AccessType; description: string; icon: typeof BriefcaseBusiness }[] = [
   { value: "Vendedor", description: "Representa clientes e monta pedidos", icon: BriefcaseBusiness },
-  { value: "Visitante", description: "Consulta o catálogo", icon: UserRound },
-  { value: "Distribuidor", description: "Compra para distribuição", icon: Truck },
-  { value: "Auto-Peças", description: "Compra para sua loja", icon: Store },
+  { value: "Visitante", description: "Conhece a Netinho e nossa atuação", icon: UserRound },
+  { value: "Distribuidor", description: "Conhece nossas soluções comerciais", icon: Truck },
+  { value: "Auto-Peças", description: "Conhece nossa linha e atuação", icon: Store },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -92,7 +92,7 @@ function AuthPage() {
 
       // A identificação é local e não depende de autenticação Supabase.
       // Isso mantém o catálogo acessível mesmo quando o projeto não permite sessão anônima.
-      navigate({ to: "/catalogo" });
+      navigate({ to: accessType === "Vendedor" ? "/catalogo" : "/" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível entrar.");
     } finally {
@@ -156,7 +156,7 @@ function AuthPage() {
                 <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
               </div>
               <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
-                {busy ? "Entrando..." : "Entrar no catálogo"}
+                {busy ? "Entrando..." : accessType === "Vendedor" ? "Entrar no catálogo" : "Conhecer a Netinho"}
               </Button>
             </div>
           )}
