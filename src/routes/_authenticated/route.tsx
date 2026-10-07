@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Home, Search, Users, ClipboardList, ShoppingCart, LogOut, Shield } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals } from "@/lib/order-store";
@@ -9,20 +8,22 @@ import { meQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    if (typeof window !== "undefined" && !localStorage.getItem("netinho-vendedor")) {
-      throw redirect({ to: "/auth" });
+  beforeLoad: () => {
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem("netinho-vendedor");
+      if (!raw) throw redirect({ to: "/auth" });
+      let profile: { accessType?: string };
+      try {
+        profile = JSON.parse(raw) as { accessType?: string };
+      } catch {
+        localStorage.removeItem("netinho-vendedor");
+        throw redirect({ to: "/auth" });
+      }
+      if (profile.accessType !== "Vendedor") throw redirect({ to: "/" });
     }
-
-    // Sessão anônima para manter o acesso ao banco sem exigir senha.
-    const { data } = await supabase.auth.getSession();
-    let user = data.session?.user;
-    if (!user) {
-      const anon = await supabase.auth.signInAnonymously();
-      user = anon.data.user ?? undefined;
-    }
-    if (!user) throw redirect({ to: "/auth" });
-    return { user };
+    // O catálogo é público após a identificação local do visitante.
+    // Não depende de sessão Supabase para montar a rota.
+    return { user: null };
   },
   component: AppShell,
 });
@@ -40,8 +41,8 @@ function AppShell() {
   const navigate = useNavigate();
   const { data: me } = useQuery(meQuery);
 
-  async function logout() {
-    await supabase.auth.signOut();
+  function logout() {
+    localStorage.removeItem("netinho-vendedor");
     navigate({ to: "/auth" });
   }
 

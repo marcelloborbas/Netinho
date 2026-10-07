@@ -79,6 +79,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   h1, h2, h3 { font-family: var(--font-display); letter-spacing: 0.01em; }
+  .image-transparent { filter: url("#remove-white-background"); }
 }
 
 @utility surface-card {

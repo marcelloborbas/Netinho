@@ -9,7 +9,7 @@ import { draftActions, useDraft } from "@/lib/order-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { partImage, catalogSprite } from "@/lib/part-images";
+import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
@@ -44,12 +44,9 @@ function Catalog() {
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          <CategoryCard name="Todas" active={!cat} onClick={() => setCat(null)} sprite={catalogSprite("701018")} />
+          <CategoryCard name="Todas" active={!cat} onClick={() => setCat(null)} />
           {cats?.map((c) => (
-            <CategoryCard key={c.id} name={c.name} active={cat === c.id} onClick={() => setCat(c.id)}
-              sprite={c.name.toLowerCase().includes("bico") ? catalogSprite("701018")
-                : c.name.toLowerCase().includes("atuador") ? catalogSprite("A050J-1600006")
-                : null} />
+            <CategoryCard key={c.id} name={c.name} active={cat === c.id} onClick={() => setCat(c.id)} />
           ))}
         </div>
 
@@ -73,8 +70,8 @@ function Catalog() {
   );
 }
 
-function CategoryCard({ name, active, onClick, sprite }: {
-  name: string; active: boolean; onClick: () => void; sprite: ReturnType<typeof catalogSprite>;
+function CategoryCard({ name, active, onClick }: {
+  name: string; active: boolean; onClick: () => void;
 }) {
   const fallbackImage = partImage(name);
   return (
@@ -82,12 +79,9 @@ function CategoryCard({ name, active, onClick, sprite }: {
       "surface-card flex min-w-0 flex-col overflow-hidden rounded-xl border p-1.5 text-left transition",
       active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
     )}>
-      <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-white sm:h-20">
-        {sprite ? (
-          <div className="h-full w-full bg-no-repeat"
-            style={{ backgroundImage: `url(${sprite.url})`, backgroundPosition: sprite.position, backgroundSize: sprite.size }} />
-        ) : fallbackImage ? (
-          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1" />
+      <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-transparent sm:h-20">
+        {fallbackImage ? (
+          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 image-transparent" />
         ) : (
           <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
         )}
