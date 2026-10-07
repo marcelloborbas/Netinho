@@ -5,17 +5,17 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserRound, Phone, Mail, BriefcaseBusiness, Store, Truck } from "lucide-react";
+import { UserRound, Phone, Mail } from "lucide-react";
+import { ProfileAvatar, type AccessType } from "@/components/ProfileAvatar";
 
 const PROFILE_KEY = "netinho-vendedor";
-type AccessType = "Vendedor" | "Visitante" | "Distribuidor" | "Auto-Peças";
 type SellerProfile = { name: string; phone: string; email: string; accessType: AccessType };
 
-const ACCESS_OPTIONS: { value: AccessType; description: string; icon: typeof BriefcaseBusiness }[] = [
-  { value: "Vendedor", description: "Representa clientes e monta pedidos", icon: BriefcaseBusiness },
-  { value: "Visitante", description: "Conhece a Netinho e nossa atuação", icon: UserRound },
-  { value: "Distribuidor", description: "Conhece nossas soluções comerciais", icon: Truck },
-  { value: "Auto-Peças", description: "Conhece nossa linha e atuação", icon: Store },
+const ACCESS_OPTIONS: { value: AccessType; description: string }[] = [
+  { value: "Vendedor", description: "Representa clientes e monta pedidos" },
+  { value: "Visitante", description: "Conhece a Netinho e nossa atuação" },
+  { value: "Distribuidor", description: "Conhece nossas soluções comerciais" },
+  { value: "Auto-Peças", description: "Conhece nossa linha e atuação" },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -125,14 +125,13 @@ function AuthPage() {
 
           <div className="grid grid-cols-2 gap-3">
             {ACCESS_OPTIONS.map((option) => {
-              const Icon = option.icon;
               const active = accessType === option.value;
               return (
                 <button key={option.value} type="button" onClick={() => setAccessType(option.value)}
                   className={active
                     ? "rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20"
                     : "rounded-xl border border-border bg-secondary/40 p-4 text-left hover:border-primary/50"}>
-                  <Icon className={active ? "h-6 w-6 text-primary" : "h-6 w-6 text-muted-foreground"} />
+                  <ProfileAvatar type={option.value} className={active ? "h-12 w-12" : "h-12 w-12 opacity-70"} />
                   <span className="mt-3 block font-bold">{option.value}</span>
                   <span className="mt-1 block text-xs leading-snug text-muted-foreground">{option.description}</span>
                 </button>
