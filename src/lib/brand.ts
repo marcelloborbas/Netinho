@@ -1,7 +1,7 @@
 /** Dados fixos da marca e regras comerciais compartilhadas. */
 export const BRAND = {
-  name: "NETINHO",
-  tagline: "Representações · Auto Parts",
+  name: "Netinho",
+  tagline: "Auto Parts",
   phone: "(15) 9.9169-7105",
   phoneDigits: "5515991697105",
   /** E-mail que recebe os pedidos (a confirmar com o cliente). */
