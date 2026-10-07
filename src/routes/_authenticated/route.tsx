@@ -14,14 +14,18 @@ export const Route = createFileRoute("/_authenticated")({
       throw redirect({ to: "/auth" });
     }
 
-    // Sessão anônima para manter o acesso ao banco sem exigir senha.
-    const { data } = await supabase.auth.getSession();
-    let user = data.session?.user;
-    if (!user) {
-      const anon = await supabase.auth.signInAnonymously();
-      user = anon.data.user ?? undefined;
+    // A sessão anônima é opcional; o acesso ao catálogo não deve falhar por causa dela.
+    let user = null;
+    try {
+      const { data } = await supabase.auth.getSession();
+      user = data.session?.user ?? null;
+      if (!user) {
+        const anon = await supabase.auth.signInAnonymously();
+        user = anon.data.user ?? null;
+      }
+    } catch {
+      // Continua normalmente sem sessão anônima.
     }
-    if (!user) throw redirect({ to: "/auth" });
     return { user };
   },
   component: AppShell,
