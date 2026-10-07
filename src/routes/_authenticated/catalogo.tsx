@@ -131,11 +131,13 @@ function CategoryCard({ name, active, onClick }: {
       active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
     )}>
       <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-transparent sm:h-20">
-        {fallbackImage ? (
+        {name === "Todas" ? (
+          <LogoMark className="h-14 w-14 sm:h-16 sm:w-16" />
+        ) : fallbackImage ? (
           <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 image-transparent" />
         ) : (
           <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
-        )}
+        )
       </div>
       <span className={cn("mt-1 line-clamp-2 text-center text-[11px] font-bold leading-tight sm:text-xs", active ? "text-primary" : "text-foreground")}>{name}</span>
     </button>
