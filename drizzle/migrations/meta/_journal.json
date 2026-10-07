@@ -15,6 +15,13 @@
       "when": 1791029264504,
       "tag": "0001_create_order_function",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791375208461,
+      "tag": "0002_allow_anonymous_temp_access",
+      "breakpoints": true
     }
   ]
 }
