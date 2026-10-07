@@ -9,7 +9,7 @@ import { draftActions, useDraft } from "@/lib/order-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { partImage, catalogSprite } from "@/lib/part-images";
+import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
@@ -44,12 +44,9 @@ function Catalog() {
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          <CategoryCard name="Todas" active={!cat} onClick={() => setCat(null)} sprite={catalogSprite("701018")} />
+          <CategoryCard name="Todas" active={!cat} onClick={() => setCat(null)} />
           {cats?.map((c) => (
-            <CategoryCard key={c.id} name={c.name} active={cat === c.id} onClick={() => setCat(c.id)}
-              sprite={c.name.toLowerCase().includes("bico") ? catalogSprite("701018")
-                : c.name.toLowerCase().includes("atuador") ? catalogSprite("A050J-1600006")
-                : null} />
+            <CategoryCard key={c.id} name={c.name} active={cat === c.id} onClick={() => setCat(c.id)} />
           ))}
         </div>
 
