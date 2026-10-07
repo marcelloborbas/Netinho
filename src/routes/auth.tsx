@@ -6,7 +6,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, UserRound, Phone, Mail, Smartphone, BriefcaseBusiness, Store, Truck, ShoppingBag } from "lucide-react";
+import { Download, UserRound, Phone, Mail, BriefcaseBusiness, Store, Truck } from "lucide-react";
 
 const PROFILE_KEY = "netinho-vendedor";
 type AccessType = "Vendedor" | "Visitante" | "Distribuidor" | "Auto-Peças";
@@ -22,7 +22,7 @@ const ACCESS_OPTIONS: { value: AccessType; description: string; icon: typeof Bri
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Acesso – Netinho Auto Parts" },
+      { title: "Netinho Auto Parts" },
       { name: "description", content: "Escolha seu perfil e acesse a Netinho Auto Parts." },
       { property: "og:title", content: "Netinho Auto Parts" },
       { property: "og:description", content: "Catálogo e pedidos para Vendedores, Visitantes, Distribuidores e Auto-Peças." },
@@ -124,7 +124,6 @@ function AuthPage() {
         <Logo size="lg" showPhone className="mb-8 justify-center" />
         <form onSubmit={submit} className="surface-card space-y-5 p-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Acesso</p>
             <h1 className="mt-1 text-2xl font-bold">Como você acessa a Netinho?</h1>
             <p className="mt-1 text-sm text-muted-foreground">Selecione seu perfil e informe seus dados.</p>
           </div>
@@ -170,8 +169,8 @@ function AuthPage() {
 
         <button type="button" onClick={installApp} disabled={installing}
           className="mt-4 flex w-full items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 text-left transition hover:border-primary/60 hover:bg-primary/10">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-glow">
-            {canInstall ? <Download className="h-5 w-5" /> : <Smartphone className="h-5 w-5" />}
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-glow">
+            <img src="/__l5e/assets-v1/2aa54efb-02e7-4fcc-addf-bd32fbeeb22e/netinho-icon.webp" alt="Netinho Auto Parts" className="h-full w-full object-contain" />
           </span>
           <span className="min-w-0">
             <span className="block font-semibold">{installing ? "Instalando..." : "Colocar Netinho no celular"}</span>
