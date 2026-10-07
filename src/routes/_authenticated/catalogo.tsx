@@ -79,9 +79,9 @@ function CategoryCard({ name, active, onClick }: {
       "surface-card flex min-w-0 flex-col overflow-hidden rounded-xl border p-1.5 text-left transition",
       active ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
     )}>
-      <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-white sm:h-20">
+      <div className="flex h-16 w-full items-center justify-center overflow-hidden rounded-lg bg-transparent sm:h-20">
         {fallbackImage ? (
-          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 mix-blend-darken" />
+          <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 image-transparent" />
         ) : (
           <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
         )}
