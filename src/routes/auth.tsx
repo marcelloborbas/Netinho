@@ -127,9 +127,10 @@ function AuthPage() {
       if (accessType === "Representante Comercial") {
         const rep = REPRESENTATIVES.find((r) => r.id === selectedRepresentative);
         if (!rep) { toast.error("Selecione um representante cadastrado."); return; }
-        if (!email.trim() || !password) { toast.error("Informe e-mail e senha para autenticar."); return; }
-        const auth = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
-        if (auth.error || !auth.data.user) { toast.error("E-mail ou senha inválidos."); return; }
+        if (!password) { toast.error("Informe a senha fornecida pelo administrador."); return; }
+        const representativeEmail = `rep-${rep.id}@representantes.netinho.example.com`;
+        const auth = await supabase.auth.signInWithPassword({ email: representativeEmail, password });
+        if (auth.error || !auth.data.user) { toast.error("Senha inválida ou acesso não configurado pelo administrador."); return; }
         const result = await supabase.from("commercial_representatives" as never).select("full_name,active,user_id").eq("user_id", auth.data.user.id).maybeSingle();
         const record = result.data as { full_name: string; active: boolean; user_id: string } | null;
         if (result.error || !record?.active || record.full_name.toLocaleLowerCase("pt-BR") !== rep.name.toLocaleLowerCase("pt-BR")) {
@@ -138,7 +139,7 @@ function AuthPage() {
           toast.error("Representante não autorizado. Continue como Visitante.");
           return;
         }
-        localStorage.setItem(PROFILE_KEY, JSON.stringify({ accessType, name: record.full_name, phone: "", email: email.trim().toLowerCase() }));
+        localStorage.setItem(PROFILE_KEY, JSON.stringify({ accessType, name: record.full_name, phone: "", email: representativeEmail }));
         navigate({ to: "/catalogo" });
         return;
       }
@@ -323,8 +324,7 @@ function AuthPage() {
           {accessType === "Representante Comercial" && selectedRepresentative && (
             <div className="space-y-3 rounded-xl border border-primary/40 bg-secondary/30 p-4">
               <p className="font-semibold">Acesso de {REPRESENTATIVES.find(r => r.id === selectedRepresentative)?.name}</p>
-              <p className="text-xs text-muted-foreground">Informe o e-mail e a senha da conta individual autorizada pelo administrador.</p>
-              <div className="space-y-1"><Label htmlFor="representative-email">E-mail</Label><Input id="representative-email" type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} /></div>
+              <p className="text-xs text-muted-foreground">Informe a senha definida pelo administrador para este representante.</p>
               <div className="space-y-1"><Label htmlFor="representative-password">Senha</Label><Input id="representative-password" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
               <Button type="submit" disabled={busy} className="w-full">{busy ? "Verificando..." : "Entrar como representante"}</Button>
             </div>
