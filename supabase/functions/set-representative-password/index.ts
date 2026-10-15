@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const headers = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Content-Type": "application/json" };
 const allowed = new Set(["abdenego-eugenio", "livaldo-souza-silva"]);
-const emailFor = (slug: string) => `rep-${slug}@auth.netinho.invalid`;
+const emailFor = (slug: string) => `rep-${slug}@representantes.netinho.example.com`;
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers });
   const reply = (status: number, body: object) => new Response(JSON.stringify(body), { status, headers });
