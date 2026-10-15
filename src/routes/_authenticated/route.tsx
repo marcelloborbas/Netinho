@@ -6,12 +6,20 @@ import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAv
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals } from "@/lib/order-store";
 import { meQuery } from "@/lib/queries";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: () => {
+  beforeLoad: async ({ location }) => {
     if (typeof window !== "undefined") {
       const raw = localStorage.getItem("netinho-vendedor");
+      if (!raw && location.pathname === "/admin") {
+        const { data: auth } = await supabase.auth.getUser();
+        if (auth.user) {
+          const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", auth.user.id);
+          if (roles?.some(role => role.role === "admin")) return { user: auth.user };
+        }
+      }
       if (!raw) throw redirect({ to: "/auth" });
       let profile: { accessType?: string };
       try {
