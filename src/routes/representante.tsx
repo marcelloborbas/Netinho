@@ -1,5 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+import { meQuery } from "@/lib/queries";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MapPin, ArrowLeft, LockKeyhole } from "lucide-react";
+import { MapPin, ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/representante")({
   component: RepresentativePage,
@@ -9,13 +11,14 @@ export const Route = createFileRoute("/representante")({
 const cities = ["São José dos Campos", "Jacareí", "Mogi das Cruzes", "Caçapava", "Taubaté", "Pindamonhangaba", "Guaratinguetá", "Lorena", "Cruzeiro", "Caraguatatuba", "Ubatuba", "São Sebastião"];
 
 function RepresentativePage() {
+  const { data: me } = useQuery(meQuery);
   return (
     <main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Brasil inteiro)</Link></div>
       <section className="surface-card space-y-4 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <h2 className="text-xl font-bold text-amber-400">Abdenego Eugênio</h2>
+        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">Abdenego Eugênio</h2>{me?.isAdmin && <Link to="/admin" hash="representantes" title="Editar representante (somente administrador)" aria-label="Editar cadastro de Abdenego Eugênio" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
         <p className="text-sm text-muted-foreground">Dados de representação cadastrados pela administração — somente leitura.</p>
         <dl className="grid gap-3 sm:grid-cols-2">
           <div><dt className="text-xs text-muted-foreground">Área de atuação</dt><dd className="font-medium">Vale do Paraíba e Litoral Norte de São Paulo</dd></div>
