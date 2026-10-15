@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserRound, Phone, Mail } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { ProfileAvatar, type AccessType } from "@/components/ProfileAvatar";
 
 const PROFILE_KEY = "netinho-vendedor";
+const REPRESENTATIVES = [{ id: "abdenego-eugenio", name: "Abdenego Eugênio", region: "São José dos Campos e Litoral Norte · Vale do Paraíba" }] as const;
 type SellerProfile = { name: string; phone: string; email: string; accessType: AccessType };
 
 const ACCESS_OPTIONS: { value: AccessType; description: string }[] = [
@@ -37,6 +39,8 @@ function AuthPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
+  const [selectedRepresentative, setSelectedRepresentative] = useState("");
+  const [password, setPassword] = useState("");
   const [installing, setInstalling] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -82,6 +86,24 @@ function AuthPage() {
     }
     setBusy(true);
     try {
+      if (accessType === "Representante Comercial") {
+        const rep = REPRESENTATIVES.find((r) => r.id === selectedRepresentative);
+        if (!rep) { toast.error("Selecione um representante cadastrado."); return; }
+        if (!email.trim() || !password) { toast.error("Informe e-mail e senha para autenticar."); return; }
+        const auth = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+        if (auth.error || !auth.data.user) { toast.error("E-mail ou senha inválidos."); return; }
+        const result = await supabase.from("commercial_representatives" as never).select("full_name,active,user_id").eq("user_id", auth.data.user.id).maybeSingle();
+        const record = result.data as { full_name: string; active: boolean; user_id: string } | null;
+        if (result.error || !record?.active || record.full_name.toLocaleLowerCase("pt-BR") !== rep.name.toLocaleLowerCase("pt-BR")) {
+          await supabase.auth.signOut();
+          setAccessType("Visitante"); setName(""); setPassword("");
+          toast.error("Representante não autorizado. Continue como Visitante.");
+          return;
+        }
+        localStorage.setItem(PROFILE_KEY, JSON.stringify({ accessType, name: record.full_name, phone: "", email: email.trim().toLowerCase() }));
+        navigate({ to: "/catalogo" });
+        return;
+      }
       const profile: SellerProfile = {
         accessType,
         name: name.trim(),
@@ -142,20 +164,31 @@ function AuthPage() {
           {accessType && (
             <div className="space-y-4 border-t pt-4">
               <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
-              <div className="space-y-1.5">
+              {accessType === "Representante Comercial" && (
+                <div className="space-y-2">
+                  <Label htmlFor="representative">Selecione seu nome</Label>
+                  <select id="representative" required value={selectedRepresentative} onChange={(e) => setSelectedRepresentative(e.target.value)} className="h-12 w-full rounded-lg border bg-background px-3 text-foreground">
+                    <option value="">Escolha um representante</option>
+                    {REPRESENTATIVES.map((rep) => <option key={rep.id} value={rep.id}>{rep.name} — {rep.region}</option>)}
+                  </select>
+                  <p className="text-xs text-muted-foreground">Representantes precisam confirmar sua identidade com e-mail e senha. O cadastro e a autorização são feitos pelo administrador.</p>
+                </div>
+              )}
+              {accessType !== "Representante Comercial" && <div className="space-y-1.5">
                 <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
                 <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
-              </div>
-              <div className="space-y-1.5">
+              </div>}
+              {accessType !== "Representante Comercial" && <div className="space-y-1.5">
                 <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Telefone</Label>
                 <Input id="phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-12" />
-              </div>
+              </div>}
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="flex items-center gap-2"><Mail className="h-4 w-4" />E-mail</Label>
                 <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
               </div>
+              {accessType === "Representante Comercial" && <div className="space-y-1.5"><Label htmlFor="password">Senha</Label><Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12" /></div>}
               <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
-                {busy ? "Entrando..." : accessType === "Vendedor" ? "Entrar no catálogo" : "Conhecer a Netinho"}
+                {busy ? "Entrando..." : accessType === "Representante Comercial" ? "Autenticar representante" : "Conhecer a Netinho"}
               </Button>
             </div>
           )}
