@@ -21,8 +21,9 @@ export const Route = createFileRoute("/_authenticated")({
       return { user: auth.user };
     }
     if (isAdmin) return { user: auth.user };
+    if (!auth.user.email || !auth.user.identities?.some(identity => identity.provider === "google")) throw redirect({ to: "/auth" });
     const { data: record, error } = await supabase.from("commercial_representatives" as never)
-      .select("user_id,active").eq("user_id", auth.user.id).eq("active", true).maybeSingle();
+      .select("email,active").eq("email", auth.user.email.toLowerCase()).eq("active", true).maybeSingle();
     if (error || !record) throw redirect({ to: "/auth" });
     return { user: auth.user };
   },
