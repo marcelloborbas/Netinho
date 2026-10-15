@@ -233,16 +233,16 @@ function AuthPage() {
         </form>
 
         <button type="button" onClick={installApp} disabled={installing}
-          className="mt-4 flex w-full items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 text-left transition hover:border-primary/60 hover:bg-primary/10">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-glow">
+          className="mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition hover:border-primary/70 hover:bg-primary/15 sm:px-6 sm:py-6">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-glow sm:h-20 sm:w-20">
             <img src="/__l5e/assets-v1/2aa54efb-02e7-4fcc-addf-bd32fbeeb22e/netinho-icon.webp" alt="Netinho Auto Parts" className="h-full w-full object-contain" />
           </span>
           <span className="min-w-0">
-            <span className="block font-semibold">{installing ? "Instalando..." : "Colocar Netinho no celular"}</span>
-            <span className="block text-xs text-muted-foreground">{canInstall ? "Adicionar o ícone Netinho Auto Parts à tela inicial" : "Adicionar à tela inicial pelo navegador"}</span>
+            <span className="block text-lg font-extrabold leading-snug text-foreground sm:text-xl">{installing ? "Instalando..." : "Colocar Netinho no celular"}</span>
+            <span className="mt-2 block text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">{canInstall ? "Adicionar o ícone Netinho Auto Parts à tela inicial" : "Adicionar à tela inicial pelo navegador"}</span>
           </span>
         </button>
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-5 max-w-md text-center text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
           O ícone abre o site oficial. Atualizações de catálogo e dados publicados pela Netinho ficam disponíveis automaticamente.
         </p>
       </div>
