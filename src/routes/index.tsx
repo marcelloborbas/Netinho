@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
     try {
       const raw = localStorage.getItem("netinho-vendedor");
       const profile = raw ? JSON.parse(raw) as { name?: string; accessType?: string } : null;
-      if (!profile?.name || !["Vendedor", "Visitante", "Distribuidor", "Auto-Peças"].includes(profile.accessType ?? "")) {
+      if (!profile?.name || !["Representante Comercial", "Vendedor", "Visitante", "Distribuidor", "Auto-Peças"].includes(profile.accessType ?? "")) {
         throw redirect({ to: "/auth" });
       }
     } catch (error) {
@@ -51,7 +51,7 @@ function HomePage() {
       const raw = localStorage.getItem("netinho-vendedor");
       if (raw) {
         const p = JSON.parse(raw) as { name?: string; accessType?: AccessType };
-        if (p.name && p.accessType) setProfile({ name: p.name, accessType: p.accessType });
+        if (p.name && p.accessType) setProfile({ name: p.name, accessType: p.accessType === "Vendedor" ? "Representante Comercial" : p.accessType });
       }
     } catch { /* perfil inválido: ignora */ }
   }, []);
