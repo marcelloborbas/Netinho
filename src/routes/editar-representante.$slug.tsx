@@ -32,6 +32,7 @@ function EditRepresentativePage() {
   const [phone, setPhone] = useState("");
   const [region, setRegion] = useState("");
   const [busy, setBusy] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
   const [details, setDetails] = useState({ cpf: "", rg: "", street_address: "", neighborhood: "", postal_code: "", city: "", state: "", service_cities: "" });
   const setDetail = (key: keyof typeof details, value: string) => setDetails(prev => ({ ...prev, [key]: value }));
   const { data: privateRecord } = useQuery({ queryKey: ["representative-private", slug], enabled: !!profile && me?.isAdmin === true, queryFn: async () => { const { data, error } = await supabase.from("representative_private_details" as never).select("*").eq("slug", slug).maybeSingle(); if (error) throw error; return data as PrivateDetails | null; } });
@@ -58,8 +59,18 @@ function EditRepresentativePage() {
     event.preventDefault();
     if (!me?.isAdmin) return;
     if (!name.trim() || !region.trim()) { toast.error("Preencha nome e região."); return; }
+    if (newPassword && newPassword.length < 8) { toast.error("A senha precisa ter pelo menos 8 caracteres."); return; }
     setBusy(true);
     try {
+      if (newPassword) {
+        // Apenas uma função de servidor autenticada como administrador pode
+        // alterar senhas de outras contas. Nunca gravar senhas em tabelas públicas.
+        const { error: passwordError } = await supabase.functions.invoke("set-representative-password", {
+          body: { slug, password: newPassword },
+        });
+        if (passwordError) throw new Error("A senha não foi atualizada. Configure a função segura de autenticação no Supabase antes de definir senhas.");
+        setNewPassword("");
+      }
       const result = await supabase.from("representative_profiles" as never)
         .upsert({ slug, full_name: name.trim(), region: region.trim(), email: email.trim().toLowerCase() || null, phone: phone.trim() || null } as never, { onConflict: "slug" });
       if (result.error) throw result.error;
@@ -87,11 +98,19 @@ function EditRepresentativePage() {
       <Link to={profile.back} className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar ao representante</Link>
       <section className="surface-card space-y-5 p-5">
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
-        <p className="font-display text-2xl font-bold text-amber-400">{profile.name}</p>
+        <div className="flex flex-wrap items-center gap-4">
+          <p className="font-display text-2xl font-bold text-amber-400">{profile.name}</p>
+          <span className="text-sm text-muted-foreground">A senha de acesso é definida no formulário abaixo.</span>
+        </div>
         <p className="text-sm text-muted-foreground">Área de atuação: {record?.region ?? profile.region}</p>
         {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : (
           <form onSubmit={save} className="space-y-4">
             <div className="space-y-2"><Label htmlFor="rep-name">Nome completo</Label><Input id="rep-name" required value={name} onChange={e => setName(e.target.value)} /></div>
+            <div className="space-y-2">
+              <Label htmlFor="rep-password">Senha de acesso do representante (somente administrador)</Label>
+              <Input id="rep-password" type="password" autoComplete="new-password" minLength={8} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Nova senha (mínimo de 8 caracteres)" />
+              <p className="text-xs text-muted-foreground">Deixe em branco para manter a senha atual. A alteração exige validação segura no servidor.</p>
+            </div>
             <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-phone">Telefone</Label><Input id="rep-phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
