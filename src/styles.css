@@ -97,3 +97,24 @@
 @utility font-display {
   font-family: var(--font-display);
 }
+
+/* Ícones interativos: pequeno salto ao passar o mouse ou focar pelo teclado. */
+@keyframes netinho-icon-hop {
+  0%, 100% { transform: translateY(0) scale(1); }
+  38% { transform: translateY(-9px) scale(1.12); }
+  68% { transform: translateY(-3px) scale(1.05); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  :where(a, button, [role="button"]):hover :where(svg.lucide, img, [data-slot="avatar"]),
+  :where(a, button, [role="button"]):hover > svg.lucide {
+    animation: netinho-icon-hop 480ms ease-out both;
+    transform-origin: center bottom;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :where(a, button, [role="button"]):focus-visible :where(svg.lucide, img, [data-slot="avatar"]),
+  :where(a, button, [role="button"]):focus-visible > svg.lucide {
+    animation: netinho-icon-hop 480ms ease-out both;
+    transform-origin: center bottom;
+  }
+}
