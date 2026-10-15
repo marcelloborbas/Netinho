@@ -2,8 +2,8 @@
 export const BRAND = {
   name: "Netinho",
   tagline: "Auto Parts",
-  phone: "(15) 9.9169-7105",
-  phoneDigits: "5515991697105",
+  phone: "(15) 9.9245-8492",
+  phoneDigits: "5515992458492",
   /** E-mail que recebe os pedidos (a confirmar com o cliente). */
   orderEmail: "vendas1@fcoautomotive.com",
 } as const;
