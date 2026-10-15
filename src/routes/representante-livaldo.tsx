@@ -48,11 +48,11 @@ function BrazilMap() {
   return (
     <div className="rounded-xl border bg-sky-50 p-3 text-slate-900">
       {failed ? <p className="p-6 text-center text-sm">Não foi possível carregar os limites do Brasil. Verifique a conexão.</p> :
-        <svg viewBox="0 0 680 610" className="mx-auto w-full max-w-2xl" role="img" aria-label="Mapa do Brasil com o limite territorial destacado em azul">
-          {paths.length ? paths.map((path, i) => <path key={i} d={path} fill="#dbeafe" stroke="#1663d6" strokeWidth="3" strokeLinejoin="round" fillRule="evenodd" />) :
+        <svg viewBox="0 0 680 610" className="mx-auto w-full max-w-2xl" role="img" aria-label="Mapa do Brasil com área nacional de representação destacada em vermelho">
+          {paths.length ? <>{paths.map((path, i) => <path key={i} d={path} fill="#fee2e2" stroke="#dc2626" strokeWidth="3" strokeLinejoin="round" fillRule="evenodd" />)}<g transform="translate(350 305)"><circle r="12" fill="#dc2626" stroke="white" strokeWidth="4" /><path d="M0 0 L-8 -16 A11 11 0 1 1 8 -16 Z" fill="#dc2626" stroke="white" strokeWidth="2" /><text x="0" y="38" textAnchor="middle" fontSize="19" fontWeight="bold" fill="#991b1b">TODO O BRASIL</text></g></> :
             <text x="340" y="300" textAnchor="middle" fontSize="20" fill="#1e40af">Carregando mapa do Brasil...</text>}
         </svg>}
-      <p className="text-center text-xs text-slate-600">Contorno azul: limite territorial do Brasil · Área de representação nacional</p>
+      <p className="text-center text-xs text-slate-600">Área vermelha: cobertura nacional do representante · Brasil inteiro</p>
     </div>
   );
 }
