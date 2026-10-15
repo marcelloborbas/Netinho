@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -90,6 +90,19 @@ function RepresentativesAdmin() {
     },
   });
 
+  const { data: profiles = [], error: profilesError } = useQuery({
+    queryKey: ["admin-representative-profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("representative_profiles" as never).select("slug,full_name,region").order("full_name");
+      if (error) throw error;
+      return (data ?? []) as { slug: string; full_name: string; region: string }[];
+    },
+  });
+  const defaultProfiles = [
+    { slug: "abdenego-eugenio", full_name: "Abdenego Eugênio", region: "Vale do Paraíba e Litoral Norte" },
+    { slug: "livaldo-souza-silva", full_name: "Livaldo Souza Silva", region: "Todo o Brasil · Teste" },
+  ];
+  const visibleProfiles = [...profiles, ...defaultProfiles.filter(item => !profiles.some(p => p.slug === item.slug))];
   async function createRepresentative(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -140,6 +153,16 @@ function RepresentativesAdmin() {
         <Input aria-label="Telefone" type="tel" placeholder="Telefone" value={phone} onChange={(e) => setPhone(e.target.value)} />
         <Button disabled={busy} type="submit">Cadastrar representante</Button>
       </form>
+      <div className="space-y-3 border-t pt-4">
+        <h3 className="text-lg font-bold">Representantes cadastrados</h3>
+        {profilesError && <p className="text-xs text-amber-400">Falha ao consultar cadastros; exibindo representantes conhecidos.</p>}
+        {visibleProfiles.map(rep => (
+          <div key={rep.slug} className="flex items-center justify-between gap-3 rounded-lg border p-3">
+            <div><p className="font-semibold">{rep.full_name}</p><p className="text-xs text-muted-foreground">{rep.region}</p></div>
+            <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="rounded-lg border px-3 py-2 text-sm font-bold text-primary hover:bg-secondary">Editar cadastro</Link>
+          </div>
+        ))}
+      </div>
       {error && <p className="text-sm text-destructive">Não foi possível carregar representantes. Verifique se a migração do banco foi aplicada.</p>}
       {isLoading && <p className="text-sm">Carregando representantes...</p>}
       <ul className="space-y-2">
