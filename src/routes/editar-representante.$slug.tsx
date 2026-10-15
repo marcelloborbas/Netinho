@@ -59,7 +59,7 @@ function EditRepresentativePage() {
     event.preventDefault();
     if (!me?.isAdmin) return;
     if (!name.trim() || !region.trim()) { toast.error("Preencha nome e região."); return; }
-    if (newPassword && newPassword.length < 8) { toast.error("A senha precisa ter pelo menos 8 caracteres."); return; }
+    if (newPassword && !/^\d{8}$/.test(newPassword)) { toast.error("A senha deve conter exatamente 8 números."); return; }
     setBusy(true);
     try {
       if (newPassword) {
@@ -108,8 +108,8 @@ function EditRepresentativePage() {
             <div className="space-y-2"><Label htmlFor="rep-name">Nome completo</Label><Input id="rep-name" required value={name} onChange={e => setName(e.target.value)} /></div>
             <div className="space-y-2">
               <Label htmlFor="rep-password">Senha de acesso do representante (somente administrador)</Label>
-              <Input id="rep-password" type="password" autoComplete="new-password" minLength={8} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Nova senha (mínimo de 8 caracteres)" />
-              <p className="text-xs text-muted-foreground">Deixe em branco para manter a senha atual. A alteração exige validação segura no servidor.</p>
+              <Input id="rep-password" type="password" autoComplete="new-password" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="8 números" />
+              <p className="text-xs text-muted-foreground">Digite exatamente 8 números ou deixe em branco para manter a senha atual. A alteração exige validação segura no servidor.</p>
             </div>
             <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
