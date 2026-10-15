@@ -2,13 +2,14 @@ import { QueryClient } from "@tanstack/react-query";
 import { createMemoryHistory, createRouter, RouterProvider } from "@tanstack/react-router";
 import { cleanup, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
 import { routeTree } from "@/routeTree.gen";
 
 // The document shell belongs to SSR, not a div mounted by Testing Library.
 vi.mock("@/routes/__root", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/routes/__root")>();
-  original.Route.options.shellComponent = ({ children }) => <>{children}</>;
+  Object.assign(original.Route.options, { shellComponent: ({ children }: { children: ReactNode }) => <>{children}</> });
   return original;
 });
 
