@@ -81,30 +81,25 @@ function RepresentativesAdmin() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
-  const [passwords, setPasswords] = useState<Record<string, string>>({});
-  const [savingPassword, setSavingPassword] = useState<string | null>(null);
-  const [issuedPasswords, setIssuedPasswords] = useState<Record<string, string>>({});
-  function generatePassword(slug: string) {
-    const values = new Uint32Array(8);
-    crypto.getRandomValues(values);
-    const generated = Array.from(values, value => String(value % 10)).join("");
-    setPasswords(prev => ({ ...prev, [slug]: generated }));
-    setIssuedPasswords(prev => ({ ...prev, [slug]: "" }));
-  }
-  async function savePassword(slug: string) {
-    const password = passwords[slug] ?? "";
-    if (!/^[0-9]{8}$/.test(password)) { toast.error("A senha deve ter exatamente 8 números."); return; }
-    setSavingPassword(slug);
+  const [savingAccess, setSavingAccess] = useState<string | null>(null);
+  const [googleEmails, setGoogleEmails] = useState<Record<string, string>>({});
+  async function authorizeGoogle(rep: { slug: string; full_name: string }) {
+    const googleEmail = (googleEmails[rep.slug] ?? "").trim().toLowerCase();
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(googleEmail)) {
+      toast.error("Informe o e-mail Google do representante."); return;
+    }
+    setSavingAccess(rep.slug);
     try {
-      const { data, error } = await supabase.functions.invoke("set-representative-password", { body: { slug, password } });
-      if (error || !data?.ok) throw new Error(data?.error || "A função segura de senhas precisa estar implantada no Supabase.");
-      setPasswords(prev => ({ ...prev, [slug]: "" }));
-      setIssuedPasswords(prev => ({ ...prev, [slug]: password }));
-      toast.success("Senha ativada. Copie e entregue ao representante.");
+      const current = representatives.find(item => item.email.toLowerCase() === googleEmail || item.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR"));
+      const payload = { full_name: rep.full_name, email: googleEmail, active: true };
+      const result = current
+        ? await supabase.from("commercial_representatives" as never).update(payload as never).eq("id", current.id)
+        : await supabase.from("commercial_representatives" as never).insert(payload as never);
+      if (result.error) throw result.error;
+      toast.success("E-mail Google autorizado para " + rep.full_name);
       void qc.invalidateQueries({ queryKey: ["commercial-representatives"] });
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível definir a senha.");
-    } finally { setSavingPassword(null); }
+    } catch (err) { toast.error(err instanceof Error ? err.message : "Não foi possível autorizar o Google."); }
+    finally { setSavingAccess(null); }
   }
   const { data: representatives = [], isLoading, error } = useQuery({
     queryKey: ["commercial-representatives"],
@@ -171,7 +166,7 @@ function RepresentativesAdmin() {
   return (
     <section id="representantes" className="surface-card space-y-4 p-4">
       <h2 className="text-xl font-bold">Cadastro de Representantes Comerciais</h2>
-      <p className="text-sm text-muted-foreground">Somente administradores autorizam representantes. Novos cadastros ficam inativos até a vinculação de uma conta autenticada.</p>
+      <p className="text-sm text-muted-foreground">Somente administradores autorizam representantes. Cadastre o e-mail Google de cada representante e clique em Autorizar Google.</p>
       <form onSubmit={createRepresentative} className="grid gap-2 sm:grid-cols-4">
         <Input aria-label="Nome completo" required placeholder="Nome completo" value={name} onChange={(e) => setName(e.target.value)} />
         <Input aria-label="E-mail" required type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -185,12 +180,8 @@ function RepresentativesAdmin() {
           <div key={rep.slug} className="flex items-center justify-between gap-3 rounded-lg border p-3">
             <div><p className="font-semibold">{rep.full_name}</p><p className="text-xs text-muted-foreground">{rep.region}</p></div>
             <div className="flex flex-wrap items-center gap-2">
-              <Input type="text" autoComplete="off" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" aria-label={`Senha de ${rep.full_name}`} placeholder="8 números" className="w-40" value={passwords[rep.slug] ?? ""} onChange={e => setPasswords(prev => ({ ...prev, [rep.slug]: e.target.value.replace(/[^0-9]/g, "").slice(0, 8) }))} />
-              <Button type="button" size="sm" variant="outline" onClick={() => generatePassword(rep.slug)}>Gerar senha</Button>
-              {passwords[rep.slug] && <Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(passwords[rep.slug])}>Copiar números</Button>}
-              <Button type="button" size="sm" disabled={savingPassword === rep.slug || !/^[0-9]{8}$/.test(passwords[rep.slug] ?? "")} onClick={() => savePassword(rep.slug)}>{savingPassword === rep.slug ? "Salvando..." : "Ativar senha"}</Button>
-              {passwords[rep.slug] && <span className="text-xs text-amber-500">Ainda não ativada</span>}
-              {issuedPasswords[rep.slug] && <div className="flex items-center gap-2 rounded border border-amber-500/50 px-2 py-1 text-sm"><span>Senha gerada: <strong className="font-mono tracking-widest">{issuedPasswords[rep.slug]}</strong></span><Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(issuedPasswords[rep.slug])}>Copiar</Button><Button type="button" size="sm" variant="ghost" onClick={() => setIssuedPasswords(prev => ({ ...prev, [rep.slug]: "" }))}>Ocultar</Button></div>}
+              <Input type="email" aria-label={`E-mail Google de ${rep.full_name}`} placeholder="E-mail Google autorizado" className="w-56" value={googleEmails[rep.slug] ?? representatives.find(r => r.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR"))?.email ?? ""} onChange={e => setGoogleEmails(prev => ({ ...prev, [rep.slug]: e.target.value }))} />
+              <Button type="button" size="sm" disabled={savingAccess === rep.slug} onClick={() => authorizeGoogle(rep)}>{savingAccess === rep.slug ? "Autorizando..." : "Autorizar Google"}</Button>
             </div>
             <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="rounded-lg border px-3 py-2 text-sm font-bold text-primary hover:bg-secondary">Editar cadastro</Link>
           </div>
