@@ -36,6 +36,7 @@ describe("Representative editor rendering", () => {
     state.slug = slug;
     state.isAdmin = true;
     const Editor = Route.options.component;
+    if (!Editor) throw new Error("Representative editor component is missing");
     render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><Editor /></QueryClientProvider>);
     expect(await screen.findByRole("heading", { name: "Editar representante comercial" })).toBeVisible();
     expect(await screen.findByLabelText("Nome completo")).toHaveValue(name);
@@ -47,6 +48,7 @@ describe("Representative editor rendering", () => {
     state.slug = "abdenego-eugenio";
     state.isAdmin = false;
     const Editor = Route.options.component;
+    if (!Editor) throw new Error("Representative editor component is missing");
     render(<QueryClientProvider client={new QueryClient()}><Editor /></QueryClientProvider>);
     expect(await screen.findByText("Acesso exclusivo do administrador.")).toBeVisible();
     expect(screen.queryByRole("button", { name: "Salvar alterações" })).not.toBeInTheDocument();

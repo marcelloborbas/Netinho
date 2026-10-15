@@ -5,6 +5,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
 
+// The document shell belongs to SSR, not a div mounted by Testing Library.
+vi.mock("@/routes/__root", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@/routes/__root")>();
+  original.Route.options.shellComponent = ({ children }) => <>{children}</>;
+  return original;
+});
+
 function renderAt(path: string) {
   const queryClient = new QueryClient();
   const router = createRouter({
