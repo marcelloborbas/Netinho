@@ -5,7 +5,9 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserRound, Phone, Mail } from "lucide-react";
+import { UserRound, Phone, Mail, Pencil } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { meQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { ProfileAvatar, type AccessType } from "@/components/ProfileAvatar";
 
@@ -37,6 +39,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { data: me } = useQuery(meQuery);
   const [accessType, setAccessType] = useState<AccessType | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -168,12 +171,15 @@ function AuthPage() {
             <div className="space-y-4 rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-400/10 to-transparent p-4 sm:p-5">
               <p className="text-center text-lg font-extrabold tracking-wide text-amber-400">Representantes Comerciais</p>
               {REPRESENTATIVES.map(rep => (
+                <div key={rep.id} className="flex items-stretch gap-2">
                 <button key={rep.id} type="button" onClick={() => { setSelectedRepresentative(rep.id); setEmail(""); setPassword(""); }}
-                  className="flex w-full items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition hover:border-amber-400 hover:bg-amber-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+                  className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition hover:border-amber-400 hover:bg-amber-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
                   <span><span className="block font-display text-2xl font-black leading-tight tracking-wide text-amber-400 sm:text-3xl">{rep.name}</span>
                     <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
                   <span className="shrink-0 text-2xl font-bold text-amber-400">→</span>
                 </button>
+                {me?.isAdmin && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/admin", hash: "representantes" })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
+                </div>
               ))}
               {selectedRepresentative && (
                 <div className="space-y-3 rounded-xl border border-amber-400/40 bg-background/80 p-4">
