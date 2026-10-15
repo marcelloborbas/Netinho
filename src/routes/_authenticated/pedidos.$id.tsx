@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/pedidos/$id")({
-  head: () => ({ meta: [{ title: "Pedido – NETINHO" }, { name: "description", content: "Detalhes do pedido." },
+  head: () => ({ meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },{ title: "Pedido – NETINHO" }, { name: "description", content: "Detalhes do pedido." },
     { property: "og:title", content: "Pedido – NETINHO" }, { property: "og:description", content: "Detalhes do pedido." }] }),
   component: OrderDetail,
 });

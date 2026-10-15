@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/pedidos/")({
   head: () => ({
-    meta: [
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
       { title: "Meus pedidos – NETINHO" },
       { name: "description", content: "Histórico de pedidos enviados." },
       { property: "og:title", content: "Meus pedidos – NETINHO" },

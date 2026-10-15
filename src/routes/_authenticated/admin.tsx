@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Administração – NETINHO" }, { name: "description", content: "Gestão de produtos, estoque e preços." },
+  head: () => ({ meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },{ title: "Administração – NETINHO" }, { name: "description", content: "Gestão de produtos, estoque e preços." },
     { property: "og:title", content: "Administração – NETINHO" }, { property: "og:description", content: "Gestão de produtos, estoque e preços." }] }),
   component: Admin,
 });

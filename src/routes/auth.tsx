@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { meQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { ProfileAvatar, type AccessType } from "@/components/ProfileAvatar";
+import { InstallAppButton } from "@/components/InstallAppButton";
 
 const PROFILE_KEY = "netinho-vendedor";
 const REPRESENTATIVES = [
@@ -28,10 +29,12 @@ const ACCESS_OPTIONS: { value: AccessType; description: string }[] = [
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Netinho Auto Parts" },
+      { title: "Acesso e perfis | Netinho Auto Parts" },
       { name: "description", content: "Escolha seu perfil e acesse a Netinho Auto Parts." },
-      { property: "og:title", content: "Netinho Auto Parts" },
+      { property: "og:title", content: "Acesso e perfis | Netinho Auto Parts" },
       { property: "og:description", content: "Catálogo e pedidos para Representantes Comerciais, Visitantes, Distribuidores e Auto-Peças." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
@@ -79,9 +82,6 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [selectedRepresentative, setSelectedRepresentative] = useState("");
   const [password, setPassword] = useState("");
-  const [installing, setInstalling] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(PROFILE_KEY);
@@ -97,23 +97,6 @@ function AuthPage() {
       }
     }
 
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setDeferredPrompt(event as BeforeInstallPromptEvent);
-      setCanInstall(true);
-    };
-    const onInstalled = () => {
-      setInstalling(false);
-      setCanInstall(false);
-      setDeferredPrompt(null);
-      toast.success("Netinho Auto Parts instalado no celular.");
-    };
-    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-    window.addEventListener("appinstalled", onInstalled);
-    return () => {
-      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", onInstalled);
-    };
   }, []);
 
   async function submit(e: FormEvent) {
@@ -152,7 +135,7 @@ function AuthPage() {
 
       // A identificação é local e não depende de autenticação Supabase.
       // Isso mantém o catálogo acessível mesmo quando o projeto não permite sessão anônima.
-      navigate({ to: accessType === "Representante Comercial" ? "/catalogo" : "/" });
+      navigate({ to: "/" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível entrar.");
     } finally {
@@ -235,18 +218,6 @@ function AuthPage() {
     finally { setBusy(false); }
   }
 
-  async function installApp() {
-    if (!deferredPrompt) {
-      toast.info("No celular, use o menu do navegador e escolha “Adicionar à tela inicial” ou “Instalar aplicativo”.");
-      return;
-    }
-    setInstalling(true);
-    await deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setInstalling(false);
-    setDeferredPrompt(null);
-    setCanInstall(false);
-  }
 
   return (
     <main className="flex min-h-screen items-center justify-center px-5 py-8">
@@ -332,36 +303,26 @@ function AuthPage() {
           {accessType && accessType !== "Representante Comercial" && (
             <div className="space-y-4 border-t pt-4">
               <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
-              {accessType !== "Representante Comercial" && <div className="space-y-1.5">
+              <div className="space-y-1.5">
                 <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
                 <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
-              </div>}
-              {accessType !== "Representante Comercial" && <div className="space-y-1.5">
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Telefone</Label>
                 <Input id="phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-12" />
-              </div>}
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="flex items-center gap-2"><Mail className="h-4 w-4" />E-mail</Label>
                 <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
               </div>
-              {accessType === "Representante Comercial" && <div className="space-y-1.5"><Label htmlFor="password">Senha</Label><Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12" /></div>}
               <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
-                {busy ? "Entrando..." : accessType === "Representante Comercial" ? "Autenticar representante" : "Conhecer a Netinho"}
+                {busy ? "Entrando..." : "Conhecer a Netinho"}
               </Button>
             </div>
           )}
         </form>
 
-        <button type="button" onClick={installApp} disabled={installing}
-          className="group mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/70 hover:bg-primary/15 active:scale-[0.97] motion-reduce:transform-none sm:px-6 sm:py-6">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-transparent shadow-glow transition-transform duration-300 group-hover:scale-110 group-active:rotate-[-8deg] motion-reduce:transform-none sm:h-20 sm:w-20">
-            <img src="/__l5e/assets-v1/2aa54efb-02e7-4fcc-addf-bd32fbeeb22e/netinho-icon.webp" alt="Netinho Auto Parts" className="h-full w-full object-contain" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-lg font-extrabold leading-snug text-foreground sm:text-xl">{installing ? "Instalando..." : "Colocar Netinho no celular"}</span>
-            <span className="mt-2 block text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">{canInstall ? "Adicionar o ícone Netinho Auto Parts à tela inicial" : "Adicionar à tela inicial pelo navegador"}</span>
-          </span>
-        </button>
+        <InstallAppButton />
         <p className="mx-auto mt-5 max-w-md text-center text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
           O ícone abre o site oficial. Atualizações de catálogo e dados publicados pela Netinho ficam disponíveis automaticamente.
         </p>
@@ -370,7 +331,3 @@ function AuthPage() {
   );
 }
 
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
-};

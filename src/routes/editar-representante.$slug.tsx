@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/editar-representante/$slug")({
   component: EditRepresentativePage,
-  head: () => ({ meta: [{ title: "Editar representante | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },{ title: "Editar representante | Netinho Auto Parts" }, { name: "description", content: "Administração do cadastro de representantes comerciais da Netinho Auto Parts." }, { property: "og:title", content: "Editar representante | Netinho Auto Parts" }, { property: "og:description", content: "Administração do cadastro de representantes comerciais da Netinho Auto Parts." }] }),
 });
 
 const profiles: Record<string, { name: string; region: string; back: "/representante" | "/representante-livaldo" }> = {

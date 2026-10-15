@@ -12,10 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as RepresentanteRouteImport } from './routes/representante'
+import { Route as RepresentanteLivaldoRouteImport } from './routes/representante-livaldo'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCatalogoRouteImport } from './routes/_authenticated/catalogo'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedPedidoRouteImport } from './routes/_authenticated/pedido'
+import { Route as EditarRepresentanteSlugRouteImport } from './routes/editar-representante.$slug'
 import { Route as AuthenticatedPedidosIndexRouteImport } from './routes/_authenticated/pedidos.index'
 import { Route as AuthenticatedPedidosIdRouteImport } from './routes/_authenticated/pedidos.$id'
 
@@ -31,6 +34,16 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepresentanteRoute = RepresentanteRouteImport.update({
+  id: '/representante',
+  path: '/representante',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepresentanteLivaldoRoute = RepresentanteLivaldoRouteImport.update({
+  id: '/representante-livaldo',
+  path: '/representante-livaldo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -53,6 +66,11 @@ const AuthenticatedPedidoRoute = AuthenticatedPedidoRouteImport.update({
   path: '/pedido',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const EditarRepresentanteSlugRoute = EditarRepresentanteSlugRouteImport.update({
+  id: '/editar-representante/$slug',
+  path: '/editar-representante/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPedidosIndexRoute =
   AuthenticatedPedidosIndexRouteImport.update({
     id: '/pedidos/',
@@ -68,20 +86,26 @@ const AuthenticatedPedidosIdRoute = AuthenticatedPedidosIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/representante': typeof RepresentanteRoute
+  '/representante-livaldo': typeof RepresentanteLivaldoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/catalogo': typeof AuthenticatedCatalogoRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/pedido': typeof AuthenticatedPedidoRoute
+  '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
   '/pedidos/': typeof AuthenticatedPedidosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/representante': typeof RepresentanteRoute
+  '/representante-livaldo': typeof RepresentanteLivaldoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/catalogo': typeof AuthenticatedCatalogoRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/pedido': typeof AuthenticatedPedidoRoute
+  '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
   '/pedidos': typeof AuthenticatedPedidosIndexRoute
 }
@@ -90,10 +114,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/representante': typeof RepresentanteRoute
+  '/representante-livaldo': typeof RepresentanteLivaldoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/catalogo': typeof AuthenticatedCatalogoRoute
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/pedido': typeof AuthenticatedPedidoRoute
+  '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/_authenticated/pedidos/$id': typeof AuthenticatedPedidosIdRoute
   '/_authenticated/pedidos/': typeof AuthenticatedPedidosIndexRoute
 }
@@ -102,20 +129,26 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/representante'
+    | '/representante-livaldo'
     | '/admin'
     | '/catalogo'
     | '/clientes'
     | '/pedido'
+    | '/editar-representante/$slug'
     | '/pedidos/$id'
     | '/pedidos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/representante'
+    | '/representante-livaldo'
     | '/admin'
     | '/catalogo'
     | '/clientes'
     | '/pedido'
+    | '/editar-representante/$slug'
     | '/pedidos/$id'
     | '/pedidos'
   id:
@@ -123,10 +156,13 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/representante'
+    | '/representante-livaldo'
     | '/_authenticated/admin'
     | '/_authenticated/catalogo'
     | '/_authenticated/clientes'
     | '/_authenticated/pedido'
+    | '/editar-representante/$slug'
     | '/_authenticated/pedidos/$id'
     | '/_authenticated/pedidos/'
   fileRoutesById: FileRoutesById
@@ -135,6 +171,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  RepresentanteRoute: typeof RepresentanteRoute
+  RepresentanteLivaldoRoute: typeof RepresentanteLivaldoRoute
+  EditarRepresentanteSlugRoute: typeof EditarRepresentanteSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,6 +197,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/representante': {
+      id: '/representante'
+      path: '/representante'
+      fullPath: '/representante'
+      preLoaderRoute: typeof RepresentanteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/representante-livaldo': {
+      id: '/representante-livaldo'
+      path: '/representante-livaldo'
+      fullPath: '/representante-livaldo'
+      preLoaderRoute: typeof RepresentanteLivaldoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -187,6 +240,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pedido'
       preLoaderRoute: typeof AuthenticatedPedidoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/editar-representante/$slug': {
+      id: '/editar-representante/$slug'
+      path: '/editar-representante/$slug'
+      fullPath: '/editar-representante/$slug'
+      preLoaderRoute: typeof EditarRepresentanteSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/pedidos/': {
       id: '/_authenticated/pedidos/'
@@ -230,6 +290,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  RepresentanteRoute: RepresentanteRoute,
+  RepresentanteLivaldoRoute: RepresentanteLivaldoRoute,
+  EditarRepresentanteSlugRoute: EditarRepresentanteSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

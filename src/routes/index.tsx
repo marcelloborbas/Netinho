@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
     }
   },
   head: () => ({
-    meta: [
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
       { title: "Netinho Auto Parts | Representação e soluções automotivas" },
       { name: "description", content: "Conheça a Netinho Auto Parts, sua parceira em representação e soluções para o mercado automotivo." },
       { property: "og:title", content: "Netinho Auto Parts" },

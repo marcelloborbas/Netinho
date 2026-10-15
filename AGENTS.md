@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture rules
+- Home-screen installation state and browser event listeners belong to the dedicated installation control, so page rendering cannot reference detached installation state.
 - Orders are created only via the `create_order(payload)` SQL function — prices are recomputed server-side from `products`, so clients can't tamper with them.
 - Order items snapshot code/price/application and orders snapshot the customer — history must not change when the catalog changes.
 - The in-progress order draft lives in localStorage (`src/lib/order-store.ts`) — survives connection loss and reloads.

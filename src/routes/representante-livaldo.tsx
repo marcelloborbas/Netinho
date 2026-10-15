@@ -7,7 +7,7 @@ import { ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
-  head: () => ({ meta: [{ title: "Livaldo Souza Silva — Representante Comercial | Netinho" }] }),
+  head: () => ({ meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },{ title: "Livaldo Souza Silva — Representante Comercial | Netinho" }, { name: "description", content: "Perfil de teste de Livaldo Souza Silva e sua área de atuação na Netinho Auto Parts." }, { property: "og:title", content: "Livaldo Souza Silva — Representante Comercial | Netinho" }, { property: "og:description", content: "Perfil de teste de Livaldo Souza Silva e sua área de atuação na Netinho Auto Parts." }] }),
 });
 
 type PolygonCoordinates = number[][][];
@@ -15,8 +15,8 @@ type BrazilGeometry = { type: "Polygon" | "MultiPolygon"; coordinates: PolygonCo
 const geojsonUrl = "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 const width = 680;
 const height = 610;
-const project = (coordinate: number[]) => {
-  const [lon, lat] = coordinate;
+const project = (coordinate: number[]): [number, number] => {
+  const [lon = 0, lat = 0] = coordinate;
   return [((lon + 75) / 43) * width, ((7 - lat) / 42) * height];
 };
 function ringsToPath(rings: PolygonCoordinates) {
@@ -35,7 +35,7 @@ function BrazilMap() {
       .then(response => { if (!response.ok) throw new Error("Mapa indisponível"); return response.json(); })
       .then(data => {
         const feature = data.features?.find((item: { properties?: Record<string, string> }) =>
-          item.properties?.name === "Brazil" || item.properties?.ADMIN === "Brazil" || item.properties?.name === "Brasil");
+          item.properties?.["name"] === "Brazil" || item.properties?.["ADMIN"] === "Brazil" || item.properties?.["name"] === "Brasil");
         if (!feature?.geometry) throw new Error("Brasil não encontrado");
         const geometry = feature.geometry as BrazilGeometry;
         setPaths(geometry.type === "Polygon"
