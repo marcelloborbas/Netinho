@@ -162,6 +162,31 @@ function AuthPage() {
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [resetMode, setResetMode] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setUpdatingPassword(true);
+    });
+    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) setUpdatingPassword(true);
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function saveNewPassword(e: FormEvent) {
+    e.preventDefault();
+    if (newPassword.length < 8) { toast.error("Use uma senha com pelo menos 8 caracteres."); return; }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) { toast.error("Não foi possível atualizar a senha: " + error.message); return; }
+      setNewPassword("");
+      setUpdatingPassword(false);
+      toast.success("Senha atualizada. Entre com seu e-mail e a nova senha.");
+      await supabase.auth.signOut();
+      await refreshMe();
+    } finally { setBusy(false); }
+  }
 
   async function loginAdminEmail(e: FormEvent) {
     e.preventDefault();
@@ -276,7 +301,13 @@ function AuthPage() {
 
         <div className="mt-5 rounded-xl border border-amber-400/30 bg-secondary/30 p-4">
           <p className="mb-3 text-base font-bold text-amber-400">Acesso administrativo</p>
-          {me?.isAdmin ? (
+          {updatingPassword ? (
+            <form onSubmit={saveNewPassword} className="space-y-3">
+              <Label htmlFor="new-admin-password">Defina sua nova senha</Label>
+              <Input id="new-admin-password" type="password" minLength={8} required autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Pelo menos 8 caracteres" />
+              <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar nova senha"}</Button>
+            </form>
+          ) : me?.isAdmin ? (
             <div className="space-y-3">
               <p className="text-sm">Administrador conectado: {me.email}</p>
               <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
