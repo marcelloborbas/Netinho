@@ -60,7 +60,7 @@ function LivaldoPage() {
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <section className="surface-card space-y-3 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <h2 className="text-xl font-semibold">Livaldo Souza Silva</h2>
+        <h2 className="text-xl font-bold text-amber-400">Livaldo Souza Silva</h2>
         <p className="text-sm font-semibold text-primary">Cadastro de teste</p>
         <p><span className="text-muted-foreground">Área de representação:</span> Todo o Brasil — todos os estados e o Distrito Federal.</p>
         <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole size={16} /> Dados somente para visualização. Alterações exclusivas da administração.</p>
