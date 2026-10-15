@@ -253,7 +253,7 @@ function AuthPage() {
       <div className="w-full max-w-lg">
         <div className="mb-8 flex items-center justify-center gap-3">
           <Logo size="lg" showPhone />
-          <button type="button" onClick={() => setShowAdminPanel((open) => !open)} aria-label="Acesso administrativo" title="Modo administrativo" aria-expanded={showAdminPanel} className="rounded-full border border-zinc-600/60 bg-zinc-800/70 p-3 text-zinc-400 transition hover:bg-zinc-700 hover:text-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-400">
+          <button type="button" onClick={() => setShowAdminPanel((open) => !open)} aria-label="Acesso administrativo" title="Modo administrativo" aria-expanded={showAdminPanel} className="group rounded-full border border-zinc-600/60 bg-transparent p-3 text-zinc-400 transition-all duration-300 hover:rotate-45 hover:bg-zinc-700/30 hover:text-zinc-100 active:rotate-90 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-400 motion-reduce:transform-none">
             <Settings className="h-6 w-6" />
           </button>
         </div>
@@ -294,9 +294,9 @@ function AuthPage() {
               return (
                 <button key={option.value} type="button" onClick={() => setAccessType(option.value)}
                   className={active
-                    ? "rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20"
-                    : "rounded-xl border border-border bg-secondary/40 p-4 text-left hover:border-primary/50"}>
-                  <ProfileAvatar type={option.value} className={active ? "h-12 w-12" : "h-12 w-12 opacity-70"} />
+                    ? "group rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20 transition-all duration-200 hover:-translate-y-1 active:scale-95 motion-reduce:transform-none"
+                    : "group rounded-xl border border-border bg-secondary/40 p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 active:scale-95 motion-reduce:transform-none"}>
+                  <ProfileAvatar type={option.value} className={active ? "h-12 w-12 group-hover:scale-110 group-active:rotate-12" : "h-12 w-12 opacity-70 group-hover:scale-110 group-active:rotate-12"} />
                   <span className="mt-3 block font-bold">{option.value}</span>
                   <span className="mt-1 block text-xs leading-snug text-muted-foreground">{option.description}</span>
                 </button>
@@ -344,8 +344,8 @@ function AuthPage() {
         </form>
 
         <button type="button" onClick={installApp} disabled={installing}
-          className="mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition hover:border-primary/70 hover:bg-primary/15 sm:px-6 sm:py-6">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-glow sm:h-20 sm:w-20">
+          className="group mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/70 hover:bg-primary/15 active:scale-[0.97] motion-reduce:transform-none sm:px-6 sm:py-6">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-transparent shadow-glow transition-transform duration-300 group-hover:scale-110 group-active:rotate-[-8deg] motion-reduce:transform-none sm:h-20 sm:w-20">
             <img src="/__l5e/assets-v1/2aa54efb-02e7-4fcc-addf-bd32fbeeb22e/netinho-icon.webp" alt="Netinho Auto Parts" className="h-full w-full object-contain" />
           </span>
           <span className="min-w-0">
