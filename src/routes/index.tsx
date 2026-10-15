@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, Building2, Handshake, PackageSearch, Truck } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
 import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
@@ -6,6 +6,20 @@ import { useEffect, useState } from "react";
 import { partImage } from "@/lib/part-images";
 
 export const Route = createFileRoute("/")({
+  ssr: false,
+  beforeLoad: () => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem("netinho-vendedor");
+      const profile = raw ? JSON.parse(raw) as { name?: string; accessType?: string } : null;
+      if (!profile?.name || !["Vendedor", "Visitante", "Distribuidor", "Auto-Peças"].includes(profile.accessType ?? "")) {
+        throw redirect({ to: "/auth" });
+      }
+    } catch (error) {
+      if (error && typeof error === "object" && "options" in error) throw error;
+      throw redirect({ to: "/auth" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Netinho Auto Parts | Representação e soluções automotivas" },
