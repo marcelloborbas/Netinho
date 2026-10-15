@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export const Route = createFileRoute("/_authenticated/pedido")({
   head: () => ({
-    meta: [
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
       { title: "Meu pedido – NETINHO" },
       { name: "description", content: "Conferir e finalizar o pedido em andamento." },
       { property: "og:title", content: "Meu pedido – NETINHO" },

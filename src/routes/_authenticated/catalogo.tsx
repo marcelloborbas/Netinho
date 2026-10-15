@@ -15,7 +15,7 @@ import { LogoMark } from "@/components/Logo";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   head: () => ({
-    meta: [
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
       { title: "Catálogo de produtos – NETINHO" },
       { name: "description", content: "Pesquise peças por código FCO, referência ou veículo." },
       { property: "og:title", content: "Catálogo de produtos – NETINHO" },

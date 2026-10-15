@@ -6,7 +6,7 @@ import { MapPin, ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/representante")({
   component: RepresentativePage,
-  head: () => ({ meta: [{ title: "Representante Comercial | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },{ title: "Representante Comercial | Netinho Auto Parts" }, { name: "description", content: "Área de atuação de Abdenego Eugênio, representante comercial da Netinho Auto Parts." }, { property: "og:title", content: "Representante Comercial | Netinho Auto Parts" }, { property: "og:description", content: "Área de atuação de Abdenego Eugênio, representante comercial da Netinho Auto Parts." }] }),
 });
 
 const locations = [
