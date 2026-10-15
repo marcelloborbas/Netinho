@@ -93,7 +93,7 @@ function RepresentativesAdmin() {
   }
   async function savePassword(slug: string) {
     const password = passwords[slug] ?? "";
-    if (!/^\\d{8}$/.test(password)) { toast.error("A senha deve ter exatamente 8 números."); return; }
+    if (!/^[0-9]{8}$/.test(password)) { toast.error("A senha deve ter exatamente 8 números."); return; }
     setSavingPassword(slug);
     try {
       const { data, error } = await supabase.functions.invoke("set-representative-password", { body: { slug, password } });
@@ -185,9 +185,11 @@ function RepresentativesAdmin() {
           <div key={rep.slug} className="flex items-center justify-between gap-3 rounded-lg border p-3">
             <div><p className="font-semibold">{rep.full_name}</p><p className="text-xs text-muted-foreground">{rep.region}</p></div>
             <div className="flex flex-wrap items-center gap-2">
-              <Input type="password" autoComplete="new-password" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" aria-label={`Senha de ${rep.full_name}`} placeholder="8 números" className="w-40" value={passwords[rep.slug] ?? ""} onChange={e => setPasswords(prev => ({ ...prev, [rep.slug]: e.target.value }))} />
+              <Input type="text" autoComplete="off" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" aria-label={`Senha de ${rep.full_name}`} placeholder="8 números" className="w-40" value={passwords[rep.slug] ?? ""} onChange={e => setPasswords(prev => ({ ...prev, [rep.slug]: e.target.value.replace(/[^0-9]/g, "").slice(0, 8) }))} />
               <Button type="button" size="sm" variant="outline" onClick={() => generatePassword(rep.slug)}>Gerar senha</Button>
-              <Button type="button" size="sm" disabled={savingPassword === rep.slug || !/^\\d{8}$/.test(passwords[rep.slug] ?? "")} onClick={() => savePassword(rep.slug)}>{savingPassword === rep.slug ? "Salvando..." : "Ativar senha"}</Button>
+              {passwords[rep.slug] && <Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(passwords[rep.slug])}>Copiar números</Button>}
+              <Button type="button" size="sm" disabled={savingPassword === rep.slug || !/^[0-9]{8}$/.test(passwords[rep.slug] ?? "")} onClick={() => savePassword(rep.slug)}>{savingPassword === rep.slug ? "Salvando..." : "Ativar senha"}</Button>
+              {passwords[rep.slug] && <span className="text-xs text-amber-500">Ainda não ativada</span>}
               {issuedPasswords[rep.slug] && <div className="flex items-center gap-2 rounded border border-amber-500/50 px-2 py-1 text-sm"><span>Senha gerada: <strong className="font-mono tracking-widest">{issuedPasswords[rep.slug]}</strong></span><Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(issuedPasswords[rep.slug])}>Copiar</Button><Button type="button" size="sm" variant="ghost" onClick={() => setIssuedPasswords(prev => ({ ...prev, [rep.slug]: "" }))}>Ocultar</Button></div>}
             </div>
             <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="rounded-lg border px-3 py-2 text-sm font-bold text-primary hover:bg-secondary">Editar cadastro</Link>
