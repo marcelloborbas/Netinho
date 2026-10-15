@@ -137,7 +137,7 @@ function CategoryCard({ name, active, onClick }: {
           <img src={fallbackImage} alt="" loading="lazy" className="h-full w-full object-contain p-1 image-transparent" />
         ) : (
           <div className="flex h-full items-center justify-center px-2 text-center text-xs font-semibold text-muted-foreground">Netinho Auto Parts</div>
-        )
+        )}
       </div>
       <span className={cn("mt-1 line-clamp-2 text-center text-[11px] font-bold leading-tight sm:text-xs", active ? "text-primary" : "text-foreground")}>{name}</span>
     </button>
