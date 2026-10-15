@@ -2,6 +2,7 @@
 export const BRAND = {
   name: "Netinho",
   tagline: "Auto Parts",
+  domain: "netinhoautoparts.live",
   phone: "(15) 9.9245-8492",
   phoneDigits: "5515992458492",
   /** E-mail que recebe os pedidos (a confirmar com o cliente). */
