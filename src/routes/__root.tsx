@@ -57,37 +57,73 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
-    // O pointerdown ocorre antes da navegação e preserva a ativação de áudio no celular.
+    // Sons de interação para mouse e toque; hover só após o primeiro gesto
+    // (navegadores não permitem áudio antes de interação do usuário).
     let audioContext: AudioContext | null = null;
-    const play = (event: PointerEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
-      const control = target.closest("button, a, [role='button']");
-      if (!control || control.hasAttribute("disabled") || control.getAttribute("aria-disabled") === "true") return;
-      try {
-        const AudioContextClass = window.AudioContext;
-        if (!AudioContextClass) return;
-        audioContext ??= new AudioContextClass();
-        const ctx = audioContext;
-        if (ctx.state !== "running") void ctx.resume();
-        const t = ctx.currentTime + 0.005;
-        const tone = ctx.createOscillator();
-        const envelope = ctx.createGain();
-        tone.type = "triangle";
-        tone.frequency.setValueAtTime(1100, t);
-        tone.frequency.exponentialRampToValueAtTime(620, t + 0.105);
-        envelope.gain.setValueAtTime(0.0001, t);
-        envelope.gain.exponentialRampToValueAtTime(0.14, t + 0.012);
-        envelope.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
-        tone.connect(envelope);
-        envelope.connect(ctx.destination);
-        tone.start(t);
-        tone.stop(t + 0.16);
-      } catch { /* A falta de suporte a áudio não impede a navegação. */ }
+    let lastControl: Element | null = null;
+    let lastPlayed = 0;
+    const getContext = () => {
+      const AudioClass = window.AudioContext;
+      if (!AudioClass) return null;
+      audioContext ??= new AudioClass();
+      if (audioContext.state !== "running") void audioContext.resume();
+      return audioContext;
     };
-    document.addEventListener("pointerdown", play, true);
+    const play = (kind: "hover" | "click") => {
+      try {
+        const ctx = getContext();
+        if (!ctx || ctx.state !== "running") return;
+        const t = ctx.currentTime + 0.004;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(kind === "hover" ? 850 : 1050, t);
+        osc.frequency.exponentialRampToValueAtTime(kind === "hover" ? 650 : 570, t + 0.1);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(kind === "hover" ? 0.11 : 0.14, t + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.14);
+      } catch { /* Sem áudio, os controles continuam funcionando. */ }
+    };
+    const findControl = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return null;
+      const control = target.closest("button, a, [role='button']");
+      if (!control || control.hasAttribute("disabled") || control.getAttribute("aria-disabled") === "true") return null;
+      return control;
+    };
+    const onHover = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      const control = findControl(event);
+      if (!control || control === lastControl) return;
+      const now = performance.now();
+      lastControl = control;
+      if (now - lastPlayed < 110) return;
+      lastPlayed = now;
+      play("hover");
+    };
+    const onLeave = (event: PointerEvent) => {
+      const related = event.relatedTarget;
+      if (!(related instanceof Node) || !lastControl?.contains(related)) lastControl = null;
+    };
+    const onDown = (event: PointerEvent) => {
+      if (!findControl(event)) return;
+      play("click");
+    };
+    // Primeiro clique libera áudio para os próximos hovers, mesmo fora dos ícones.
+    const unlock = () => { try { getContext(); } catch { /* opcional */ } };
+    document.addEventListener("pointerover", onHover, true);
+    document.addEventListener("pointerout", onLeave, true);
+    document.addEventListener("pointerdown", onDown, true);
+    document.addEventListener("pointerdown", unlock, true);
     return () => {
-      document.removeEventListener("pointerdown", play, true);
+      document.removeEventListener("pointerover", onHover, true);
+      document.removeEventListener("pointerout", onLeave, true);
+      document.removeEventListener("pointerdown", onDown, true);
+      document.removeEventListener("pointerdown", unlock, true);
       if (audioContext) void audioContext.close();
     };
   }, []);
