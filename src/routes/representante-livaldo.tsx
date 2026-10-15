@@ -1,6 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { meQuery } from "@/lib/queries";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, LockKeyhole } from "lucide-react";
+import { ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
@@ -55,12 +57,13 @@ function BrazilMap() {
 }
 
 function LivaldoPage() {
+  const { data: me } = useQuery(meQuery);
   return (
     <main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <section className="surface-card space-y-3 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <h2 className="text-xl font-bold text-amber-400">Livaldo Souza Silva</h2>
+        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">Livaldo Souza Silva</h2>{me?.isAdmin && <Link to="/admin" hash="representantes" title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
         <p className="text-sm font-semibold text-primary">Cadastro de teste</p>
         <p><span className="text-muted-foreground">Área de representação:</span> Todo o Brasil — todos os estados e o Distrito Federal.</p>
         <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole size={16} /> Dados somente para visualização. Alterações exclusivas da administração.</p>
