@@ -11,28 +11,20 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
-    if (typeof window !== "undefined") {
-      const raw = localStorage.getItem("netinho-vendedor");
-      if (!raw && location.pathname === "/admin") {
-        const { data: auth } = await supabase.auth.getUser();
-        if (auth.user) {
-          const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", auth.user.id);
-          if (roles?.some(role => role.role === "admin")) return { user: auth.user };
-        }
-      }
-      if (!raw) throw redirect({ to: "/auth" });
-      let profile: { accessType?: string };
-      try {
-        profile = JSON.parse(raw) as { accessType?: string };
-      } catch {
-        localStorage.removeItem("netinho-vendedor");
-        throw redirect({ to: "/auth" });
-      }
-      if (profile.accessType !== "Representante Comercial" && profile.accessType !== "Vendedor") throw redirect({ to: "/" });
+    if (typeof window === "undefined") return { user: null };
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) throw redirect({ to: "/auth" });
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", auth.user.id);
+    const isAdmin = roles?.some(role => role.role === "admin") ?? false;
+    if (location.pathname === "/admin") {
+      if (!isAdmin) throw redirect({ to: "/auth" });
+      return { user: auth.user };
     }
-    // O catálogo é público após a identificação local do visitante.
-    // Não depende de sessão Supabase para montar a rota.
-    return { user: null };
+    if (isAdmin) return { user: auth.user };
+    const { data: record, error } = await supabase.from("commercial_representatives" as never)
+      .select("user_id,active").eq("user_id", auth.user.id).eq("active", true).maybeSingle();
+    if (error || !record) throw redirect({ to: "/auth" });
+    return { user: auth.user };
   },
   component: AppShell,
 });
