@@ -33,6 +33,13 @@ function EditRepresentativePage() {
   const [region, setRegion] = useState("");
   const [busy, setBusy] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [issuedPassword, setIssuedPassword] = useState("");
+  function generatePassword() {
+    const digits = new Uint32Array(8);
+    crypto.getRandomValues(digits);
+    setNewPassword(Array.from(digits, n => String(n % 10)).join(""));
+    setIssuedPassword("");
+  }
   const [details, setDetails] = useState({ cpf: "", rg: "", street_address: "", neighborhood: "", postal_code: "", city: "", state: "", service_cities: "" });
   const setDetail = (key: keyof typeof details, value: string) => setDetails(prev => ({ ...prev, [key]: value }));
   const { data: privateRecord } = useQuery({ queryKey: ["representative-private", slug], enabled: !!profile && me?.isAdmin === true, queryFn: async () => { const { data, error } = await supabase.from("representative_private_details" as never).select("*").eq("slug", slug).maybeSingle(); if (error) throw error; return data as PrivateDetails | null; } });
@@ -69,6 +76,7 @@ function EditRepresentativePage() {
           body: { slug, password: newPassword },
         });
         if (passwordError) throw new Error("A senha não foi atualizada. Configure a função segura de autenticação no Supabase antes de definir senhas.");
+        setIssuedPassword(newPassword);
         setNewPassword("");
       }
       const result = await supabase.from("representative_profiles" as never)
@@ -100,7 +108,7 @@ function EditRepresentativePage() {
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
         <div className="flex flex-wrap items-center gap-4">
           <p className="font-display text-2xl font-bold text-amber-400">{profile.name}</p>
-          <span className="text-sm text-muted-foreground">A senha de acesso é definida no formulário abaixo.</span>
+          <div className="space-y-2"><p className="text-sm text-muted-foreground">Senha individual de 8 números — visível ao administrador após ativar.</p>{issuedPassword && <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/50 p-2"><span className="font-mono text-lg font-bold tracking-widest text-amber-400">{issuedPassword}</span><Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(issuedPassword)}>Copiar</Button><Button type="button" size="sm" variant="ghost" onClick={() => setIssuedPassword("")}>Ocultar</Button></div>}</div>
         </div>
         <p className="text-sm text-muted-foreground">Área de atuação: {record?.region ?? profile.region}</p>
         {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : (
@@ -108,8 +116,8 @@ function EditRepresentativePage() {
             <div className="space-y-2"><Label htmlFor="rep-name">Nome completo</Label><Input id="rep-name" required value={name} onChange={e => setName(e.target.value)} /></div>
             <div className="space-y-2">
               <Label htmlFor="rep-password">Senha de acesso do representante (somente administrador)</Label>
-              <Input id="rep-password" type="password" autoComplete="new-password" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="8 números" />
-              <p className="text-xs text-muted-foreground">Digite exatamente 8 números ou deixe em branco para manter a senha atual. A alteração exige validação segura no servidor.</p>
+              <div className="flex gap-2"><Input id="rep-password" type="text" autoComplete="off" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" value={newPassword} onChange={e => setNewPassword(e.target.value.replace(/\\D/g, "").slice(0, 8))} placeholder="Clique em Gerar senha" readOnly /><Button type="button" variant="outline" onClick={generatePassword}>Gerar senha</Button></div>
+              <p className="text-xs text-muted-foreground">Clique em Gerar senha e depois em Salvar alterações. A senha aparecerá ao lado do nome somente se a ativação no servidor for concluída.</p>
             </div>
             <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
