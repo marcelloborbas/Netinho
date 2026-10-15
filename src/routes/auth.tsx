@@ -172,7 +172,7 @@ function AuthPage() {
               <p className="text-center text-lg font-extrabold tracking-wide text-amber-400">Representantes Comerciais</p>
               {REPRESENTATIVES.map(rep => (
                 <div key={rep.id} className="flex items-stretch gap-2">
-                <button key={rep.id} type="button" onClick={() => { setSelectedRepresentative(rep.id); setEmail(""); setPassword(""); }}
+                <button key={rep.id} type="button" onClick={() => navigate({ to: rep.path })}
                   className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition hover:border-amber-400 hover:bg-amber-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
                   <span><span className="block font-display text-2xl font-black leading-tight tracking-wide text-amber-400 sm:text-3xl">{rep.name}</span>
                     <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
@@ -181,20 +181,6 @@ function AuthPage() {
                 {me?.isAdmin && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/admin", hash: "representantes" })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
                 </div>
               ))}
-              {selectedRepresentative && (
-                <div className="space-y-3 rounded-xl border border-amber-400/40 bg-background/80 p-4">
-                  <p className="text-lg font-bold text-amber-400">{REPRESENTATIVES.find(rep => rep.id === selectedRepresentative)?.name}</p>
-                  <p className="text-sm text-muted-foreground">Para acessar a página de vendas, confirme seu e-mail e senha de representante autorizado.</p>
-                  <Label htmlFor="representative-email">E-mail</Label>
-                  <Input id="representative-email" type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} />
-                  <Label htmlFor="representative-password">Senha</Label>
-                  <Input id="representative-password" type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} />
-                  <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red font-bold">{busy ? "Verificando..." : "Acessar página de vendas →"}</Button>
-                  {REPRESENTATIVES.filter(rep => rep.id === selectedRepresentative).map(rep => (
-                    <button key={rep.id} type="button" onClick={() => navigate({ to: rep.path })} className="w-full text-center text-sm font-semibold text-amber-400 underline">Ver cadastro e mapa de atuação</button>
-                  ))}
-                </div>
-              )}
               <p className="text-xs text-muted-foreground">O acesso comercial requer autenticação e autorização da administração.</p>
             </div>
           )}
