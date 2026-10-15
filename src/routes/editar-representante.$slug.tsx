@@ -32,14 +32,6 @@ function EditRepresentativePage() {
   const [phone, setPhone] = useState("");
   const [region, setRegion] = useState("");
   const [busy, setBusy] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [issuedPassword, setIssuedPassword] = useState("");
-  function generatePassword() {
-    const digits = new Uint32Array(8);
-    crypto.getRandomValues(digits);
-    setNewPassword(Array.from(digits, n => String(n % 10)).join(""));
-    setIssuedPassword("");
-  }
   const [details, setDetails] = useState({ cpf: "", rg: "", street_address: "", neighborhood: "", postal_code: "", city: "", state: "", service_cities: "" });
   const setDetail = (key: keyof typeof details, value: string) => setDetails(prev => ({ ...prev, [key]: value }));
   const { data: privateRecord } = useQuery({ queryKey: ["representative-private", slug], enabled: !!profile && me?.isAdmin === true, queryFn: async () => { const { data, error } = await supabase.from("representative_private_details" as never).select("*").eq("slug", slug).maybeSingle(); if (error) throw error; return data as PrivateDetails | null; } });
@@ -66,19 +58,8 @@ function EditRepresentativePage() {
     event.preventDefault();
     if (!me?.isAdmin) return;
     if (!name.trim() || !region.trim()) { toast.error("Preencha nome e região."); return; }
-    if (newPassword && !/^\d{8}$/.test(newPassword)) { toast.error("A senha deve conter exatamente 8 números."); return; }
     setBusy(true);
     try {
-      if (newPassword) {
-        // Apenas uma função de servidor autenticada como administrador pode
-        // alterar senhas de outras contas. Nunca gravar senhas em tabelas públicas.
-        const { error: passwordError } = await supabase.functions.invoke("set-representative-password", {
-          body: { slug, password: newPassword },
-        });
-        if (passwordError) throw new Error("A senha não foi atualizada. Configure a função segura de autenticação no Supabase antes de definir senhas.");
-        setIssuedPassword(newPassword);
-        setNewPassword("");
-      }
       const result = await supabase.from("representative_profiles" as never)
         .upsert({ slug, full_name: name.trim(), region: region.trim(), email: email.trim().toLowerCase() || null, phone: phone.trim() || null } as never, { onConflict: "slug" });
       if (result.error) throw result.error;
@@ -108,7 +89,7 @@ function EditRepresentativePage() {
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
         <div className="flex flex-wrap items-center gap-4">
           <p className="font-display text-2xl font-bold text-amber-400">{profile.name}</p>
-          <div className="space-y-2"><p className="text-sm text-muted-foreground">Senha individual de 8 números — visível ao administrador após ativar.</p>{issuedPassword && <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/50 p-2"><span className="font-mono text-lg font-bold tracking-widest text-amber-400">{issuedPassword}</span><Button type="button" size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(issuedPassword)}>Copiar</Button><Button type="button" size="sm" variant="ghost" onClick={() => setIssuedPassword("")}>Ocultar</Button></div>}</div>
+          <p className="text-sm text-muted-foreground">Acesso Google autorizado no painel Administração.</p>
         </div>
         <p className="text-sm text-muted-foreground">Área de atuação: {record?.region ?? profile.region}</p>
         {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : (
