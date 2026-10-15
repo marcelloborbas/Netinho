@@ -65,6 +65,7 @@ function AuthPage() {
     window.setTimeout(() => navigate({ to: path }), 150);
   }
   const { data: me, refetch: refreshMe } = useQuery(meQuery);
+  const canEditRepresentatives = me?.isAdmin === true;
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
       void refreshMe();
@@ -271,7 +272,7 @@ function AuthPage() {
                     <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
                   <span className="shrink-0 text-2xl font-bold text-amber-400">→</span>
                 </button>
-                {me?.isAdmin && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/admin", hash: "representantes" })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
+                {canEditRepresentatives && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/admin", hash: "representantes" })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
                 </div>
               ))}
             </div>
