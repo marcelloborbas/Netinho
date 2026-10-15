@@ -12,10 +12,10 @@ function RepresentativePage() {
   return (
     <main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
-      <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="text-primary underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="text-primary underline">Livaldo Souza Silva (teste — Brasil inteiro)</Link></div>
+      <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Brasil inteiro)</Link></div>
       <section className="surface-card space-y-4 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <h2 className="text-xl font-semibold">Abdenego Eugênio</h2>
+        <h2 className="text-xl font-bold text-amber-400">Abdenego Eugênio</h2>
         <p className="text-sm text-muted-foreground">Dados de representação cadastrados pela administração — somente leitura.</p>
         <dl className="grid gap-3 sm:grid-cols-2">
           <div><dt className="text-xs text-muted-foreground">Área de atuação</dt><dd className="font-medium">Vale do Paraíba e Litoral Norte de São Paulo</dd></div>
