@@ -81,6 +81,22 @@ function RepresentativesAdmin() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
+  const [passwords, setPasswords] = useState<Record<string, string>>({});
+  const [savingPassword, setSavingPassword] = useState<string | null>(null);
+  async function savePassword(slug: string) {
+    const password = passwords[slug] ?? "";
+    if (password.length < 8) { toast.error("A senha deve ter pelo menos 8 caracteres."); return; }
+    setSavingPassword(slug);
+    try {
+      const { data, error } = await supabase.functions.invoke("set-representative-password", { body: { slug, password } });
+      if (error || !data?.ok) throw new Error(data?.error || "A função segura de senhas precisa estar implantada no Supabase.");
+      setPasswords(prev => ({ ...prev, [slug]: "" }));
+      toast.success("Senha de acesso definida para o representante.");
+      void qc.invalidateQueries({ queryKey: ["commercial-representatives"] });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível definir a senha.");
+    } finally { setSavingPassword(null); }
+  }
   const { data: representatives = [], isLoading, error } = useQuery({
     queryKey: ["commercial-representatives"],
     queryFn: async () => {
@@ -159,6 +175,10 @@ function RepresentativesAdmin() {
         {visibleProfiles.map(rep => (
           <div key={rep.slug} className="flex items-center justify-between gap-3 rounded-lg border p-3">
             <div><p className="font-semibold">{rep.full_name}</p><p className="text-xs text-muted-foreground">{rep.region}</p></div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Input type="password" autoComplete="new-password" aria-label={`Senha de ${rep.full_name}`} placeholder="Senha do representante" minLength={8} className="w-48" value={passwords[rep.slug] ?? ""} onChange={e => setPasswords(prev => ({ ...prev, [rep.slug]: e.target.value }))} />
+              <Button type="button" size="sm" disabled={savingPassword === rep.slug || !(passwords[rep.slug]?.length >= 8)} onClick={() => savePassword(rep.slug)}>{savingPassword === rep.slug ? "Salvando..." : "Definir senha"}</Button>
+            </div>
             <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="rounded-lg border px-3 py-2 text-sm font-bold text-primary hover:bg-secondary">Editar cadastro</Link>
           </div>
         ))}
