@@ -95,11 +95,6 @@ function EditRepresentativePage() {
         {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : (
           <form onSubmit={save} className="space-y-4">
             <div className="space-y-2"><Label htmlFor="rep-name">Nome completo</Label><Input id="rep-name" required value={name} onChange={e => setName(e.target.value)} /></div>
-            <div className="space-y-2">
-              <Label htmlFor="rep-password">Senha de acesso do representante (somente administrador)</Label>
-              <div className="flex gap-2"><Input id="rep-password" type="text" autoComplete="off" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" value={newPassword} onChange={e => setNewPassword(e.target.value.replace(/\\D/g, "").slice(0, 8))} placeholder="Clique em Gerar senha" readOnly /><Button type="button" variant="outline" onClick={generatePassword}>Gerar senha</Button></div>
-              <p className="text-xs text-muted-foreground">Clique em Gerar senha e depois em Salvar alterações. A senha aparecerá ao lado do nome somente se a ativação no servidor for concluída.</p>
-            </div>
             <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-phone">Telefone</Label><Input id="rep-phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
