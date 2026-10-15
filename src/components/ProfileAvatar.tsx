@@ -1,9 +1,10 @@
 import { BriefcaseBusiness, Store, Truck, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type AccessType = "Vendedor" | "Visitante" | "Distribuidor" | "Auto-Peças";
+export type AccessType = "Representante Comercial" | "Vendedor" | "Visitante" | "Distribuidor" | "Auto-Peças";
 
 const ICONS = {
+  "Representante Comercial": BriefcaseBusiness,
   "Vendedor": BriefcaseBusiness,
   "Visitante": UserRound,
   "Distribuidor": Truck,
