@@ -41,6 +41,39 @@ export type Database = {
         }
         Relationships: []
       }
+      commercial_representatives: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address: string | null
@@ -336,6 +369,80 @@ export type Database = {
         }
         Relationships: []
       }
+      representative_private_details: {
+        Row: {
+          city: string | null
+          cpf: string | null
+          neighborhood: string | null
+          postal_code: string | null
+          rg: string | null
+          service_cities: string | null
+          slug: string
+          state: string | null
+          street_address: string | null
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          cpf?: string | null
+          neighborhood?: string | null
+          postal_code?: string | null
+          rg?: string | null
+          service_cities?: string | null
+          slug: string
+          state?: string | null
+          street_address?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          cpf?: string | null
+          neighborhood?: string | null
+          postal_code?: string | null
+          rg?: string | null
+          service_cities?: string | null
+          slug?: string
+          state?: string | null
+          street_address?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "representative_private_details_slug_fkey"
+            columns: ["slug"]
+            isOneToOne: true
+            referencedRelation: "representative_profiles"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      representative_profiles: {
+        Row: {
+          email: string | null
+          full_name: string
+          phone: string | null
+          region: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          email?: string | null
+          full_name: string
+          phone?: string | null
+          region: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          email?: string | null
+          full_name?: string
+          phone?: string | null
+          region?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -367,6 +474,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_commercial_representative: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "seller"

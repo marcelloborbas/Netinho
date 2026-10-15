@@ -1,4 +1,5 @@
 # Roadmap NETINHO
+- [x] Verificar erro newPassword na edição de representantes e adicionar teste para ambos os cadastros
 - [x] Banco de dados + 244 produtos
 - [x] Login (e-mail/senha + Google)
 - [x] Catálogo, clientes, pedido, histórico, PDF, repetir pedido

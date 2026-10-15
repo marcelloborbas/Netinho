@@ -145,7 +145,7 @@ function AuthPage() {
 
       // A identificação é local e não depende de autenticação Supabase.
       // Isso mantém o catálogo acessível mesmo quando o projeto não permite sessão anônima.
-      navigate({ to: accessType === "Representante Comercial" ? "/catalogo" : "/" });
+      navigate({ to: "/" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível entrar.");
     } finally {
@@ -353,21 +353,20 @@ function AuthPage() {
           {accessType && accessType !== "Representante Comercial" && (
             <div className="space-y-4 border-t pt-4">
               <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
-              {accessType !== "Representante Comercial" && <div className="space-y-1.5">
+              <div className="space-y-1.5">
                 <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
                 <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
-              </div>}
-              {accessType !== "Representante Comercial" && <div className="space-y-1.5">
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Telefone</Label>
                 <Input id="phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-12" />
-              </div>}
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="flex items-center gap-2"><Mail className="h-4 w-4" />E-mail</Label>
                 <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
               </div>
-              {accessType === "Representante Comercial" && <div className="space-y-1.5"><Label htmlFor="password">Senha</Label><Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12" /></div>}
               <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
-                {busy ? "Entrando..." : accessType === "Representante Comercial" ? "Autenticar representante" : "Conhecer a Netinho"}
+                {busy ? "Entrando..." : "Conhecer a Netinho"}
               </Button>
             </div>
           )}
