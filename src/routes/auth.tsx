@@ -308,7 +308,7 @@ function AuthPage() {
               <p className="text-center text-lg font-extrabold tracking-wide text-amber-400">Representantes Comerciais</p>
               {REPRESENTATIVES.map(rep => (
                 <div key={rep.id} className="flex items-stretch gap-2">
-                <button key={rep.id} type="button" onClick={() => { setSelectedRepresentative(rep.id); setAccessType("Representante Comercial"); }}
+                <button key={rep.id} type="button" onClick={() => { if (canEditRepresentatives) { navigate({ to: "/editar-representante/$slug", params: { slug: rep.id } }); return; } setSelectedRepresentative(rep.id); setAccessType("Representante Comercial"); }}
                   className={`flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition-all duration-150 hover:border-amber-400 hover:bg-amber-400/10 active:scale-[0.97] active:bg-amber-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 motion-reduce:transition-none ${selectedRepresentative === rep.id ? "scale-[0.97] border-amber-400 bg-amber-400/20 shadow-[0_0_18px_rgba(251,191,36,0.3)]" : ""}`}>
                   <span><span className="block font-display text-2xl font-black leading-tight tracking-wide text-amber-400 sm:text-3xl">{rep.name}</span>
                     <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
