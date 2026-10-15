@@ -149,7 +149,7 @@ function AuthPage() {
             {ACCESS_OPTIONS.map((option) => {
               const active = accessType === option.value;
               return (
-                <button key={option.value} type="button" onClick={() => setAccessType(option.value)}
+                <button key={option.value} type="button" onClick={() => option.value === "Representante Comercial" ? navigate({ to: "/representante" }) : setAccessType(option.value)}
                   className={active
                     ? "rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20"
                     : "rounded-xl border border-border bg-secondary/40 p-4 text-left hover:border-primary/50"}>
@@ -161,7 +161,7 @@ function AuthPage() {
             })}
           </div>
 
-          {accessType && (
+          {accessType && accessType !== "Representante Comercial" && (
             <div className="space-y-4 border-t pt-4">
               <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
               {accessType === "Representante Comercial" && (
