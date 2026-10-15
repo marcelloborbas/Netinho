@@ -103,6 +103,22 @@ function RepresentativesAdmin() {
     qc.invalidateQueries({ queryKey: ["commercial-representatives"] });
   }
 
+  async function editRepresentative(rep: Representative) {
+    const fullName = window.prompt("Nome completo do representante:", rep.full_name);
+    if (fullName === null) return;
+    if (!fullName.trim()) { toast.error("O nome é obrigatório."); return; }
+    const email = window.prompt("E-mail do representante:", rep.email);
+    if (email === null) return;
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.trim())) { toast.error("E-mail inválido."); return; }
+    const phone = window.prompt("Telefone do representante:", rep.phone ?? "");
+    if (phone === null) return;
+    const result = await supabase.from("commercial_representatives" as never)
+      .update({ full_name: fullName.trim(), email: email.trim().toLowerCase(), phone: phone.trim() || null } as never)
+      .eq("id", rep.id);
+    if (result.error) toast.error(result.error.message);
+    else { toast.success("Representante atualizado."); qc.invalidateQueries({ queryKey: ["commercial-representatives"] }); }
+  }
+
   async function toggle(rep: Representative) {
     if (!rep.user_id && !rep.active) {
       toast.error("Vincule primeiro a conta autenticada do representante.");
@@ -115,7 +131,7 @@ function RepresentativesAdmin() {
   }
 
   return (
-    <section className="surface-card space-y-4 p-4">
+    <section id="representantes" className="surface-card space-y-4 p-4">
       <h2 className="text-xl font-bold">Cadastro de Representantes Comerciais</h2>
       <p className="text-sm text-muted-foreground">Somente administradores autorizam representantes. Novos cadastros ficam inativos até a vinculação de uma conta autenticada.</p>
       <form onSubmit={createRepresentative} className="grid gap-2 sm:grid-cols-4">
@@ -131,9 +147,9 @@ function RepresentativesAdmin() {
           <li key={rep.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
             <div><p className="font-semibold">{rep.full_name}</p><p className="text-xs text-muted-foreground">{rep.email} · {rep.phone || "Sem telefone"}</p>
               <p className="text-xs">{rep.user_id ? "Conta vinculada" : "Aguardando vínculo de conta"}</p></div>
-            <label className="flex items-center gap-2 text-sm">Ativo
+            <div className="flex items-center gap-3"><Button size="sm" variant="outline" onClick={() => editRepresentative(rep)}>Editar</Button><label className="flex items-center gap-2 text-sm">Ativo
               <Switch checked={rep.active} disabled={!rep.user_id && !rep.active} onCheckedChange={() => toggle(rep)} />
-            </label>
+            </label></div>
           </li>
         ))}
       </ul>
