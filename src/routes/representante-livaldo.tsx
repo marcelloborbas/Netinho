@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { meQuery } from "@/lib/queries";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -58,14 +59,15 @@ function BrazilMap() {
 
 function LivaldoPage() {
   const { data: me } = useQuery(meQuery);
+  const { data: profile } = useQuery({ queryKey: ["representative-profile", "livaldo-souza-silva"], queryFn: async () => { const { data, error } = await supabase.from("representative_profiles" as never).select("full_name,region").eq("slug", "livaldo-souza-silva").maybeSingle(); if (error) return null; return data as { full_name: string; region: string } | null; } });
   return (
     <main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <section className="surface-card space-y-3 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">Livaldo Souza Silva</h2>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
+        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Livaldo Souza Silva"}</h2>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
         <p className="text-sm font-semibold text-primary">Cadastro de teste</p>
-        <p><span className="text-muted-foreground">Área de representação:</span> Todo o Brasil — todos os estados e o Distrito Federal.</p>
+        <p><span className="text-muted-foreground">Área de representação:</span> {profile?.region ?? "Todo o Brasil — todos os estados e o Distrito Federal"}</p>
         <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole size={16} /> Dados somente para visualização. Alterações exclusivas da administração.</p>
       </section>
       <section className="surface-card space-y-3 p-5">
