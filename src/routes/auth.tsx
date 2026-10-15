@@ -165,14 +165,14 @@ function AuthPage() {
           </div>
 
           {accessType === "Representante Comercial" && (
-            <div className="space-y-3 border-t pt-4">
-              <p className="font-semibold text-amber-400">Selecione o Representante Comercial</p>
+            <div className="space-y-4 rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-400/10 to-transparent p-4 sm:p-5">
+              <p className="text-center text-lg font-extrabold tracking-wide text-amber-400">Representantes Comerciais</p>
               {REPRESENTATIVES.map(rep => (
                 <button key={rep.id} type="button" onClick={() => navigate({ to: rep.path })}
-                  className="flex w-full items-center justify-between rounded-xl border border-amber-400/40 bg-secondary/30 p-4 text-left hover:border-amber-400">
-                  <span><span className="block font-bold text-amber-400">{rep.name}</span>
-                    <span className="text-xs text-muted-foreground">{rep.region}</span></span>
-                  <span className="text-amber-400">→</span>
+                  className="flex w-full items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition hover:border-amber-400 hover:bg-amber-400/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+                  <span><span className="block font-display text-2xl font-black leading-tight tracking-wide text-amber-400 sm:text-3xl">{rep.name}</span>
+                    <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
+                  <span className="shrink-0 text-2xl font-bold text-amber-400">→</span>
                 </button>
               ))}
               <p className="text-xs text-muted-foreground">Visualização de perfil. Acesso comercial exige autorização.</p>
