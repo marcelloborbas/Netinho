@@ -309,8 +309,8 @@ function AuthPage() {
               <p className="text-center text-lg font-extrabold tracking-wide text-amber-400">Representantes Comerciais</p>
               {REPRESENTATIVES.map(rep => (
                 <div key={rep.id} className="flex items-stretch gap-2">
-                <button key={rep.id} type="button" onClick={() => openRepresentative(rep.id, rep.path)}
-                  className={`flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition-all duration-150 hover:border-amber-400 hover:bg-amber-400/10 active:scale-[0.97] active:bg-amber-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 motion-reduce:transition-none ${pressedRepresentative === rep.id ? "scale-[0.97] border-amber-400 bg-amber-400/20 shadow-[0_0_18px_rgba(251,191,36,0.3)]" : ""}`}>
+                <button key={rep.id} type="button" onClick={() => { setSelectedRepresentative(rep.id); setAccessType("Representante Comercial"); }}
+                  className={`flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition-all duration-150 hover:border-amber-400 hover:bg-amber-400/10 active:scale-[0.97] active:bg-amber-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 motion-reduce:transition-none ${selectedRepresentative === rep.id ? "scale-[0.97] border-amber-400 bg-amber-400/20 shadow-[0_0_18px_rgba(251,191,36,0.3)]" : ""}`}>
                   <span><span className="block font-display text-2xl font-black leading-tight tracking-wide text-amber-400 sm:text-3xl">{rep.name}</span>
                     <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
                   <span className="shrink-0 text-2xl font-bold text-amber-400">→</span>
@@ -318,6 +318,15 @@ function AuthPage() {
                 {canEditRepresentatives && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/editar-representante/$slug", params: { slug: rep.id } })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
                 </div>
               ))}
+            </div>
+          )}
+          {accessType === "Representante Comercial" && selectedRepresentative && (
+            <div className="space-y-3 rounded-xl border border-primary/40 bg-secondary/30 p-4">
+              <p className="font-semibold">Acesso de {REPRESENTATIVES.find(r => r.id === selectedRepresentative)?.name}</p>
+              <p className="text-xs text-muted-foreground">Informe o e-mail e a senha da conta individual autorizada pelo administrador.</p>
+              <div className="space-y-1"><Label htmlFor="representative-email">E-mail</Label><Input id="representative-email" type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} /></div>
+              <div className="space-y-1"><Label htmlFor="representative-password">Senha</Label><Input id="representative-password" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
+              <Button type="submit" disabled={busy} className="w-full">{busy ? "Verificando..." : "Entrar como representante"}</Button>
             </div>
           )}
           {accessType && accessType !== "Representante Comercial" && (
