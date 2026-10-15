@@ -19,6 +19,7 @@ const profiles: Record<string, { name: string; region: string; back: "/represent
   "livaldo-souza-silva": { name: "Livaldo Souza Silva", region: "Todo o Brasil · Teste", back: "/representante-livaldo" },
 };
 
+type PrivateDetails = { cpf: string | null; rg: string | null; street_address: string | null; neighborhood: string | null; postal_code: string | null; city: string | null; state: string | null; service_cities: string | null };
 type Representative = { slug: string; full_name: string; region: string; email: string | null; phone: string | null };
 
 function EditRepresentativePage() {
@@ -31,6 +32,9 @@ function EditRepresentativePage() {
   const [phone, setPhone] = useState("");
   const [region, setRegion] = useState("");
   const [busy, setBusy] = useState(false);
+  const [details, setDetails] = useState({ cpf: "", rg: "", street_address: "", neighborhood: "", postal_code: "", city: "", state: "", service_cities: "" });
+  const setDetail = (key: keyof typeof details, value: string) => setDetails(prev => ({ ...prev, [key]: value }));
+  const { data: privateRecord } = useQuery({ queryKey: ["representative-private", slug], enabled: !!profile && me?.isAdmin === true, queryFn: async () => { const { data, error } = await supabase.from("representative_private_details" as never).select("*").eq("slug", slug).maybeSingle(); if (error) throw error; return data as PrivateDetails | null; } });
   const { data: record, isLoading, error } = useQuery({
     queryKey: ["edit-commercial-representative", slug],
     enabled: !!profile && me?.isAdmin === true,
@@ -48,6 +52,8 @@ function EditRepresentativePage() {
     setRegion(record?.region ?? profile?.region ?? "");
   }, [record, profile?.name]);
 
+  useEffect(() => { if (privateRecord) setDetails({ cpf: privateRecord.cpf ?? "", rg: privateRecord.rg ?? "", street_address: privateRecord.street_address ?? "", neighborhood: privateRecord.neighborhood ?? "", postal_code: privateRecord.postal_code ?? "", city: privateRecord.city ?? "", state: privateRecord.state ?? "", service_cities: privateRecord.service_cities ?? "" }); }, [privateRecord]);
+
   async function save(event: FormEvent) {
     event.preventDefault();
     if (!me?.isAdmin) return;
@@ -57,9 +63,12 @@ function EditRepresentativePage() {
       const result = await supabase.from("representative_profiles" as never)
         .upsert({ slug, full_name: name.trim(), region: region.trim(), email: email.trim().toLowerCase() || null, phone: phone.trim() || null } as never, { onConflict: "slug" });
       if (result.error) throw result.error;
+      const privateResult = await supabase.from("representative_private_details" as never).upsert({ slug, ...details } as never, { onConflict: "slug" });
+      if (privateResult.error) throw privateResult.error;
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["edit-commercial-representative", slug] }),
         qc.invalidateQueries({ queryKey: ["representative-profile", slug] }),
+        qc.invalidateQueries({ queryKey: ["representative-private", slug] }),
       ]);
       toast.success("Dados do representante atualizados.");
     } catch (err) {
@@ -80,15 +89,15 @@ function EditRepresentativePage() {
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
         <p className="font-display text-2xl font-bold text-amber-400">{profile.name}</p>
         <p className="text-sm text-muted-foreground">Área de atuação: {record?.region ?? profile.region}</p>
-        {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : !record ? (
-          <p className="rounded-lg border p-4 text-sm">O perfil ainda não foi importado. Você pode salvar os dados já preenchidos abaixo.</p>
-        ) : (
+        {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : (
           <form onSubmit={save} className="space-y-4">
             <div className="space-y-2"><Label htmlFor="rep-name">Nome completo</Label><Input id="rep-name" required value={name} onChange={e => setName(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-phone">Telefone</Label><Input id="rep-phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
-            <p className="text-xs text-muted-foreground">Este formulário edita os dados públicos de apresentação. A autorização de acesso comercial é gerenciada separadamente.</p>
+            <h2 className="text-lg font-bold">Dados cadastrais (somente administrador)</h2>
+            {([["cpf","CPF"],["rg","RG"],["street_address","Endereço (rua e número)"],["neighborhood","Bairro"],["postal_code","CEP"],["city","Cidade"],["state","Estado (UF)"],["service_cities","Municípios atendidos"]] as const).map(([key,label]) => <div key={key} className="space-y-2"><Label htmlFor={`rep-${key}`}>{label}</Label><Input id={`rep-${key}`} value={details[key]} onChange={e => setDetail(key,e.target.value)} /></div>)}
+            <p className="text-xs text-muted-foreground">CPF, RG e endereço são dados privados e não aparecem na página pública. A autorização comercial é gerenciada separadamente.</p>
             <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar alterações"}</Button>
           </form>
         )}
