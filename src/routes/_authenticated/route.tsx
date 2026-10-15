@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated")({
         localStorage.removeItem("netinho-vendedor");
         throw redirect({ to: "/auth" });
       }
-      if (profile.accessType !== "Vendedor") throw redirect({ to: "/" });
+      if (profile.accessType !== "Representante Comercial" && profile.accessType !== "Vendedor") throw redirect({ to: "/" });
     }
     // O catálogo é público após a identificação local do visitante.
     // Não depende de sessão Supabase para montar a rota.
@@ -43,7 +43,7 @@ function AppShell() {
   const { data: me } = useQuery(meQuery);
   const rawProfile = typeof window !== "undefined" ? localStorage.getItem("netinho-vendedor") : null;
   let profile: { name: string; accessType: AccessType } | null = null;
-  try { if (rawProfile) { const p = JSON.parse(rawProfile) as { name?: string; accessType?: AccessType }; if (p.name && p.accessType) profile = { name: p.name, accessType: p.accessType }; } } catch { /* ignora */ }
+  try { if (rawProfile) { const p = JSON.parse(rawProfile) as { name?: string; accessType?: AccessType }; if (p.name && p.accessType) profile = { name: p.name, accessType: p.accessType === "Vendedor" ? "Representante Comercial" : p.accessType }; } } catch { /* ignora */ }
 
   function logout() {
     localStorage.removeItem("netinho-vendedor");
