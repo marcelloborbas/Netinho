@@ -12,7 +12,7 @@ const PROFILE_KEY = "netinho-vendedor";
 type SellerProfile = { name: string; phone: string; email: string; accessType: AccessType };
 
 const ACCESS_OPTIONS: { value: AccessType; description: string }[] = [
-  { value: "Vendedor", description: "Representa clientes e monta pedidos" },
+  { value: "Representante Comercial", description: "Atende clientes e monta pedidos" },
   { value: "Visitante", description: "Conhece a Netinho e nossa atuação" },
   { value: "Distribuidor", description: "Conhece nossas soluções comerciais" },
   { value: "Auto-Peças", description: "Conhece nossa linha e atuação" },
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/auth")({
       { title: "Netinho Auto Parts" },
       { name: "description", content: "Escolha seu perfil e acesse a Netinho Auto Parts." },
       { property: "og:title", content: "Netinho Auto Parts" },
-      { property: "og:description", content: "Catálogo e pedidos para Vendedores, Visitantes, Distribuidores e Auto-Peças." },
+      { property: "og:description", content: "Catálogo e pedidos para Representantes Comerciais, Visitantes, Distribuidores e Auto-Peças." },
     ],
   }),
   component: AuthPage,
@@ -46,7 +46,7 @@ function AuthPage() {
     if (saved) {
       try {
         const profile = JSON.parse(saved) as SellerProfile;
-        setAccessType(profile.accessType ?? null);
+        setAccessType(profile.accessType === "Vendedor" ? "Representante Comercial" : (profile.accessType ?? null));
         setName(profile.name ?? "");
         setPhone(profile.phone ?? "");
         setEmail(profile.email ?? "");
@@ -92,7 +92,7 @@ function AuthPage() {
 
       // A identificação é local e não depende de autenticação Supabase.
       // Isso mantém o catálogo acessível mesmo quando o projeto não permite sessão anônima.
-      navigate({ to: accessType === "Vendedor" ? "/catalogo" : "/" });
+      navigate({ to: accessType === "Representante Comercial" ? "/catalogo" : "/" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível entrar.");
     } finally {
