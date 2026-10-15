@@ -80,6 +80,7 @@ function AuthPage() {
   const [selectedRepresentative, setSelectedRepresentative] = useState("");
   const [password, setPassword] = useState("");
   const [installing, setInstalling] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
