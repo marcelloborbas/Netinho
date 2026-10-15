@@ -5,6 +5,17 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
 
+// Test the pages without the full-document shell, which cannot mount inside a div.
+vi.mock("@/routes/__root", async () => {
+  const { createRootRouteWithContext, Outlet } = await import("@tanstack/react-router");
+  const { QueryClientProvider } = await import("@tanstack/react-query");
+  const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+    component: () => <QueryClientProvider client={Route.useRouteContext().queryClient}><Outlet /></QueryClientProvider>,
+    notFoundComponent: () => <p>Página não encontrada</p>,
+  });
+  return { Route };
+});
+
 function renderAt(path: string) {
   const queryClient = new QueryClient();
   const router = createRouter({
