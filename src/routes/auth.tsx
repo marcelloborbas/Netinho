@@ -159,19 +159,41 @@ function AuthPage() {
     }
   }
 
-  async function loginAdminGoogle() {
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [resetMode, setResetMode] = useState(false);
+
+  async function loginAdminEmail(e: FormEvent) {
+    e.preventDefault();
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin + "/auth" },
-      });
-      if (error) toast.error("Não foi possível entrar com Google: " + error.message);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao iniciar login com Google.");
-    } finally {
-      setBusy(false);
-    }
+      const { data, error } = await supabase.auth.signInWithPassword({ email: adminEmail.trim().toLowerCase(), password: adminPassword });
+      if (error || !data.user) { toast.error("E-mail ou senha inválidos."); return; }
+      const { data: roles, error: roleError } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+      if (roleError || !roles?.some((item) => item.role === "admin")) {
+        await supabase.auth.signOut();
+        toast.error("Esta conta não possui permissão de administrador.");
+        return;
+      }
+      setAdminPassword("");
+      await refreshMe();
+      toast.success("Administrador autenticado.");
+      navigate({ to: "/admin" });
+    } catch (err) { toast.error(err instanceof Error ? err.message : "Não foi possível entrar."); }
+    finally { setBusy(false); }
+  }
+
+  async function recoverAdminPassword(e: FormEvent) {
+    e.preventDefault();
+    if (!adminEmail.trim()) { toast.error("Informe seu e-mail."); return; }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(adminEmail.trim().toLowerCase(), { redirectTo: window.location.origin + "/auth" });
+      if (error) { toast.error("Não foi possível solicitar a recuperação: " + error.message); return; }
+      toast.success("Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.");
+      setResetMode(false);
+    } catch (err) { toast.error(err instanceof Error ? err.message : "Falha ao solicitar recuperação."); }
+    finally { setBusy(false); }
   }
 
   async function installApp() {
@@ -260,12 +282,23 @@ function AuthPage() {
               <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
             </div>
           ) : (
-            <div className="space-y-2">
-              <Button type="button" variant="outline" disabled={busy} className="h-12 w-full text-base font-semibold" onClick={loginAdminGoogle}>
-                Entrar como administrador com Google
+            <form onSubmit={resetMode ? recoverAdminPassword : loginAdminEmail} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="admin-email">E-mail do administrador</Label>
+                <Input id="admin-email" type="email" required autoComplete="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="seuemail@exemplo.com" />
+              </div>
+              {!resetMode && <div className="space-y-1.5">
+                <Label htmlFor="admin-password">Senha</Label>
+                <Input id="admin-password" type="password" required autoComplete="current-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="Sua senha" />
+              </div>}
+              <Button type="submit" disabled={busy} className="h-12 w-full font-semibold">
+                {busy ? "Aguarde..." : resetMode ? "Enviar recuperação de senha" : "Entrar como administrador"}
               </Button>
+              <button type="button" className="w-full text-center text-sm text-primary underline-offset-4 hover:underline" onClick={() => setResetMode(!resetMode)}>
+                {resetMode ? "Voltar ao login" : "Esqueci minha senha"}
+              </button>
               {me && <p className="text-xs text-muted-foreground">A conta conectada não possui permissão de administrador.</p>}
-            </div>
+            </form>
           )}
         </div>
 
