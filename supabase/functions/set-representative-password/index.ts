@@ -19,7 +19,7 @@ serve(async (req) => {
     const { data: role, error: roleError } = await admin.from("user_roles").select("role").eq("user_id", identity.user.id).eq("role", "admin").maybeSingle();
     if (roleError || !role) return reply(403, { error: "Apenas administrador" });
     const { slug, password } = await req.json();
-    if (typeof slug !== "string" || !allowed.has(slug) || typeof password !== "string" || password.length < 8 || password.length > 128) return reply(400, { error: "Representante ou senha inválidos" });
+    if (typeof slug !== "string" || !allowed.has(slug) || typeof password !== "string" || !/^\d{8}$/.test(password)) return reply(400, { error: "Representante ou senha inválidos" });
     const email = emailFor(slug);
     const { data: existing, error: lookupError } = await admin.from("commercial_representatives").select("id,user_id").eq("email", email).maybeSingle();
     if (lookupError) return reply(500, { error: "Não foi possível consultar representante" });
