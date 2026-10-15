@@ -284,7 +284,7 @@ function AuthPage() {
                     <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
                   <span className="shrink-0 text-2xl font-bold text-amber-400">→</span>
                 </button>
-                {canEditRepresentatives && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/admin", hash: "representantes" })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
+                {canEditRepresentatives && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/editar-representante/$slug", params: { slug: rep.id } })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
                 </div>
               ))}
             </div>
