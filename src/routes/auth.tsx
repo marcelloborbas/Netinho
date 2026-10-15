@@ -64,7 +64,13 @@ function AuthPage() {
     setPressedRepresentative(id);
     window.setTimeout(() => navigate({ to: path }), 150);
   }
-  const { data: me } = useQuery(meQuery);
+  const { data: me, refetch: refreshMe } = useQuery(meQuery);
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      void refreshMe();
+    });
+    return () => listener.subscription.unsubscribe();
+  }, [refreshMe]);
   const [accessType, setAccessType] = useState<AccessType | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -153,6 +159,21 @@ function AuthPage() {
     }
   }
 
+  async function loginAdminGoogle() {
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/auth" },
+      });
+      if (error) toast.error("Não foi possível entrar com Google: " + error.message);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao iniciar login com Google.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function installApp() {
     if (!deferredPrompt) {
       toast.info("No celular, use o menu do navegador e escolha “Adicionar à tela inicial” ou “Instalar aplicativo”.");
@@ -230,6 +251,23 @@ function AuthPage() {
             </div>
           )}
         </form>
+
+        <div className="mt-5 rounded-xl border border-amber-400/30 bg-secondary/30 p-4">
+          <p className="mb-3 text-base font-bold text-amber-400">Acesso administrativo</p>
+          {me?.isAdmin ? (
+            <div className="space-y-3">
+              <p className="text-sm">Administrador conectado: {me.email}</p>
+              <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Button type="button" variant="outline" disabled={busy} className="h-12 w-full text-base font-semibold" onClick={loginAdminGoogle}>
+                Entrar como administrador com Google
+              </Button>
+              {me && <p className="text-xs text-muted-foreground">A conta conectada não possui permissão de administrador.</p>}
+            </div>
+          )}
+        </div>
 
         <button type="button" onClick={installApp} disabled={installing}
           className="mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition hover:border-primary/70 hover:bg-primary/15 sm:px-6 sm:py-6">
