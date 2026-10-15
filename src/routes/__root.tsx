@@ -57,6 +57,41 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
+    // Som curto para ícones e botões, apenas após interação real do usuário.
+    // Delegação cobre também botões renderizados depois da navegação.
+    let audioContext: AudioContext | null = null;
+    const onClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const control = target.closest("button, a, [role='button']");
+      if (!control || control.hasAttribute("disabled") || control.getAttribute("aria-disabled") === "true") return;
+      try {
+        const AudioContextClass = window.AudioContext;
+        if (!AudioContextClass) return;
+        audioContext ??= new AudioContextClass();
+        if (audioContext.state === "suspended") void audioContext.resume();
+        const start = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(700, start);
+        oscillator.frequency.exponentialRampToValueAtTime(480, start + 0.065);
+        volume.gain.setValueAtTime(0.025, start);
+        volume.gain.exponentialRampToValueAtTime(0.001, start + 0.085);
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(start);
+        oscillator.stop(start + 0.09);
+      } catch { /* Áudio opcional: nunca bloqueia os cliques. */ }
+    };
+    document.addEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("click", onClick);
+      if (audioContext) void audioContext.close();
+    };
+  }, []);
+
+  useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
