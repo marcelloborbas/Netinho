@@ -127,7 +127,7 @@ function AuthPage() {
       if (accessType === "Representante Comercial") {
         const rep = REPRESENTATIVES.find((r) => r.id === selectedRepresentative);
         if (!rep) { toast.error("Selecione um representante cadastrado."); return; }
-        if (!password) { toast.error("Informe a senha fornecida pelo administrador."); return; }
+        if (!/^\d{8}$/.test(password)) { toast.error("Digite a senha de 8 números fornecida pelo administrador."); return; }
         const representativeEmail = `rep-${rep.id}@representantes.netinho.example.com`;
         const auth = await supabase.auth.signInWithPassword({ email: representativeEmail, password });
         if (auth.error || !auth.data.user) { toast.error("Senha inválida ou acesso não configurado pelo administrador."); return; }
@@ -324,8 +324,8 @@ function AuthPage() {
           {accessType === "Representante Comercial" && selectedRepresentative && (
             <div className="space-y-3 rounded-xl border border-primary/40 bg-secondary/30 p-4">
               <p className="font-semibold">Acesso de {REPRESENTATIVES.find(r => r.id === selectedRepresentative)?.name}</p>
-              <p className="text-xs text-muted-foreground">Informe a senha definida pelo administrador para este representante.</p>
-              <div className="space-y-1"><Label htmlFor="representative-password">Senha</Label><Input id="representative-password" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
+              <p className="text-xs text-muted-foreground">Informe a senha de 8 números definida pelo administrador para este representante.</p>
+              <div className="space-y-1"><Label htmlFor="representative-password">Senha</Label><Input id="representative-password" type="password" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
               <Button type="submit" disabled={busy} className="w-full">{busy ? "Verificando..." : "Entrar como representante"}</Button>
             </div>
           )}
