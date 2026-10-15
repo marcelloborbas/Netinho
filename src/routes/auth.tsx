@@ -181,23 +181,11 @@ function AuthPage() {
                 {me?.isAdmin && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/admin", hash: "representantes" })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
                 </div>
               ))}
-              <p className="text-xs text-muted-foreground">O acesso comercial requer autenticação e autorização da administração.</p>
             </div>
           )}
           {accessType && accessType !== "Representante Comercial" && (
             <div className="space-y-4 border-t pt-4">
               <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
-              {accessType === "Representante Comercial" && (
-                <div className="space-y-2">
-                  <Label htmlFor="representative">Selecione seu nome</Label>
-                  <select id="representative" required value={selectedRepresentative} onChange={(e) => setSelectedRepresentative(e.target.value)} className="h-12 w-full rounded-lg border bg-background px-3 text-foreground">
-                    <option value="">Escolha um representante</option>
-                    {REPRESENTATIVES.map((rep) => <option key={rep.id} value={rep.id}>{rep.name} — {rep.region}</option>)}
-                  </select>
-                  {selectedRepresentative && <button type="button" onClick={() => navigate({ to: "/representante" })} className="w-full rounded-lg border border-primary/40 bg-primary/10 p-3 text-left text-sm font-semibold text-primary">Ver dados cadastrados e mapa de atuação →</button>}
-                  <p className="text-xs text-muted-foreground">Representantes precisam confirmar sua identidade com e-mail e senha. O cadastro e a autorização são feitos pelo administrador.</p>
-                </div>
-              )}
               {accessType !== "Representante Comercial" && <div className="space-y-1.5">
                 <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
                 <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
