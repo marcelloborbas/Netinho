@@ -57,10 +57,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
-    // Som curto para ícones e botões, apenas após interação real do usuário.
-    // Delegação cobre também botões renderizados depois da navegação.
+    // O pointerdown ocorre antes da navegação e preserva a ativação de áudio no celular.
     let audioContext: AudioContext | null = null;
-    const onClick = (event: MouseEvent) => {
+    const play = (event: PointerEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
       const control = target.closest("button, a, [role='button']");
@@ -69,24 +68,26 @@ function RootComponent() {
         const AudioContextClass = window.AudioContext;
         if (!AudioContextClass) return;
         audioContext ??= new AudioContextClass();
-        if (audioContext.state === "suspended") void audioContext.resume();
-        const start = audioContext.currentTime;
-        const oscillator = audioContext.createOscillator();
-        const volume = audioContext.createGain();
-        oscillator.type = "sine";
-        oscillator.frequency.setValueAtTime(700, start);
-        oscillator.frequency.exponentialRampToValueAtTime(480, start + 0.065);
-        volume.gain.setValueAtTime(0.025, start);
-        volume.gain.exponentialRampToValueAtTime(0.001, start + 0.085);
-        oscillator.connect(volume);
-        volume.connect(audioContext.destination);
-        oscillator.start(start);
-        oscillator.stop(start + 0.09);
-      } catch { /* Áudio opcional: nunca bloqueia os cliques. */ }
+        const ctx = audioContext;
+        if (ctx.state !== "running") void ctx.resume();
+        const t = ctx.currentTime + 0.005;
+        const tone = ctx.createOscillator();
+        const envelope = ctx.createGain();
+        tone.type = "triangle";
+        tone.frequency.setValueAtTime(1100, t);
+        tone.frequency.exponentialRampToValueAtTime(620, t + 0.105);
+        envelope.gain.setValueAtTime(0.0001, t);
+        envelope.gain.exponentialRampToValueAtTime(0.14, t + 0.012);
+        envelope.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+        tone.connect(envelope);
+        envelope.connect(ctx.destination);
+        tone.start(t);
+        tone.stop(t + 0.16);
+      } catch { /* A falta de suporte a áudio não impede a navegação. */ }
     };
-    document.addEventListener("click", onClick);
+    document.addEventListener("pointerdown", play, true);
     return () => {
-      document.removeEventListener("click", onClick);
+      document.removeEventListener("pointerdown", play, true);
       if (audioContext) void audioContext.close();
     };
   }, []);
