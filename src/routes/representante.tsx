@@ -92,7 +92,7 @@ function RepresentativePage() {
       <section className="surface-card space-y-4 p-5">
         <h2 className="text-xl font-bold">Mapa de atuação</h2>
         <p className="text-sm text-muted-foreground">Brasil → São Paulo → municípios atendidos</p>
-        <div className="overflow-hidden rounded-xl border bg-white"><img src="/mapa-abdenego.webp" alt="Mapa de São Paulo com marcações vermelhas dos municípios de atuação de Abdenego Eugênio" className="block h-auto w-full" loading="lazy" /></div>
+        <div className="overflow-hidden rounded-xl border bg-white"><img src="/Mapa%20Infogr%C3%A1fico%20dos%20Munic%C3%ADpios%20Paulistas%20Abdnego.webp" alt="Mapa de São Paulo com marcações vermelhas dos municípios de atuação de Abdenego Eugênio" className="block h-auto w-full" loading="lazy" /></div>
         <div className="grid gap-2 sm:grid-cols-3">
           {cities.map(city => <div key={city} className="flex items-start gap-2 rounded-lg border p-3 text-sm"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />{city}</div>)}
         </div>
