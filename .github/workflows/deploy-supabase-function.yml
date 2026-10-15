@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      PROJECT_REF: oavnxnzhrecbmmthtspf
+      PROJECT_REF: ajopipjydbphhwgtjfki
     steps:
       - name: Verificar credencial de implantacao
         run: |
@@ -33,4 +33,4 @@ jobs:
       - name: Implantar funcao de senha
         run: supabase functions deploy set-representative-password --project-ref "$PROJECT_REF"
 
-# Nova tentativa automatica apos configurar o token.
+# Implantar no mesmo projeto configurado em VITE_SUPABASE_URL.
