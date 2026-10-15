@@ -32,3 +32,5 @@ jobs:
           version: latest
       - name: Implantar funcao de senha
         run: supabase functions deploy set-representative-password --project-ref "$PROJECT_REF"
+
+# Nova tentativa automatica apos configurar o token.
