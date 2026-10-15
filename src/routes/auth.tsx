@@ -10,7 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProfileAvatar, type AccessType } from "@/components/ProfileAvatar";
 
 const PROFILE_KEY = "netinho-vendedor";
-const REPRESENTATIVES = [{ id: "abdenego-eugenio", name: "Abdenego Eugênio", region: "São José dos Campos e Litoral Norte · Vale do Paraíba" }] as const;
+const REPRESENTATIVES = [
+  { id: "abdenego-eugenio", name: "Abdenego Eugênio", region: "Vale do Paraíba e Litoral Norte", path: "/representante" },
+  { id: "livaldo-souza-silva", name: "Livaldo Souza Silva", region: "Todo o Brasil · Teste", path: "/representante-livaldo" },
+] as const;
 type SellerProfile = { name: string; phone: string; email: string; accessType: AccessType };
 
 const ACCESS_OPTIONS: { value: AccessType; description: string }[] = [
@@ -149,7 +152,7 @@ function AuthPage() {
             {ACCESS_OPTIONS.map((option) => {
               const active = accessType === option.value;
               return (
-                <button key={option.value} type="button" onClick={() => option.value === "Representante Comercial" ? navigate({ to: "/representante" }) : setAccessType(option.value)}
+                <button key={option.value} type="button" onClick={() => setAccessType(option.value)}
                   className={active
                     ? "rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20"
                     : "rounded-xl border border-border bg-secondary/40 p-4 text-left hover:border-primary/50"}>
@@ -161,6 +164,20 @@ function AuthPage() {
             })}
           </div>
 
+          {accessType === "Representante Comercial" && (
+            <div className="space-y-3 border-t pt-4">
+              <p className="font-semibold text-amber-400">Selecione o Representante Comercial</p>
+              {REPRESENTATIVES.map(rep => (
+                <button key={rep.id} type="button" onClick={() => navigate({ to: rep.path })}
+                  className="flex w-full items-center justify-between rounded-xl border border-amber-400/40 bg-secondary/30 p-4 text-left hover:border-amber-400">
+                  <span><span className="block font-bold text-amber-400">{rep.name}</span>
+                    <span className="text-xs text-muted-foreground">{rep.region}</span></span>
+                  <span className="text-amber-400">→</span>
+                </button>
+              ))}
+              <p className="text-xs text-muted-foreground">Visualização de perfil. Acesso comercial exige autorização.</p>
+            </div>
+          )}
           {accessType && accessType !== "Representante Comercial" && (
             <div className="space-y-4 border-t pt-4">
               <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
