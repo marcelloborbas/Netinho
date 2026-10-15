@@ -80,36 +80,6 @@ function AuthPage() {
   const [selectedRepresentative, setSelectedRepresentative] = useState("");
   const [password, setPassword] = useState("");
   const [installing, setInstalling] = useState(false);
-  const [soundStatus, setSoundStatus] = useState("");
-  async function testSound() {
-    try {
-      const AudioClass = window.AudioContext;
-      if (!AudioClass) { setSoundStatus("Este navegador não oferece áudio Web Audio."); return; }
-      const ctx = new AudioClass();
-      await ctx.resume();
-      if (ctx.state !== "running") { setSoundStatus("Áudio bloqueado pelo navegador."); return; }
-      const t = ctx.currentTime + 0.03;
-      [660, 880].forEach((frequency, index) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        const start = t + index * 0.16;
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(frequency, start);
-        gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(0.2, start + 0.025);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(start);
-        osc.stop(start + 0.23);
-      });
-      setSoundStatus("Som de teste enviado. Se não ouviu, verifique se a aba do navegador está silenciada e a saída de áudio do Windows.");
-      window.setTimeout(() => { void ctx.close(); }, 850);
-    } catch (error) {
-      setSoundStatus("Não foi possível reproduzir: " + (error instanceof Error ? error.message : "erro de áudio"));
-    }
-  }
-  const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -381,10 +351,6 @@ function AuthPage() {
           )}
         </form>
 
-        <div className="mt-5 rounded-xl border border-primary/30 p-3 text-center">
-          <button type="button" onClick={testSound} data-sound-test="true" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-bold text-primary-foreground transition hover:scale-105 active:scale-95">🔊 Testar som dos ícones</button>
-          {soundStatus && <p role="status" className="mt-2 text-xs text-muted-foreground">{soundStatus}</p>}
-        </div>
         <button type="button" onClick={installApp} disabled={installing}
           className="group mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/70 hover:bg-primary/15 active:scale-[0.97] motion-reduce:transform-none sm:px-6 sm:py-6">
           <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-transparent shadow-glow transition-transform duration-300 group-hover:scale-110 group-active:rotate-[-8deg] motion-reduce:transform-none sm:h-20 sm:w-20">
