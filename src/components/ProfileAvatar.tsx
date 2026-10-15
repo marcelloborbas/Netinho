@@ -14,8 +14,8 @@ const ICONS = {
 export function ProfileAvatar({ type, className }: { type: AccessType; className?: string }) {
   const Icon = ICONS[type];
   return (
-    <span className={cn("flex shrink-0 items-center justify-center rounded-full border-2 border-primary/30 bg-primary/10 text-primary", className)}>
-      <Icon className="h-1/2 w-1/2" strokeWidth={2.2} />
+    <span className={cn("flex shrink-0 items-center justify-center rounded-full border-2 border-primary/30 bg-transparent text-primary transition-transform duration-300 ease-out motion-reduce:transition-none", className)}>
+      <Icon className="h-1/2 w-1/2 transition-transform duration-300 group-hover:rotate-12 group-active:scale-75 motion-reduce:transition-none" strokeWidth={2.2} />
     </span>
   );
 }
