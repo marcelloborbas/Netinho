@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserRound, Phone, Mail, Pencil } from "lucide-react";
+import { UserRound, Phone, Mail, Pencil, Settings } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { meQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
@@ -160,6 +160,7 @@ function AuthPage() {
     }
   }
 
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [resetMode, setResetMode] = useState(false);
@@ -250,7 +251,37 @@ function AuthPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-5 py-8">
       <div className="w-full max-w-lg">
-        <Logo size="lg" showPhone className="mb-8 justify-center" />
+        <div className="mb-8 flex items-center justify-center gap-3">
+          <Logo size="lg" showPhone />
+          <button type="button" onClick={() => setShowAdminPanel((open) => !open)} aria-label="Acesso administrativo" title="Modo administrativo" aria-expanded={showAdminPanel} className="rounded-full border border-zinc-600/60 bg-zinc-800/70 p-3 text-zinc-400 transition hover:bg-zinc-700 hover:text-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-400">
+            <Settings className="h-6 w-6" />
+          </button>
+        </div>
+        {showAdminPanel && (
+          <div className="mb-5 rounded-xl border border-amber-400/30 bg-secondary/30 p-4">
+            <p className="mb-3 text-base font-bold text-amber-400">Acesso administrativo</p>
+            {updatingPassword ? (
+              <form onSubmit={saveNewPassword} className="space-y-3">
+                <Label htmlFor="new-admin-password">Defina sua nova senha</Label>
+                <Input id="new-admin-password" type="password" minLength={8} required autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Pelo menos 8 caracteres" />
+                <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar nova senha"}</Button>
+              </form>
+            ) : me?.isAdmin ? (
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3"><p className="min-w-0 break-all text-sm">Administrador conectado: {me.email}</p><Button type="button" variant="outline" size="sm" disabled={busy} onClick={logoutAdmin}>Sair</Button></div>
+                <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
+              </div>
+            ) : (
+              <form onSubmit={resetMode ? recoverAdminPassword : loginAdminEmail} className="space-y-3">
+                <div className="space-y-1.5"><Label htmlFor="admin-email">E-mail do administrador</Label><Input id="admin-email" type="email" required autoComplete="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="seuemail@exemplo.com" /></div>
+                {!resetMode && <div className="space-y-1.5"><Label htmlFor="admin-password">Senha</Label><Input id="admin-password" type="password" required autoComplete="current-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="Sua senha" /></div>}
+                <Button type="submit" disabled={busy} className="h-12 w-full font-semibold">{busy ? "Aguarde..." : resetMode ? "Enviar recuperação de senha" : "Entrar como administrador"}</Button>
+                <button type="button" className="w-full text-center text-sm text-primary underline-offset-4 hover:underline" onClick={() => setResetMode(!resetMode)}>{resetMode ? "Voltar ao login" : "Esqueci minha senha"}</button>
+                {me && <p className="text-xs text-muted-foreground">A conta conectada não possui permissão de administrador.</p>}
+              </form>
+            )}
+          </div>
+        )}
         <form onSubmit={submit} className="surface-card space-y-5 p-6">
           <div>
             <h1 className="mt-1 text-2xl font-bold">Qual seu perfil ?</h1>
@@ -311,40 +342,6 @@ function AuthPage() {
             </div>
           )}
         </form>
-
-        <div className="mt-5 rounded-xl border border-amber-400/30 bg-secondary/30 p-4">
-          <p className="mb-3 text-base font-bold text-amber-400">Acesso administrativo</p>
-          {updatingPassword ? (
-            <form onSubmit={saveNewPassword} className="space-y-3">
-              <Label htmlFor="new-admin-password">Defina sua nova senha</Label>
-              <Input id="new-admin-password" type="password" minLength={8} required autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Pelo menos 8 caracteres" />
-              <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar nova senha"}</Button>
-            </form>
-          ) : me?.isAdmin ? (
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-3"><p className="min-w-0 break-all text-sm">Administrador conectado: {me.email}</p><Button type="button" variant="outline" size="sm" disabled={busy} onClick={logoutAdmin}>Sair</Button></div>
-              <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
-            </div>
-          ) : (
-            <form onSubmit={resetMode ? recoverAdminPassword : loginAdminEmail} className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="admin-email">E-mail do administrador</Label>
-                <Input id="admin-email" type="email" required autoComplete="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="seuemail@exemplo.com" />
-              </div>
-              {!resetMode && <div className="space-y-1.5">
-                <Label htmlFor="admin-password">Senha</Label>
-                <Input id="admin-password" type="password" required autoComplete="current-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="Sua senha" />
-              </div>}
-              <Button type="submit" disabled={busy} className="h-12 w-full font-semibold">
-                {busy ? "Aguarde..." : resetMode ? "Enviar recuperação de senha" : "Entrar como administrador"}
-              </Button>
-              <button type="button" className="w-full text-center text-sm text-primary underline-offset-4 hover:underline" onClick={() => setResetMode(!resetMode)}>
-                {resetMode ? "Voltar ao login" : "Esqueci minha senha"}
-              </button>
-              {me && <p className="text-xs text-muted-foreground">A conta conectada não possui permissão de administrador.</p>}
-            </form>
-          )}
-        </div>
 
         <button type="button" onClick={installApp} disabled={installing}
           className="mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition hover:border-primary/70 hover:bg-primary/15 sm:px-6 sm:py-6">
