@@ -78,7 +78,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [selectedRepresentative, setSelectedRepresentative] = useState("");
-  const [password, setPassword] = useState("");
+
   const [installing, setInstalling] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -127,20 +127,12 @@ function AuthPage() {
       if (accessType === "Representante Comercial") {
         const rep = REPRESENTATIVES.find((r) => r.id === selectedRepresentative);
         if (!rep) { toast.error("Selecione um representante cadastrado."); return; }
-        if (!/^\d{8}$/.test(password)) { toast.error("Digite a senha de 8 números fornecida pelo administrador."); return; }
-        const representativeEmail = `rep-${rep.id}@representantes.netinho.example.com`;
-        const auth = await supabase.auth.signInWithPassword({ email: representativeEmail, password });
-        if (auth.error || !auth.data.user) { toast.error("Senha inválida ou acesso não configurado pelo administrador."); return; }
-        const result = await supabase.from("commercial_representatives" as never).select("full_name,active,user_id").eq("user_id", auth.data.user.id).maybeSingle();
-        const record = result.data as { full_name: string; active: boolean; user_id: string } | null;
-        if (result.error || !record?.active || record.full_name.toLocaleLowerCase("pt-BR") !== rep.name.toLocaleLowerCase("pt-BR")) {
-          await supabase.auth.signOut();
-          setAccessType("Visitante"); setName(""); setPassword("");
-          toast.error("Representante não autorizado. Continue como Visitante.");
-          return;
-        }
-        localStorage.setItem(PROFILE_KEY, JSON.stringify({ accessType, name: record.full_name, phone: "", email: representativeEmail }));
-        navigate({ to: "/catalogo" });
+        sessionStorage.setItem("netinho-google-representante", rep.id);
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: window.location.origin + "/auth", queryParams: { prompt: "select_account" } },
+        });
+        if (error) toast.error("Não foi possível iniciar o acesso Google: " + error.message);
         return;
       }
       const profile: SellerProfile = {
@@ -160,6 +152,36 @@ function AuthPage() {
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem("netinho-google-representante");
+    if (!pending) return;
+    let cancelled = false;
+    async function completeGoogleLogin() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (cancelled || !user) return;
+      sessionStorage.removeItem("netinho-google-representante");
+      const rep = REPRESENTATIVES.find(r => r.id === pending);
+      const googleIdentity = user.identities?.some(identity => identity.provider === "google");
+      if (!rep || !googleIdentity || !user.email) {
+        await supabase.auth.signOut();
+        toast.error("Entre com uma conta Google autorizada.");
+        return;
+      }
+      const { data, error } = await supabase.from("commercial_representatives" as never)
+        .select("full_name,email,active").eq("email", user.email.toLowerCase()).eq("active", true).maybeSingle();
+      const approved = data as { full_name: string; email: string; active: boolean } | null;
+      if (error || !approved || approved.full_name.toLocaleLowerCase("pt-BR") !== rep.name.toLocaleLowerCase("pt-BR")) {
+        await supabase.auth.signOut();
+        toast.error("Google não autorizado para este representante. Peça ao administrador para cadastrar e ativar seu e-mail.");
+        return;
+      }
+      localStorage.setItem(PROFILE_KEY, JSON.stringify({ accessType: "Representante Comercial", name: approved.full_name, phone: "", email: approved.email }));
+      navigate({ to: "/catalogo" });
+    }
+    void completeGoogleLogin();
+    return () => { cancelled = true; };
+  }, [navigate]);
 
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
@@ -324,9 +346,8 @@ function AuthPage() {
           {accessType === "Representante Comercial" && selectedRepresentative && (
             <div className="space-y-3 rounded-xl border border-primary/40 bg-secondary/30 p-4">
               <p className="font-semibold">Acesso de {REPRESENTATIVES.find(r => r.id === selectedRepresentative)?.name}</p>
-              <p className="text-xs text-muted-foreground">Informe a senha de 8 números definida pelo administrador para este representante.</p>
-              <div className="space-y-1"><Label htmlFor="representative-password">Senha</Label><Input id="representative-password" type="password" inputMode="numeric" maxLength={8} pattern="[0-9]{8}" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
-              <Button type="submit" disabled={busy} className="w-full">{busy ? "Verificando..." : "Entrar como representante"}</Button>
+              <p className="text-xs text-muted-foreground">Use a conta Google autorizada pelo administrador para fazer pedidos.</p>
+              <Button type="submit" disabled={busy} className="w-full">{busy ? "Aguarde..." : "Entrar com Google"}</Button>
             </div>
           )}
           {accessType && accessType !== "Representante Comercial" && (
