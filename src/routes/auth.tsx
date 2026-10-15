@@ -209,6 +209,18 @@ function AuthPage() {
     finally { setBusy(false); }
   }
 
+  async function logoutAdmin() {
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) { toast.error("Não foi possível sair: " + error.message); return; }
+      await refreshMe();
+      toast.success("Administrador desconectado.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível sair.");
+    } finally { setBusy(false); }
+  }
+
   async function recoverAdminPassword(e: FormEvent) {
     e.preventDefault();
     if (!adminEmail.trim()) { toast.error("Informe seu e-mail."); return; }
@@ -310,7 +322,7 @@ function AuthPage() {
             </form>
           ) : me?.isAdmin ? (
             <div className="space-y-3">
-              <p className="text-sm">Administrador conectado: {me.email}</p>
+              <div className="flex flex-wrap items-center justify-between gap-3"><p className="min-w-0 break-all text-sm">Administrador conectado: {me.email}</p><Button type="button" variant="outline" size="sm" disabled={busy} onClick={logoutAdmin}>Sair</Button></div>
               <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
             </div>
           ) : (
