@@ -171,6 +171,7 @@ function AuthPage() {
                     <option value="">Escolha um representante</option>
                     {REPRESENTATIVES.map((rep) => <option key={rep.id} value={rep.id}>{rep.name} — {rep.region}</option>)}
                   </select>
+                  {selectedRepresentative && <button type="button" onClick={() => navigate({ to: "/representante" })} className="w-full rounded-lg border border-primary/40 bg-primary/10 p-3 text-left text-sm font-semibold text-primary">Ver dados cadastrados e mapa de atuação →</button>}
                   <p className="text-xs text-muted-foreground">Representantes precisam confirmar sua identidade com e-mail e senha. O cadastro e a autorização são feitos pelo administrador.</p>
                 </div>
               )}
