@@ -79,3 +79,12 @@ O proprietário autorizou preços pesquisados na internet. Foram confirmados som
 - Página inicial com atalhos dentro de Vender e logos FCO/HD com links diretos dentro de Ver catálogos. Tela conferida em 360 × 640 (9:16), sem rolagem horizontal e com os dois blocos visíveis.
 - Prévia interativa em `/previa.html`, com celular, tablet e laptop; a moldura abre a página inicial real.
 - Revalidação: 18 testes frontend, TypeScript e build aprovados.
+
+## PDFs restritos ao login — 17/10/2026
+
+- Revisão `5882ce6` enviada ao GitHub e publicada; Lovable confirmou “Seu site foi atualizado”. Conferência real da migração: classes presentes, tabela de comissões presente, RLS ativo e leitura direta negada a authenticated.
+- Botões de PDF retirados da entrada. Downloads mantidos dentro do catálogo autenticado.
+- Criado bucket privado `catalogs` e enviadas as duas versões FCO (22 MB) e HD (14,4 MB). Migração `20261017000200_private_catalog_downloads.sql` aplicada no banco real; leitura apenas por contas autenticadas não anônimas, escrita administrativa.
+- PDFs removidos de `public/catalog`; URLs antigas retornaram 404 na validação local. O componente verifica a conta e baixa usando o cliente autenticado do Storage.
+- 21 testes, TypeScript e build passaram. A sessão do novo navegador foi redirecionada ao login; download real nessa sessão não foi executado. O teste de autenticação verifica o bloqueio sem login e a chamada ao armazenamento privado com conta autenticada.
+

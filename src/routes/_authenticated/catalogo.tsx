@@ -1,3 +1,4 @@
+import { CatalogDownload } from "@/components/CatalogDownload";
 import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -114,7 +115,7 @@ function Catalog() {
         <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
           <div className="flex flex-wrap justify-between gap-5">
             <div>
-              <PartnerLogos />
+              <PartnerLogos downloads />
               <p className="official-brands mt-5">Representante Oficial das Marcas</p>
               <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
                 A peça certa. Sem perder tempo.
@@ -486,14 +487,11 @@ function ProductCard({
             </a>
           ))}
         {p.catalog_page && (
-          <a
+          <CatalogDownload
+            brand="HD"
+            page={p.catalog_page}
             className="mb-3 text-xs text-muted-foreground underline"
-            href={`/catalog/hd-catalogo.pdf#page=${p.catalog_page}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Ver no catálogo · pág. {p.catalog_page}
-          </a>
+          />
         )}
         <div className="mt-auto border-t pt-4">
           {canSell && (

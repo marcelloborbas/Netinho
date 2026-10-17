@@ -40,4 +40,6 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [x] Região por representante e mapa de Abdenego.
 - [x] Testes frontend, TypeScript, build e validação de banco descartável.
 - [x] Aplicar a migração de classes/comissões no ambiente real.
-- [ ] Publicar a revisão compacta 9:16 no Lovable.
+- [x] Publicar a revisão compacta 9:16 no Lovable.
+
+- [x] Retirar PDFs da entrada e migrar arquivos para Storage privado com login.

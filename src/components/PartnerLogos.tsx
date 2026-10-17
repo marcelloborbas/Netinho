@@ -1,5 +1,12 @@
+import { CatalogDownload } from "@/components/CatalogDownload";
 import { Link } from "@tanstack/react-router";
-export function PartnerLogos({ compact = false }: { compact?: boolean }) {
+export function PartnerLogos({
+  compact = false,
+  downloads = false,
+}: {
+  compact?: boolean;
+  downloads?: boolean;
+}) {
   return (
     <div
       className={compact ? "partner-logos partner-logos-compact" : "partner-logos"}
@@ -20,15 +27,7 @@ export function PartnerLogos({ compact = false }: { compact?: boolean }) {
           >
             <img src={s.image} alt={compact ? "" : s.name} />
           </Link>
-          {!compact && (
-            <a
-              href={`/catalog/${s.brand.toLowerCase()}-catalogo.pdf`}
-              download
-              className="supplier-download"
-            >
-              Baixar PDF {s.brand}
-            </a>
-          )}
+          {!compact && downloads && <CatalogDownload brand={s.brand} />}
         </div>
       ))}
     </div>
