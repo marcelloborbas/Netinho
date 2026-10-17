@@ -1,16 +1,28 @@
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mkdirSync, writeFileSync } from "node:fs";
-const state = vi.hoisted(() => ({ seller: false, customerEnabled: false }));
+const state = vi.hoisted(() => ({
+  seller: false,
+  customerEnabled: false,
+  search: {} as { modo?: string; marca?: string },
+}));
 vi.mock("@tanstack/react-router", () => ({
-  createFileRoute: () => (options: unknown) => ({ options }),
+  createFileRoute: () => (options: unknown) => ({ options, useSearch: () => state.search }),
   Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
 }));
 vi.mock("@tanstack/react-query", () => ({
   queryOptions: (options: unknown) => options,
   useQuery: (options: { queryKey: string[]; enabled?: boolean }) => {
     const key = options.queryKey[0];
-    if (key === "access") return { data: { can_sell: state.seller, level: state.seller ? 2 : 3 } };
+    if (key === "access")
+      return {
+        data: {
+          can_sell: state.seller,
+          level: state.seller ? 2 : 3,
+          name: "Marcello",
+          email: "test@example.com",
+        },
+      };
     if (key === "customers") {
       state.customerEnabled = options.enabled === true;
       return { data: [] };
@@ -39,16 +51,53 @@ vi.mock("@tanstack/react-query", () => ({
   },
 }));
 import { Route } from "@/routes/_authenticated/catalogo";
+import { Route as HomeRoute } from "@/routes/index";
 const Catalog = Route.options.component!;
-afterEach(cleanup);
+const Home = HomeRoute.options.component!;
+afterEach(() => {
+  cleanup();
+  state.search = {};
+});
 describe("catalog access presentation", () => {
+  it("offers selling and supplier catalogs after login", () => {
+    state.seller = true;
+    render(<Home />);
+    expect(screen.getByRole("heading", { name: /Sr. Marcello/ })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /Ver catálogos/ }));
+    expect(screen.getByRole("img", { name: "FCO Automotive" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "HD Embreagens" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /^Vender/ }));
+    expect(screen.getByRole("heading", { name: "Editar e revisar" })).toBeVisible();
+    expect(screen.getByText("netinhoautoparts@gmail.com")).toBeVisible();
+  });
+  it("does not give a visitor sales tools when choosing Vender", () => {
+    state.seller = false;
+    render(<Home />);
+    fireEvent.click(screen.getByRole("button", { name: /^Vender/ }));
+    expect(screen.queryByRole("heading", { name: "Montar venda" })).not.toBeInTheDocument();
+    expect(screen.getByText(/acesso a vendas precisa ser autorizado/)).toBeVisible();
+  });
+  it("keeps supplier consultation free of sales controls even for an authorized seller", () => {
+    state.seller = true;
+    state.search = { modo: "consulta", marca: "HD" };
+    render(<Catalog />);
+    expect(screen.queryByText(/1\.234,56/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("complementary", { name: "Resumo do pedido" }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "FCO-TESTE" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "K6246.HD" })).toBeVisible();
+    expect(state.customerEnabled).toBe(false);
+  });
   it("never renders prices or order controls for visitors, even if a response accidentally contains prices", () => {
     state.seller = false;
     const { container } = render(<Catalog />);
     expect(screen.queryByText(/1\.234,56/)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Adicionar ao pedido" })).not.toBeInTheDocument();
     expect(state.customerEnabled).toBe(false);
-    expect(screen.queryByRole("complementary", { name: "Resumo do pedido" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("complementary", { name: "Resumo do pedido" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByText(/Catálogo sem exibição de valores/)).toBeVisible();
     if (process.env["NETINHO_QA_EXPORT"]) {
       mkdirSync("tmp/qa", { recursive: true });

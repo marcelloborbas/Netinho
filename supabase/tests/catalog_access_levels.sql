@@ -31,10 +31,12 @@ insert into public.products(id,category_id,code,application,manufacturer,stock,p
 values('c0000000-0000-0000-0000-000000000001','b0000000-0000-0000-0000-000000000001','ACCESS-TEST-HD','Integration test','HD',99,123.45);
 
 set local role authenticated;
--- Ordinary password users and anonymous sessions cannot enter the app.
+-- Confirmed email accounts can consult catalogs without gaining commercial rights.
 select set_config('request.jwt.claims','{"sub":"a0000000-0000-0000-0000-000000000001","email":"viewer-access-test@example.invalid","app_metadata":{"provider":"email","providers":["email"]}}',true);
 do $$ begin
- if public.access_context() is not null or public.can_sell() is distinct from false or public.catalog_products() <> '[]'::jsonb then raise exception 'Ordinary password login accepted'; end if;
+ if (public.access_context()->>'level')::int <> 3 or public.can_sell() is distinct from false then raise exception 'Email viewer access incorrect'; end if;
+ if exists(select 1 from public.products) or exists(select 1 from public.customers) then raise exception 'Email viewer sees commercial records'; end if;
+ if exists(select 1 from jsonb_array_elements(public.catalog_products()) p where p->>'price_cash' is not null or p->>'stock' is not null) then raise exception 'Email viewer sees price or stock'; end if;
 end $$;
 select set_config('request.jwt.claims','{"sub":"a0000000-0000-0000-0000-000000000001","is_anonymous":true,"app_metadata":{"provider":"google","providers":["google"]}}',true);
 do $$ begin

@@ -6,7 +6,7 @@ export const BRAND = {
   phone: "(15) 9.9245-8492",
   phoneDigits: "5515992458492",
   /** E-mail confirmado do setor de compras da Netinho. */
-  orderEmail: "vendas@netinhoautoparts.live",
+  orderEmail: "netinhoautoparts@gmail.com",
 } as const;
 
 export type PaymentTerm = "cash" | "30" | "30_45_60" | "30_45_60_75";

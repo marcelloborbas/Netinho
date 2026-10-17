@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import {
   Search,
   Plus,
@@ -23,6 +23,12 @@ import { partImage } from "@/lib/part-images";
 import { RepresentativeDirectory } from "@/components/RepresentativeDirectory";
 import hdCatalog from "@/data/hd-catalog.json";
 export const Route = createFileRoute("/_authenticated/catalogo")({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { marca?: "FCO" | "HD" | undefined; modo?: "consulta" | "venda" | undefined } => ({
+    marca: search["marca"] === "FCO" || search["marca"] === "HD" ? search["marca"] : undefined,
+    modo: search["modo"] === "consulta" || search["modo"] === "venda" ? search["modo"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Catálogo FCO e HD | Netinho Auto Parts" },
@@ -60,13 +66,20 @@ const localHd = hdCatalog.map((p) => ({
   localOnly: true,
 })) as CatalogProduct[];
 function Catalog() {
+  const search = Route.useSearch();
   const [q, setQ] = useState("");
-  const [manufacturer, setManufacturer] = useState("all");
+  const [manufacturer, setManufacturer] = useState<string>(search.marca ?? "all");
   const [category, setCategory] = useState("all");
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
   const { data: access } = useQuery(accessQuery);
-  const canSell = access?.can_sell === true;
+  const canSell = access?.can_sell === true && search.modo !== "consulta";
+  useEffect(() => {
+    setManufacturer(search.marca ?? "all");
+    setCategory("all");
+    setPage(1);
+    setQ("");
+  }, [search.marca, search.modo]);
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: customers } = useQuery({ ...customersQuery, enabled: canSell });
   const draft = useDraft();
@@ -112,247 +125,297 @@ function Catalog() {
   return (
     <div className={`catalog-workspace ${canSell ? "catalog-workspace-commercial" : ""}`}>
       <div className="catalog-main space-y-6">
-      <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
-        <div className="flex flex-wrap justify-between gap-5">
-          <div>
-            <PartnerLogos />
-            <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-primary">Representante Oficial das Marcas</p>
-            <h1 className="mt-2 text-4xl font-bold sm:text-5xl">A peça certa. Sem perder tempo.</h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-              Do código à aplicação, encontre o que precisa com a confiança de quem entende de peças.
-            </p>
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+          ← Vender ou ver catálogos
+        </Link>
+        <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
+          <div className="flex flex-wrap justify-between gap-5">
+            <div>
+              <PartnerLogos />
+              <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-primary">
+                Representante Oficial das Marcas
+              </p>
+              <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
+                A peça certa. Sem perder tempo.
+              </h1>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
+                Do código à aplicação, encontre o que precisa com a confiança de quem entende de
+                peças.
+              </p>
+            </div>
+            <a
+              className="inline-flex items-center gap-2 self-start rounded-lg border px-3 py-2 text-xs"
+              href="/catalog/hd-catalogo.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FileDown size={16} />
+              Catálogo HD completo
+            </a>
           </div>
-          <a
-            className="inline-flex items-center gap-2 self-start rounded-lg border px-3 py-2 text-xs"
-            href="/catalog/hd-catalogo.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <FileDown size={16} />
-            Catálogo HD completo
-          </a>
-        </div>
-      </section>
-      {canSell ? (
-        <section className="surface-card grid items-center gap-4 p-4 sm:grid-cols-[1fr_1fr_auto]">
-          <div>
-            <span className="eyebrow">COMECE PELO CLIENTE</span>
-            <h2 className="mt-1 text-xl font-bold">Para quem vamos vender?</h2>
-          </div>
-          <select
-            aria-label="Cliente do pedido"
-            className="h-12 min-w-0 rounded-lg border bg-secondary px-3 text-sm"
-            value={draft.customerId ?? ""}
-            onChange={(e) => {
-              const c = customers?.find((c) => c.id === e.target.value);
-              if (c)
-                draftActions.update({
-                  customerId: c.id,
-                  customerName: c.trade_name || c.company_name,
-                  buyer: c.buyer ?? "",
-                  carrier: c.carrier ?? "",
-                });
-            }}
-          >
-            <option value="">Selecione um cliente</option>
-            {customers?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.trade_name || c.company_name}
-              </option>
-            ))}
-          </select>
-          <Link to="/clientes" className="text-sm font-semibold text-primary">
-            + Novo cliente
-          </Link>
         </section>
-      ) : (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 px-5 py-4">
-          <p className="text-sm">
-            Gostou de uma peça? Consulte valores e condições com seu representante.
-          </p>
-          <a
-            href="#representantes"
-            className="inline-flex items-center gap-2 text-sm font-bold text-primary"
-          >
-            Encontrar representante <ArrowRight size={16} />
-          </a>
-        </div>
-      )}
-      <section className="catalog-search space-y-4" aria-label="Busca e filtros do catálogo">
-        <label htmlFor="catalog-search" className="block text-lg font-semibold">Qual peça você procura?</label>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-4 text-muted-foreground" size={20} />
-            <input
-              aria-label="Buscar peças"
-              id="catalog-search"
-              value={q}
-              onChange={(e) => {
-                setQ(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Ex.: embreagem, Gol, K6246.HD..."
-              className="h-14 w-full rounded-xl border bg-secondary/40 pl-12 pr-12 text-sm"
-            />
-            {q && (
-              <button
-                aria-label="Limpar busca"
-                onClick={() => {
-                  setQ("");
-                  setPage(1);
-                }}
-                className="absolute right-4 top-4"
-              >
-                <X size={20} />
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2 rounded-xl border bg-secondary/40 px-3">
-            <SlidersHorizontal size={17} className="text-muted-foreground" />
+        {canSell ? (
+          <section className="surface-card grid items-center gap-4 p-4 sm:grid-cols-[1fr_1fr_auto]">
+            <div>
+              <span className="eyebrow">COMECE PELO CLIENTE</span>
+              <h2 className="mt-1 text-xl font-bold">Para quem vamos vender?</h2>
+            </div>
             <select
-              aria-label="Categoria de peças"
-              value={category}
+              aria-label="Cliente do pedido"
+              className="h-12 min-w-0 rounded-lg border bg-secondary px-3 text-sm"
+              value={draft.customerId ?? ""}
               onChange={(e) => {
-                setCategory(e.target.value);
-                setPage(1);
+                const c = customers?.find((c) => c.id === e.target.value);
+                if (c)
+                  draftActions.update({
+                    customerId: c.id,
+                    customerName: c.trade_name || c.company_name,
+                    buyer: c.buyer ?? "",
+                    carrier: c.carrier ?? "",
+                  });
               }}
-              className="h-14 w-full max-w-xs bg-transparent text-sm"
             >
-              <option value="all">Todas as categorias</option>
-              {categories.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap gap-2">
-            {[
-              ["all", "Todas as marcas"],
-              ["FCO", "FCO Automotive"],
-              ["HD", "HD Embreagens"],
-            ].map(([value, label]) => (
-              <button
-                key={value}
-                className="filter-pill"
-                aria-pressed={manufacturer === value}
-                onClick={() => {
-                  setManufacturer(value!);
-                  setCategory("all");
-                  setPage(1);
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {canSell && (
-            <select
-              aria-label="Condição de pagamento"
-              value={draft.paymentTerm}
-              onChange={(e) => draftActions.update({ paymentTerm: e.target.value as PaymentTerm })}
-              className="h-10 max-w-full rounded-lg border bg-secondary px-3 text-xs"
-            >
-              {PAYMENT_TERMS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
+              <option value="">Selecione um cliente</option>
+              {customers?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.trade_name || c.company_name}
                 </option>
               ))}
             </select>
-          )}
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-        <p role="status" className="text-xs text-muted-foreground">
-          {list.length} peças encontradas{dq && ` para “${dq}”`} ·{" "}
-          {canSell ? "Preços exclusivos da área comercial" : "Catálogo sem exibição de valores"}
-        </p>
-        {(q || manufacturer !== "all" || category !== "all") && <button onClick={reset} className="text-xs font-semibold text-primary">Limpar filtros</button>}
-        </div>
-      </section>
-      {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-4 text-sm"
-        >
-          <p>
-            Não foi possível carregar o catálogo comercial. As peças HD disponíveis abaixo são para
-            consulta.
-          </p>
-          <button onClick={() => refetch()} className="mt-2 font-bold text-primary">
-            Tentar carregar novamente
-          </button>
-        </div>
-      )}
-      {isLoading && (
-        <p role="status" className="text-sm text-muted-foreground">
-          Atualizando catálogo...
-        </p>
-      )}
-      {!list.length ? (
-        <div className="surface-card p-12 text-center">
-          <PackageSearch className="mx-auto text-primary" size={36} />
-          <h2 className="mt-4 text-2xl font-bold">Vamos tentar outra busca?</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Busque por outro código ou veículo, ou remova os filtros.
-          </p>
-          <Button variant="secondary" onClick={reset} className="mt-5">
-            Limpar filtros
-          </Button>
-        </div>
-      ) : (
-        <ul className="catalog-product-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => (
-            <ProductCard
-              key={p.id}
-              p={p}
-              term={draft.paymentTerm}
-              canSell={canSell}
-              inOrder={draft.items.find((i) => i.productId === p.id)?.quantity}
-            />
-          ))}
-        </ul>
-      )}
-      {pageCount > 1 && (
-        <nav aria-label="Páginas do catálogo" className="flex items-center justify-center gap-4">
-          <Button
-            variant="outline"
-            disabled={currentPage === 1}
-            onClick={() => setPage(currentPage - 1)}
+            <Link to="/clientes" className="text-sm font-semibold text-primary">
+              + Novo cliente
+            </Link>
+          </section>
+        ) : (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 px-5 py-4">
+            <p className="text-sm">
+              Gostou de uma peça? Consulte valores e condições com seu representante.
+            </p>
+            <a
+              href="#representantes"
+              className="inline-flex items-center gap-2 text-sm font-bold text-primary"
+            >
+              Encontrar representante <ArrowRight size={16} />
+            </a>
+          </div>
+        )}
+        <section className="catalog-search space-y-4" aria-label="Busca e filtros do catálogo">
+          <label htmlFor="catalog-search" className="block text-lg font-semibold">
+            Qual peça você procura?
+          </label>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-4 text-muted-foreground" size={20} />
+              <input
+                aria-label="Buscar peças"
+                id="catalog-search"
+                value={q}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Ex.: embreagem, Gol, K6246.HD..."
+                className="h-14 w-full rounded-xl border bg-secondary/40 pl-12 pr-12 text-sm"
+              />
+              {q && (
+                <button
+                  aria-label="Limpar busca"
+                  onClick={() => {
+                    setQ("");
+                    setPage(1);
+                  }}
+                  className="absolute right-4 top-4"
+                >
+                  <X size={20} />
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2 rounded-xl border bg-secondary/40 px-3">
+              <SlidersHorizontal size={17} className="text-muted-foreground" />
+              <select
+                aria-label="Categoria de peças"
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setPage(1);
+                }}
+                className="h-14 w-full max-w-xs bg-transparent text-sm"
+              >
+                <option value="all">Todas as categorias</option>
+                {categories.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              {[
+                ["all", "Todas as marcas"],
+                ["FCO", "FCO Automotive"],
+                ["HD", "HD Embreagens"],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  className="filter-pill"
+                  aria-pressed={manufacturer === value}
+                  onClick={() => {
+                    setManufacturer(value!);
+                    setCategory("all");
+                    setPage(1);
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {canSell && (
+              <select
+                aria-label="Condição de pagamento"
+                value={draft.paymentTerm}
+                onChange={(e) =>
+                  draftActions.update({ paymentTerm: e.target.value as PaymentTerm })
+                }
+                className="h-10 max-w-full rounded-lg border bg-secondary px-3 text-xs"
+              >
+                {PAYMENT_TERMS.map((p) => (
+                  <option key={p.value} value={p.value}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p role="status" className="text-xs text-muted-foreground">
+              {list.length} peças encontradas{dq && ` para “${dq}”`} ·{" "}
+              {canSell ? "Preços exclusivos da área comercial" : "Catálogo sem exibição de valores"}
+            </p>
+            {(q || manufacturer !== "all" || category !== "all") && (
+              <button onClick={reset} className="text-xs font-semibold text-primary">
+                Limpar filtros
+              </button>
+            )}
+          </div>
+        </section>
+        {error && (
+          <div
+            role="alert"
+            className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-4 text-sm"
           >
-            Anterior
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            {currentPage} de {pageCount}
-          </span>
-          <Button
-            variant="outline"
-            disabled={currentPage === pageCount}
-            onClick={() => setPage(currentPage + 1)}
-          >
-            Próxima
-          </Button>
-        </nav>
-      )}
-      <div className="border-t pt-8">
-        <RepresentativeDirectory />
-      </div>
+            <p>
+              Não foi possível carregar o catálogo comercial. As peças HD disponíveis abaixo são
+              para consulta.
+            </p>
+            <button onClick={() => refetch()} className="mt-2 font-bold text-primary">
+              Tentar carregar novamente
+            </button>
+          </div>
+        )}
+        {isLoading && (
+          <p role="status" className="text-sm text-muted-foreground">
+            Atualizando catálogo...
+          </p>
+        )}
+        {!list.length ? (
+          <div className="surface-card p-12 text-center">
+            <PackageSearch className="mx-auto text-primary" size={36} />
+            <h2 className="mt-4 text-2xl font-bold">Vamos tentar outra busca?</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Busque por outro código ou veículo, ou remova os filtros.
+            </p>
+            <Button variant="secondary" onClick={reset} className="mt-5">
+              Limpar filtros
+            </Button>
+          </div>
+        ) : (
+          <ul className="catalog-product-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => (
+              <ProductCard
+                key={p.id}
+                p={p}
+                term={draft.paymentTerm}
+                canSell={canSell}
+                inOrder={draft.items.find((i) => i.productId === p.id)?.quantity}
+              />
+            ))}
+          </ul>
+        )}
+        {pageCount > 1 && (
+          <nav aria-label="Páginas do catálogo" className="flex items-center justify-center gap-4">
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => setPage(currentPage - 1)}
+            >
+              Anterior
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {currentPage} de {pageCount}
+            </span>
+            <Button
+              variant="outline"
+              disabled={currentPage === pageCount}
+              onClick={() => setPage(currentPage + 1)}
+            >
+              Próxima
+            </Button>
+          </nav>
+        )}
+        <div className="border-t pt-8">
+          <RepresentativeDirectory />
+        </div>
       </div>
       {canSell && (
         <aside className="catalog-order-summary surface-card" aria-label="Resumo do pedido">
-          <div className="flex items-center gap-3"><ShoppingCart size={22} className="text-primary" /><span className="eyebrow">SEU PEDIDO</span></div>
-          <h2 className="mt-4 text-2xl font-bold">Venda em andamento</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{draft.customerName || "Selecione o cliente no catálogo para começar."}</p>
-          <div className="my-5 border-y py-4" aria-live="polite">
-            {draft.items.length ? <>
-              <p className="mb-3 text-xs text-muted-foreground">{draft.items.length} códigos · {draft.items.reduce((sum, item) => sum + item.quantity, 0)} unidades</p>
-              <ul className="space-y-3">{draft.items.slice(-4).map(item => <li key={item.productId} className="flex justify-between gap-3 text-sm"><span className="min-w-0 break-words">{item.code}</span><span className="shrink-0 text-muted-foreground">× {item.quantity}</span></li>)}</ul>
-              {draft.items.length > 4 && <p className="mt-3 text-xs text-muted-foreground">Mais {draft.items.length - 4} códigos na revisão.</p>}
-            </> : <p className="text-sm text-muted-foreground">As peças adicionadas aparecem aqui. Seu rascunho é salvo automaticamente.</p>}
+          <div className="flex items-center gap-3">
+            <ShoppingCart size={22} className="text-primary" />
+            <span className="eyebrow">SEU PEDIDO</span>
           </div>
-          <p className="text-xs text-muted-foreground">{PAYMENT_TERMS.find(term => term.value === draft.paymentTerm)?.label}</p>
-          <div className="mt-2 flex items-center justify-between gap-2"><span className="text-sm">Total estimado</span><strong className="text-2xl">{brl(draftTotals(draft).net)}</strong></div>
-          <Link to="/pedido" className="primary-link mt-5 w-full">Revisar pedido <ArrowRight size={17} /></Link>
-          <p className="mt-3 text-xs leading-5 text-muted-foreground">Confira quantidades, condições e descontos antes de enviar.</p>
+          <h2 className="mt-4 text-2xl font-bold">Venda em andamento</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {draft.customerName || "Selecione o cliente no catálogo para começar."}
+          </p>
+          <div className="my-5 border-y py-4" aria-live="polite">
+            {draft.items.length ? (
+              <>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  {draft.items.length} códigos ·{" "}
+                  {draft.items.reduce((sum, item) => sum + item.quantity, 0)} unidades
+                </p>
+                <ul className="space-y-3">
+                  {draft.items.slice(-4).map((item) => (
+                    <li key={item.productId} className="flex justify-between gap-3 text-sm">
+                      <span className="min-w-0 break-words">{item.code}</span>
+                      <span className="shrink-0 text-muted-foreground">× {item.quantity}</span>
+                    </li>
+                  ))}
+                </ul>
+                {draft.items.length > 4 && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Mais {draft.items.length - 4} códigos na revisão.
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                As peças adicionadas aparecem aqui. Seu rascunho é salvo automaticamente.
+              </p>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {PAYMENT_TERMS.find((term) => term.value === draft.paymentTerm)?.label}
+          </p>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <span className="text-sm">Total estimado</span>
+            <strong className="text-2xl">{brl(draftTotals(draft).net)}</strong>
+          </div>
+          <Link to="/pedido" className="primary-link mt-5 w-full">
+            Revisar pedido <ArrowRight size={17} />
+          </Link>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            Confira quantidades, condições e descontos antes de enviar.
+          </p>
         </aside>
       )}
     </div>
@@ -399,7 +462,9 @@ function ProductCard({
     setQty(1);
   }
   return (
-    <li className={`catalog-product-card surface-card flex min-w-0 flex-col p-3 ${inOrder ? "catalog-product-selected" : ""}`}>
+    <li
+      className={`catalog-product-card surface-card flex min-w-0 flex-col p-3 ${inOrder ? "catalog-product-selected" : ""}`}
+    >
       <div className="product-visual">
         {img ? (
           <img
@@ -416,9 +481,16 @@ function ProductCard({
           <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
             {brand === "HD" ? "HD EMBREAGENS" : "FCO AUTOMOTIVE"}
           </span>
-          {canSell && inOrder && <span className="inline-flex items-center gap-1 text-xs text-success"><Check size={15} />{inOrder} no pedido</span>}
+          {canSell && inOrder && (
+            <span className="inline-flex items-center gap-1 text-xs text-success">
+              <Check size={15} />
+              {inOrder} no pedido
+            </span>
+          )}
         </div>
-        <p className="mt-2 text-lg font-bold">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</p>
+        <p className="mt-2 text-lg font-bold">
+          {p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}
+        </p>
         <h2 className="mt-1 text-base font-semibold text-muted-foreground">{p.code}</h2>
         <p className={`mt-3 text-sm leading-6 ${details ? "" : "line-clamp-3"}`}>{p.application}</p>
         {details && p.refs && (

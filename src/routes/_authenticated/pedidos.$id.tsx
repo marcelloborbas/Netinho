@@ -113,16 +113,13 @@ function OrderDetail() {
     if (sending) return;
     setSending(true);
     try {
-      const { data, error } = await supabase.functions.invoke("send-order-email", {
-        body: { orderId: order.id },
-      });
-      if (error || !data?.sent)
-        throw new Error(
-          "O envio não foi confirmado. Verifique a configuração do e-mail de compras com o administrador.",
-        );
-      toast.success("Pedido em PDF enviado ao setor de compras.");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Não foi possível enviar o pedido.");
+      await downloadOrderPdf(order, items, sellerName);
+      const subject = `${order.kind === "orcamento" ? "Orçamento" : "Pedido"} ${order.number} - Netinho Auto Parts`;
+      const body = `Olá, Netinho!\n\nSegue ${order.kind === "orcamento" ? "orçamento" : "pedido"} nº ${order.number}.\nCliente: ${c.company_name || ""}\nTotal: ${brl(Number(order.total))}\nRepresentante: ${sellerName}\n\nAnexe o PDF baixado antes de enviar.`;
+      window.location.href = `mailto:${BRAND.orderEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      toast.info("PDF baixado. Anexe-o ao e-mail aberto e confirme o envio no seu aplicativo.");
+    } catch {
+      toast.error("Não foi possível preparar o PDF. Tente novamente antes de enviar.");
     } finally {
       setSending(false);
     }
@@ -211,14 +208,14 @@ function OrderDetail() {
 
       <div className="surface-card flex flex-wrap items-center justify-between gap-4 p-4">
         <div>
-          <h2 className="text-xl font-bold">Pronto para o setor de compras</h2>
+          <h2 className="text-xl font-bold">Revisado e pronto para enviar</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Envie o pedido com PDF anexo ou compartilhe pelo seu aplicativo.
+            Destino: {BRAND.orderEmail}. O PDF será baixado; anexe-o no e-mail e confirme o envio.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button onClick={sendToPurchasing} disabled={sending} className="bg-gradient-red">
-            {sending ? "Enviando..." : "Enviar PDF para compras"}
+            {sending ? "Preparando..." : "Preparar e-mail com PDF"}
           </Button>
           <Button variant="outline" onClick={sharePdf}>
             Compartilhar PDF

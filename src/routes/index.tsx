@@ -1,168 +1,164 @@
-import { PartnerLogos } from "@/components/PartnerLogos";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   ArrowRight,
-  PackageSearch,
-  ClipboardList,
+  ShoppingCart,
+  BookOpen,
   Users,
-  MessageCircle,
-  ShieldCheck,
-  ArrowUpRight,
-  FileDown,
+  ClipboardList,
+  FilePenLine,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { accessQuery, selectedProfile } from "@/lib/access";
+import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { greeting } from "@/components/ProfileAvatar";
 import { BRAND } from "@/lib/brand";
-import { partImage } from "@/lib/part-images";
-import { RepresentativeDirectory } from "@/components/RepresentativeDirectory";
 export const Route = createFileRoute("/")({
   ssr: false,
   beforeLoad: async ({ context }) => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth" });
-    const access = await context.queryClient.fetchQuery(accessQuery);
-    if (!selectedProfile(access.email)) throw redirect({ to: "/auth" });
+    await context.queryClient.fetchQuery(accessQuery);
   },
-  head: () => ({ meta: [{ title: "Minha área | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [{ title: "O que deseja fazer? | Netinho Auto Parts" }] }),
   component: Home,
 });
 function Home() {
   const { data: access } = useQuery(accessQuery);
+  const [area, setArea] = useState<"vender" | "catalogos" | null>(null);
   return (
-    <div className="min-h-screen pb-10">
+    <div className="min-h-screen pb-12">
       <header className="app-header">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <Logo />
-          <Link to="/auth" className="nav-link">
-            Meu perfil <ArrowUpRight size={15} />
-          </Link>
+          <div className="flex gap-2">
+            {access?.level === 1 && (
+              <Link to="/admin" className="nav-link">
+                Administração
+              </Link>
+            )}
+            <Link to="/auth" className="nav-link">
+              Minha conta
+            </Link>
+          </div>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <span className="eyebrow">SUA CONEXÃO COM AS MELHORES PEÇAS</span>
-            <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
-              {greeting(`sr. ${access?.name.split(" ")[0] ?? ""}`)}
-            </h1>
-            <p className="mt-2 text-muted-foreground">
-              {access?.can_sell
-                ? "Tudo pronto para o seu próximo bom negócio."
-                : "Encontre a peça certa. Conte com quem entende."}
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
+        <span className="eyebrow">BEM-VINDO À NETINHO AUTO PARTS</span>
+        <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
+          {greeting(`Sr. ${access?.name.split(" ")[0] || "Usuário"}`)}
+        </h1>
+        <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2">
+          <button
+            className={`journey-choice ${area === "vender" ? "journey-active" : ""}`}
+            aria-pressed={area === "vender"}
+            onClick={() => setArea("vender")}
+          >
+            <ShoppingCart size={32} />
+            <h2 className="mt-5 text-3xl font-bold">Vender</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Clientes, peças, pedidos e orçamentos. Revise tudo antes de enviar.
             </p>
-          </div>
-          <span className="access-badge">
-            <ShieldCheck size={15} />
-            Nível {access?.level ?? 3} ·{" "}
-            {access?.can_sell ? "Área comercial" : "Catálogo de consulta"}
-          </span>
+            <span className="mt-6 inline-flex items-center gap-2 font-semibold">
+              Abrir área de vendas <ArrowRight size={18} />
+            </span>
+          </button>
+          <button
+            className={`journey-choice ${area === "catalogos" ? "journey-active" : ""}`}
+            aria-pressed={area === "catalogos"}
+            onClick={() => setArea("catalogos")}
+          >
+            <BookOpen size={32} />
+            <h2 className="mt-5 text-3xl font-bold">Ver catálogos</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Conheça as linhas FCO Automotive e HD Embreagens por fornecedor.
+            </p>
+            <span className="mt-6 inline-flex items-center gap-2 font-semibold">
+              Escolher catálogo <ArrowRight size={18} />
+            </span>
+          </button>
         </div>
-        <section className="catalog-hero relative overflow-hidden rounded-3xl border p-6 sm:p-10">
-          <div className="relative z-10 max-w-xl">
-            <span className="eyebrow">REPRESENTAÇÃO EXCLUSIVA · NETINHO</span>
-            <h2 className="mt-4 text-4xl font-bold leading-[1.02] sm:text-6xl">
-              Seu negócio merece
-              <br />
-              <span className="text-primary">a peça certa.</span>
-            </h2>
-            <p className="mt-5 max-w-md text-sm leading-7 text-muted-foreground sm:text-base">
-              Tecnologia FCO Automotive e força HD Embreagens. Consulte aplicações e encontre
-              soluções para cada veículo.
-            </p>
-            <Link to="/catalogo" className="primary-link mt-7">
-              Explorar catálogo <ArrowRight size={18} />
-            </Link>
-            <div className="mt-8"><PartnerLogos /></div>
-          </div>
-          <img
-            src={partImage("Kit Embreagem") || partImage("TBI") || undefined}
-            alt="Linha de peças automotivas representada pela Netinho"
-            className="pointer-events-none absolute -right-12 bottom-0 hidden h-[85%] w-[48%] object-contain opacity-80 lg:block"
-          />
-        </section>
-        <section className="mt-6 grid gap-3 sm:grid-cols-3">
-          {[
-            {
-              icon: PackageSearch,
-              title: "Catálogo de peças",
-              text: "FCO, HD ou as duas marcas.",
-              to: "/catalogo",
-            },
-            ...(access?.can_sell
-              ? [
-                  {
-                    icon: Users,
-                    title: "Meus clientes",
-                    text: "Cadastros e atendimento organizados.",
-                    to: "/clientes",
-                  },
-                  {
-                    icon: ClipboardList,
-                    title: "Meus pedidos",
-                    text: "Acompanhe, repita e exporte em PDF.",
-                    to: "/pedidos",
-                  },
-                ]
-              : [
-                  {
-                    icon: MessageCircle,
-                    title: "Falar com a Netinho",
-                    text: "Encontre atendimento para sua região.",
-                    to: "contact",
-                  },
-                  {
-                    icon: FileDown,
-                    title: "Catálogo HD em PDF",
-                    text: "Consulte o catálogo original completo.",
-                    to: "pdf",
-                  },
-                ]),
-          ].map((item) => {
-            const content = (
+        {area === "vender" && (
+          <section className="surface-card mt-7 p-6 sm:p-8" aria-label="Área de vendas">
+            <h2 className="text-2xl font-bold">Tudo para sua próxima venda</h2>
+            {access?.can_sell ? (
               <>
-                <item.icon className="text-primary" size={24} />
-                <h3 className="mt-4 text-xl font-bold">{item.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{item.text}</p>
-                <ArrowUpRight size={18} className="absolute right-5 top-5 text-muted-foreground" />
+                <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <Link to="/clientes" className="action-card">
+                    <Users className="text-primary" />
+                    <h3 className="mt-4 font-bold">Clientes</h3>
+                    <p className="mt-2 text-xs text-muted-foreground">Cadastrar ou selecionar</p>
+                  </Link>
+                  <Link to="/catalogo" search={{ modo: "venda" }} className="action-card">
+                    <ShoppingCart className="text-primary" />
+                    <h3 className="mt-4 font-bold">Montar venda</h3>
+                    <p className="mt-2 text-xs text-muted-foreground">Escolher peças e condições</p>
+                  </Link>
+                  <Link to="/pedido" className="action-card">
+                    <FilePenLine className="text-primary" />
+                    <h3 className="mt-4 font-bold">Editar e revisar</h3>
+                    <p className="mt-2 text-xs text-muted-foreground">Conferir pedido atual</p>
+                  </Link>
+                  <Link to="/pedidos" className="action-card">
+                    <ClipboardList className="text-primary" />
+                    <h3 className="mt-4 font-bold">Meus pedidos</h3>
+                    <p className="mt-2 text-xs text-muted-foreground">Histórico, PDF e envio</p>
+                  </Link>
+                </div>
+                <p className="mt-6 text-sm text-muted-foreground">
+                  Cliente → Peças → Editar e revisar → Registrar → Enviar para{" "}
+                  <strong className="text-foreground">{BRAND.orderEmail}</strong>.
+                </p>
               </>
-            );
-            return item.to === "contact" ? (
-              <a key={item.title} href="#representantes" className="action-card">
-                {content}
-              </a>
-            ) : item.to === "pdf" ? (
-              <a
-                key={item.title}
-                href="/catalog/hd-catalogo.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="action-card"
-              >
-                {content}
-              </a>
             ) : (
-              <Link
-                key={item.title}
-                to={item.to as "/catalogo" | "/clientes" | "/pedidos"}
-                className="action-card"
-              >
-                {content}
-              </Link>
-            );
-          })}
-        </section>
-        <div className="mt-10">
-          <RepresentativeDirectory />
-        </div>
-        <footer className="mt-10 flex flex-wrap justify-between gap-3 border-t pt-6 text-xs text-muted-foreground">
-          <span>Netinho Auto Parts · FCO Automotive & HD Embreagens</span>
-          <a href={`https://wa.me/${BRAND.phoneDigits}`} target="_blank" rel="noreferrer">
-            {BRAND.phone}
-          </a>
-        </footer>
+              <p className="mt-4 text-muted-foreground">
+                O acesso a vendas precisa ser autorizado pela Netinho. Você já pode consultar os
+                dois catálogos abaixo.
+              </p>
+            )}
+          </section>
+        )}
+        {(area === "catalogos" || (area === "vender" && !access?.can_sell)) && (
+          <section className="mt-8" aria-label="Escolher fornecedor">
+            <p className="mb-5 text-sm text-muted-foreground">
+              Representante Oficial das Marcas · Escolha o catálogo que deseja visualizar.
+            </p>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {[
+                {
+                  brand: "FCO",
+                  name: "FCO Automotive",
+                  image: "/images/brands/fco.webp",
+                  text: "Peças, referências e aplicações da linha FCO.",
+                },
+                {
+                  brand: "HD",
+                  name: "HD Embreagens",
+                  image: "/images/brands/hd.png",
+                  text: "Embreagens, componentes e fichas do catálogo HD.",
+                },
+              ].map((supplier) => (
+                <Link
+                  key={supplier.brand}
+                  to="/catalogo"
+                  search={{ marca: supplier.brand as "FCO" | "HD", modo: "consulta" }}
+                  className="supplier-choice surface-card"
+                >
+                  <div className="supplier-logo">
+                    <img src={supplier.image} alt={supplier.name} />
+                  </div>
+                  <h2 className="mt-5 text-2xl font-bold">{supplier.name}</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">{supplier.text}</p>
+                  <span className="mt-6 inline-flex items-center gap-2 font-semibold text-primary">
+                    Ver catálogo <ArrowRight size={18} />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

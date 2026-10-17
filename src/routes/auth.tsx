@@ -2,12 +2,12 @@ import { PartnerLogos } from "@/components/PartnerLogos";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Check, LoaderCircle, LogOut, Settings, ShieldCheck } from "lucide-react";
+import { ArrowRight, LoaderCircle, LogOut, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery, saveProfile } from "@/lib/access";
 import { Logo } from "@/components/Logo";
-import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
+import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -24,20 +24,6 @@ export const Route = createFileRoute("/auth")({
   }),
   component: AuthPage,
 });
-const options: { type: AccessType; text: string; level: string }[] = [
-  {
-    type: "Representante Comercial",
-    text: "Clientes, preços e pedidos em um só lugar.",
-    level: "Nível 2 · vendas",
-  },
-  { type: "Visitante", text: "Explore as peças e suas aplicações.", level: "Nível 3 · consulta" },
-  {
-    type: "Distribuidor",
-    text: "Encontre soluções para sua distribuição.",
-    level: "Nível 3 · consulta",
-  },
-  { type: "Auto-Peças", text: "Encontre a peça certa para sua loja.", level: "Nível 3 · consulta" },
-];
 function GoogleIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true">
@@ -63,12 +49,20 @@ function AuthPage() {
   const [signedIn, setSignedIn] = useState(false);
   const [checking, setChecking] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [profile, setProfile] = useState<AccessType | null>(null);
+
   const [admin, setAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recovery, setRecovery] = useState(false);
+  const [register, setRegister] = useState(false);
+  const [fullName, setFullName] = useState("");
   const { data: access, error, refetch } = useQuery({ ...accessQuery, enabled: signedIn });
+  useEffect(() => {
+    if (signedIn && access && !recovery) {
+      saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
+      void navigate({ to: "/" });
+    }
+  }, [signedIn, access, recovery, navigate]);
   useEffect(() => {
     void supabase.auth.getUser().then(({ data }) => {
       setSignedIn(!!data.user);
@@ -116,6 +110,18 @@ function AuthPage() {
         setRecovery(false);
         setPassword("");
         toast.success("Senha atualizada.");
+      } else if (register) {
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+          options: {
+            data: { full_name: fullName.trim() },
+            emailRedirectTo: `${window.location.origin}/auth`,
+          },
+        });
+        if (error) throw error;
+        if (!data.session)
+          toast.success("Cadastro solicitado. Confira seu e-mail para confirmar sua conta.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
@@ -135,13 +141,6 @@ function AuthPage() {
     }
     localStorage.removeItem("netinho-vendedor");
     qc.clear();
-    setProfile(null);
-  }
-  function enter() {
-    if (!access || !profile) return;
-    if (profile === "Representante Comercial" && !access.can_sell) return;
-    saveProfile(access, profile);
-    navigate({ to: "/" });
   }
   return (
     <main className="auth-stage min-h-screen px-4 py-6 sm:py-10">
@@ -155,32 +154,70 @@ function AuthPage() {
           <Settings size={20} />
         </button>
       </div>
-      {admin && (
+      {(admin || !signedIn) && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
-          <h2 className="text-xl font-bold">Administração</h2>
+          <h1 className="text-2xl font-bold">
+            {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Entre na Netinho"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {register
+              ? "Informe seu nome e e-mail para se cadastrar."
+              : "Use seu e-mail e senha ou continue com o Google."}
+          </p>
+          {!recovery && (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                className="filter-pill"
+                aria-pressed={!register}
+                onClick={() => setRegister(false)}
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                className="filter-pill"
+                aria-pressed={register}
+                onClick={() => setRegister(true)}
+              >
+                Cadastrar usuário
+              </button>
+            </div>
+          )}
+          {register && !recovery && (
+            <Input
+              aria-label="Nome completo"
+              autoComplete="name"
+              required
+              minLength={2}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Seu nome completo"
+            />
+          )}
           {!recovery && (
             <Input
-              aria-label="E-mail do administrador"
+              aria-label="E-mail"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="E-mail do administrador"
+              placeholder="Seu e-mail"
             />
           )}
           <Input
             aria-label={recovery ? "Nova senha" : "Senha"}
             type="password"
             required
-            minLength={recovery ? 8 : 1}
+            minLength={recovery || register ? 8 : 1}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={recovery ? "Nova senha (mínimo 8 caracteres)" : "Senha"}
           />
           <Button disabled={busy} className="w-full">
-            {recovery ? "Salvar nova senha" : "Entrar como administrador"}
+            {recovery ? "Salvar nova senha" : register ? "Cadastrar usuário" : "Entrar"}
           </Button>
-          {!recovery && (
+          {!recovery && !register && (
             <button
               type="button"
               className="text-sm text-muted-foreground underline"
@@ -197,6 +234,12 @@ function AuthPage() {
               }}
             >
               Esqueci minha senha
+            </button>
+          )}
+          {!recovery && (
+            <button type="button" className="google-button" onClick={googleLogin} disabled={busy}>
+              <GoogleIcon />
+              Continuar com o Google
             </button>
           )}
           {access?.level === 1 && (
@@ -216,47 +259,10 @@ function AuthPage() {
           <LoaderCircle className="animate-spin" aria-label="Verificando sessão" />
         </div>
       ) : !signedIn ? (
-        <div className="mx-auto mt-8 grid max-w-5xl items-center gap-10 lg:grid-cols-2">
-          <div className="welcome-frame mx-auto w-full max-w-sm">
-            <img
-              src="/images/welcome.webp"
-              alt="Netinho: seja bem-vindo ao mundo automotivo"
-              className="block h-auto w-full rounded-t-3xl"
-              fetchPriority="high"
-            />
-            <div className="space-y-3 bg-[#061c49] p-5">
-              <button onClick={googleLogin} disabled={busy} className="google-button">
-                <span className="google-icon-disc"><GoogleIcon /></span>
-                {busy ? "Conectando..." : "Continuar com o Google"}
-              </button>
-              <p className="text-center text-xs leading-5 text-blue-200">
-                Use sua conta Google para entrar com segurança.
-              </p>
-            </div>
-          </div>
-          <div className="welcome-partners lg:hidden">
-            <p className="mb-3 text-center text-sm font-semibold text-white">Representante Oficial das Marcas</p>
+        <div className="mx-auto mt-8 max-w-md text-center">
+          <p className="mb-4 text-sm font-semibold">Representante Oficial das Marcas</p>
+          <div className="flex justify-center">
             <PartnerLogos />
-          </div>
-          <div className="hidden lg:block">
-            <span className="eyebrow">REPRESENTAÇÃO EXCLUSIVA</span>
-            <h1 className="mt-5 text-6xl font-bold leading-none">
-              A peça certa.
-              <br />
-              <span className="text-primary">O parceiro certo.</span>
-            </h1>
-            <p className="mt-6 max-w-md text-lg leading-8 text-muted-foreground">
-              FCO Automotive e HD Embreagens. Duas linhas completas, com o atendimento próximo de
-              quem entende do seu negócio.
-            </p>
-            <div className="mt-8">
-              <p className="mb-3 text-sm font-semibold">Representante Oficial das Marcas</p>
-              <PartnerLogos />
-            </div>
-            <p className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
-              <ShieldCheck size={18} className="text-primary" /> Acesso pessoal · Atendimento
-              profissional
-            </p>
           </div>
         </div>
       ) : (
@@ -282,49 +288,19 @@ function AuthPage() {
                   <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
                     {greeting(`sr. ${access.name.split(" ")[0]}`)}
                   </h1>
-                  <p className="mt-2 text-muted-foreground">Qual seria seu perfil?</p>
+                  <p className="mt-2 text-muted-foreground">
+                    Preparando suas opções de vendas e catálogos.
+                  </p>
                 </div>
                 <button onClick={logout} className="icon-button" aria-label="Trocar conta Google">
                   <LogOut size={20} />
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                {options.map((o) => (
-                  <button
-                    key={o.type}
-                    onClick={() => setProfile(o.type)}
-                    aria-pressed={profile === o.type}
-                    className={`profile-card ${profile === o.type ? "selected" : ""}`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <ProfileAvatar type={o.type} className="h-11 w-11" />
-                      {profile === o.type && <Check size={18} className="text-primary" />}
-                    </div>
-                    <span className="mt-5 block text-base font-bold sm:text-lg">{o.type}</span>
-                    <span className="mt-2 block text-xs leading-5 text-muted-foreground sm:text-sm">
-                      {o.text}
-                    </span>
-                    <span className="mt-4 block text-[10px] font-semibold uppercase tracking-wider text-metal">
-                      {o.level}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              {profile === "Representante Comercial" && !access.can_sell && (
-                <p
-                  role="status"
-                  className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-200"
-                >
-                  Seu e-mail precisa ser autorizado pela Netinho para vender. Enquanto aguarda,
-                  explore o catálogo com um perfil de consulta.
-                </p>
-              )}
               <Button
-                onClick={enter}
-                disabled={!profile || (profile === "Representante Comercial" && !access.can_sell)}
-                className="mt-6 h-14 w-full bg-gradient-red text-base"
+                onClick={() => navigate({ to: "/" })}
+                className="mt-6 h-14 w-full bg-gradient-red"
               >
-                Entrar na minha área <ArrowRight size={18} />
+                Continuar para minha área <ArrowRight size={18} />
               </Button>
               <p className="mt-4 text-center text-xs text-muted-foreground">
                 Conectado como {access.email}

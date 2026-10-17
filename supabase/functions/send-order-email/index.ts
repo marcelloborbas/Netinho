@@ -38,7 +38,7 @@ Deno.serve(async (request) => {
     ]);
     if (error || itemError || !order || !items?.length)
       return json({ error: "Pedido não encontrado" }, 404);
-    const to = Deno.env.get("NETINHO_PURCHASING_EMAIL") || "vendas@netinhoautoparts.live";
+    const to = "netinhoautoparts@gmail.com";
     const from = Deno.env.get("NETINHO_FROM_EMAIL");
     const apiKey = Deno.env.get("RESEND_API_KEY");
     if (!to || !from || !apiKey)

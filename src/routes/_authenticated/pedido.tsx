@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { customersQuery } from "@/lib/queries";
 import { draftActions, draftTotals, lineNet, useDraft } from "@/lib/order-store";
-import { PAYMENT_TERMS, brl, termLabel, type PaymentTerm } from "@/lib/brand";
+import { BRAND, PAYMENT_TERMS, brl, termLabel, type PaymentTerm } from "@/lib/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +42,11 @@ function OrderPage() {
   const [busy, setBusy] = useState(false);
 
   async function finalize() {
+    if (!review) {
+      setReview(true);
+      window.scrollTo(0, 0);
+      return;
+    }
     if (!d.customerId) {
       toast.error("Selecione o cliente.");
       return;
@@ -325,18 +330,24 @@ function OrderPage() {
       </section>
 
       {review ? (
-        <div className="grid grid-cols-2 gap-3">
-          <Button variant="secondary" className="h-12" onClick={() => setReview(false)}>
-            Voltar e editar
-          </Button>
-          <Button
-            className="h-12 bg-gradient-red font-semibold shadow-glow"
-            disabled={busy}
-            onClick={finalize}
-          >
-            {busy ? "Enviando..." : "Registrar pedido"}
-          </Button>
-        </div>
+        <>
+          <p className="rounded-xl border p-4 text-sm">
+            Confira os dados abaixo antes de registrar. Na próxima tela você poderá preparar o envio
+            para <strong>{BRAND.orderEmail}</strong>, com o PDF do pedido.
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <Button variant="secondary" className="h-12" onClick={() => setReview(false)}>
+              Voltar e editar
+            </Button>
+            <Button
+              className="h-12 bg-gradient-red font-semibold shadow-glow"
+              disabled={busy}
+              onClick={finalize}
+            >
+              {busy ? "Enviando..." : "Registrar pedido"}
+            </Button>
+          </div>
+        </>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           <Button
@@ -353,12 +364,10 @@ function OrderPage() {
           >
             Revisar pedido
           </Button>
-          <Button
-            className="h-12 bg-gradient-red text-base font-semibold shadow-glow"
-            disabled={busy}
-            onClick={finalize}
-          >
-            {busy ? "Enviando..." : "Registrar pedido"}
+          <Button asChild variant="outline" className="h-12">
+            <Link to="/catalogo" search={{ modo: "venda" }}>
+              Continuar escolhendo peças
+            </Link>
           </Button>
         </div>
       )}
