@@ -15,7 +15,14 @@ export const Route = createFileRoute("/")({
     if (!data.user) throw redirect({ to: "/auth" });
     await context.queryClient.fetchQuery(accessQuery);
   },
-  head: () => ({ meta: [{ title: "O que deseja fazer? | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [
+    { title: "O que deseja fazer? | Netinho Auto Parts" },
+    { name: "description", content: "Sua área Netinho para consultar catálogos, selecionar clientes e acompanhar pedidos." },
+    { property: "og:title", content: "O que deseja fazer? | Netinho Auto Parts" },
+    { property: "og:description", content: "Sua área Netinho para consultar catálogos, selecionar clientes e acompanhar pedidos." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: Home,
 });
 function Home() {

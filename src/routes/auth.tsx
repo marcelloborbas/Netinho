@@ -10,6 +10,7 @@ import { Logo } from "@/components/Logo";
 import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { InstallAppButton } from "@/components/InstallAppButton";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -20,6 +21,10 @@ export const Route = createFileRoute("/auth")({
         name: "description",
         content: "Entre com Google e conheça FCO Automotive e HD Embreagens.",
       },
+      { property: "og:title", content: "Bem-vindo | Netinho Auto Parts" },
+      { property: "og:description", content: "Entre com Google e conheça FCO Automotive e HD Embreagens." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
@@ -148,6 +153,7 @@ function AuthPage() {
         <Logo />
         <PartnerLogos compact linked={false} />
       </div>
+      <p className="official-brands mx-auto mt-3 text-center text-xs font-semibold text-metal">Representante Oficial das Marcas</p>
       {(recovery || !signedIn) && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
           <h1 className="text-2xl font-bold">
@@ -211,10 +217,13 @@ function AuthPage() {
             </button>
           )}
           {!recovery && (
-            <button type="button" className="google-button" onClick={googleLogin} disabled={busy}>
-              <GoogleIcon />
-              Continuar com o Google
-            </button>
+            <>
+              <button type="button" className="google-button" onClick={googleLogin} disabled={busy}>
+                <GoogleIcon />
+                Continuar com o Google
+              </button>
+              <InstallAppButton />
+            </>
           )}
           {access?.level === 1 && (
             <Button

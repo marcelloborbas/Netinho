@@ -7,7 +7,14 @@ import { ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
-  head: () => ({ meta: [{ title: "Livaldo Souza Silva — Representante Comercial | Netinho" }] }),
+  head: () => ({ meta: [
+    { title: "Livaldo Souza Silva — Representante Comercial | Netinho" },
+    { name: "description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua cobertura nacional pela Netinho." },
+    { property: "og:title", content: "Livaldo Souza Silva — Representante Comercial | Netinho" },
+    { property: "og:description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua cobertura nacional pela Netinho." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 type PolygonCoordinates = number[][][];
