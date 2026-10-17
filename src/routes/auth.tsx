@@ -2,7 +2,7 @@ import { PartnerLogos } from "@/components/PartnerLogos";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, LoaderCircle, LogOut, Settings } from "lucide-react";
+import { ArrowRight, LoaderCircle, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery, saveProfile } from "@/lib/access";
@@ -50,7 +50,6 @@ function AuthPage() {
   const [checking, setChecking] = useState(true);
   const [busy, setBusy] = useState(false);
 
-  const [admin, setAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recovery, setRecovery] = useState(false);
@@ -72,7 +71,6 @@ function AuthPage() {
       setSignedIn(!!session?.user);
       setChecking(false);
       if (event === "PASSWORD_RECOVERY") {
-        setAdmin(true);
         setRecovery(true);
       }
     });
@@ -146,15 +144,8 @@ function AuthPage() {
     <main className="auth-stage min-h-screen px-4 py-6 sm:py-10">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
         <Logo />
-        <button
-          className="icon-button"
-          aria-label="Acesso administrativo"
-          onClick={() => setAdmin(!admin)}
-        >
-          <Settings size={20} />
-        </button>
       </div>
-      {(admin || !signedIn) && (
+      {(recovery || !signedIn) && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
           <h1 className="text-2xl font-bold">
             {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Faça seu Login na Netinho"}
