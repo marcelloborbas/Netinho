@@ -551,20 +551,70 @@ a {
  .home-page .home-catalog-logos{margin-top:12px;max-width:none}
  .home-page .home-catalog-link .supplier-logo{height:64px;padding:10px}
 }
+
+.auth-login{display:flex;flex-direction:column;justify-content:center;min-height:100svh;padding:24px 16px}
+.auth-login .auth-header{display:flex;width:100%;max-width:448px;margin-inline:auto;flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
+.auth-login .auth-brand{justify-content:center;gap:8px}
+.auth-login .auth-header img.rounded-full{width:52px;height:52px}
+.auth-login .auth-header .font-display{font-size:32px}
+.auth-login .partner-logos-compact{flex-wrap:nowrap}
+.auth-login .partner-logos-compact .partner-logo{width:84px!important;height:60px!important;padding:8px!important}
+.auth-login form{width:100%;margin-top:24px;padding:24px}
+.auth-login form h1{font-size:30px;line-height:1.2}
+.auth-login form>p{font-size:15px;line-height:1.5}
+.auth-login form input{height:48px;font-size:16px}
+.auth-login .google-button{font-size:15px;gap:12px}
+.auth-login footer{width:100%;max-width:448px;margin-top:24px;padding-top:16px;font-size:11px;line-height:20px}
 @media(max-width:1023px){
  .auth-login{min-height:100svh;display:flex;flex-direction:column;padding:16px;gap:0}
- .auth-login>div:first-child{width:100%}
- .auth-login>div:first-child img.rounded-full{height:40px;width:40px}
- .auth-login>div:first-child .font-display{font-size:26px}
- .auth-login form{width:100%;margin-top:16px;padding:16px}
- .auth-login form>:not(:first-child){margin-top:10px}
- .auth-login form h1{font-size:22px;line-height:1.2}
- .auth-login form>p{font-size:12px;line-height:1.4}
- .auth-login form input{height:40px;font-size:14px}
- .auth-login .google-button{min-height:44px;padding:8px;font-size:13px}
- .auth-login .google-button svg{width:22px;height:22px}
+ .auth-login .auth-header{width:100%;gap:8px}
+ .auth-login .auth-header img.rounded-full{height:42px;width:42px}
+ .auth-login .auth-header .font-display{font-size:28px}
+ .auth-login .auth-brand{flex:0 0 auto;gap:7px}
+ .auth-login .partner-logos-compact{flex-wrap:nowrap;gap:6px!important}
+ .auth-login .partner-logos-compact .partner-logo{width:72px!important;height:52px!important;padding:7px!important}
+ .auth-login form{width:100%;margin-top:14px;padding:16px}
+ .auth-login form>:not(:first-child){margin-top:8px}
+ .auth-login form h1{font-size:26px;line-height:1.2}
+ .auth-login form>p{font-size:14px;line-height:1.35}
+ .auth-login form input{height:44px;font-size:16px}
+ .auth-login form>button{font-size:14px}
+ .auth-login form>button.w-full{height:42px;font-size:16px}
+ .auth-login .google-button{min-height:48px;padding:7px 12px;font-size:14px;gap:10px}
+ .auth-login .google-button svg{width:26px;height:26px}
  .auth-login .auth-brands{margin-top:16px;width:100%}
  .auth-login .auth-brands .official-brands{font-size:12px;letter-spacing:.04em;margin-bottom:10px}
  .auth-login .partner-logo{width:112px;height:60px;padding:10px}
- .auth-login footer{width:100%;margin-top:auto;padding-top:10px;font-size:9px;line-height:18px}
+ .auth-login footer{width:100%;margin-top:14px;padding-top:8px;font-size:10px;line-height:17px}
 }
+
+.google-icon-tile{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;border:1px solid #e2e8f0;border-radius:50%;background:#fff;box-shadow:0 2px 6px #0f172a12}
+
+@media(max-width:359px){
+ .auth-login{padding-inline:12px}
+ .auth-login>div:first-child{gap:8px}
+ .auth-login>div:first-child img.rounded-full{width:44px;height:44px}
+ .auth-login>div:first-child .font-display{font-size:28px}
+ .auth-login .partner-logos-compact .partner-logo{width:64px!important;height:46px!important}
+}
+@media(max-width:600px) and (max-height:600px){
+ .auth-login{padding-block:12px}
+ .auth-login form{margin-top:12px;padding:16px}
+ .auth-login form>:not(:first-child){margin-top:8px}
+ .auth-login form h1{font-size:26px}
+ .auth-login form input{height:42px}
+ .auth-login .google-button{min-height:46px}
+ .auth-login footer{font-size:9px;line-height:16px}
+}
+.auth-partners{flex:0 1 180px;width:180px;text-align:center}
+.auth-partners>p{margin-bottom:4px;color:#edc772;font-size:12px;font-weight:700;line-height:1.25}
+.auth-partners .partner-logos{justify-content:center}
+@media(max-width:1023px){.auth-partners{flex:0 1 158px;width:158px}.auth-partners>p{font-size:10px;margin-bottom:3px}.auth-login .auth-partners .partner-logo{width:58px!important;height:42px!important;padding:5px!important}}
+@media(max-width:359px){.auth-login .auth-header{gap:5px}.auth-login .auth-header img.rounded-full{height:36px;width:36px}.auth-login .auth-header .font-display{font-size:24px}.auth-login .auth-brand{gap:5px}.auth-partners{flex-basis:144px;width:144px}.auth-partners>p{font-size:9px}}
+.install-app-button{display:flex;width:100%;min-height:54px;align-items:center;justify-content:center;gap:12px;border:1px solid #424652;border-radius:12px;padding:8px 14px;background:#171a20;color:#f4f5f7;font-size:14px;font-weight:650;text-align:left;transition:border-color .2s,background .2s}
+.install-app-button:hover{border-color:#edc772;background:#20232b}
+.install-app-button img{width:34px;height:34px;flex:0 0 auto;border-radius:50%;object-fit:contain;background:#fff}
+.install-app-button span{flex:1}
+.install-app-button svg{flex:0 0 auto;color:#edc772}
+@media(max-width:1023px){.auth-login .install-app-button{min-height:50px;font-size:13px}}
+@media(max-width:359px){.auth-login .install-app-button{gap:9px;padding-inline:10px;font-size:12px}.install-app-button img{width:30px;height:30px}}
