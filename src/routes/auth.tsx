@@ -146,20 +146,17 @@ function AuthPage() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
         <Logo />
+        <PartnerLogos compact linked={false} />
       </div>
       {(recovery || !signedIn) && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
           <h1 className="text-2xl font-bold">
-            {recovery
-              ? "Recuperar acesso"
-              : register
-                ? "Criar minha conta"
-                : "Faça seu Login na Netinho"}
+            {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Faça seu Login"}
           </h1>
           <p className="text-sm text-muted-foreground">
             {register
               ? "Informe seu nome e e-mail para se cadastrar."
-              : "Use seu e-mail e senha ou pelo Google"}
+              : "Use seu e-mail e senha ou acesse pelo Google"}
           </p>
           {register && !recovery && (
             <Input
@@ -235,14 +232,7 @@ function AuthPage() {
         <div className="flex justify-center p-24">
           <LoaderCircle className="animate-spin" aria-label="Verificando sessão" />
         </div>
-      ) : !signedIn ? (
-        <div className="auth-brands mx-auto mt-8 max-w-md text-center">
-          <p className="official-brands mb-4">Representante Oficial das Marcas</p>
-          <div className="flex justify-center">
-            <PartnerLogos linked={false} />
-          </div>
-        </div>
-      ) : (
+      ) : !signedIn ? null : (
         <div className="mx-auto mt-10 max-w-2xl">
           {error ? (
             <div className="surface-card space-y-4 p-6">

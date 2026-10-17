@@ -554,7 +554,7 @@ a {
 @media(max-width:1023px){
  .auth-login{min-height:100svh;display:flex;flex-direction:column;padding:16px;gap:0}
  .auth-login>div:first-child{width:100%}
- .auth-login>div:first-child img{height:40px;width:40px}
+ .auth-login>div:first-child img.rounded-full{height:40px;width:40px}
  .auth-login>div:first-child .font-display{font-size:26px}
  .auth-login form{width:100%;margin-top:16px;padding:16px}
  .auth-login form>:not(:first-child){margin-top:10px}
