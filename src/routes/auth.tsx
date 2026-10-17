@@ -141,19 +141,25 @@ function AuthPage() {
     qc.clear();
   }
   return (
-    <main className="auth-stage min-h-screen px-4 py-6 sm:py-10">
+    <main
+      className={`auth-stage ${!signedIn && !recovery ? "auth-login" : ""} min-h-screen px-4 py-6 sm:py-10`}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
         <Logo />
       </div>
       {(recovery || !signedIn) && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
           <h1 className="text-2xl font-bold">
-            {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Faça seu Login na Netinho"}
+            {recovery
+              ? "Recuperar acesso"
+              : register
+                ? "Criar minha conta"
+                : "Faça seu Login na Netinho"}
           </h1>
           <p className="text-sm text-muted-foreground">
             {register
               ? "Informe seu nome e e-mail para se cadastrar."
-              : "Use seu e-mail e senha ou continue com o Google."}
+              : "Use seu e-mail e senha ou pelo Google"}
           </p>
           {register && !recovery && (
             <Input
@@ -230,10 +236,10 @@ function AuthPage() {
           <LoaderCircle className="animate-spin" aria-label="Verificando sessão" />
         </div>
       ) : !signedIn ? (
-        <div className="mx-auto mt-8 max-w-md text-center">
+        <div className="auth-brands mx-auto mt-8 max-w-md text-center">
           <p className="official-brands mb-4">Representante Oficial das Marcas</p>
           <div className="flex justify-center">
-            <PartnerLogos />
+            <PartnerLogos linked={false} />
           </div>
         </div>
       ) : (

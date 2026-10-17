@@ -551,3 +551,20 @@ a {
  .home-page .home-catalog-logos{margin-top:12px;max-width:none}
  .home-page .home-catalog-link .supplier-logo{height:64px;padding:10px}
 }
+@media(max-width:1023px){
+ .auth-login{min-height:100svh;display:flex;flex-direction:column;padding:16px;gap:0}
+ .auth-login>div:first-child{width:100%}
+ .auth-login>div:first-child img{height:40px;width:40px}
+ .auth-login>div:first-child .font-display{font-size:26px}
+ .auth-login form{width:100%;margin-top:16px;padding:16px}
+ .auth-login form>:not(:first-child){margin-top:10px}
+ .auth-login form h1{font-size:22px;line-height:1.2}
+ .auth-login form>p{font-size:12px;line-height:1.4}
+ .auth-login form input{height:40px;font-size:14px}
+ .auth-login .google-button{min-height:44px;padding:8px;font-size:13px}
+ .auth-login .google-button svg{width:22px;height:22px}
+ .auth-login .auth-brands{margin-top:16px;width:100%}
+ .auth-login .auth-brands .official-brands{font-size:12px;letter-spacing:.04em;margin-bottom:10px}
+ .auth-login .partner-logo{width:112px;height:60px;padding:10px}
+ .auth-login footer{width:100%;margin-top:auto;padding-top:10px;font-size:9px;line-height:18px}
+}

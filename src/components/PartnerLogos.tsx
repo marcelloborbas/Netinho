@@ -3,9 +3,11 @@ import { Link } from "@tanstack/react-router";
 export function PartnerLogos({
   compact = false,
   downloads = false,
+  linked = true,
 }: {
   compact?: boolean;
   downloads?: boolean;
+  linked?: boolean;
 }) {
   return (
     <div
@@ -19,14 +21,20 @@ export function PartnerLogos({
         ] as const
       ).map((s) => (
         <div key={s.brand}>
-          <Link
-            to="/catalogo"
-            search={{ marca: s.brand, modo: "consulta" }}
-            className="partner-logo"
-            aria-label={`Ver catálogo ${s.name}`}
-          >
-            <img src={s.image} alt={compact ? "" : s.name} />
-          </Link>
+          {linked ? (
+            <Link
+              to="/catalogo"
+              search={{ marca: s.brand, modo: "consulta" }}
+              className="partner-logo"
+              aria-label={`Ver catálogo ${s.name}`}
+            >
+              <img src={s.image} alt={compact ? "" : s.name} />
+            </Link>
+          ) : (
+            <span className="partner-logo">
+              <img src={s.image} alt={s.name} />
+            </span>
+          )}
           {!compact && downloads && <CatalogDownload brand={s.brand} />}
         </div>
       ))}
