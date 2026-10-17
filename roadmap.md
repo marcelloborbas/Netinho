@@ -35,6 +35,7 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [ ] Reativar login (temporariamente desativado; acesso anônimo ligado)
 
 ## Ajustes solicitados em 17/10/2026
+- [x] Compactar /auth para celular 9:16 com frase acima das logos, preservar todos os controles e conferir a prévia; sem publicar.
 - [x] Restaurar faixa de instalação no cartão de login com logo oficial, instalação disponível e instruções alternativas; sem publicar.
 - [x] Implementação local de navegação, marcas, PDFs, identificação do operador e estoque dourado.
 - [x] Classes de pedido mínimo e comissões por fornecedor protegidas no servidor.
