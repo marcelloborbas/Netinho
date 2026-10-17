@@ -157,33 +157,13 @@ function AuthPage() {
       {(admin || !signedIn) && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
           <h1 className="text-2xl font-bold">
-            {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Entre na Netinho"}
+            {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Faça seu Login na Netinho"}
           </h1>
           <p className="text-sm text-muted-foreground">
             {register
               ? "Informe seu nome e e-mail para se cadastrar."
               : "Use seu e-mail e senha ou continue com o Google."}
           </p>
-          {!recovery && (
-            <div className="flex gap-3">
-              <button
-                type="button"
-                className="filter-pill"
-                aria-pressed={!register}
-                onClick={() => setRegister(false)}
-              >
-                Entrar
-              </button>
-              <button
-                type="button"
-                className="filter-pill"
-                aria-pressed={register}
-                onClick={() => setRegister(true)}
-              >
-                Cadastrar usuário
-              </button>
-            </div>
-          )}
           {register && !recovery && (
             <Input
               aria-label="Nome completo"
