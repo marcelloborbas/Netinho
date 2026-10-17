@@ -48,6 +48,7 @@ describe("catalog access presentation", () => {
     expect(screen.queryByText(/1\.234,56/)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Adicionar ao pedido" })).not.toBeInTheDocument();
     expect(state.customerEnabled).toBe(false);
+    expect(screen.queryByRole("complementary", { name: "Resumo do pedido" })).not.toBeInTheDocument();
     expect(screen.getByText(/Catálogo sem exibição de valores/)).toBeVisible();
     if (process.env["NETINHO_QA_EXPORT"]) {
       mkdirSync("tmp/qa", { recursive: true });
@@ -62,6 +63,7 @@ describe("catalog access presentation", () => {
     render(<Catalog />);
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
     expect(state.customerEnabled).toBe(true);
+    expect(screen.getByRole("complementary", { name: "Resumo do pedido" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "FCO Automotive" }));
     expect(screen.getByRole("heading", { name: "FCO-TESTE" })).toBeVisible();
     expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();

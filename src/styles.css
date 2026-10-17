@@ -386,3 +386,22 @@ a {
   object-fit: cover;
   object-position: top;
 }
+
+/* Catalog workspace: preserve the storefront identity and keep the order in reach. */
+.catalog-workspace { display: grid; gap: 28px; align-items: start; }
+.catalog-main { min-width: 0; }
+.catalog-search { padding: 24px; border: 1px solid #ffffff18; border-radius: 16px; background: #191c23; }
+.catalog-search input { background: #101318; border-color: #ffffff30; }
+.catalog-product-card { transition: border-color .18s, box-shadow .18s; }
+.catalog-product-card:hover { border-color: #ef444466; box-shadow: 0 8px 24px #0002; }
+.catalog-product-selected { border-color: #4ade8060; }
+.catalog-order-summary { display: none; }
+@media (min-width: 1280px) {
+  .catalog-workspace-commercial { grid-template-columns: minmax(0, 1fr) 280px; }
+  .catalog-order-summary { display: block; position: sticky; top: 96px; padding: 22px; border-top: 3px solid #ef4444; }
+  .catalog-workspace-commercial .catalog-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .catalog-search { padding: 16px; }
+  .catalog-product-grid { gap: 18px; }
+}

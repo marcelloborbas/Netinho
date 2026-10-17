@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl, PAYMENT_TERMS, BRAND, type PaymentTerm } from "@/lib/brand";
 import { accessQuery } from "@/lib/access";
-import { draftActions, useDraft } from "@/lib/order-store";
+import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
 import { Button } from "@/components/ui/button";
 import { partImage } from "@/lib/part-images";
 import { RepresentativeDirectory } from "@/components/RepresentativeDirectory";
@@ -110,14 +110,16 @@ function Catalog() {
     setPage(1);
   }
   return (
-    <div className="space-y-6">
+    <div className={`catalog-workspace ${canSell ? "catalog-workspace-commercial" : ""}`}>
+      <div className="catalog-main space-y-6">
       <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
         <div className="flex flex-wrap justify-between gap-5">
           <div>
             <PartnerLogos />
-            <h1 className="mt-2 text-4xl font-bold sm:text-5xl">Encontre sua próxima solução.</h1>
+            <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-primary">Representante Oficial das Marcas</p>
+            <h1 className="mt-2 text-4xl font-bold sm:text-5xl">A peça certa. Sem perder tempo.</h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-              Pesquise pela peça, código ou aplicação. Duas marcas, a mesma confiança Netinho.
+              Do código à aplicação, encontre o que precisa com a confiança de quem entende de peças.
             </p>
           </div>
           <a
@@ -176,18 +178,20 @@ function Catalog() {
           </a>
         </div>
       )}
-      <section className="space-y-4">
+      <section className="catalog-search space-y-4" aria-label="Busca e filtros do catálogo">
+        <label htmlFor="catalog-search" className="block text-lg font-semibold">Qual peça você procura?</label>
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-4 text-muted-foreground" size={20} />
             <input
               aria-label="Buscar peças"
+              id="catalog-search"
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);
                 setPage(1);
               }}
-              placeholder="Código, peça, referência ou veículo..."
+              placeholder="Ex.: embreagem, Gol, K6246.HD..."
               className="h-14 w-full rounded-xl border bg-secondary/40 pl-12 pr-12 text-sm"
             />
             {q && (
@@ -257,10 +261,13 @@ function Catalog() {
             </select>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+        <p role="status" className="text-xs text-muted-foreground">
           {list.length} peças encontradas{dq && ` para “${dq}”`} ·{" "}
           {canSell ? "Preços exclusivos da área comercial" : "Catálogo sem exibição de valores"}
         </p>
+        {(q || manufacturer !== "all" || category !== "all") && <button onClick={reset} className="text-xs font-semibold text-primary">Limpar filtros</button>}
+        </div>
       </section>
       {error && (
         <div
@@ -293,7 +300,7 @@ function Catalog() {
           </Button>
         </div>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul className="catalog-product-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => (
             <ProductCard
               key={p.id}
@@ -329,6 +336,25 @@ function Catalog() {
       <div className="border-t pt-8">
         <RepresentativeDirectory />
       </div>
+      </div>
+      {canSell && (
+        <aside className="catalog-order-summary surface-card" aria-label="Resumo do pedido">
+          <div className="flex items-center gap-3"><ShoppingCart size={22} className="text-primary" /><span className="eyebrow">SEU PEDIDO</span></div>
+          <h2 className="mt-4 text-2xl font-bold">Venda em andamento</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{draft.customerName || "Selecione o cliente no catálogo para começar."}</p>
+          <div className="my-5 border-y py-4" aria-live="polite">
+            {draft.items.length ? <>
+              <p className="mb-3 text-xs text-muted-foreground">{draft.items.length} códigos · {draft.items.reduce((sum, item) => sum + item.quantity, 0)} unidades</p>
+              <ul className="space-y-3">{draft.items.slice(-4).map(item => <li key={item.productId} className="flex justify-between gap-3 text-sm"><span className="min-w-0 break-words">{item.code}</span><span className="shrink-0 text-muted-foreground">× {item.quantity}</span></li>)}</ul>
+              {draft.items.length > 4 && <p className="mt-3 text-xs text-muted-foreground">Mais {draft.items.length - 4} códigos na revisão.</p>}
+            </> : <p className="text-sm text-muted-foreground">As peças adicionadas aparecem aqui. Seu rascunho é salvo automaticamente.</p>}
+          </div>
+          <p className="text-xs text-muted-foreground">{PAYMENT_TERMS.find(term => term.value === draft.paymentTerm)?.label}</p>
+          <div className="mt-2 flex items-center justify-between gap-2"><span className="text-sm">Total estimado</span><strong className="text-2xl">{brl(draftTotals(draft).net)}</strong></div>
+          <Link to="/pedido" className="primary-link mt-5 w-full">Revisar pedido <ArrowRight size={17} /></Link>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">Confira quantidades, condições e descontos antes de enviar.</p>
+        </aside>
+      )}
     </div>
   );
 }
@@ -373,7 +399,7 @@ function ProductCard({
     setQty(1);
   }
   return (
-    <li className="surface-card flex min-w-0 flex-col p-3">
+    <li className={`catalog-product-card surface-card flex min-w-0 flex-col p-3 ${inOrder ? "catalog-product-selected" : ""}`}>
       <div className="product-visual">
         {img ? (
           <img
@@ -390,10 +416,10 @@ function ProductCard({
           <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
             {brand === "HD" ? "HD EMBREAGENS" : "FCO AUTOMOTIVE"}
           </span>
-          {canSell && inOrder && <Check size={15} className="text-success" />}
+          {canSell && inOrder && <span className="inline-flex items-center gap-1 text-xs text-success"><Check size={15} />{inOrder} no pedido</span>}
         </div>
-        <h2 className="mt-2 text-2xl font-bold">{p.code}</h2>
-        <p className="mt-1 text-[11px] text-muted-foreground">{p.categories?.name}</p>
+        <p className="mt-2 text-lg font-bold">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</p>
+        <h2 className="mt-1 text-base font-semibold text-muted-foreground">{p.code}</h2>
         <p className={`mt-3 text-sm leading-6 ${details ? "" : "line-clamp-3"}`}>{p.application}</p>
         {details && p.refs && (
           <p className="mt-2 text-xs leading-5 text-muted-foreground">Referências: {p.refs}</p>
