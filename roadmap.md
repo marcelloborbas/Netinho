@@ -10,7 +10,7 @@
 - [x] Rascunho por conta, pedidos, PDF multipágina e compartilhamento.
 - [x] Função de envio de PDF para vendas@netinhoautoparts.live.
 - [x] 15 testes frontend, TypeScript, build e validação SQL em PostgreSQL temporário.
-- [ ] Aplicar as migrações e publicar no ambiente existente.
+- [x] Aplicar as migrações e publicar no ambiente existente (17/10/2026; 601 peças verificadas no domínio real).
 - [ ] Confirmar Google OAuth e representantes autorizados em contas reais.
 - [ ] Configurar remetente verificado/serviço de e-mail e validar recebimento real.
 - [ ] Completar preços comerciais dos 355 códigos HD sem valor verificável.
@@ -33,3 +33,11 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [x] Fotos das peças no catálogo
 - [x] Estoque em cinza no campo de quantidade
 - [ ] Reativar login (temporariamente desativado; acesso anônimo ligado)
+
+## Ajustes solicitados em 17/10/2026
+- [x] Implementação local de navegação, marcas, PDFs, identificação do operador e estoque dourado.
+- [x] Classes de pedido mínimo e comissões por fornecedor protegidas no servidor.
+- [x] Região por representante e mapa de Abdenego.
+- [x] Testes frontend, TypeScript, build e validação de banco descartável.
+- [x] Aplicar a migração de classes/comissões no ambiente real.
+- [ ] Publicar a revisão compacta 9:16 no Lovable.

@@ -10,6 +10,7 @@ import {
   Shield,
   Contact,
 } from "lucide-react";
+import { PartnerLogos } from "@/components/PartnerLogos";
 import { Logo } from "@/components/Logo";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
@@ -63,9 +64,12 @@ function AppShell() {
     <div className="min-h-screen pb-36 md:pb-28">
       <header className="app-header">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link to="/" aria-label="Início Netinho">
-            <Logo />
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link to="/" aria-label="Início Netinho">
+              <Logo />
+            </Link>
+            <PartnerLogos compact />
+          </div>
           <nav className="hidden items-center gap-1 md:flex">
             {nav.map((n) => (
               <Link
@@ -97,6 +101,9 @@ function AppShell() {
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        <p className="operator-banner">
+          Operando como <strong>{access?.name || access?.email}</strong>
+        </p>
         <Outlet />
       </main>
       {canSell && draft.items.length > 0 && (

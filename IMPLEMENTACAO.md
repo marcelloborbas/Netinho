@@ -48,3 +48,34 @@ O proprietário autorizou preços pesquisados na internet. Foram confirmados som
 - TypeScript (`tsc --noEmit`) e build de produção concluídos sem erros.
 - Reexecutado `tmp/validation/validate-access.mjs` em PostgreSQL em memória: permissões, preservação dos preços FCO e preservação de preços HD existentes passaram. Confirmados 244 produtos FCO e 357 HD.
 - A validação local não confirma a configuração de Google OAuth, o esquema do banco remoto ou a entrega real de e-mail. A ativação permanece pendente das etapas documentadas acima.
+
+## Implantação real — 17/10/2026
+
+- Google OAuth corrigido com o retorno Supabase e login administrativo confirmado pelo proprietário.
+- Código enviado ao GitHub em `6dbd007`, recebido pelo projeto Lovable `1515e38b-ed97-4a9b-83e2-7422a84662af`.
+- Backup interno restrito criado em `netinho_backup_20261017` antes das migrações: produtos, categorias, funções, políticas, representantes, permissões, clientes e pedidos.
+- As três migrações de 16/10 foram executadas no banco real pelo editor SQL do Lovable, com aprovação dos alertas pelo proprietário.
+- Conferência remota: 244 FCO e 357 HD; zero diferenças nos preços FCO contra backup; um administrador preservado; dois produtos HD com preço à vista.
+- Publicação concluída: Lovable confirmou “Seu site foi atualizado”. Validado no domínio real: administração acessível, nova entrada com saudação e escolha de perfil, catálogo com 601 peças e filtro HD com 357 peças.
+- Envio de e-mail continua pendente de implantação da função e configuração do remetente/segredos; não considerar entrega validada.
+
+## Ajustes comerciais retomados — 17/10/2026
+
+- Botões de retorno e novo cliente destacados; identificação oficial das marcas em dourado; logos pequenas no cabeçalho com acesso ao catálogo de consulta.
+- Downloads FCO (11 catálogos originais reunidos, 67 páginas) e HD. A tabela FCO com preços foi excluída do PDF público de consulta.
+- Categorias removidas da busca conforme solicitação. Diretório e convite para consultar representante aparecem somente na consulta, sem interferir na venda.
+- Identificação do operador nas páginas autenticadas; estoque em dourado e maior.
+- Classes de cliente: 1 = R$ 5.000; 2 = R$ 10.000; 3 = R$ 1.000. Clientes existentes permanecem sem classe até edição. Pedidos são validados no frontend e no servidor sobre o valor líquido; orçamentos podem ficar abaixo do mínimo. A classe permanece no snapshot do pedido.
+- Administração: total de pedidos por fornecedor, taxas de 0,5%, 1%, 3%, 3,5%, 5% e 6%, comissão sobre o líquido vendido, repasse somente após faturamento e estorno. RPCs exclusivas do administrador; vendedores e visitantes não têm acesso à tabela.
+- Área de atuação ligada ao e-mail do cadastro de representante. O mapa fornecido pertence ao perfil Abdenego; não é atribuído a outros usuários. Cadastros sem e-mail correspondente exibem orientação para atualizar o cadastro.
+- Validação local: 18 testes frontend, TypeScript e build aprovados; testes PostgreSQL descartável para as três classes, snapshot, cálculo de comissão, taxa inválida, bloqueio antes de faturamento e proteção contra leitura/escrita por vendedor.
+- Migração necessária antes de disponibilizar esta revisão: `supabase/migrations/20261017000100_customer_classes_supplier_commissions.sql`. Não execute reset. Teste SQL complementar em `supabase/tests/customer_classes_supplier_commissions.sql`, incluído na transação com fixtures do teste de acesso.
+- Implantação desta revisão pendente: revisão automática recusou o envio da migração ao editor SQL do Lovable por exigir autorização explícita para código e destino. Nenhuma migração de classes/comissões foi aplicada ao banco real; a revisão não foi enviada ao GitHub nem publicada. A consulta remota confirmou ausência da tabela e da coluna antes da tentativa.
+- Prévia local correta: `/auth`. O arquivo `tmp/qa/catalogo-visitante.html` é somente uma exportação de teste, fora das rotas públicas.
+
+## Atualização autorizada — 17/10/2026
+
+- Autorização recebida para atualizar GitHub e Lovable. Migração de classes e comissões aplicada no editor SQL do projeto existente, em transação; resultado: Query succeeded.
+- Página inicial com atalhos dentro de Vender e logos FCO/HD com links diretos dentro de Ver catálogos. Tela conferida em 360 × 640 (9:16), sem rolagem horizontal e com os dois blocos visíveis.
+- Prévia interativa em `/previa.html`, com celular, tablet e laptop; a moldura abre a página inicial real.
+- Revalidação: 18 testes frontend, TypeScript e build aprovados.

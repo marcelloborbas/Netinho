@@ -76,6 +76,7 @@ export type Database = {
       }
       customers: {
         Row: {
+          order_class: number | null
           address: string | null
           buyer: string | null
           carrier: string | null
@@ -100,6 +101,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          order_class?: number | null
           address?: string | null
           buyer?: string | null
           carrier?: string | null
@@ -124,6 +126,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          order_class?: number | null
           address?: string | null
           buyer?: string | null
           carrier?: string | null
@@ -466,6 +469,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_supplier_commissions: { Args: Record<string, never>; Returns: Json }
+      save_supplier_commission: { Args: { p_order_id: string; p_manufacturer: string; p_rate: number; p_paid: boolean }; Returns: undefined }
       access_context: { Args: Record<PropertyKey, never>; Returns: Json }
       catalog_products: { Args: Record<PropertyKey, never>; Returns: Json }
       can_sell: { Args: Record<PropertyKey, never>; Returns: boolean }

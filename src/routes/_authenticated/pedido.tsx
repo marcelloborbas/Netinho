@@ -1,3 +1,4 @@
+import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -49,6 +50,12 @@ function OrderPage() {
     }
     if (!d.customerId) {
       toast.error("Selecione o cliente.");
+      return;
+    }
+    if (d.kind === "pedido" && t.net < customerMinimum(selectedCustomer?.order_class)) {
+      toast.error(
+        `Pedido mínimo deste cliente: ${brl(customerMinimum(selectedCustomer?.order_class))}`,
+      );
       return;
     }
     if (busy || !d.items.length) return;
@@ -120,6 +127,15 @@ function OrderPage() {
       <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
           <Label>Cliente *</Label>
+          {selectedCustomer?.order_class && (
+            <p className="text-sm text-amber-400">
+              Classe {selectedCustomer.order_class} · Pedido mínimo{" "}
+              {brl(customerMinimum(selectedCustomer.order_class))}
+              {t.net < customerMinimum(selectedCustomer.order_class)
+                ? ` · Faltam ${brl(customerMinimum(selectedCustomer.order_class) - t.net)}`
+                : " · Mínimo atingido"}
+            </p>
+          )}
           <Select
             value={d.customerId ?? ""}
             onValueChange={(id) => {

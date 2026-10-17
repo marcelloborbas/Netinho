@@ -63,17 +63,14 @@ describe("catalog access presentation", () => {
     state.seller = true;
     render(<Home />);
     expect(screen.getByRole("heading", { name: /Sr. Marcello/ })).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: /Ver catálogos/ }));
     expect(screen.getByRole("img", { name: "FCO Automotive" })).toBeVisible();
     expect(screen.getByRole("img", { name: "HD Embreagens" })).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: /^Vender/ }));
     expect(screen.getByRole("heading", { name: "Editar e revisar" })).toBeVisible();
     expect(screen.getByText("netinhoautoparts@gmail.com")).toBeVisible();
   });
-  it("does not give a visitor sales tools when choosing Vender", () => {
+  it("does not give a visitor sales tools on the home screen", () => {
     state.seller = false;
     render(<Home />);
-    fireEvent.click(screen.getByRole("button", { name: /^Vender/ }));
     expect(screen.queryByRole("heading", { name: "Montar venda" })).not.toBeInTheDocument();
     expect(screen.getByText(/acesso a vendas precisa ser autorizado/)).toBeVisible();
   });
@@ -112,6 +109,9 @@ describe("catalog access presentation", () => {
     render(<Catalog />);
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
     expect(state.customerEnabled).toBe(true);
+    expect(
+      screen.queryByRole("heading", { name: "Perto de você. Do seu negócio." }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("complementary", { name: "Resumo do pedido" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "FCO Automotive" }));
     expect(screen.getByRole("heading", { name: "FCO-TESTE" })).toBeVisible();

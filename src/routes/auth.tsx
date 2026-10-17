@@ -260,7 +260,7 @@ function AuthPage() {
         </div>
       ) : !signedIn ? (
         <div className="mx-auto mt-8 max-w-md text-center">
-          <p className="mb-4 text-sm font-semibold">Representante Oficial das Marcas</p>
+          <p className="official-brands mb-4">Representante Oficial das Marcas</p>
           <div className="flex justify-center">
             <PartnerLogos />
           </div>

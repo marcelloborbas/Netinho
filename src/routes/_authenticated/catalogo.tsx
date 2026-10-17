@@ -1,3 +1,4 @@
+import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
@@ -7,8 +8,6 @@ import {
   Minus,
   Check,
   ShoppingCart,
-  SlidersHorizontal,
-  FileDown,
   ArrowRight,
   PackageSearch,
   X,
@@ -69,14 +68,12 @@ function Catalog() {
   const search = Route.useSearch();
   const [q, setQ] = useState("");
   const [manufacturer, setManufacturer] = useState<string>(search.marca ?? "all");
-  const [category, setCategory] = useState("all");
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true && search.modo !== "consulta";
   useEffect(() => {
     setManufacturer(search.marca ?? "all");
-    setCategory("all");
     setPage(1);
     setQ("");
   }, [search.marca, search.modo]);
@@ -92,49 +89,33 @@ function Catalog() {
     ],
     [products],
   );
-  const categories = useMemo(
-    () =>
-      [
-        ...new Set(
-          combined
-            .filter((p) => manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer)
-            .map((p) => p.categories?.name)
-            .filter((v): v is string => !!v),
-        ),
-      ].sort(),
-    [combined, manufacturer],
-  );
   const list = useMemo(
     () =>
       combined.filter(
         (p) =>
           (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) &&
-          (category === "all" || p.categories?.name === category) &&
           productMatches(p, dq),
       ),
-    [combined, manufacturer, category, dq],
+    [combined, manufacturer, dq],
   );
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
   function reset() {
     setQ("");
     setManufacturer("all");
-    setCategory("all");
     setPage(1);
   }
   return (
     <div className={`catalog-workspace ${canSell ? "catalog-workspace-commercial" : ""}`}>
       <div className="catalog-main space-y-6">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/" className="return-button">
           ← Vender ou ver catálogos
         </Link>
         <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
           <div className="flex flex-wrap justify-between gap-5">
             <div>
               <PartnerLogos />
-              <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-primary">
-                Representante Oficial das Marcas
-              </p>
+              <p className="official-brands mt-5">Representante Oficial das Marcas</p>
               <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
                 A peça certa. Sem perder tempo.
               </h1>
@@ -143,15 +124,6 @@ function Catalog() {
                 peças.
               </p>
             </div>
-            <a
-              className="inline-flex items-center gap-2 self-start rounded-lg border px-3 py-2 text-xs"
-              href="/catalog/hd-catalogo.pdf"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FileDown size={16} />
-              Catálogo HD completo
-            </a>
           </div>
         </section>
         {canSell ? (
@@ -182,7 +154,15 @@ function Catalog() {
                 </option>
               ))}
             </select>
-            <Link to="/clientes" className="text-sm font-semibold text-primary">
+            {customers?.find((c) => c.id === draft.customerId)?.order_class && (
+              <p className="text-sm text-amber-400 sm:col-span-3">
+                Pedido mínimo do cliente:{" "}
+                {brl(
+                  customerMinimum(customers?.find((c) => c.id === draft.customerId)?.order_class),
+                )}
+              </p>
+            )}
+            <Link to="/clientes" className="classic-button">
               + Novo cliente
             </Link>
           </section>
@@ -230,23 +210,6 @@ function Catalog() {
                 </button>
               )}
             </div>
-            <div className="flex items-center gap-2 rounded-xl border bg-secondary/40 px-3">
-              <SlidersHorizontal size={17} className="text-muted-foreground" />
-              <select
-                aria-label="Categoria de peças"
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setPage(1);
-                }}
-                className="h-14 w-full max-w-xs bg-transparent text-sm"
-              >
-                <option value="all">Todas as categorias</option>
-                {categories.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2">
@@ -261,7 +224,6 @@ function Catalog() {
                   aria-pressed={manufacturer === value}
                   onClick={() => {
                     setManufacturer(value!);
-                    setCategory("all");
                     setPage(1);
                   }}
                 >
@@ -291,7 +253,7 @@ function Catalog() {
               {list.length} peças encontradas{dq && ` para “${dq}”`} ·{" "}
               {canSell ? "Preços exclusivos da área comercial" : "Catálogo sem exibição de valores"}
             </p>
-            {(q || manufacturer !== "all" || category !== "all") && (
+            {(q || manufacturer !== "all") && (
               <button onClick={reset} className="text-xs font-semibold text-primary">
                 Limpar filtros
               </button>
@@ -362,9 +324,11 @@ function Catalog() {
             </Button>
           </nav>
         )}
-        <div className="border-t pt-8">
-          <RepresentativeDirectory />
-        </div>
+        {!canSell && (
+          <div className="border-t pt-8">
+            <RepresentativeDirectory />
+          </div>
+        )}
       </div>
       {canSell && (
         <aside className="catalog-order-summary surface-card" aria-label="Resumo do pedido">
@@ -537,7 +501,7 @@ function ProductCard({
               <div className="mb-3 flex items-end justify-between gap-2">
                 <p className="text-2xl font-bold">{price == null ? "Sob consulta" : brl(price)}</p>
                 {!p.localOnly && (
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-sm font-bold text-amber-400">
                     {p.stock > 0 ? `${p.stock} em estoque` : "Disponibilidade sob consulta"}
                   </span>
                 )}

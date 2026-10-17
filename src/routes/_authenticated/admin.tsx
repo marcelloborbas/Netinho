@@ -1,3 +1,4 @@
+import { SupplierCommissions } from "@/components/SupplierCommissions";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -39,6 +40,7 @@ function Admin() {
       <p className="text-sm text-muted-foreground">
         Todos os pedidos dos vendedores aparecem em “Pedidos”, onde você também altera o status.
       </p>
+      <SupplierCommissions />
       <RepresentativesAdmin />
       <h2 className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
       <Input
