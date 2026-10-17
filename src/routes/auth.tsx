@@ -149,13 +149,15 @@ function AuthPage() {
     <main
       className={`auth-stage ${!signedIn && !recovery ? "auth-login" : ""} min-h-screen px-4 py-6 sm:py-10`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-        <Logo />
-        <PartnerLogos compact linked={false} />
-      </div>
-      <p className="official-brands mx-auto mt-3 text-center text-xs font-semibold text-metal">Representante Oficial das Marcas</p>
+      <header className="auth-header mx-auto grid w-full max-w-6xl items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <Logo className="auth-netinho min-w-0" />
+        <div className="auth-brands min-w-0 text-center">
+          <p className="official-brands text-xs font-semibold text-metal">Representante Oficial das Marcas</p>
+          <PartnerLogos compact linked={false} />
+        </div>
+      </header>
       {(recovery || !signedIn) && (
-        <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
+        <form onSubmit={adminLogin} className="auth-login-card surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
           <h1 className="text-2xl font-bold">
             {recovery ? "Recuperar acesso" : register ? "Criar minha conta" : "Faça seu Login"}
           </h1>
@@ -222,7 +224,7 @@ function AuthPage() {
                 <GoogleIcon />
                 Continuar com o Google
               </button>
-              <InstallAppButton />
+              <InstallAppButton className="auth-install" />
             </>
           )}
           {access?.level === 1 && (
