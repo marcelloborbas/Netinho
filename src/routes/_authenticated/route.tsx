@@ -1,111 +1,129 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Home, Search, Users, ClipboardList, ShoppingCart, LogOut, Shield } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Home,
+  Search,
+  Users,
+  ClipboardList,
+  ShoppingCart,
+  LogOut,
+  Shield,
+  Contact,
+} from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
 import { brl } from "@/lib/brand";
-import { useDraft, draftTotals } from "@/lib/order-store";
-import { meQuery } from "@/lib/queries";
+import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
+import { accessQuery, selectedProfile } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
-
+import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async ({ location }) => {
-    if (typeof window === "undefined") return { user: null };
-    const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) throw redirect({ to: "/auth" });
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", auth.user.id);
-    const isAdmin = roles?.some(role => role.role === "admin") ?? false;
+  beforeLoad: async ({ context, location }) => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) throw redirect({ to: "/auth" });
+    draftActions.switchAccount(data.user.id);
+    const access = await context.queryClient.fetchQuery(accessQuery);
     if (location.pathname === "/admin") {
-      if (!isAdmin) throw redirect({ to: "/auth" });
-      return { user: auth.user };
-    }
-    if (isAdmin) return { user: auth.user };
-    if (!auth.user.email || !auth.user.identities?.some(identity => identity.provider === "google")) throw redirect({ to: "/auth" });
-    const { data: record, error } = await supabase.from("commercial_representatives" as never)
-      .select("email,active").eq("email", auth.user.email.toLowerCase()).eq("active", true).maybeSingle();
-    if (error || !record) throw redirect({ to: "/auth" });
-    return { user: auth.user };
+      if (access.level !== 1) throw redirect({ to: "/catalogo" });
+    } else if (!selectedProfile(access.email)) throw redirect({ to: "/auth" });
+    if (!access.can_sell && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
+    return { user: data.user, access };
   },
   component: AppShell,
 });
-
-const NAV = [
-  { to: "/", label: "Início", icon: Home },
-  { to: "/catalogo", label: "Produtos", icon: Search },
-  { to: "/clientes", label: "Clientes", icon: Users },
-  { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
-] as const;
-
 function AppShell() {
   const draft = useDraft();
-  const totals = draftTotals(draft);
   const navigate = useNavigate();
-  const { data: me } = useQuery(meQuery);
-  const rawProfile = typeof window !== "undefined" ? localStorage.getItem("netinho-vendedor") : null;
-  let profile: { name: string; accessType: AccessType } | null = null;
-  try { if (rawProfile) { const p = JSON.parse(rawProfile) as { name?: string; accessType?: AccessType }; if (p.name && p.accessType) profile = { name: p.name, accessType: p.accessType === "Vendedor" ? "Representante Comercial" : p.accessType }; } } catch { /* ignora */ }
-
-  function logout() {
+  const qc = useQueryClient();
+  const { data: access } = useQuery(accessQuery);
+  const canSell = access?.can_sell === true;
+  const nav = canSell
+    ? ([
+        { to: "/", label: "Início", icon: Home },
+        { to: "/catalogo", label: "Catálogo", icon: Search },
+        { to: "/clientes", label: "Clientes", icon: Users },
+        { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
+      ] as const)
+    : ([
+        { to: "/", label: "Início", icon: Home },
+        { to: "/catalogo", label: "Catálogo", icon: Search },
+        { to: "/representante", label: "Representante", icon: Contact },
+      ] as const);
+  async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Não foi possível sair.");
+      return;
+    }
     localStorage.removeItem("netinho-vendedor");
+    qc.clear();
     navigate({ to: "/auth" });
   }
-
   return (
-    <div className="min-h-screen pb-36 md:pb-24">
-      <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/"><Logo /></Link>
+    <div className="min-h-screen pb-36 md:pb-28">
+      <header className="app-header">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <Link to="/" aria-label="Início Netinho">
+            <Logo />
+          </Link>
           <nav className="hidden items-center gap-1 md:flex">
-            {NAV.map((n) => (
-              <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-                activeProps={{ className: "text-foreground bg-secondary" }}>{n.label}</Link>
+            {nav.map((n) => (
+              <Link
+                key={n.to}
+                to={n.to}
+                activeOptions={{ exact: true }}
+                className="nav-link"
+                activeProps={{ className: "nav-link active" }}
+              >
+                {n.label}
+              </Link>
             ))}
-            {me?.isAdmin && (
-              <Link to="/admin" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-                activeProps={{ className: "text-foreground bg-secondary" }}>Admin</Link>
+            {access?.level === 1 && (
+              <Link to="/admin" className="nav-link">
+                Administração
+              </Link>
             )}
           </nav>
-          <div className="flex items-center gap-1">
-            {me?.isAdmin && (
-              <Link to="/admin" className="rounded-md p-2 text-muted-foreground md:hidden" aria-label="Administração"><Shield className="h-5 w-5" /></Link>
+          <div className="flex items-center gap-2">
+            {access?.level === 1 && (
+              <Link to="/admin" className="icon-button md:hidden" aria-label="Administração">
+                <Shield size={20} />
+              </Link>
             )}
-            <button onClick={logout} className="rounded-md p-2 text-muted-foreground hover:text-foreground" aria-label="Sair">
-              <LogOut className="h-5 w-5" />
+            <button onClick={logout} className="icon-button" aria-label="Sair da conta">
+              <LogOut size={19} />
             </button>
           </div>
         </div>
       </header>
-
-      <div className="mx-auto max-w-6xl px-4 pt-4">
-        {profile && (
-          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
-            <ProfileAvatar type={profile.accessType} className="h-12 w-12" />
-            <div className="min-w-0">
-              <p className="font-bold">{greeting(profile.name)}</p>
-              <p className="text-xs text-muted-foreground">Seja bem-vindo à Netinho Auto Parts · {profile.accessType}</p>
-            </div>
-          </div>
-        )}
-      </div>
-      <main className="mx-auto max-w-6xl px-4 py-5"><Outlet /></main>
-
-      {draft.items.length > 0 && (
-        <Link to="/pedido"
-          className="fixed inset-x-3 bottom-[4.5rem] z-30 flex items-center justify-between rounded-xl bg-gradient-red px-4 py-3 text-primary-foreground shadow-glow md:bottom-4 md:left-auto md:right-6 md:w-96">
-          <span className="flex items-center gap-2 font-semibold"><ShoppingCart className="h-5 w-5" />
-            Meu pedido · {draft.items.length} {draft.items.length === 1 ? "item" : "itens"}</span>
-          <span className="font-display text-xl font-bold">{brl(totals.net)}</span>
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        <Outlet />
+      </main>
+      {canSell && draft.items.length > 0 && (
+        <Link to="/pedido" className="order-dock">
+          <span className="flex items-center gap-3">
+            <ShoppingCart size={20} />
+            <span>
+              <b className="block text-sm">Meu pedido</b>
+              <span className="text-xs opacity-80">
+                {draft.items.length} itens · revisar e finalizar
+              </span>
+            </span>
+          </span>
+          <b className="text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
-        {NAV.map((n) => (
-          <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
-            className="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted-foreground"
-            activeProps={{ className: "text-primary" }}>
-            <n.icon className="h-5 w-5" />{n.label}
+      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length}, 1fr)` }}>
+        {nav.map((n) => (
+          <Link
+            key={n.to}
+            to={n.to}
+            activeOptions={{ exact: true }}
+            className="flex flex-col items-center gap-1 py-3 text-[11px] text-muted-foreground"
+            activeProps={{ className: "text-primary" }}
+          >
+            <n.icon size={21} />
+            {n.label}
           </Link>
         ))}
       </nav>

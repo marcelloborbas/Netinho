@@ -5,8 +5,8 @@ export const BRAND = {
   domain: "netinhoautoparts.live",
   phone: "(15) 9.9245-8492",
   phoneDigits: "5515992458492",
-  /** E-mail que recebe os pedidos (a confirmar com o cliente). */
-  orderEmail: "vendas1@fcoautomotive.com",
+  /** E-mail confirmado do setor de compras da Netinho. */
+  orderEmail: "vendas@netinhoautoparts.live",
 } as const;
 
 export type PaymentTerm = "cash" | "30" | "30_45_60" | "30_45_60_75";

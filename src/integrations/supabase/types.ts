@@ -466,6 +466,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      access_context: { Args: Record<PropertyKey, never>; Returns: Json }
+      catalog_products: { Args: Record<PropertyKey, never>; Returns: Json }
+      can_sell: { Args: Record<PropertyKey, never>; Returns: boolean }
+      update_order_status: { Args: { order_id: string; new_status: string }; Returns: undefined }
       create_order: { Args: { payload: Json }; Returns: string }
       has_role: {
         Args: {

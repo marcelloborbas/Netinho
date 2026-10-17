@@ -1,188 +1,169 @@
+import { PartnerLogos } from "@/components/PartnerLogos";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck, Building2, Handshake, PackageSearch, Truck } from "lucide-react";
-import { Logo, LogoMark } from "@/components/Logo";
-import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
-import { useEffect, useState } from "react";
-import { partImage } from "@/lib/part-images";
+import { useQuery } from "@tanstack/react-query";
+import {
+  ArrowRight,
+  PackageSearch,
+  ClipboardList,
+  Users,
+  MessageCircle,
+  ShieldCheck,
+  ArrowUpRight,
+  FileDown,
+} from "lucide-react";
+import { Logo } from "@/components/Logo";
+import { accessQuery, selectedProfile } from "@/lib/access";
+import { supabase } from "@/integrations/supabase/client";
+import { greeting } from "@/components/ProfileAvatar";
 import { BRAND } from "@/lib/brand";
-
+import { partImage } from "@/lib/part-images";
+import { RepresentativeDirectory } from "@/components/RepresentativeDirectory";
 export const Route = createFileRoute("/")({
   ssr: false,
-  beforeLoad: () => {
-    if (typeof window === "undefined") return;
-    try {
-      const raw = localStorage.getItem("netinho-vendedor");
-      const profile = raw ? JSON.parse(raw) as { name?: string; accessType?: string } : null;
-      if (!profile?.name || !["Representante Comercial", "Vendedor", "Visitante", "Distribuidor", "Auto-Peças"].includes(profile.accessType ?? "")) {
-        throw redirect({ to: "/auth" });
-      }
-    } catch (error) {
-      if (error && typeof error === "object" && "options" in error) throw error;
-      throw redirect({ to: "/auth" });
-    }
+  beforeLoad: async ({ context }) => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) throw redirect({ to: "/auth" });
+    const access = await context.queryClient.fetchQuery(accessQuery);
+    if (!selectedProfile(access.email)) throw redirect({ to: "/auth" });
   },
-  head: () => ({
-    meta: [
-      { title: "Netinho Auto Parts | Representação e soluções automotivas" },
-      { name: "description", content: "Conheça a Netinho Auto Parts, sua parceira em representação e soluções para o mercado automotivo." },
-      { property: "og:title", content: "Netinho Auto Parts" },
-      { property: "og:description", content: "Representação e soluções para o mercado automotivo." },
-    ],
-  }),
-  component: HomePage,
+  head: () => ({ meta: [{ title: "Minha área | Netinho Auto Parts" }] }),
+  component: Home,
 });
-
-const highlights = [
-  { title: "Injeção eletrônica", text: "Soluções e componentes para aplicações automotivas.", image: partImage("Bicos de Injeção") },
-  { title: "Atuadores", text: "Componentes para diferentes aplicações e sistemas.", image: partImage("Atuador Eletropneumático") },
-  { title: "Linha automotiva", text: "Um catálogo pensado para quem trabalha com peças e aplicações.", image: partImage("TBI") },
-];
-
-const cases = [
-  { icon: PackageSearch, title: "Seleção por aplicação", text: "Facilitamos a busca por código, referência e aplicação do veículo." },
-  { icon: Handshake, title: "Atendimento B2B", text: "Uma experiência feita para relacionamento comercial e atendimento profissional." },
-  { icon: Truck, title: "Distribuição", text: "Soluções para diferentes perfis do mercado automotivo e canais de venda." },
-  { icon: BadgeCheck, title: "Foco em qualidade", text: "Informações organizadas para ajudar na identificação correta das peças." },
-];
-
-function HomePage() {
-  const [profile, setProfile] = useState<{ name: string; accessType: AccessType } | null>(null);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("netinho-vendedor");
-      if (raw) {
-        const p = JSON.parse(raw) as { name?: string; accessType?: AccessType };
-        if (p.name && p.accessType) setProfile({ name: p.name, accessType: p.accessType === "Vendedor" ? "Representante Comercial" : p.accessType });
-      }
-    } catch { /* perfil inválido: ignora */ }
-  }, []);
-
+function Home() {
+  const { data: access } = useQuery(accessQuery);
   return (
-    <main className="min-h-screen overflow-hidden">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+    <div className="min-h-screen pb-10">
+      <header className="app-header">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <Logo />
-          {profile ? (
-            <div className="flex items-center gap-2">
-              <ProfileAvatar type={profile.accessType} className="h-10 w-10" />
-              <div className="hidden text-right sm:block">
-                <p className="text-sm font-bold">{greeting(profile.name)}</p>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{profile.accessType}</p>
-              </div>
-            </div>
-          ) : (
-            <Link to="/auth" className="rounded-xl bg-gradient-red px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-glow transition hover:scale-[1.02]">Entrar</Link>
-          )}
-        </div>
-      </header>
-
-      <section className="relative">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.05fr_.95fr] md:py-20">
-          <div>
-            {profile && (
-              <div className="mb-4 flex items-center gap-3">
-                <ProfileAvatar type={profile.accessType} className="h-14 w-14" />
-                <div>
-                  <p className="text-xl font-extrabold">{greeting(profile.name)}</p>
-                  <p className="text-sm text-muted-foreground">Seja bem-vindo à Netinho Auto Parts.</p>
-                </div>
-              </div>
-            )}
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-              Netinho Auto Parts
-            </span>
-            <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.02] sm:text-5xl md:text-6xl">
-              Conectando o mercado automotivo às peças certas.
-            </h1>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-              A Netinho Auto Parts atua com representação e soluções para o mercado automotivo,
-              aproximando produtos, aplicações e oportunidades comerciais.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/auth" className="inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-red px-5 font-bold text-primary-foreground shadow-glow">
-                Conhecer a Netinho <ArrowRight className="h-5 w-5" />
-              </Link>
-              <a href="#atuacao" className="inline-flex h-12 items-center rounded-xl border border-border bg-secondary/50 px-5 font-bold">
-                Nossa atuação
-              </a>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2"><Building2 className="h-4 w-4 text-primary" />Mercado automotivo</span>
-              <span className="flex items-center gap-2"><Handshake className="h-4 w-4 text-primary" />Relacionamento B2B</span>
-            </div>
-          </div>
-
-          <div className="flex w-full items-center justify-center">
-            <LogoMark className="h-64 w-64 md:h-80 md:w-80" />
-          </div>
-        </div>
-      </section>
-
-      <section id="atuacao" className="border-y border-border/60 bg-surface/40">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">O que fazemos</p>
-            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Soluções para quem vive o automotivo.</h2>
-            <p className="mt-3 text-muted-foreground">Uma apresentação clara das famílias e aplicações que fazem parte da nossa atuação.</p>
-          </div>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {highlights.map((item) => (
-              <article key={item.title} className="surface-card overflow-hidden">
-                <div className="flex h-44 items-center justify-center bg-transparent p-5">
-                  {item.image ? <img src={item.image} alt={item.title} className="h-full w-full object-contain image-transparent" /> : <PackageSearch className="h-16 w-16 text-primary" />}
-                </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-extrabold">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-        <div className="grid gap-10 md:grid-cols-[.8fr_1.2fr] md:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Nossos casos</p>
-            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Onde a Netinho ajuda a transformar atendimento em negócio.</h2>
-            <p className="mt-4 leading-7 text-muted-foreground">
-              Construímos uma experiência digital para apoiar a identificação de peças, o relacionamento comercial e a rotina de quem trabalha com o mercado automotivo.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {cases.map((item) => {
-              const Icon = item.icon;
-              return (
-                <article key={item.title} className="rounded-2xl border border-border bg-secondary/30 p-5">
-                  <Icon className="h-7 w-7 text-primary" />
-                  <h3 className="mt-4 font-extrabold">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-4 mb-12 overflow-hidden rounded-3xl bg-gradient-red shadow-glow sm:mx-auto sm:max-w-6xl">
-        <div className="px-6 py-10 text-center sm:px-10">
-          <h2 className="text-3xl font-black text-primary-foreground">Quer conhecer a Netinho?</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-primary-foreground/80">
-            Identifique seu perfil para receber a experiência adequada ao seu acesso.
-          </p>
-          <Link to="/auth" className="mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 font-bold text-slate-900">
-            Continuar <ArrowRight className="h-5 w-5" />
+          <Link to="/auth" className="nav-link">
+            Meu perfil <ArrowUpRight size={15} />
           </Link>
         </div>
-      </section>
-
-      <footer className="border-t border-border/60 px-4 py-8 text-center text-xs text-muted-foreground">
-        <Logo className="justify-center" />
-        <p className="mt-4">Netinho Auto Parts · Representação e soluções para o mercado automotivo.</p>
-        <a href={`https://${BRAND.domain}`} target="_blank" rel="noopener noreferrer" className="mt-2 block font-bold text-amber-400 hover:underline">{BRAND.domain}</a>
-        <a href="mailto:netinhoautoparts@gmail.com" className="mt-2 inline-block font-semibold text-primary hover:underline">netinhoautoparts@gmail.com</a>
-      </footer>
-    </main>
+      </header>
+      <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="eyebrow">SUA CONEXÃO COM AS MELHORES PEÇAS</span>
+            <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+              {greeting(`sr. ${access?.name.split(" ")[0] ?? ""}`)}
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              {access?.can_sell
+                ? "Tudo pronto para o seu próximo bom negócio."
+                : "Encontre a peça certa. Conte com quem entende."}
+            </p>
+          </div>
+          <span className="access-badge">
+            <ShieldCheck size={15} />
+            Nível {access?.level ?? 3} ·{" "}
+            {access?.can_sell ? "Área comercial" : "Catálogo de consulta"}
+          </span>
+        </div>
+        <section className="catalog-hero relative overflow-hidden rounded-3xl border p-6 sm:p-10">
+          <div className="relative z-10 max-w-xl">
+            <span className="eyebrow">REPRESENTAÇÃO EXCLUSIVA · NETINHO</span>
+            <h2 className="mt-4 text-4xl font-bold leading-[1.02] sm:text-6xl">
+              Seu negócio merece
+              <br />
+              <span className="text-primary">a peça certa.</span>
+            </h2>
+            <p className="mt-5 max-w-md text-sm leading-7 text-muted-foreground sm:text-base">
+              Tecnologia FCO Automotive e força HD Embreagens. Consulte aplicações e encontre
+              soluções para cada veículo.
+            </p>
+            <Link to="/catalogo" className="primary-link mt-7">
+              Explorar catálogo <ArrowRight size={18} />
+            </Link>
+            <div className="mt-8"><PartnerLogos /></div>
+          </div>
+          <img
+            src={partImage("Kit Embreagem") || partImage("TBI") || undefined}
+            alt="Linha de peças automotivas representada pela Netinho"
+            className="pointer-events-none absolute -right-12 bottom-0 hidden h-[85%] w-[48%] object-contain opacity-80 lg:block"
+          />
+        </section>
+        <section className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[
+            {
+              icon: PackageSearch,
+              title: "Catálogo de peças",
+              text: "FCO, HD ou as duas marcas.",
+              to: "/catalogo",
+            },
+            ...(access?.can_sell
+              ? [
+                  {
+                    icon: Users,
+                    title: "Meus clientes",
+                    text: "Cadastros e atendimento organizados.",
+                    to: "/clientes",
+                  },
+                  {
+                    icon: ClipboardList,
+                    title: "Meus pedidos",
+                    text: "Acompanhe, repita e exporte em PDF.",
+                    to: "/pedidos",
+                  },
+                ]
+              : [
+                  {
+                    icon: MessageCircle,
+                    title: "Falar com a Netinho",
+                    text: "Encontre atendimento para sua região.",
+                    to: "contact",
+                  },
+                  {
+                    icon: FileDown,
+                    title: "Catálogo HD em PDF",
+                    text: "Consulte o catálogo original completo.",
+                    to: "pdf",
+                  },
+                ]),
+          ].map((item) => {
+            const content = (
+              <>
+                <item.icon className="text-primary" size={24} />
+                <h3 className="mt-4 text-xl font-bold">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{item.text}</p>
+                <ArrowUpRight size={18} className="absolute right-5 top-5 text-muted-foreground" />
+              </>
+            );
+            return item.to === "contact" ? (
+              <a key={item.title} href="#representantes" className="action-card">
+                {content}
+              </a>
+            ) : item.to === "pdf" ? (
+              <a
+                key={item.title}
+                href="/catalog/hd-catalogo.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="action-card"
+              >
+                {content}
+              </a>
+            ) : (
+              <Link
+                key={item.title}
+                to={item.to as "/catalogo" | "/clientes" | "/pedidos"}
+                className="action-card"
+              >
+                {content}
+              </Link>
+            );
+          })}
+        </section>
+        <div className="mt-10">
+          <RepresentativeDirectory />
+        </div>
+        <footer className="mt-10 flex flex-wrap justify-between gap-3 border-t pt-6 text-xs text-muted-foreground">
+          <span>Netinho Auto Parts · FCO Automotive & HD Embreagens</span>
+          <a href={`https://wa.me/${BRAND.phoneDigits}`} target="_blank" rel="noreferrer">
+            {BRAND.phone}
+          </a>
+        </footer>
+      </main>
+    </div>
   );
 }

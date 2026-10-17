@@ -1,4 +1,23 @@
 # Roadmap NETINHO
+
+## Reestruturação de 16/10/2026
+
+- [x] Entrada com imagem oficial, botão Google e saudação por nome.
+- [x] Perfis e níveis 1/2/3 protegidos no frontend e no banco.
+- [x] Catálogo FCO/HD, filtros, pesquisa e paginação.
+- [x] 357 produtos HD com imagens e fichas originais; preços FCO preservados.
+- [x] Duas referências HD verificadas na internet, com fonte/data; demais preços sob consulta.
+- [x] Rascunho por conta, pedidos, PDF multipágina e compartilhamento.
+- [x] Função de envio de PDF para vendas@netinhoautoparts.live.
+- [x] 15 testes frontend, TypeScript, build e validação SQL em PostgreSQL temporário.
+- [ ] Aplicar as migrações e publicar no ambiente existente.
+- [ ] Confirmar Google OAuth e representantes autorizados em contas reais.
+- [ ] Configurar remetente verificado/serviço de e-mail e validar recebimento real.
+- [ ] Completar preços comerciais dos 355 códigos HD sem valor verificável.
+
+Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
+
+## Histórico anterior à reestruturação
 - [x] Verificar erro newPassword na edição de representantes e adicionar teste para ambos os cadastros
 - [x] Banco de dados + 244 produtos
 - [x] Login (e-mail/senha + Google)

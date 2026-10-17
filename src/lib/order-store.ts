@@ -23,10 +23,17 @@ export interface Draft {
   items: DraftItem[];
 }
 
-const KEY = "netinho-draft-v1";
+let KEY = "netinho-draft-unassigned";
 const empty: Draft = {
-  customerId: null, customerName: null, paymentTerm: "cash", kind: "pedido",
-  delivery: "", carrier: "", buyer: "", notes: "", items: [],
+  customerId: null,
+  customerName: null,
+  paymentTerm: "cash",
+  kind: "pedido",
+  delivery: "",
+  carrier: "",
+  buyer: "",
+  notes: "",
+  items: [],
 };
 
 let state: Draft = empty;
@@ -39,23 +46,43 @@ function load() {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) state = { ...empty, ...(JSON.parse(raw) as Partial<Draft>) };
-  } catch { /* rascunho corrompido: ignora */ }
+  } catch {
+    /* rascunho corrompido: ignora */
+  }
 }
 
 function set(next: Draft) {
   state = next;
-  try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* sem espaço */ }
+  try {
+    localStorage.setItem(KEY, JSON.stringify(next));
+  } catch {
+    /* sem espaço */
+  }
   listeners.forEach((l) => l());
 }
 
 export const draftActions = {
-  get: () => { load(); return state; },
+  switchAccount: (id: string | null) => {
+    const key = id ? `netinho-draft-v2-${id}` : "netinho-draft-unassigned";
+    if (KEY === key) return;
+    KEY = key;
+    state = empty;
+    loaded = false;
+    load();
+    listeners.forEach((l) => l());
+  },
+  get: () => {
+    load();
+    return state;
+  },
   update: (patch: Partial<Draft>) => set({ ...draftActions.get(), ...patch }),
   addItem: (item: Omit<DraftItem, "discount">) => {
     const s = draftActions.get();
     const existing = s.items.find((i) => i.productId === item.productId);
     const items = existing
-      ? s.items.map((i) => i.productId === item.productId ? { ...i, quantity: i.quantity + item.quantity } : i)
+      ? s.items.map((i) =>
+          i.productId === item.productId ? { ...i, quantity: i.quantity + item.quantity } : i,
+        )
       : [...s.items, { ...item, discount: 0 }];
     set({ ...s, items });
   },
@@ -72,7 +99,10 @@ export const draftActions = {
 
 export function useDraft(): Draft {
   return useSyncExternalStore(
-    (cb) => { listeners.add(cb); return () => listeners.delete(cb); },
+    (cb) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
     () => draftActions.get(),
     () => empty,
   );
@@ -83,7 +113,9 @@ export function lineNet(i: DraftItem, term: PaymentTerm) {
   return Math.round(p * (1 - i.discount / 100) * 100) / 100;
 }
 export function draftTotals(d: Draft) {
-  let gross = 0, net = 0, units = 0;
+  let gross = 0,
+    net = 0,
+    units = 0;
   for (const i of d.items) {
     gross += (i.prices[d.paymentTerm] ?? 0) * i.quantity;
     net += lineNet(i, d.paymentTerm) * i.quantity;

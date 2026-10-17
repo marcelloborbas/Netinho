@@ -1,396 +1,337 @@
+import { PartnerLogos } from "@/components/PartnerLogos";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, Check, LoaderCircle, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { accessQuery, saveProfile } from "@/lib/access";
 import { Logo } from "@/components/Logo";
+import { ProfileAvatar, greeting, type AccessType } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { UserRound, Phone, Mail, Pencil, Settings } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { meQuery } from "@/lib/queries";
-import { supabase } from "@/integrations/supabase/client";
-import { ProfileAvatar, type AccessType } from "@/components/ProfileAvatar";
-
-const PROFILE_KEY = "netinho-vendedor";
-const REPRESENTATIVES = [
-  { id: "abdenego-eugenio", name: "Abdenego Eugênio", region: "Vale do Paraíba e Litoral Norte", path: "/representante" },
-  { id: "livaldo-souza-silva", name: "Livaldo Souza Silva", region: "Todo o Brasil · Teste", path: "/representante-livaldo" },
-] as const;
-type SellerProfile = { name: string; phone: string; email: string; accessType: AccessType };
-
-const ACCESS_OPTIONS: { value: AccessType; description: string }[] = [
-  { value: "Representante Comercial", description: "Atende clientes e monta pedidos" },
-  { value: "Visitante", description: "Conhece a Netinho e nossa atuação" },
-  { value: "Distribuidor", description: "Conhece nossas soluções comerciais" },
-  { value: "Auto-Peças", description: "Conhece nossa linha e atuação" },
-];
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   head: () => ({
     meta: [
-      { title: "Netinho Auto Parts" },
-      { name: "description", content: "Escolha seu perfil e acesse a Netinho Auto Parts." },
-      { property: "og:title", content: "Netinho Auto Parts" },
-      { property: "og:description", content: "Catálogo e pedidos para Representantes Comerciais, Visitantes, Distribuidores e Auto-Peças." },
+      { title: "Bem-vindo | Netinho Auto Parts" },
+      {
+        name: "description",
+        content: "Entre com Google e conheça FCO Automotive e HD Embreagens.",
+      },
     ],
   }),
   component: AuthPage,
 });
-
+const options: { type: AccessType; text: string; level: string }[] = [
+  {
+    type: "Representante Comercial",
+    text: "Clientes, preços e pedidos em um só lugar.",
+    level: "Nível 2 · vendas",
+  },
+  { type: "Visitante", text: "Explore as peças e suas aplicações.", level: "Nível 3 · consulta" },
+  {
+    type: "Distribuidor",
+    text: "Encontre soluções para sua distribuição.",
+    level: "Nível 3 · consulta",
+  },
+  { type: "Auto-Peças", text: "Encontre a peça certa para sua loja.", level: "Nível 3 · consulta" },
+];
+function GoogleIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M43.6 20.5H24v8h11.3C33.8 33.1 29.6 36 24 36a12 12 0 1 1 8.5-20.5l5.7-5.7A20 20 0 1 0 44 24c0-1.2-.1-2.4-.4-3.5Z"
+      />
+      <path
+        fill="#34A853"
+        d="m6.3 33 6.6-5.1A12 12 0 0 0 24 36c3 0 5.7-1 7.7-2.8l6.2 4.8A20 20 0 0 1 6.3 33Z"
+      />
+      <path fill="#FBBC05" d="m6.3 15 6.6 5.1a12 12 0 0 0 0 7.8L6.3 33a20 20 0 0 1 0-18Z" />
+      <path
+        fill="#EA4335"
+        d="M24 4a20 20 0 0 1 14.2 5.8l-5.7 5.7A12 12 0 0 0 12.9 20l-6.6-5A20 20 0 0 1 24 4Z"
+      />
+    </svg>
+  );
+}
 function AuthPage() {
   const navigate = useNavigate();
-  const [pressedRepresentative, setPressedRepresentative] = useState<string | null>(null);
-  function clickFeedback() {
-    try {
-      const AudioContextClass = window.AudioContext;
-      if (!AudioContextClass) return;
-      const context = new AudioContextClass();
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(760, context.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(480, context.currentTime + 0.07);
-      gain.gain.setValueAtTime(0.035, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.085);
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.09);
-      oscillator.onended = () => { void context.close(); };
-    } catch { /* Navegador sem áudio disponível: mantém a navegação. */ }
-  }
-  function openRepresentative(id: string, path: "/representante" | "/representante-livaldo") {
-    clickFeedback();
-    setPressedRepresentative(id);
-    window.setTimeout(() => navigate({ to: path }), 150);
-  }
-  const { data: me, refetch: refreshMe } = useQuery(meQuery);
-  const canEditRepresentatives = me?.isAdmin === true;
-  useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      void refreshMe();
-    });
-    return () => listener.subscription.unsubscribe();
-  }, [refreshMe]);
-  const [accessType, setAccessType] = useState<AccessType | null>(null);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const qc = useQueryClient();
+  const [signedIn, setSignedIn] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [selectedRepresentative, setSelectedRepresentative] = useState("");
-
-  const [installing, setInstalling] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-
+  const [profile, setProfile] = useState<AccessType | null>(null);
+  const [admin, setAdmin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [recovery, setRecovery] = useState(false);
+  const { data: access, error, refetch } = useQuery({ ...accessQuery, enabled: signedIn });
   useEffect(() => {
-    const saved = localStorage.getItem(PROFILE_KEY);
-    if (saved) {
-      try {
-        const profile = JSON.parse(saved) as SellerProfile;
-        setAccessType(profile.accessType === "Vendedor" ? "Representante Comercial" : (profile.accessType ?? null));
-        setName(profile.name ?? "");
-        setPhone(profile.phone ?? "");
-        setEmail(profile.email ?? "");
-      } catch {
-        localStorage.removeItem(PROFILE_KEY);
+    void supabase.auth.getUser().then(({ data }) => {
+      setSignedIn(!!data.user);
+      setChecking(false);
+    });
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      setSignedIn(!!session?.user);
+      setChecking(false);
+      if (event === "PASSWORD_RECOVERY") {
+        setAdmin(true);
+        setRecovery(true);
       }
-    }
-
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setDeferredPrompt(event as BeforeInstallPromptEvent);
-      setCanInstall(true);
-    };
-    const onInstalled = () => {
-      setInstalling(false);
-      setCanInstall(false);
-      setDeferredPrompt(null);
-      toast.success("Netinho Auto Parts instalado no celular.");
-    };
-    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-    window.addEventListener("appinstalled", onInstalled);
-    return () => {
-      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", onInstalled);
-    };
+    });
+    if (window.location.hash.includes("error_description"))
+      toast.error("O Google não concluiu o acesso. Tente novamente.");
+    return () => data.subscription.unsubscribe();
   }, []);
-
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    if (!accessType) {
-      toast.error("Selecione como você acessará a Netinho.");
+  async function googleLogin() {
+    // OAuth must leave the device-preview iframe before contacting Google.
+    if (window.self !== window.top) {
+      window.open(`${window.location.origin}/auth`, "_blank", "noopener,noreferrer");
+      toast.info("Continue na nova aba e clique em Continuar com o Google.");
       return;
     }
     setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth`,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    if (error) {
+      toast.error(error.message);
+      setBusy(false);
+    }
+  }
+  async function adminLogin(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
     try {
-      if (accessType === "Representante Comercial") {
-        const rep = REPRESENTATIVES.find((r) => r.id === selectedRepresentative);
-        if (!rep) { toast.error("Selecione um representante cadastrado."); return; }
-        sessionStorage.setItem("netinho-google-representante", rep.id);
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: window.location.origin + "/auth", queryParams: { prompt: "select_account" } },
-        });
-        if (error) toast.error("Não foi possível iniciar o acesso Google: " + error.message);
-        return;
+      if (recovery) {
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+        setRecovery(false);
+        setPassword("");
+        toast.success("Senha atualizada.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
       }
-      const profile: SellerProfile = {
-        accessType,
-        name: name.trim(),
-        phone: phone.trim(),
-        email: email.trim().toLowerCase(),
-      };
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-
-      // A identificação é local e não depende de autenticação Supabase.
-      // Isso mantém o catálogo acessível mesmo quando o projeto não permite sessão anônima.
-      navigate({ to: "/" });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível entrar.");
+      await qc.invalidateQueries({ queryKey: ["access"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível entrar.");
     } finally {
       setBusy(false);
     }
   }
-
-  useEffect(() => {
-    const pending = sessionStorage.getItem("netinho-google-representante");
-    if (!pending) return;
-    let cancelled = false;
-    async function completeGoogleLogin() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (cancelled || !user) return;
-      sessionStorage.removeItem("netinho-google-representante");
-      const rep = REPRESENTATIVES.find(r => r.id === pending);
-      const googleIdentity = user.identities?.some(identity => identity.provider === "google");
-      if (!rep || !googleIdentity || !user.email) {
-        await supabase.auth.signOut();
-        toast.error("Entre com uma conta Google autorizada.");
-        return;
-      }
-      const { data, error } = await supabase.from("commercial_representatives" as never)
-        .select("full_name,email,active").eq("email", user.email.toLowerCase()).eq("active", true).maybeSingle();
-      const approved = data as { full_name: string; email: string; active: boolean } | null;
-      if (error || !approved || approved.full_name.toLocaleLowerCase("pt-BR") !== rep.name.toLocaleLowerCase("pt-BR")) {
-        await supabase.auth.signOut();
-        toast.error("Google não autorizado para este representante. Peça ao administrador para cadastrar e ativar seu e-mail.");
-        return;
-      }
-      localStorage.setItem(PROFILE_KEY, JSON.stringify({ accessType: "Representante Comercial", name: approved.full_name, phone: "", email: approved.email }));
-      navigate({ to: "/catalogo" });
-    }
-    void completeGoogleLogin();
-    return () => { cancelled = true; };
-  }, [navigate]);
-
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [adminEmail, setAdminEmail] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
-  const [resetMode, setResetMode] = useState(false);
-  const [updatingPassword, setUpdatingPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setUpdatingPassword(true);
-    });
-    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) setUpdatingPassword(true);
-    return () => subscription.unsubscribe();
-  }, []);
-
-  async function saveNewPassword(e: FormEvent) {
-    e.preventDefault();
-    if (newPassword.length < 8) { toast.error("Use uma senha com pelo menos 8 caracteres."); return; }
-    setBusy(true);
-    try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) { toast.error("Não foi possível atualizar a senha: " + error.message); return; }
-      setNewPassword("");
-      setUpdatingPassword(false);
-      toast.success("Senha atualizada. Entre com seu e-mail e a nova senha.");
-      await supabase.auth.signOut();
-      await refreshMe();
-    } finally { setBusy(false); }
-  }
-
-  async function loginAdminEmail(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email: adminEmail.trim().toLowerCase(), password: adminPassword });
-      if (error || !data.user) { toast.error("E-mail ou senha inválidos."); return; }
-      const { data: roles, error: roleError } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
-      if (roleError || !roles?.some((item) => item.role === "admin")) {
-        await supabase.auth.signOut();
-        toast.error("Esta conta não possui permissão de administrador.");
-        return;
-      }
-      setAdminPassword("");
-      await refreshMe();
-      toast.success("Administrador autenticado.");
-      navigate({ to: "/admin" });
-    } catch (err) { toast.error(err instanceof Error ? err.message : "Não foi possível entrar."); }
-    finally { setBusy(false); }
-  }
-
-  async function logoutAdmin() {
-    setBusy(true);
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) { toast.error("Não foi possível sair: " + error.message); return; }
-      await refreshMe();
-      toast.success("Administrador desconectado.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível sair.");
-    } finally { setBusy(false); }
-  }
-
-  async function recoverAdminPassword(e: FormEvent) {
-    e.preventDefault();
-    if (!adminEmail.trim()) { toast.error("Informe seu e-mail."); return; }
-    setBusy(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(adminEmail.trim().toLowerCase(), { redirectTo: window.location.origin + "/auth" });
-      if (error) { toast.error("Não foi possível solicitar a recuperação: " + error.message); return; }
-      toast.success("Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.");
-      setResetMode(false);
-    } catch (err) { toast.error(err instanceof Error ? err.message : "Falha ao solicitar recuperação."); }
-    finally { setBusy(false); }
-  }
-
-  async function installApp() {
-    if (!deferredPrompt) {
-      toast.info("No celular, use o menu do navegador e escolha “Adicionar à tela inicial” ou “Instalar aplicativo”.");
+  async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Não foi possível sair.");
       return;
     }
-    setInstalling(true);
-    await deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setInstalling(false);
-    setDeferredPrompt(null);
-    setCanInstall(false);
+    localStorage.removeItem("netinho-vendedor");
+    qc.clear();
+    setProfile(null);
   }
-
+  function enter() {
+    if (!access || !profile) return;
+    if (profile === "Representante Comercial" && !access.can_sell) return;
+    saveProfile(access, profile);
+    navigate({ to: "/" });
+  }
   return (
-    <main className="flex min-h-screen items-center justify-center px-5 py-8">
-      <div className="w-full max-w-lg">
-        <div className="mb-8 flex items-center justify-center gap-3">
-          <Logo size="lg" showPhone />
-          <button type="button" onClick={() => setShowAdminPanel((open) => !open)} aria-label="Acesso administrativo" title="Modo administrativo" aria-expanded={showAdminPanel} className="group rounded-full border border-zinc-600/60 bg-transparent p-3 text-zinc-400 transition-all duration-300 hover:rotate-45 hover:bg-zinc-700/30 hover:text-zinc-100 active:rotate-90 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-400 motion-reduce:transform-none">
-            <Settings className="h-6 w-6" />
-          </button>
-        </div>
-        {showAdminPanel && (
-          <div className="mb-5 rounded-xl border border-amber-400/30 bg-secondary/30 p-4">
-            <p className="mb-3 text-base font-bold text-amber-400">Acesso administrativo</p>
-            {updatingPassword ? (
-              <form onSubmit={saveNewPassword} className="space-y-3">
-                <Label htmlFor="new-admin-password">Defina sua nova senha</Label>
-                <Input id="new-admin-password" type="password" minLength={8} required autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Pelo menos 8 caracteres" />
-                <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar nova senha"}</Button>
-              </form>
-            ) : me?.isAdmin ? (
-              <div className="space-y-3">
-                <div className="flex flex-wrap items-center justify-between gap-3"><p className="min-w-0 break-all text-sm">Administrador conectado: {me.email}</p><Button type="button" variant="outline" size="sm" disabled={busy} onClick={logoutAdmin}>Sair</Button></div>
-                <Button type="button" className="w-full" onClick={() => navigate({ to: "/admin" })}>Abrir administração</Button>
-              </div>
-            ) : (
-              <form onSubmit={resetMode ? recoverAdminPassword : loginAdminEmail} className="space-y-3">
-                <div className="space-y-1.5"><Label htmlFor="admin-email">E-mail do administrador</Label><Input id="admin-email" type="email" required autoComplete="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="seuemail@exemplo.com" /></div>
-                {!resetMode && <div className="space-y-1.5"><Label htmlFor="admin-password">Senha</Label><Input id="admin-password" type="password" required autoComplete="current-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="Sua senha" /></div>}
-                <Button type="submit" disabled={busy} className="h-12 w-full font-semibold">{busy ? "Aguarde..." : resetMode ? "Enviar recuperação de senha" : "Entrar como administrador"}</Button>
-                <button type="button" className="w-full text-center text-sm text-primary underline-offset-4 hover:underline" onClick={() => setResetMode(!resetMode)}>{resetMode ? "Voltar ao login" : "Esqueci minha senha"}</button>
-                {me && <p className="text-xs text-muted-foreground">A conta conectada não possui permissão de administrador.</p>}
-              </form>
-            )}
-          </div>
-        )}
-        <form onSubmit={submit} className="surface-card space-y-5 p-6">
-          <div>
-            <h1 className="mt-1 text-2xl font-bold">Qual seu perfil ?</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Selecione seu perfil e informe seus dados.</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {ACCESS_OPTIONS.map((option) => {
-              const active = accessType === option.value;
-              return (
-                <button key={option.value} type="button" onClick={() => setAccessType(option.value)}
-                  className={active
-                    ? "group rounded-xl border-2 border-primary bg-primary/10 p-4 text-left ring-2 ring-primary/20 transition-all duration-200 hover:-translate-y-1 active:scale-95 motion-reduce:transform-none"
-                    : "group rounded-xl border border-border bg-secondary/40 p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 active:scale-95 motion-reduce:transform-none"}>
-                  <ProfileAvatar type={option.value} className={active ? "h-12 w-12 group-hover:scale-110 group-active:rotate-12" : "h-12 w-12 opacity-70 group-hover:scale-110 group-active:rotate-12"} />
-                  <span className="mt-3 block font-bold">{option.value}</span>
-                  <span className="mt-1 block text-xs leading-snug text-muted-foreground">{option.description}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {accessType === "Representante Comercial" && (
-            <div className="space-y-4 rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-400/10 to-transparent p-4 sm:p-5">
-              <p className="text-center text-lg font-extrabold tracking-wide text-amber-400">Representantes Comerciais</p>
-              {REPRESENTATIVES.map(rep => (
-                <div key={rep.id} className="flex items-stretch gap-2">
-                <button key={rep.id} type="button" onClick={() => { if (canEditRepresentatives) { navigate({ to: "/editar-representante/$slug", params: { slug: rep.id } }); return; } setSelectedRepresentative(rep.id); setAccessType("Representante Comercial"); }}
-                  className={`flex min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl border-2 border-amber-400/40 bg-background/70 px-4 py-5 text-left shadow-sm transition-all duration-150 hover:border-amber-400 hover:bg-amber-400/10 active:scale-[0.97] active:bg-amber-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 motion-reduce:transition-none ${selectedRepresentative === rep.id ? "scale-[0.97] border-amber-400 bg-amber-400/20 shadow-[0_0_18px_rgba(251,191,36,0.3)]" : ""}`}>
-                  <span><span className="block font-display text-2xl font-black leading-tight tracking-wide text-amber-400 sm:text-3xl">{rep.name}</span>
-                    <span className="mt-2 block text-sm text-muted-foreground">{rep.region}</span></span>
-                  <span className="shrink-0 text-2xl font-bold text-amber-400">→</span>
-                </button>
-                {canEditRepresentatives && <button type="button" title={`Editar ${rep.name} (somente administrador)`} aria-label={`Editar ${rep.name}`} onClick={() => navigate({ to: "/editar-representante/$slug", params: { slug: rep.id } })} className="rounded-xl border border-amber-400/50 px-3 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></button>}
-                </div>
-              ))}
-            </div>
+    <main className="auth-stage min-h-screen px-4 py-6 sm:py-10">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+        <Logo />
+        <button
+          className="icon-button"
+          aria-label="Acesso administrativo"
+          onClick={() => setAdmin(!admin)}
+        >
+          <Settings size={20} />
+        </button>
+      </div>
+      {admin && (
+        <form onSubmit={adminLogin} className="surface-card mx-auto mt-6 max-w-md space-y-3 p-5">
+          <h2 className="text-xl font-bold">Administração</h2>
+          {!recovery && (
+            <Input
+              aria-label="E-mail do administrador"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="E-mail do administrador"
+            />
           )}
-          {accessType === "Representante Comercial" && selectedRepresentative && (
-            <div className="space-y-3 rounded-xl border border-primary/40 bg-secondary/30 p-4">
-              <p className="font-semibold">Acesso de {REPRESENTATIVES.find(r => r.id === selectedRepresentative)?.name}</p>
-              <p className="text-xs text-muted-foreground">Use a conta Google autorizada pelo administrador para fazer pedidos.</p>
-              <Button type="submit" disabled={busy} className="w-full">{busy ? "Aguarde..." : "Entrar com Google"}</Button>
-            </div>
+          <Input
+            aria-label={recovery ? "Nova senha" : "Senha"}
+            type="password"
+            required
+            minLength={recovery ? 8 : 1}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={recovery ? "Nova senha (mínimo 8 caracteres)" : "Senha"}
+          />
+          <Button disabled={busy} className="w-full">
+            {recovery ? "Salvar nova senha" : "Entrar como administrador"}
+          </Button>
+          {!recovery && (
+            <button
+              type="button"
+              className="text-sm text-muted-foreground underline"
+              onClick={async () => {
+                if (!email.trim()) {
+                  toast.error("Informe seu e-mail.");
+                  return;
+                }
+                const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                  redirectTo: `${window.location.origin}/auth`,
+                });
+                if (error) toast.error(error.message);
+                else toast.success("Solicitação enviada. Confira seu e-mail.");
+              }}
+            >
+              Esqueci minha senha
+            </button>
           )}
-          {accessType && accessType !== "Representante Comercial" && (
-            <div className="space-y-4 border-t pt-4">
-              <p className="text-sm font-semibold text-primary">Perfil selecionado: {accessType}</p>
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="flex items-center gap-2"><UserRound className="h-4 w-4" />Nome</Label>
-                <Input id="name" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" className="h-12" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Telefone</Label>
-                <Input id="phone" required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-9999" className="h-12" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="flex items-center gap-2"><Mail className="h-4 w-4" />E-mail</Label>
-                <Input id="email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com" className="h-12" />
-              </div>
-              <Button type="submit" disabled={busy} className="h-12 w-full bg-gradient-red text-base font-semibold shadow-glow">
-                {busy ? "Entrando..." : "Conhecer a Netinho"}
-              </Button>
-            </div>
+          {access?.level === 1 && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() => navigate({ to: "/admin" })}
+            >
+              Abrir administração
+            </Button>
           )}
         </form>
-
-        <button type="button" onClick={installApp} disabled={installing}
-          className="group mt-6 flex w-full items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/10 px-5 py-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/70 hover:bg-primary/15 active:scale-[0.97] motion-reduce:transform-none sm:px-6 sm:py-6">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-transparent shadow-glow transition-transform duration-300 group-hover:scale-110 group-active:rotate-[-8deg] motion-reduce:transform-none sm:h-20 sm:w-20">
-            <img src="/__l5e/assets-v1/2aa54efb-02e7-4fcc-addf-bd32fbeeb22e/netinho-icon.webp" alt="Netinho Auto Parts" className="h-full w-full object-contain" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-lg font-extrabold leading-snug text-foreground sm:text-xl">{installing ? "Instalando..." : "Colocar Netinho no celular"}</span>
-            <span className="mt-2 block text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">{canInstall ? "Adicionar o ícone Netinho Auto Parts à tela inicial" : "Adicionar à tela inicial pelo navegador"}</span>
-          </span>
-        </button>
-        <p className="mx-auto mt-5 max-w-md text-center text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">
-          O ícone abre o site oficial. Atualizações de catálogo e dados publicados pela Netinho ficam disponíveis automaticamente.
-        </p>
-      </div>
+      )}
+      {checking ? (
+        <div className="flex justify-center p-24">
+          <LoaderCircle className="animate-spin" aria-label="Verificando sessão" />
+        </div>
+      ) : !signedIn ? (
+        <div className="mx-auto mt-8 grid max-w-5xl items-center gap-10 lg:grid-cols-2">
+          <div className="welcome-frame mx-auto w-full max-w-sm">
+            <img
+              src="/images/welcome.webp"
+              alt="Netinho: seja bem-vindo ao mundo automotivo"
+              className="block h-auto w-full rounded-t-3xl"
+              fetchPriority="high"
+            />
+            <div className="space-y-3 bg-[#061c49] p-5">
+              <button onClick={googleLogin} disabled={busy} className="google-button">
+                <span className="google-icon-disc"><GoogleIcon /></span>
+                {busy ? "Conectando..." : "Continuar com o Google"}
+              </button>
+              <p className="text-center text-xs leading-5 text-blue-200">
+                Use sua conta Google para entrar com segurança.
+              </p>
+            </div>
+          </div>
+          <div className="welcome-partners lg:hidden"><PartnerLogos /></div>
+          <div className="hidden lg:block">
+            <span className="eyebrow">REPRESENTAÇÃO EXCLUSIVA</span>
+            <h1 className="mt-5 text-6xl font-bold leading-none">
+              A peça certa.
+              <br />
+              <span className="text-primary">O parceiro certo.</span>
+            </h1>
+            <p className="mt-6 max-w-md text-lg leading-8 text-muted-foreground">
+              FCO Automotive e HD Embreagens. Duas linhas completas, com o atendimento próximo de
+              quem entende do seu negócio.
+            </p>
+            <div className="mt-8"><PartnerLogos /></div>
+            <p className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
+              <ShieldCheck size={18} className="text-primary" /> Acesso pessoal · Atendimento
+              profissional
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="mx-auto mt-10 max-w-2xl">
+          {error ? (
+            <div className="surface-card space-y-4 p-6">
+              <h1 className="text-2xl font-bold">Não foi possível verificar seu acesso</h1>
+              <p className="text-muted-foreground">
+                Tente novamente. Se persistir, contate a Netinho.
+              </p>
+              <Button onClick={() => refetch()}>Tentar novamente</Button>
+              <button onClick={logout} className="ml-4 text-sm underline">
+                Trocar conta
+              </button>
+            </div>
+          ) : !access ? (
+            <p className="p-10 text-center">Preparando sua área...</p>
+          ) : (
+            <>
+              <div className="mb-7 flex items-start justify-between gap-3">
+                <div>
+                  <span className="eyebrow">QUE BOM TER VOCÊ AQUI</span>
+                  <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+                    {greeting(`sr. ${access.name.split(" ")[0]}`)}
+                  </h1>
+                  <p className="mt-2 text-muted-foreground">Qual seria seu perfil?</p>
+                </div>
+                <button onClick={logout} className="icon-button" aria-label="Trocar conta Google">
+                  <LogOut size={20} />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                {options.map((o) => (
+                  <button
+                    key={o.type}
+                    onClick={() => setProfile(o.type)}
+                    aria-pressed={profile === o.type}
+                    className={`profile-card ${profile === o.type ? "selected" : ""}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <ProfileAvatar type={o.type} className="h-11 w-11" />
+                      {profile === o.type && <Check size={18} className="text-primary" />}
+                    </div>
+                    <span className="mt-5 block text-base font-bold sm:text-lg">{o.type}</span>
+                    <span className="mt-2 block text-xs leading-5 text-muted-foreground sm:text-sm">
+                      {o.text}
+                    </span>
+                    <span className="mt-4 block text-[10px] font-semibold uppercase tracking-wider text-metal">
+                      {o.level}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {profile === "Representante Comercial" && !access.can_sell && (
+                <p
+                  role="status"
+                  className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-200"
+                >
+                  Seu e-mail precisa ser autorizado pela Netinho para vender. Enquanto aguarda,
+                  explore o catálogo com um perfil de consulta.
+                </p>
+              )}
+              <Button
+                onClick={enter}
+                disabled={!profile || (profile === "Representante Comercial" && !access.can_sell)}
+                className="mt-6 h-14 w-full bg-gradient-red text-base"
+              >
+                Entrar na minha área <ArrowRight size={18} />
+              </Button>
+              <p className="mt-4 text-center text-xs text-muted-foreground">
+                Conectado como {access.email}
+              </p>
+            </>
+          )}
+        </div>
+      )}
+      <footer className="mx-auto mt-10 max-w-5xl border-t pt-5 text-center text-xs leading-6 text-muted-foreground">
+        NETINHO AUTO PARTS · FCO Automotive & HD Embreagens
+        <br />
+        Peças, parceria e confiança em cada pedido.
+      </footer>
     </main>
   );
 }
-
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
-};
