@@ -76,7 +76,6 @@ export type Database = {
       }
       customers: {
         Row: {
-          order_class: number | null
           address: string | null
           buyer: string | null
           carrier: string | null
@@ -93,6 +92,7 @@ export type Database = {
           id: string
           last_order_at: string | null
           notes: string | null
+          order_class: number | null
           phone: string | null
           seller_id: string
           state: string | null
@@ -101,7 +101,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          order_class?: number | null
           address?: string | null
           buyer?: string | null
           carrier?: string | null
@@ -118,6 +117,7 @@ export type Database = {
           id?: string
           last_order_at?: string | null
           notes?: string | null
+          order_class?: number | null
           phone?: string | null
           seller_id?: string
           state?: string | null
@@ -126,7 +126,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          order_class?: number | null
           address?: string | null
           buyer?: string | null
           carrier?: string | null
@@ -143,6 +142,7 @@ export type Database = {
           id?: string
           last_order_at?: string | null
           notes?: string | null
+          order_class?: number | null
           phone?: string | null
           seller_id?: string
           state?: string | null
@@ -161,6 +161,7 @@ export type Database = {
           discount_pct: number
           id: string
           line_total: number
+          manufacturer: string
           net_price: number
           order_id: string
           product_id: string | null
@@ -175,6 +176,7 @@ export type Database = {
           discount_pct?: number
           id?: string
           line_total: number
+          manufacturer?: string
           net_price: number
           order_id: string
           product_id?: string | null
@@ -189,6 +191,7 @@ export type Database = {
           discount_pct?: number
           id?: string
           line_total?: number
+          manufacturer?: string
           net_price?: number
           order_id?: string
           product_id?: string | null
@@ -285,10 +288,13 @@ export type Database = {
           active: boolean
           application: string
           brand: string | null
+          catalog_page: number | null
           category_id: string
           code: string
           created_at: string
           id: string
+          image_url: string | null
+          manufacturer: string
           price_30: number | null
           price_30_45_60: number | null
           price_30_45_60_75: number | null
@@ -303,10 +309,13 @@ export type Database = {
           active?: boolean
           application?: string
           brand?: string | null
+          catalog_page?: number | null
           category_id: string
           code: string
           created_at?: string
           id?: string
+          image_url?: string | null
+          manufacturer?: string
           price_30?: number | null
           price_30_45_60?: number | null
           price_30_45_60_75?: number | null
@@ -321,10 +330,13 @@ export type Database = {
           active?: boolean
           application?: string
           brand?: string | null
+          catalog_page?: number | null
           category_id?: string
           code?: string
           created_at?: string
           id?: string
+          image_url?: string | null
+          manufacturer?: string
           price_30?: number | null
           price_30_45_60?: number | null
           price_30_45_60_75?: number | null
@@ -446,6 +458,38 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_commissions: {
+        Row: {
+          manufacturer: string
+          order_id: string
+          paid_at: string | null
+          rate: number
+          updated_at: string
+        }
+        Insert: {
+          manufacturer: string
+          order_id: string
+          paid_at?: string | null
+          rate: number
+          updated_at?: string
+        }
+        Update: {
+          manufacturer?: string
+          order_id?: string
+          paid_at?: string | null
+          rate?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_commissions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -469,13 +513,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      admin_supplier_commissions: { Args: Record<string, never>; Returns: Json }
-      save_supplier_commission: { Args: { p_order_id: string; p_manufacturer: string; p_rate: number; p_paid: boolean }; Returns: undefined }
-      access_context: { Args: Record<PropertyKey, never>; Returns: Json }
-      catalog_products: { Args: Record<PropertyKey, never>; Returns: Json }
-      can_sell: { Args: Record<PropertyKey, never>; Returns: boolean }
-      update_order_status: { Args: { order_id: string; new_status: string }; Returns: undefined }
+      access_context: { Args: never; Returns: Json }
+      admin_supplier_commissions: { Args: never; Returns: Json }
+      can_sell: { Args: never; Returns: boolean }
+      catalog_products: { Args: never; Returns: Json }
       create_order: { Args: { payload: Json }; Returns: string }
+      customer_order_minimum: { Args: { class: number }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -484,6 +527,19 @@ export type Database = {
         Returns: boolean
       }
       is_active_commercial_representative: { Args: never; Returns: boolean }
+      save_supplier_commission: {
+        Args: {
+          p_manufacturer: string
+          p_order_id: string
+          p_paid: boolean
+          p_rate: number
+        }
+        Returns: undefined
+      }
+      update_order_status: {
+        Args: { new_status: string; order_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "seller"
