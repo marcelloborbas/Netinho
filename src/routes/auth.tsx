@@ -234,7 +234,10 @@ function AuthPage() {
               </p>
             </div>
           </div>
-          <div className="welcome-partners lg:hidden"><PartnerLogos /></div>
+          <div className="welcome-partners lg:hidden">
+            <p className="mb-3 text-center text-sm font-semibold text-white">Representante Oficial das Marcas</p>
+            <PartnerLogos />
+          </div>
           <div className="hidden lg:block">
             <span className="eyebrow">REPRESENTAÇÃO EXCLUSIVA</span>
             <h1 className="mt-5 text-6xl font-bold leading-none">
@@ -246,7 +249,10 @@ function AuthPage() {
               FCO Automotive e HD Embreagens. Duas linhas completas, com o atendimento próximo de
               quem entende do seu negócio.
             </p>
-            <div className="mt-8"><PartnerLogos /></div>
+            <div className="mt-8">
+              <p className="mb-3 text-sm font-semibold">Representante Oficial das Marcas</p>
+              <PartnerLogos />
+            </div>
             <p className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
               <ShieldCheck size={18} className="text-primary" /> Acesso pessoal · Atendimento
               profissional
