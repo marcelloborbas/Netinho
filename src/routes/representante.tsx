@@ -6,7 +6,14 @@ import { MapPin, ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/representante")({
   component: RepresentativePage,
-  head: () => ({ meta: [{ title: "Representante Comercial | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [
+    { title: "Representante Comercial | Netinho Auto Parts" },
+    { name: "description", content: "Conheça a região de atendimento do representante comercial Netinho Auto Parts." },
+    { property: "og:title", content: "Representante Comercial | Netinho Auto Parts" },
+    { property: "og:description", content: "Conheça a região de atendimento do representante comercial Netinho Auto Parts." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 const locations = [
