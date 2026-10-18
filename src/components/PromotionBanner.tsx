@@ -9,7 +9,8 @@ const promotions = [
     application: "Gol · Santana · Parati · Saveiro",
     price: "R$ 247,20",
     note: "Preço atacado à vista da campanha",
-    image: "/images/promo-caixa-direcao.svg",
+    image: "https://img.mfrural.com.br/api/image?height=288&mode=4&url=https%3A%2F%2Fs3.amazonaws.com%2Fmfrural-produtos-us%2F454069-930116-83144464-caixa-de-direcao-mecanica-gol-parati-santana-saveiro.webp&width=480",
+    fallbackImage: "https://images.tcdn.com.br/img/img_prod/150352/6975_1_20190701081410.jpg",
   },
   {
     code: "FCZB-0005A",
@@ -17,7 +18,8 @@ const promotions = [
     application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     price: "R$ 251,18",
     note: "Preço atacado à vista da campanha",
-    image: "/images/promo-caixa-direcao.svg",
+    image: "https://tgfautomotive.com.br/660498-large_default/caixa_direcao_manual_147-_oggi-_panorama-mille_s-axial.jpg",
+    fallbackImage: "https://http2.mlstatic.com/D_614804-MLA89986012424_082025-C.jpg",
   },
   {
     code: "FCZB-0020A",
@@ -25,7 +27,8 @@ const promotions = [
     application: "Elba · Fiorino · Prêmio · Uno Mille",
     price: "R$ 253,69",
     note: "Preço atacado à vista da campanha",
-    image: "/images/promo-caixa-direcao.svg",
+    image: "https://down-br.img.susercontent.com/file/sg-11134201-824j7-me7mv7swt6v537",
+    fallbackImage: "https://images.tcdn.com.br/img/img_prod/1346041/caixa_direcao_mecanica_uno_fiorino_1992_a_2014_mille_fire_9287_1_9b705ee56cfecbb10b6681e02e3ab7a7.jpg",
   },
 ] as const;
 
@@ -80,8 +83,9 @@ export function PromotionBanner() {
           src={promotion.image}
           alt=""
           onError={(event) => {
-            event.currentTarget.onerror = null;
-            event.currentTarget.src = "/images/promo-caixa-direcao.svg";
+            const image = event.currentTarget;
+            if (image.src !== promotion.fallbackImage) image.src = promotion.fallbackImage;
+            else image.style.visibility = "hidden";
           }}
         />
         <span>IMAGEM ILUSTRATIVA</span>

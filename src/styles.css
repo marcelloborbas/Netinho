@@ -779,6 +779,11 @@ a {
   height: 205px;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  border: 1px solid #ffffff20;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #f9fbff, #dce7f3);
+  box-shadow: 0 12px 28px #02081355;
 }
 .promotion-banner-art::before {
   position: absolute;
@@ -797,7 +802,7 @@ a {
   max-height: 210px;
   object-fit: contain;
   filter: drop-shadow(0 14px 16px #02081385);
-  mix-blend-mode: normal;
+  mix-blend-mode: multiply;
   animation: promotionImageEnter .55s cubic-bezier(.2,.75,.3,1) both;
 }
 @keyframes promotionImageEnter {
@@ -1025,9 +1030,9 @@ a {
  .promotion-banner-price-row span{font-size:8px}
  .promotion-banner-cta{min-height:30px;gap:5px;margin-top:7px;border-radius:8px;padding:5px 9px;font-size:9px}
  .promotion-banner-cta svg{width:14px;height:14px}
- .promotion-banner-art{position:absolute;right:0;bottom:29px;width:44%;height:126px;opacity:1}
+ .promotion-banner-art{position:absolute;right:0;bottom:29px;width:44%;height:126px;opacity:1;border-radius:14px}
  .promotion-banner-art::before{width:116px;height:116px}
- .promotion-banner-art img{max-height:132px;width:100%;filter:drop-shadow(0 12px 15px #020813aa)}
+ .promotion-banner-art img{max-height:132px;width:120%;max-width:none;scale:1.4;filter:drop-shadow(0 12px 15px #020813aa);mix-blend-mode:multiply}
  .promotion-banner-art span{top:-1px;right:3px;transform:rotate(5deg);padding:3px 5px;font-size:6px}
  .promotion-banner-controls{right:9px;bottom:7px;gap:5px;padding:5px 7px}
  .promotion-banner-controls span{width:12px;height:3px}

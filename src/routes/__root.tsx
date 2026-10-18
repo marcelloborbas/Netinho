@@ -15,26 +15,14 @@ import { draftActions } from "@/lib/order-store";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
-let clickAudioContext: AudioContext | null = null;
+let clickAudio: HTMLAudioElement | null = null;
 
-function playSoftIconClick(volume = 0.32) {
+function playSoftIconClick(volume = 0.48) {
   try {
-    clickAudioContext ??= new AudioContext();
-    if (clickAudioContext.state === "suspended") void clickAudioContext.resume().catch(() => undefined);
-
-    const now = clickAudioContext.currentTime;
-    const oscillator = clickAudioContext.createOscillator();
-    const gain = clickAudioContext.createGain();
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(760, now);
-    oscillator.frequency.exponentialRampToValueAtTime(560, now + 0.055);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume * 0.12), now + 0.008);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.065);
-    oscillator.connect(gain);
-    gain.connect(clickAudioContext.destination);
-    oscillator.start(now);
-    oscillator.stop(now + 0.07);
+    clickAudio ??= new Audio("/sounds/soft-click.wav");
+    clickAudio.volume = volume;
+    clickAudio.currentTime = 0;
+    void clickAudio.play().catch(() => undefined);
   } catch {
     // Keep clicks silent when audio is unsupported or blocked by the browser.
   }
