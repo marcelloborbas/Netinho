@@ -255,8 +255,8 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  border-bottom: 1px solid #ffffff12;
-  background: #101114ed;
+  border-bottom: 1px solid #ef444455;
+  background: linear-gradient(115deg, #06152cf5, #0b1f3ff2 55%, #05142bf5);
   backdrop-filter: blur(16px);
 }
 .nav-link {

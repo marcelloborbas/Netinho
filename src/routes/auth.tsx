@@ -61,16 +61,19 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [recovery, setRecovery] = useState(false);
   const showWelcome = !signedIn && !recovery;
-  const { data: access, error, refetch, isPending } = useQuery({ ...accessQuery, enabled: signedIn });
+  const { data: access, error, refetch, isPending } = useQuery({
+    ...accessQuery,
+    enabled: signedIn && !previewMode,
+  });
   useEffect(() => {
-    if (signedIn && access && !recovery) {
+    if (signedIn && access && !recovery && !previewMode) {
       saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
       void navigate({ to: "/" });
     }
-  }, [signedIn, access, recovery, navigate]);
+  }, [signedIn, access, recovery, navigate, previewMode]);
   useEffect(() => {
-    // The preview shell must remain mounted through OAuth and keep its toolbar.
-    if (previewMode || devicePreviewFrame) return;
+    // Keep the preview shell mounted after OAuth, then show the signed-in app in its frame.
+    if (devicePreviewFrame) return;
     void supabase.auth.getUser().then(({ data }) => {
       setSignedIn(!!data.user);
       setChecking(false);
@@ -85,7 +88,7 @@ function AuthPage() {
     if (window.location.hash.includes("error_description"))
       toast.error("O Google não concluiu o acesso. Tente novamente.");
     return () => data.subscription.unsubscribe();
-  }, [previewMode]);
+  }, [previewMode, devicePreviewFrame]);
   async function googleLogin() {
     // OAuth must leave the device-preview iframe before contacting Google.
     if (window.self !== window.top) {
@@ -191,7 +194,10 @@ function AuthPage() {
             className={`device-preview-frame device-preview-frame-${previewDevice}`}
             style={{ width: device.width, height: device.height }}
           >
-            <iframe title={`Prévia do site em ${device.label}`} src="/auth?devicePreviewFrame=1" />
+            <iframe
+              title={`Prévia do site em ${device.label}`}
+              src={signedIn ? "/" : "/auth?devicePreviewFrame=1"}
+            />
           </div>
         </section>
       </main>
