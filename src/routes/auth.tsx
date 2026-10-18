@@ -20,19 +20,16 @@ export const Route = createFileRoute("/auth")({
       { title: "Bem-vindo | Netinho Auto Parts" },
       {
         name: "description",
-        content: "Entre com Google e conheça FCO Automotive e HD Embreagens.",
+        content: "Conheça FCO Automotive e HD Embreagens na Netinho Auto Parts.",
       },
       { property: "og:title", content: "Bem-vindo | Netinho Auto Parts" },
-      { property: "og:description", content: "Entre com Google e conheça FCO Automotive e HD Embreagens." },
+      { property: "og:description", content: "Conheça FCO Automotive e HD Embreagens na Netinho Auto Parts." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
 });
-function GoogleIcon() {
-  return <img src="/images/google-logo.webp" width="30" height="30" alt="" aria-hidden="true" />;
-}
 function isDevicePreviewMode() {
   const params = new URLSearchParams(window.location.search);
   if (params.get("preview") === "device" && window.self === window.top) return true;
@@ -220,16 +217,14 @@ function AuthPage() {
               alt="Seja bem-vindo ao mundo automotivo."
             />
             <section className="welcome-auth-actions" aria-label="Acesso à Netinho">
-              <h1>Faça seu login</h1>
+              <h1>Seja bem-vindo</h1>
               <button
                 type="button"
                 className="welcome-google-button"
-                onClick={googleLogin}
-                disabled={busy}
-                aria-busy={busy}
-                aria-label="Continuar com o Google"
+                onClick={() => navigate({ to: "/" })}
+                aria-label="Entrar no site"
               >
-                <GoogleIcon />
+                Entrar
               </button>
             </section>
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
