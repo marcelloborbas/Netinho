@@ -1,4 +1,4 @@
-import { Globe2, Phone } from "lucide-react";
+import { Globe2, Mail, Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { BRAND } from "@/lib/brand";
@@ -18,6 +18,10 @@ export function BrandFooter() {
           <a href={`https://${BRAND.domain}`}>
             <Globe2 size={16} aria-hidden="true" />
             {BRAND.domain}
+          </a>
+          <a href={`mailto:${BRAND.orderEmail}`}>
+            <Mail size={16} aria-hidden="true" />
+            {BRAND.orderEmail}
           </a>
         </div>
       </div>
