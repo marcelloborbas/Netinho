@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { PROMOTIONS } from "@/components/PromotionBanner";
 
 export const Route = createFileRoute("/_authenticated/promocao")({
-  validateSearch: (search: Record<string, unknown>): { codigo?: string } => ({
-    codigo: typeof search.codigo === "string" ? search.codigo.slice(0, 50) : undefined,
+  validateSearch: (search: Record<string, unknown>): { codigo?: string | undefined } => ({
+    codigo: typeof search["codigo"] === "string" ? search["codigo"].slice(0, 50) : undefined,
   }),
   head: () => ({
     meta: [
