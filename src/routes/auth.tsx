@@ -189,7 +189,7 @@ function AuthPage() {
             className={`device-preview-frame device-preview-frame-${previewDevice}`}
             style={{ width: device.width, height: device.height }}
           >
-            <iframe title={`Prévia do site em ${device.label}`} src="/auth?devicePreviewFrame=1" />
+            <iframe title={`Prévia do site em ${device.label}`} src="/auth?devicePreviewFrame=1&preview=device" />
           </div>
         </section>
       </main>
