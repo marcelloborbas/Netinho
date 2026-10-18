@@ -74,8 +74,6 @@ function Home() {
                   Cliente → Peças → Editar e revisar → Registrar → Enviar para{" "}
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
-              </>
-
           </section>
           <section className="journey-choice" aria-labelledby="catalogs-title">
             <div className="home-panel-heading">
