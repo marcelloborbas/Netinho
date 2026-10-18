@@ -1,4 +1,5 @@
 import { CatalogDownload } from "@/components/CatalogDownload";
+import { CatalogPreview } from "@/components/CatalogPreview";
 import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -120,7 +121,7 @@ function Catalog() {
         <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
           <div className="flex flex-wrap justify-between gap-5">
             <div>
-              <PartnerLogos downloads />
+              <PartnerLogos />
               <p className="official-brands mt-5">Representante Oficial das Marcas</p>
               <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
                 A peça certa. Sem perder tempo.
@@ -132,6 +133,7 @@ function Catalog() {
             </div>
           </div>
         </section>
+        <CatalogPreview brand={search.marca ?? "FCO"} mode={search.modo ?? "consulta"} />
         {canSell ? (
           <section className="surface-card grid items-center gap-4 p-4 sm:grid-cols-[1fr_1fr_auto]">
             <div>

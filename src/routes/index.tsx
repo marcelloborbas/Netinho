@@ -112,7 +112,6 @@ function Home() {
                     <div className="supplier-logo">
                       <img src={supplier.image} alt={supplier.name} />
                     </div>
-                    <span>{supplier.name}</span>
                   </Link>
               ))}
             </div>
