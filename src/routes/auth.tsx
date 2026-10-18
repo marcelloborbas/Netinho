@@ -123,27 +123,31 @@ function AuthPage() {
         <>
           <header className="welcome-auth-brands">
             <Logo className="welcome-netinho-logo" />
-            <p>Representante Oficial</p>
-            <PartnerLogos compact linked={false} />
+            <div className="welcome-representations">
+              <p>Representante Oficial</p>
+              <PartnerLogos compact linked={false} />
+            </div>
           </header>
-          <img
-            className="welcome-auth-art"
-            src="/images/welcome-screen.webp"
-            alt="Seja bem-vindo ao mundo automotivo."
-          />
-          <section className="welcome-auth-actions" aria-label="Acesso à Netinho">
-            <h1>Faça seu login</h1>
-            <button
-              type="button"
-              className="welcome-google-button"
-              onClick={googleLogin}
-              disabled={busy}
-            >
-              {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <GoogleIcon />}
-              <span>Continuar com o Google</span>
-            </button>
-            <InstallAppButton className="welcome-install-button" />
-          </section>
+          <div className="welcome-art-frame">
+            <img
+              className="welcome-auth-art"
+              src="/images/welcome-screen-clean.webp"
+              alt="Seja bem-vindo ao mundo automotivo."
+            />
+            <section className="welcome-auth-actions" aria-label="Acesso à Netinho">
+              <h1>Faça seu login</h1>
+              <button
+                type="button"
+                className="welcome-google-button"
+                onClick={googleLogin}
+                disabled={busy}
+              >
+                {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <GoogleIcon />}
+                <span>Continuar com o Google</span>
+              </button>
+              <InstallAppButton className="welcome-install-button" />
+            </section>
+          </div>
         </>
       )}
       {recovery && (

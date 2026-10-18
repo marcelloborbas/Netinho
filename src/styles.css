@@ -585,20 +585,22 @@ a {
  .auth-login .auth-login-card{margin-top:10px;padding:12px;gap:7px}
 }
 
-.welcome-auth-stage{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-sizing:border-box;width:100%;height:100svh;min-height:100svh;overflow:hidden;padding:max(14px,env(safe-area-inset-top)) 16px max(18px,env(safe-area-inset-bottom));background:#041b4b}
-.welcome-auth-brands{position:relative;z-index:1;display:flex;width:min(100%,520px);flex-direction:column;align-items:center;gap:8px;padding-top:4px;color:#fff;text-align:center}
-.welcome-auth-brands p{margin:0;font-size:clamp(15px,3.8vw,18px);font-weight:700;letter-spacing:.045em;text-shadow:0 2px 10px #00112c}
+.welcome-auth-stage{position:relative;isolation:isolate;display:grid;grid-template-rows:auto minmax(0,1fr);box-sizing:border-box;width:100%;height:100svh;min-height:100svh;overflow:hidden;background:#041b4b}
+.welcome-auth-brands{position:relative;z-index:2;display:flex;width:100%;min-height:86px;align-items:center;justify-content:space-between;gap:12px;padding:12px max(18px,env(safe-area-inset-right)) 12px max(18px,env(safe-area-inset-left));border-bottom:1px solid #ffffff24;background:linear-gradient(115deg,#06152ceF,#0b1f3ff2 55%,#05142bed);color:#fff}
+.welcome-representations{display:flex;flex:0 1 auto;flex-direction:column;align-items:center;gap:5px}
+.welcome-auth-brands p{margin:0;font-size:clamp(11px,2.7vw,15px);font-weight:700;letter-spacing:.045em;text-shadow:0 2px 10px #00112c}
 .welcome-netinho-logo{flex:0 0 auto;gap:9px!important;color:#fff}
 .welcome-netinho-logo>img{width:50px!important;height:50px!important}
 .welcome-netinho-logo>div>div:first-child{font-size:clamp(22px,5.4vw,27px)!important}
 .welcome-netinho-logo>div>div:last-child{margin-top:4px!important;font-size:8px!important;letter-spacing:.16em!important}
-.welcome-auth-brands .partner-logos{justify-content:center;gap:clamp(26px,8vw,42px)!important;margin-top:1px}
+.welcome-auth-brands .partner-logos{justify-content:center;gap:clamp(18px,5vw,32px)!important;margin-top:1px}
 .welcome-auth-brands .partner-logos>div{flex:0 0 auto}
-.welcome-auth-brands .partner-logo{display:grid;width:66px!important;height:42px!important;min-width:66px;min-height:42px;place-items:center;padding:4px 8px;border-radius:9px;background:#fff;box-shadow:0 3px 12px #00112c55}
-.welcome-auth-brands .partner-logo img{display:block;max-width:64px;max-height:32px;object-fit:contain}
-.welcome-auth-art{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center 47%}
-.welcome-auth-stage::after{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#00153655 0%,transparent 24%,transparent 56%,#00163855 72%,#001638b8 100%);content:"";pointer-events:none}
-.welcome-auth-actions{position:relative;z-index:1;display:flex;width:min(360px,100%);margin-inline:auto;flex-direction:column;align-items:stretch;gap:10px;padding-bottom:2px}
+.welcome-auth-brands .partner-logo{display:grid;width:58px!important;height:38px!important;min-width:58px;min-height:38px;place-items:center;padding:4px 7px;border-radius:8px;background:#fff;box-shadow:0 3px 12px #00112c55}
+.welcome-auth-brands .partner-logo img{display:block;max-width:56px;max-height:28px;object-fit:contain}
+.welcome-art-frame{position:relative;isolation:isolate;min-width:0;min-height:0;overflow:hidden;background:#041b4b}
+.welcome-auth-art{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom}
+.welcome-art-frame::after{position:absolute;inset:55% 0 0;z-index:1;background:linear-gradient(180deg,transparent 0%,#00163855 38%,#001638c9 100%);content:"";pointer-events:none}
+.welcome-auth-actions{position:absolute;right:16px;bottom:max(18px,env(safe-area-inset-bottom));left:16px;z-index:2;display:flex;width:min(360px,calc(100% - 32px));margin-inline:auto;flex-direction:column;align-items:stretch;gap:10px;padding-bottom:2px}
 .welcome-auth-actions h1{margin:0;color:#fff;text-align:center;font-size:clamp(18px,4.5vw,22px);font-weight:700}
 .welcome-google-button{display:flex;min-height:52px;width:100%;align-items:center;justify-content:center;gap:12px;border:1px solid #d7dce5;border-radius:12px;background:#fff;color:#172033;font-weight:700;box-shadow:0 8px 24px #00112c75;transition:transform .18s ease,box-shadow .18s ease}
 .welcome-google-button:hover{transform:translateY(-1px);box-shadow:0 12px 28px #00112c8c}
@@ -609,4 +611,4 @@ a {
 .welcome-install-button:hover{border-color:#fff!important;background:#0a2a5ced!important}
 .welcome-install-button span{flex:0 1 auto!important;font-size:14px!important;font-weight:700;line-height:1.25}
 .welcome-install-button>svg{color:#f7bd32!important}
-@media(max-width:380px){.welcome-auth-stage{gap:5px;padding-right:12px;padding-left:12px}.welcome-auth-brands{gap:6px}.welcome-netinho-logo{gap:7px!important}.welcome-netinho-logo>img{width:44px!important;height:44px!important}.welcome-netinho-logo>div>div:first-child{font-size:20px!important}.welcome-netinho-logo>div>div:last-child{font-size:7px!important}.welcome-auth-brands .partner-logos{gap:20px!important}.welcome-auth-brands .partner-logo{width:58px!important;height:38px!important;min-width:58px;min-height:38px;padding:3px 5px}.welcome-auth-actions{gap:7px}.welcome-google-button{min-height:48px}.welcome-install-button{min-height:50px!important}}
+@media(max-width:380px){.welcome-auth-brands{min-height:78px;gap:8px;padding-right:12px;padding-left:12px}.welcome-netinho-logo{gap:6px!important}.welcome-netinho-logo>img{width:38px!important;height:38px!important}.welcome-netinho-logo>div>div:first-child{font-size:18px!important}.welcome-netinho-logo>div>div:last-child{font-size:6px!important}.welcome-representations{gap:4px}.welcome-auth-brands .partner-logos{gap:10px!important}.welcome-auth-brands .partner-logo{width:46px!important;height:32px!important;min-width:46px;min-height:32px;padding:3px 5px}.welcome-auth-actions{right:12px;left:12px;gap:7px}.welcome-google-button{min-height:48px}.welcome-install-button{min-height:50px!important}}
