@@ -11,7 +11,7 @@ export function BrandHeader() {
         </Link>
         <div className="brand-header-representations">
           <p>Representante Oficial</p>
-          <PartnerLogos compact linked={false} />
+          <PartnerLogos compact linked />
         </div>
       </div>
     </header>
