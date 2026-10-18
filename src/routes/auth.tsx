@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, LoaderCircle, LogOut } from "lucide-react";
+import { ArrowRight, LoaderCircle, LogOut, Monitor, Smartphone, Tablet } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery, saveProfile } from "@/lib/access";
@@ -40,6 +40,8 @@ function GoogleIcon() {
   );
 }
 function AuthPage() {
+  const previewMode = import.meta.env.DEV && new URLSearchParams(window.location.search).get("preview") === "device";
+  const [previewDevice, setPreviewDevice] = useState<"phone" | "tablet" | "desktop">("phone");
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [signedIn, setSignedIn] = useState(false);
@@ -116,6 +118,49 @@ function AuthPage() {
     }
     localStorage.removeItem("netinho-vendedor");
     qc.clear();
+  }
+  if (previewMode) {
+    const device = {
+      phone: { label: "Celular", width: 390, height: 844, icon: Smartphone },
+      tablet: { label: "Tablet", width: 768, height: 1024, icon: Tablet },
+      desktop: { label: "PC", width: 1440, height: 900, icon: Monitor },
+    }[previewDevice];
+    return (
+      <main className="device-preview-shell">
+        <nav className="device-preview-toolbar" aria-label="Tamanho da prévia">
+          <strong>Visualização</strong>
+          <div role="group" aria-label="Dispositivo">
+            {(["phone", "tablet", "desktop"] as const).map((size) => {
+              const option = {
+                phone: { label: "Celular", icon: Smartphone },
+                tablet: { label: "Tablet", icon: Tablet },
+                desktop: { label: "PC", icon: Monitor },
+              }[size];
+              const Icon = option.icon;
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  aria-pressed={previewDevice === size}
+                  onClick={() => setPreviewDevice(size)}
+                >
+                  <Icon size={16} aria-hidden="true" /> {option.label}
+                </button>
+              );
+            })}
+          </div>
+          <span>{device.width} × {device.height}</span>
+        </nav>
+        <section className="device-preview-workspace" aria-label={`Prévia em ${device.label}`}>
+          <div
+            className={`device-preview-frame device-preview-frame-${previewDevice}`}
+            style={{ width: device.width, height: device.height }}
+          >
+            <iframe title={`Prévia da tela de autenticação em ${device.label}`} src="/auth" />
+          </div>
+        </section>
+      </main>
+    );
   }
   return (
     <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen px-4 py-6 sm:py-10"}>
