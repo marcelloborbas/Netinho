@@ -55,6 +55,9 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   const [password, setPassword] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [showLogin, setShowLogin] = useState(false);
   const [recovery, setRecovery] = useState(false);
   const showWelcome = !signedIn && !recovery;
   const { data: access, error, refetch, isPending } = useQuery({
@@ -85,6 +88,34 @@ function AuthPage() {
       toast.error("O Google não concluiu o acesso. Tente novamente.");
     return () => data.subscription.unsubscribe();
   }, [previewMode, devicePreviewFrame]);
+  async function emailLogin(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginEmail.trim().toLowerCase(),
+      password: loginPassword,
+    });
+    setBusy(false);
+    if (error) {
+      toast.error("Não foi possível entrar. Verifique e-mail e senha.");
+      return;
+    }
+    setLoginPassword("");
+    toast.success("Acesso identificado.");
+    await qc.invalidateQueries({ queryKey: ["access"] });
+    void navigate({ to: "/" });
+  }
+  async function recoverPassword() {
+    if (!loginEmail.trim()) {
+      toast.error("Informe seu e-mail para recuperar a senha.");
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(loginEmail.trim().toLowerCase(), {
+      redirectTo: window.location.origin + "/auth",
+    });
+    if (error) toast.error("Não foi possível enviar a recuperação.");
+    else toast.success("Se o e-mail estiver cadastrado, você receberá as instruções.");
+  }
   async function googleLogin() {
     // OAuth must leave the device-preview iframe before contacting Google.
     if (window.self !== window.top) {
@@ -217,7 +248,7 @@ function AuthPage() {
               alt="Seja bem-vindo ao mundo automotivo."
             />
             <section className="welcome-auth-actions" aria-label="Acesso à Netinho">
-              <h1>Seja bem-vindo</h1>
+
               <button
                 type="button"
                 className="welcome-google-button"
@@ -226,10 +257,26 @@ function AuthPage() {
               >
                 Entrar
               </button>
+              <button type="button" className="mt-3 rounded-lg border border-white/50 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white" onClick={() => setShowLogin(value => !value)}>
+                {showLogin ? "Fechar login" : "Fazer login"}
+              </button>
               <button type="button" className="mt-3 rounded-lg border border-white/50 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white" onClick={googleLogin} disabled={busy}>
                 {busy ? "Conectando..." : "Identificar-me com Google"}
               </button>
             </section>
+            {showLogin && (
+              <section className="surface-card mx-auto my-4 w-full max-w-md space-y-3 rounded-xl p-5" aria-label="Faça seu login">
+                <h2 className="text-2xl font-bold">Faça seu Login</h2>
+                <p className="text-sm text-muted-foreground">Use seu e-mail e senha ou acesse pelo Google</p>
+                <form onSubmit={emailLogin} className="space-y-3">
+                  <Input type="email" autoComplete="email" aria-label="Seu e-mail" placeholder="Seu e-mail" value={loginEmail} onChange={event => setLoginEmail(event.target.value)} required />
+                  <Input type="password" autoComplete="current-password" aria-label="Senha" placeholder="Senha" value={loginPassword} onChange={event => setLoginPassword(event.target.value)} required />
+                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={busy}>Entrar</Button>
+                </form>
+                <button type="button" onClick={recoverPassword} className="text-sm underline">Esqueci minha senha</button>
+                <Button type="button" variant="outline" className="w-full" onClick={googleLogin} disabled={busy}>Continuar com Google</Button>
+              </section>
+            )}
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
               <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
             </footer>
