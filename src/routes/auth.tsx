@@ -226,6 +226,9 @@ function AuthPage() {
               >
                 Entrar
               </button>
+              <button type="button" className="mt-3 rounded-lg border border-white/50 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white" onClick={googleLogin} disabled={busy}>
+                {busy ? "Conectando..." : "Identificar-me com Google"}
+              </button>
             </section>
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
               <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
