@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Users, ClipboardList, FilePenLine, BookOpen, Settings, LogIn, ShieldCheck, MapPinned, Truck } from "lucide-react";
+import { ShoppingCart, Users, ClipboardList, FilePenLine, Settings, LogIn, ShieldCheck, MapPinned, Truck } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -57,7 +57,7 @@ function Home() {
           )}
         </div>
         <PromotionBanner />
-        <div className="home-panels mt-8 grid items-stretch gap-5 lg:grid-cols-2">
+        <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1">
           <section className="journey-choice" aria-labelledby="selling-title">
             <div className="home-panel-heading">
               <div>
@@ -92,41 +92,6 @@ function Home() {
                   Cliente → Peças → Editar e revisar → Registrar → Enviar para{" "}
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
-          </section>
-          <section className="journey-choice" aria-labelledby="catalogs-title">
-            <div className="home-panel-heading">
-              <div>
-                <h2 id="catalogs-title">Ver catálogos</h2>
-                <p>Encontre rapidamente a linha que procura</p>
-              </div>
-              <span className="home-panel-icon"><BookOpen size={22} aria-hidden="true" /></span>
-            </div>
-            <div className="home-catalog-logos">
-              {[
-                {
-                  brand: "FCO",
-                  name: "FCO Automotive",
-                  image: "/images/brands/fco.webp",
-                },
-                {
-                  brand: "HD",
-                  name: "HD Embreagens",
-                  image: "/images/brands/hd.png",
-                },
-              ].map((supplier) => (
-                  <Link
-                    key={supplier.brand}
-                    to="/catalogo"
-                    search={{ marca: supplier.brand as "FCO" | "HD", modo: "consulta" }}
-                    className="home-catalog-link"
-                    aria-label={`Ver catálogo ${supplier.name}`}
-                  >
-                    <div className="supplier-logo">
-                      <img src={supplier.image} alt={supplier.name} />
-                    </div>
-                  </Link>
-              ))}
-            </div>
           </section>
         </div>
         {access?.level === 1 && (
