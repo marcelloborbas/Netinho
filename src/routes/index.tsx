@@ -1,6 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Users, ClipboardList, FilePenLine } from "lucide-react";
+import { ShoppingCart, Users, ClipboardList, FilePenLine, BookOpen } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 import { accessQuery } from "@/lib/access";
@@ -39,15 +39,15 @@ function Home() {
           </span>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
-        <div className="mt-8 grid items-start gap-5 lg:grid-cols-2">
+        <div className="home-panels mt-8 grid items-stretch gap-5 lg:grid-cols-2">
           <section className="journey-choice" aria-labelledby="selling-title">
-            <ShoppingCart size={32} aria-hidden="true" />
-            <h2 id="selling-title" className="mt-5 text-3xl font-bold">
-              Vender
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Tudo para sua próxima venda. Escolha o que deseja fazer.
-            </p>
+            <div className="home-panel-heading">
+              <div>
+                <h2 id="selling-title">Vender</h2>
+                <p>Tudo preparado para sua próxima venda</p>
+              </div>
+              <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
+            </div>
             {access?.can_sell ? (
               <>
                 <div className="mt-6 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
@@ -77,34 +77,31 @@ function Home() {
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
               </>
-            ) : (
-              <p className="mt-4 text-muted-foreground">
-                O acesso a vendas precisa ser autorizado pela Netinho. Você já pode consultar os
-                dois catálogos na área Ver catálogos.
-              </p>
-            )}
+            ) : null}
           </section>
           <section className="journey-choice" aria-labelledby="catalogs-title">
-            <h2 id="catalogs-title" className="text-xl font-bold">
-              Ver catálogos
-            </h2>
+            <div className="home-panel-heading">
+              <div>
+                <h2 id="catalogs-title">Ver catálogos</h2>
+                <p>Encontre rapidamente a linha que procura</p>
+              </div>
+              <span className="home-panel-icon"><BookOpen size={22} aria-hidden="true" /></span>
+            </div>
             <div className="home-catalog-logos">
               {[
                 {
                   brand: "FCO",
                   name: "FCO Automotive",
                   image: "/images/brands/fco.webp",
-                  text: "Peças, referências e aplicações da linha FCO.",
                 },
                 {
                   brand: "HD",
                   name: "HD Embreagens",
                   image: "/images/brands/hd.png",
-                  text: "Embreagens, componentes e fichas do catálogo HD.",
                 },
               ].map((supplier) => (
-                <div key={supplier.brand}>
                   <Link
+                    key={supplier.brand}
                     to="/catalogo"
                     search={{ marca: supplier.brand as "FCO" | "HD", modo: "consulta" }}
                     className="home-catalog-link"
@@ -113,8 +110,8 @@ function Home() {
                     <div className="supplier-logo">
                       <img src={supplier.image} alt={supplier.name} />
                     </div>
+                    <span>{supplier.name}</span>
                   </Link>
-                </div>
               ))}
             </div>
           </section>
