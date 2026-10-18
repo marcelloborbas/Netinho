@@ -199,7 +199,7 @@ function AuthPage() {
     <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen px-4 py-6 sm:py-10"}>
       {showWelcome && (
         <>
-          <header className="welcome-auth-brands">
+          <header className="app-header welcome-auth-brands">
             <Logo className="welcome-netinho-logo" />
             <div className="welcome-representations">
               <p>Representante Oficial</p>

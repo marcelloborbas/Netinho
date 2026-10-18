@@ -17,10 +17,10 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 
 let softClickAudio: HTMLAudioElement | null = null;
 
-function playSoftIconClick() {
+function playSoftIconClick(volume = 0.32) {
   try {
     softClickAudio ??= new Audio("/sounds/soft-click.wav");
-    softClickAudio.volume = 0.32;
+    softClickAudio.volume = volume;
     softClickAudio.currentTime = 0;
     void softClickAudio.play().catch(() => undefined);
   } catch {
@@ -133,47 +133,42 @@ function RootComponent() {
     softClickAudio.preload = "auto";
     softClickAudio.load();
     let lastPointerSoundAt = 0;
-    const findIconControl = (target: EventTarget | null) => {
+    const findSoundControl = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return null;
       const control = target.closest("button, a, [role='button']");
       if (!control || control.matches(":disabled, [aria-disabled='true']")) return null;
-      if (!control.querySelector("svg, img, [data-icon]")) return null;
       return control;
     };
-    let hoveredIcon: Element | null = null;
-    const playIconPointerOver = (event: PointerEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
-      const icon = target.closest("svg, img, [data-icon]");
-      if (!icon || hoveredIcon === icon) return;
-      const control = findIconControl(icon);
-      if (!control) return;
-      hoveredIcon = icon;
-      playSoftIconClick();
+    let hoveredControl: Element | null = null;
+    const playControlPointerOver = (event: PointerEvent) => {
+      const control = findSoundControl(event.target);
+      if (!control || hoveredControl === control) return;
+      hoveredControl = control;
+      playSoftIconClick(0.2);
     };
-    const resetHoveredIcon = (event: PointerEvent) => {
-      if (!hoveredIcon) return;
+    const resetHoveredControl = (event: PointerEvent) => {
+      if (!hoveredControl) return;
       const nextTarget = event.relatedTarget;
-      if (nextTarget instanceof Node && hoveredIcon.contains(nextTarget)) return;
-      hoveredIcon = null;
+      if (nextTarget instanceof Node && hoveredControl.contains(nextTarget)) return;
+      hoveredControl = null;
     };
-    const playIconPointerDown = (event: PointerEvent) => {
-      const control = findIconControl(event.target);
+    const playControlPointerDown = (event: PointerEvent) => {
+      const control = findSoundControl(event.target);
       if (!control || event.button !== 0) return;
       lastPointerSoundAt = performance.now();
       playSoftIconClick();
     };
-    const playIconClick = (event: MouseEvent) => {
-      const control = findIconControl(event.target);
+    const playControlClick = (event: MouseEvent) => {
+      const control = findSoundControl(event.target);
       if (!control) return;
       // Pointer clicks already played on pointerdown; preserve keyboard and assistive clicks.
       if (event.detail !== 0 && performance.now() - lastPointerSoundAt < 500) return;
       playSoftIconClick();
     };
-    document.addEventListener("pointerover", playIconPointerOver, true);
-    document.addEventListener("pointerout", resetHoveredIcon, true);
-    document.addEventListener("pointerdown", playIconPointerDown, true);
-    document.addEventListener("click", playIconClick, true);
+    document.addEventListener("pointerover", playControlPointerOver, true);
+    document.addEventListener("pointerout", resetHoveredControl, true);
+    document.addEventListener("pointerdown", playControlPointerDown, true);
+    document.addEventListener("click", playControlClick, true);
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       draftActions.switchAccount(session?.user.id ?? null);
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
@@ -183,10 +178,10 @@ function RootComponent() {
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => undefined);
     return () => {
-      document.removeEventListener("pointerover", playIconPointerOver, true);
-      document.removeEventListener("pointerout", resetHoveredIcon, true);
-      document.removeEventListener("pointerdown", playIconPointerDown, true);
-      document.removeEventListener("click", playIconClick, true);
+      document.removeEventListener("pointerover", playControlPointerOver, true);
+      document.removeEventListener("pointerout", resetHoveredControl, true);
+      document.removeEventListener("pointerdown", playControlPointerDown, true);
+      document.removeEventListener("click", playControlClick, true);
       data.subscription.unsubscribe();
     };
   }, [router, queryClient]);
