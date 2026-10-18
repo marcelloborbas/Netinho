@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ShoppingCart, Users, ClipboardList, FilePenLine, BookOpen } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
-import { accessQuery } from "@/lib/access";
-import { supabase } from "@/integrations/supabase/client";
+import { accessQuery, selectedProfile } from "@/lib/access";
 import { greeting } from "@/components/ProfileAvatar";
 import { BRAND } from "@/lib/brand";
 import { PromotionBanner } from "@/components/PromotionBanner";
@@ -22,16 +21,27 @@ export const Route = createFileRoute("/")({
 });
 function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
+  const firstName = access?.name?.trim().split(/\\s+/)[0];
+  const savedRole = access?.email ? selectedProfile(access.email) : null;
+  const role = access?.attribution === "Representante"
+    ? "Representante Comercial"
+    : access?.attribution === "Cliente"
+      ? "Cliente"
+      : access?.can_sell
+        ? (savedRole === "Vendedor" ? "Vendedor" : "Representante Comercial")
+        : savedRole === "Auto-Peças" || savedRole === "Distribuidor"
+          ? savedRole
+          : "Visitante";
   return (
     <div className="home-page flex min-h-screen flex-col pb-12">
       <BrandHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
         <div className="home-greeting-row">
           <h1 className="text-4xl font-bold sm:text-5xl">
-            {access ? greeting(`Sr. ${access.name.split(" ")[0]}`) : "Seja bem-vindo à Netinho Auto Parts"}
+            {greeting(firstName || "Visitante")}
           </h1>
           <span className="home-attribution-badge">
-            {access?.attribution ?? "Visitante"}
+            {role}
           </span>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
