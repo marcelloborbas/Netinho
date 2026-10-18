@@ -35,7 +35,7 @@ function GoogleIcon() {
 function isDevicePreviewMode() {
   if (!import.meta.env.DEV) return false;
   const params = new URLSearchParams(window.location.search);
-  if (params.get("preview") === "device") return true;
+  if (params.get("preview") === "device" && window.self === window.top) return true;
   // Restore the preview after OAuth without changing the configured auth redirect URL.
   if (window.self !== window.top || window.sessionStorage.getItem("netinho-device-preview") !== "1") return false;
   window.sessionStorage.removeItem("netinho-device-preview");
@@ -46,6 +46,8 @@ function isDevicePreviewMode() {
 }
 function AuthPage() {
   const previewMode = isDevicePreviewMode();
+  const devicePreviewFrame =
+    import.meta.env.DEV && new URLSearchParams(window.location.search).get("devicePreviewFrame") === "1";
   const [previewDevice, setPreviewDevice] = useState<"phone" | "tablet" | "desktop">(() => {
     const saved = window.sessionStorage.getItem("netinho-preview-device");
     return saved === "phone" || saved === "tablet" || saved === "desktop" ? saved : "phone";
@@ -68,7 +70,7 @@ function AuthPage() {
   }, [signedIn, access, recovery, navigate]);
   useEffect(() => {
     // The preview shell must remain mounted through OAuth and keep its toolbar.
-    if (previewMode) return;
+    if (previewMode || devicePreviewFrame) return;
     void supabase.auth.getUser().then(({ data }) => {
       setSignedIn(!!data.user);
       setChecking(false);
@@ -189,7 +191,7 @@ function AuthPage() {
             className={`device-preview-frame device-preview-frame-${previewDevice}`}
             style={{ width: device.width, height: device.height }}
           >
-            <iframe title={`Prévia do site em ${device.label}`} src="/auth?devicePreviewFrame=1&preview=device" />
+            <iframe title={`Prévia do site em ${device.label}`} src="/auth?devicePreviewFrame=1" />
           </div>
         </section>
       </main>
