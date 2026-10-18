@@ -50,7 +50,7 @@ function Customers() {
   function choose(c: Customer) {
     selectCustomerForOrder(c);
     toast.success(`Cliente: ${c.trade_name || c.company_name}`);
-    navigate({ to: "/catalogo" });
+    navigate({ to: "/catalogo", search: { modo: "venda" } });
   }
 
   return (

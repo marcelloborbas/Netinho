@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Megaphone } from "lucide-react";
 
-const promotions = [
+export const PROMOTIONS = [
   {
     code: "FCZA-0001A",
     title: "Caixa de direção mecânica",
@@ -33,7 +33,7 @@ const promotions = [
   {
     code: "FIAT STRADA",
     title: "Caixa de direção mecânica",
-    application: "Fiat Strada · 2000–2013",
+    application: "Fiat Strada · 1996–2000",
     price: "Sob consulta",
     note: "Preço atacado à vista",
     image: "/images/campaign/fiat-strada-caixa-direcao.webp",
@@ -44,12 +44,12 @@ const promotions = [
 export function PromotionBanner() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const promotion = promotions[active];
+  const promotion = PROMOTIONS[active];
 
   useEffect(() => {
     if (paused) return;
     const timer = window.setInterval(() => {
-      setActive((current) => (current + 1) % promotions.length);
+      setActive((current) => (current + 1) % PROMOTIONS.length);
     }, 5000);
     return () => window.clearInterval(timer);
   }, [paused]);
@@ -81,8 +81,8 @@ export function PromotionBanner() {
         </div>
         <Link
           className="promotion-banner-cta"
-          to="/catalogo"
-          search={{ marca: "FCO", modo: "consulta", q: promotion.searchTerm }}
+          to="/promocao"
+          search={{ codigo: promotion.code }}
           aria-label={`Consultar ${promotion.code} no catálogo FCO`}
         >
           Consultar promoção <ArrowUpRight size={17} aria-hidden="true" />
@@ -101,10 +101,10 @@ export function PromotionBanner() {
       <div
         className="promotion-banner-controls"
         role="status"
-        aria-label={`Oferta ${active + 1} de ${promotions.length}`}
+        aria-label={`Oferta ${active + 1} de ${PROMOTIONS.length}`}
         data-paused={paused}
       >
-        {promotions.map((item, index) => (
+        {PROMOTIONS.map((item, index) => (
           <span
             key={item.code}
             className={index === active ? "is-active" : undefined}
