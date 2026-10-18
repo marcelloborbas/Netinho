@@ -11,9 +11,32 @@ export const accessQuery = queryOptions({
   queryKey: ["access"],
   staleTime: 30_000,
   retry: false,
-  queryFn: async (): Promise<AccessContext> => {
-    const { data, error } = await supabase.rpc("access_context");
-    if (error) throw new Error("Não foi possível verificar seu acesso.");
+  queryFn: async ({ signal }): Promise<AccessContext> => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15_000);
+    const cancel = () => controller.abort();
+    signal.addEventListener("abort", cancel, { once: true });
+    let data;
+    let error;
+    try {
+      ({ data, error } = await supabase
+        .rpc("access_context")
+        .abortSignal(controller.signal));
+    } catch (cause) {
+      if (controller.signal.aborted && !signal.aborted) {
+        throw new Error("A verificação do seu acesso demorou mais que o esperado. Tente novamente.");
+      }
+      throw cause;
+    } finally {
+      clearTimeout(timeout);
+      signal.removeEventListener("abort", cancel);
+    }
+    if (error) {
+      if (controller.signal.aborted && !signal.aborted) {
+        throw new Error("A verificação do seu acesso demorou mais que o esperado. Tente novamente.");
+      }
+      throw new Error("Não foi possível verificar seu acesso.");
+    }
     const result = data as unknown as AccessContext;
     if (!result || ![1, 2, 3].includes(result.level)) throw new Error("Acesso não reconhecido.");
     return result;

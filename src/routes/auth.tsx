@@ -49,7 +49,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [recovery, setRecovery] = useState(false);
   const showWelcome = !signedIn && !recovery;
-  const { data: access, error, refetch } = useQuery({ ...accessQuery, enabled: signedIn });
+  const { data: access, error, refetch, isPending } = useQuery({ ...accessQuery, enabled: signedIn });
   useEffect(() => {
     if (signedIn && access && !recovery) {
       saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
@@ -183,7 +183,10 @@ function AuthPage() {
               </button>
             </div>
           ) : !access ? (
-            <p className="p-10 text-center">Preparando sua área...</p>
+            <div className="flex flex-col items-center gap-3 p-10 text-center" role="status">
+              {isPending && <LoaderCircle className="animate-spin" aria-hidden="true" />}
+              <p>{isPending ? "Verificando seu acesso…" : "Não foi possível carregar sua área."}</p>
+            </div>
           ) : (
             <>
               <div className="mb-7 flex items-start justify-between gap-3">
