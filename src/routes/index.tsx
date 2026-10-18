@@ -7,6 +7,7 @@ import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { greeting } from "@/components/ProfileAvatar";
 import { BRAND } from "@/lib/brand";
+import { PromotionBanner } from "@/components/PromotionBanner";
 export const Route = createFileRoute("/")({
   ssr: false,
   beforeLoad: async ({ context }) => {
@@ -30,6 +31,7 @@ function Home() {
     <div className="home-page flex min-h-screen flex-col pb-12">
       <BrandHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
+        <PromotionBanner />
         <div className="home-greeting-row">
           <h1 className="text-4xl font-bold sm:text-5xl">
             {greeting(`Sr. ${access?.name.split(" ")[0] || "Usuário"}`)}

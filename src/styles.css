@@ -655,6 +655,176 @@ a {
   font-size: 12px;
   font-weight: 700;
 }
+.promotion-banner {
+  position: relative;
+  display: grid;
+  min-height: 252px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(230px, 0.75fr);
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 30px;
+  border: 1px solid #6b98d34d;
+  border-radius: 22px;
+  padding: 24px 30px;
+  background:
+    radial-gradient(ellipse at 89% 15%, #e7434c36, transparent 32%),
+    radial-gradient(ellipse at 100% 100%, #1a559166, transparent 46%),
+    linear-gradient(112deg, #0b1c37 0%, #0d2c53 52%, #102e56 100%);
+  box-shadow: 0 18px 44px #020b1c45, inset 0 1px #ffffff16;
+}
+.promotion-banner::before {
+  position: absolute;
+  inset: auto -10% -1px 30%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #e52b36 35%, #ff7b4b 78%, transparent);
+  content: "";
+}
+.promotion-banner-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+}
+.promotion-banner-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #ffcc7060;
+  border-radius: 999px;
+  padding: 6px 11px;
+  background: #f3a6341b;
+  color: #ffdc93;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.promotion-banner-code {
+  margin: 12px 0 3px;
+  color: #aec2df;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .13em;
+}
+.promotion-banner-copy h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(23px, 3vw, 34px);
+  font-weight: 800;
+  line-height: 1.1;
+}
+.promotion-banner-application {
+  margin: 6px 0 0;
+  color: #c3d1e4;
+  font-size: 13px;
+}
+.promotion-banner-price-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin-top: 13px;
+}
+.promotion-banner-price-row strong {
+  color: #ffcf73;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 42px);
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 2px 22px #ffb93840;
+}
+.promotion-banner-price-row span {
+  color: #aebed3;
+  font-size: 10px;
+}
+.promotion-banner-cta {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  border: 1px solid #ffffff42;
+  border-radius: 10px;
+  padding: 8px 13px;
+  background: linear-gradient(130deg, #e63740, #bb1f2c);
+  box-shadow: 0 7px 18px #b91c3b45;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  transition: transform .2s, filter .2s;
+}
+.promotion-banner-cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+.promotion-banner-art {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 205px;
+  align-items: center;
+  justify-content: center;
+}
+.promotion-banner-art::before {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border: 1px solid #9bbce33b;
+  border-radius: 50%;
+  background: radial-gradient(circle, #163e6b92, #0b1f3f00 68%);
+  box-shadow: 0 0 45px #2576c726;
+  content: "";
+}
+.promotion-banner-art img {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  max-height: 210px;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 16px #02081385);
+}
+.promotion-banner-art span {
+  position: absolute;
+  top: 10px;
+  right: 4px;
+  transform: rotate(7deg);
+  border: 1px solid #ffe09a75;
+  border-radius: 7px;
+  padding: 6px 9px;
+  background: linear-gradient(135deg, #ffd779, #e79a30);
+  box-shadow: 0 5px 16px #060e1b66;
+  color: #17253b;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+.promotion-banner-controls {
+  position: absolute;
+  z-index: 3;
+  right: 20px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #b9c9dc;
+  font-size: 10px;
+  font-weight: 700;
+}
+.promotion-banner-controls button {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffffff40;
+  border-radius: 50%;
+  background: #06152c88;
+  color: #fff;
+  transition: background .2s, border-color .2s;
+}
+.promotion-banner-controls button:hover {
+  border-color: #ffcf73;
+  background: #e63740;
+}
 .brand-page-layout {
   display: flex;
   min-height: 100svh;
@@ -805,6 +975,23 @@ a {
  .brand-footer-inner{justify-content:center;text-align:center}
  .brand-footer-links{justify-content:center}
  .brand-footer-links a{font-size:12px}
+}
+@media(max-width:639px){
+ .promotion-banner{display:block;min-height:298px;margin-bottom:20px;border-radius:18px;padding:18px 17px 64px}
+ .promotion-banner-copy{max-width:100%}
+ .promotion-banner-label{padding:5px 8px;font-size:8px}
+ .promotion-banner-code{margin-top:10px;font-size:9px}
+ .promotion-banner-copy h2{max-width:75%;font-size:22px}
+ .promotion-banner-application{max-width:74%;font-size:11px;line-height:1.35}
+ .promotion-banner-price-row{margin-top:11px}
+ .promotion-banner-price-row strong{font-size:32px}
+ .promotion-banner-price-row span{font-size:9px}
+ .promotion-banner-cta{min-height:36px;margin-top:12px;font-size:11px}
+ .promotion-banner-art{position:absolute;right:0;bottom:34px;width:45%;height:106px;opacity:.76}
+ .promotion-banner-art::before{width:130px;height:130px}
+ .promotion-banner-art img{max-height:120px}
+ .promotion-banner-art span{top:0;right:4px;padding:4px 6px;font-size:7px}
+ .promotion-banner-controls{right:12px;bottom:11px}
 }
 @media(max-width:1023px){
  .auth-login{min-height:100svh;display:flex;flex-direction:column;padding:12px 16px;gap:0}

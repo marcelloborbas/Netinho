@@ -25,9 +25,10 @@ import hdCatalog from "@/data/hd-catalog.json";
 export const Route = createFileRoute("/_authenticated/catalogo")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { marca?: "FCO" | "HD" | undefined; modo?: "consulta" | "venda" | undefined } => ({
+  ): { marca?: "FCO" | "HD" | undefined; modo?: "consulta" | "venda" | undefined; q?: string } => ({
     marca: search["marca"] === "FCO" || search["marca"] === "HD" ? search["marca"] : undefined,
     modo: search["modo"] === "consulta" || search["modo"] === "venda" ? search["modo"] : undefined,
+    q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : undefined,
   }),
   head: () => ({
     meta: [
@@ -71,7 +72,7 @@ const localHd = hdCatalog.map((p) => ({
 })) as CatalogProduct[];
 function Catalog() {
   const search = Route.useSearch();
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(search.q ?? "");
   const [manufacturer, setManufacturer] = useState<string>(search.marca ?? "all");
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
@@ -80,8 +81,8 @@ function Catalog() {
   useEffect(() => {
     setManufacturer(search.marca ?? "all");
     setPage(1);
-    setQ("");
-  }, [search.marca, search.modo]);
+    setQ(search.q ?? "");
+  }, [search.marca, search.modo, search.q]);
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: customers } = useQuery({ ...customersQuery, enabled: canSell });
   const draft = useDraft();
