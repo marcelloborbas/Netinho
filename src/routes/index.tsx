@@ -45,8 +45,9 @@ function Home() {
               </div>
               <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
             </div>
-            {access?.can_sell ? (
-              <>
+            {!access?.can_sell && (
+              <p className="mt-4 text-sm text-muted-foreground">As opções de venda estão disponíveis para consulta. Para realizar operações, será necessária a autorização do administrador.</p>
+            )}
                 <div className="mt-6 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
                   <Link to="/clientes" className="action-card">
                     <Users className="text-primary" />
@@ -74,7 +75,7 @@ function Home() {
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
               </>
-            ) : <p className="mt-6 text-sm text-muted-foreground">Explore nossos catálogos. O envio de pedidos será liberado após a configuração dos acessos.</p>}
+
           </section>
           <section className="journey-choice" aria-labelledby="catalogs-title">
             <div className="home-panel-heading">
