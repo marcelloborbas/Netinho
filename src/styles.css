@@ -665,8 +665,10 @@ a {
 @media(prefers-reduced-motion:reduce){.welcome-install-button span{animation:none!important}}
 
 .welcome-auth-art{top:86px;height:calc(100% - 86px);object-fit:contain;object-position:center top}
-.welcome-google-button{width:128px;height:76px;min-height:76px;border:2px solid #16a34a;border-radius:14px;background:#fff;box-shadow:0 8px 22px #00112c99,0 0 0 1px #16a34a33}
+.welcome-google-button{box-sizing:border-box;width:210px;height:88px;min-height:88px;border:2px solid transparent;border-radius:14px;background:#fff;box-shadow:0 8px 22px #00112c99}
 .welcome-google-button img{width:50px;height:50px}
-.welcome-google-button:hover{background:#fff;box-shadow:0 0 22px #36d67b88,0 0 0 2px #16a34a66}
-.welcome-google-button:active,.welcome-google-button[aria-busy="true"]{background:#fff8e5;color:#30230a;box-shadow:0 0 0 6px #f3ca5d33,0 0 34px #ffd34eee}
+.welcome-google-button:hover{background:#fff;box-shadow:0 8px 22px #00112c99}
+.welcome-google-button:focus-visible{border-color:transparent}
+.welcome-google-button:active,.welcome-google-button[aria-busy="true"]{border-color:#16a34a;background:#fff8e5;color:#30230a;box-shadow:0 0 0 4px #16a34a33,0 0 34px #ffd34eee}
+.welcome-install-button{box-sizing:border-box;width:210px!important;height:88px!important;min-height:88px!important;padding:5px 8px 8px!important}
 @media(max-width:380px){.welcome-google-button img{width:46px;height:46px}}
