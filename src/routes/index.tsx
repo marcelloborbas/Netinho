@@ -33,9 +33,9 @@ function Home() {
           ? savedRole
           : "Visitante";
   return (
-    <div className="home-page flex min-h-screen flex-col pb-12">
+    <div className="home-page flex min-h-screen flex-col pb-12" style={{ height: "auto", minHeight: "100svh", overflow: "visible" }}>
       <BrandHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "block", overflow: "visible", minHeight: "auto", paddingTop: 24, paddingBottom: 32 }}>
         <div className="home-greeting-row">
           <h1 className="text-4xl font-bold sm:text-5xl">
             {greeting(firstName || "Visitante")}
@@ -57,8 +57,8 @@ function Home() {
           )}
         </div>
         <PromotionBanner />
-        <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1">
-          <section className="journey-choice" aria-labelledby="selling-title">
+        <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0, 1fr)", marginTop: 20, marginBottom: 24 }}>
+          <section className="journey-choice" aria-labelledby="selling-title" style={{ width: "100%", minHeight: "auto", padding: 18 }}>
             <div className="home-panel-heading">
               <div>
                 <h2 id="selling-title">Vender</h2>
@@ -66,7 +66,7 @@ function Home() {
               </div>
               <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
             </div>
-                <div className="home-sales-actions mt-6 grid grid-cols-2 gap-3">
+                <div className="home-sales-actions mt-6 grid grid-cols-2 gap-3" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
                   <Link to="/clientes" className="action-card">
                     <Users className="text-primary" />
                     <h3 className="mt-4 font-bold">Clientes</h3>
