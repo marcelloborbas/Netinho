@@ -648,9 +648,9 @@ a {
 @media(max-height:700px){.welcome-auth-actions{bottom:max(102px,calc(env(safe-area-inset-bottom) + 96px));gap:8px}.welcome-auth-actions h1{font-size:18px}.welcome-google-button{min-height:46px}.welcome-auth-footer{bottom:max(6px,env(safe-area-inset-bottom))}.welcome-install-button{gap:0!important;padding-block:2px 4px!important}.welcome-install-button>img{width:38px!important;height:38px!important}.welcome-install-button span{font-size:13px!important}}
 @media(prefers-reduced-motion:reduce){.welcome-google-button img,.welcome-install-button>img,.welcome-install-button span{animation:none!important}}
 
-/* Keep the welcome artwork under the brand bar and use the Google mark alone. */
-.welcome-art-frame{position:absolute;inset:0;z-index:0}
-.welcome-auth-art{object-fit:cover;object-position:center top}
+/* Keep the full welcome artwork below the brand bar without cropping the character. */
+.welcome-art-frame{position:relative;inset:auto;z-index:0}
+.welcome-auth-art{inset:0;width:100%;height:100%;object-fit:contain;object-position:center top}
 .welcome-auth-brands{background:linear-gradient(115deg,#06152ceb,#0b1f3fe3 55%,#05142be8);backdrop-filter:blur(5px)}
 .welcome-google-button{display:grid;width:78px;height:78px;min-height:78px;place-items:center;align-self:center;gap:0;border:0;border-radius:50%;padding:0;background:transparent;color:#fff;box-shadow:none}
 .welcome-google-button img{width:56px;height:56px;object-fit:contain;animation:googleLogoPulse 1.8s ease-in-out infinite}
@@ -664,13 +664,13 @@ a {
 @media(max-height:700px){.welcome-google-button{width:64px;height:64px;min-height:64px}.welcome-google-button img{width:46px;height:46px}}
 @media(prefers-reduced-motion:reduce){.welcome-install-button span{animation:none!important}}
 
-.welcome-auth-art{top:0;left:0;height:100%;object-fit:cover;object-position:center top}
 .welcome-google-button{box-sizing:border-box;width:210px;height:88px;min-height:88px;border:2px solid transparent;border-radius:14px;background:#fff;box-shadow:0 8px 22px #00112c99}
-.welcome-google-button img{width:50px;height:50px}
+.welcome-google-button img{width:46px;height:46px}
 .welcome-google-button:hover{background:#fff;box-shadow:0 8px 22px #00112c99}
 .welcome-google-button:focus-visible{border-color:transparent}
 .welcome-google-button:active,.welcome-google-button[aria-busy="true"]{border-color:#ef4444;background:#fff;color:#172033;box-shadow:0 0 0 4px #ef444433,0 0 30px #ef444488}
 .welcome-install-button{box-sizing:border-box;width:210px!important;height:88px!important;min-height:88px!important;padding:5px 8px 8px!important}
+.welcome-install-button>img{width:46px!important;height:46px!important}
 @media(max-width:380px){.welcome-google-button img{width:46px;height:46px}}
 
 /* Keep the welcome page aligned with Netinho's graphite, white and red interface. */
