@@ -32,9 +32,24 @@ export const Route = createFileRoute("/auth")({
 function GoogleIcon() {
   return <img src="/images/google-logo.webp" width="30" height="30" alt="" aria-hidden="true" />;
 }
+function isDevicePreviewMode() {
+  if (!import.meta.env.DEV) return false;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("preview") === "device") return true;
+  // Restore the preview after OAuth without changing the configured auth redirect URL.
+  if (window.self !== window.top || window.sessionStorage.getItem("netinho-device-preview") !== "1") return false;
+  window.sessionStorage.removeItem("netinho-device-preview");
+  const restoredUrl = new URL(window.location.href);
+  restoredUrl.searchParams.set("preview", "device");
+  window.history.replaceState(window.history.state, "", restoredUrl);
+  return true;
+}
 function AuthPage() {
-  const previewMode = import.meta.env.DEV && new URLSearchParams(window.location.search).get("preview") === "device";
-  const [previewDevice, setPreviewDevice] = useState<"phone" | "tablet" | "desktop">("phone");
+  const previewMode = isDevicePreviewMode();
+  const [previewDevice, setPreviewDevice] = useState<"phone" | "tablet" | "desktop">(() => {
+    const saved = window.sessionStorage.getItem("netinho-preview-device");
+    return saved === "phone" || saved === "tablet" || saved === "desktop" ? saved : "phone";
+  });
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [signedIn, setSignedIn] = useState(false);
@@ -52,6 +67,8 @@ function AuthPage() {
     }
   }, [signedIn, access, recovery, navigate]);
   useEffect(() => {
+    // The preview shell must remain mounted through OAuth and keep its toolbar.
+    if (previewMode) return;
     void supabase.auth.getUser().then(({ data }) => {
       setSignedIn(!!data.user);
       setChecking(false);
@@ -66,10 +83,30 @@ function AuthPage() {
     if (window.location.hash.includes("error_description"))
       toast.error("O Google não concluiu o acesso. Tente novamente.");
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [previewMode]);
   async function googleLogin() {
     // OAuth must leave the device-preview iframe before contacting Google.
     if (window.self !== window.top) {
+      const isDevicePreviewFrame = new URLSearchParams(window.location.search).get("devicePreviewFrame") === "1";
+      if (isDevicePreviewFrame) {
+        setBusy(true);
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/auth`,
+            queryParams: { prompt: "select_account" },
+            skipBrowserRedirect: true,
+          },
+        });
+        if (error || !data.url) {
+          toast.error(error?.message ?? "Não foi possível iniciar o acesso com Google.");
+          setBusy(false);
+          return;
+        }
+        window.top?.sessionStorage.setItem("netinho-device-preview", "1");
+        window.top?.location.assign(data.url);
+        return;
+      }
       window.open(`${window.location.origin}/auth`, "_blank", "noopener,noreferrer");
       toast.info("Continue na nova aba e clique em Continuar com o Google.");
       return;
@@ -135,7 +172,10 @@ function AuthPage() {
                   key={size}
                   type="button"
                   aria-pressed={previewDevice === size}
-                  onClick={() => setPreviewDevice(size)}
+                  onClick={() => {
+                    setPreviewDevice(size);
+                    window.sessionStorage.setItem("netinho-preview-device", size);
+                  }}
                 >
                   <Icon size={16} aria-hidden="true" /> {option.label}
                 </button>
@@ -149,7 +189,7 @@ function AuthPage() {
             className={`device-preview-frame device-preview-frame-${previewDevice}`}
             style={{ width: device.width, height: device.height }}
           >
-            <iframe title={`Prévia da tela de autenticação em ${device.label}`} src="/auth" />
+            <iframe title={`Prévia do site em ${device.label}`} src="/auth?devicePreviewFrame=1" />
           </div>
         </section>
       </main>
