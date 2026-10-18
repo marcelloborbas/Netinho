@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 
 const promotions = [
   {
@@ -10,7 +10,7 @@ const promotions = [
     price: "R$ 247,20",
     note: "Preço atacado à vista da campanha",
     image:
-      "https://f.fcdn.app/imgs/1fdfc9/cymaco.com.uy/cymuy/ba00/webp/catalogo/11802/1024-1024/cremallera-direccion-volkswagen-gol-senda-saveiro-santana-mecanica-lena-cremallera-direccion-volkswagen-gol-senda-saveiro-santana-mecanica-lena.jpg",
+      "https://images.tcdn.com.br/img/img_prod/940224/caixa_de_direcao_mecanica_volkswagen_gol_quadrado_1980_ate_1996_24997_2_21cd19e4cbc35ad99ac7a705ad15fcbf.png",
   },
   {
     code: "FCZB-0005A",
@@ -19,7 +19,7 @@ const promotions = [
     price: "R$ 251,18",
     note: "Preço atacado à vista da campanha",
     image:
-      "https://tgfautomotive.com.br/660498-large_default/caixa_direcao_manual_147-_oggi-_panorama-mille_s-axial.jpg",
+      "https://http2.mlstatic.com/D_NQ_NP_614804-MLA89986012424_082025-O.webp",
   },
   {
     code: "FCZB-0020A",
@@ -28,7 +28,7 @@ const promotions = [
     price: "R$ 253,69",
     note: "Preço atacado à vista da campanha",
     image:
-      "https://cdn.2rscms.com.br/imgcache/5354/600x/uploads/5354/product/photo_6615c3fa88f6d.jpeg.webp",
+      "https://static.diskpecas.com.br/public/diskpecas/imagens/produtos/caixa-de-direcao-mecanica-elba-fiorino-premio-e-uno-93-97-ampri-23111-673df8679da5a.png",
   },
 ] as const;
 
@@ -37,15 +37,11 @@ export function PromotionBanner() {
   const [paused, setPaused] = useState(false);
   const promotion = promotions[active];
 
-  function move(direction: number) {
-    setActive((current) => (current + direction + promotions.length) % promotions.length);
-  }
-
   useEffect(() => {
     if (paused) return;
     const timer = window.setInterval(() => {
       setActive((current) => (current + 1) % promotions.length);
-    }, 7000);
+    }, 5000);
     return () => window.clearInterval(timer);
   }, [paused]);
 
@@ -81,7 +77,7 @@ export function PromotionBanner() {
         </Link>
       </div>
 
-      <div className="promotion-banner-art" aria-hidden="true">
+      <div className="promotion-banner-art" key={promotion.code} aria-hidden="true">
         <img
           src={promotion.image}
           alt=""
@@ -93,14 +89,19 @@ export function PromotionBanner() {
         <span>IMAGEM ILUSTRATIVA</span>
       </div>
 
-      <div className="promotion-banner-controls" aria-label="Navegar pelas promoções">
-        <button type="button" onClick={() => move(-1)} aria-label="Promoção anterior">
-          <ChevronLeft size={18} />
-        </button>
-        <span aria-hidden="true">{active + 1} / {promotions.length}</span>
-        <button type="button" onClick={() => move(1)} aria-label="Próxima promoção">
-          <ChevronRight size={18} />
-        </button>
+      <div
+        className="promotion-banner-controls"
+        role="status"
+        aria-label={`Oferta ${active + 1} de ${promotions.length}`}
+        data-paused={paused}
+      >
+        {promotions.map((item, index) => (
+          <span
+            key={item.code}
+            className={index === active ? "is-active" : undefined}
+            aria-hidden="true"
+          />
+        ))}
       </div>
     </section>
   );

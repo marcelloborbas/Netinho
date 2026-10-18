@@ -50,7 +50,9 @@ export function Logo({ className, showPhone = false, size = "sm" }: LogoProps) {
             lg ? "text-xs" : "text-[9px]",
           )}
         >
-          {BRAND.tagline.replace("Representações · ", "")}
+          <span>AUTO</span>
+          {" "}
+          <span>PARTS</span>
         </div>
         {showPhone && (
           <div

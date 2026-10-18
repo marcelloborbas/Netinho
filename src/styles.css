@@ -289,12 +289,12 @@
   font-size: 23px !important;
 }
 .brand-header-logo > div > div:last-child {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   margin-top: 3px !important;
   font-size: 7px !important;
-  text-align: justify;
-  text-align-last: justify;
-  letter-spacing: .16em !important;
+  letter-spacing: .12em !important;
 }
 .brand-wordmark {
   width: max-content;
@@ -589,7 +589,7 @@ a {
 }
 .home-page .journey-choice {
   min-width: 0;
-  min-height: 100%;
+  min-height: 0;
   padding: clamp(20px, 2.5vw, 30px);
   border-color: #8ca9d126;
   background: linear-gradient(145deg, #102b50 0%, #0a1c37 68%, #08172e 100%);
@@ -649,6 +649,12 @@ a {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px 16px;
+}
+.home-greeting-row h1 {
+  margin: 0;
+  color: #b9c5d7;
+  font-size: clamp(18px, 2.2vw, 24px);
+  font-weight: 600;
 }
 .home-attribution-badge {
   display: inline-flex;
@@ -788,6 +794,12 @@ a {
   max-height: 210px;
   object-fit: contain;
   filter: drop-shadow(0 14px 16px #02081385);
+  mix-blend-mode: multiply;
+  animation: promotionImageEnter .55s cubic-bezier(.2,.75,.3,1) both;
+}
+@keyframes promotionImageEnter {
+  from { opacity: 0; transform: translateY(7px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .promotion-banner-art span {
   position: absolute;
@@ -811,26 +823,22 @@ a {
   bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 9px;
-  color: #b9c9dc;
-  font-size: 10px;
-  font-weight: 700;
+  gap: 7px;
+  border: 1px solid #ffffff22;
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: #06152c99;
 }
-.promotion-banner-controls button {
-  display: inline-flex;
-  width: 30px;
-  height: 30px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ffffff40;
-  border-radius: 50%;
-  background: #06152c88;
-  color: #fff;
-  transition: background .2s, border-color .2s;
+.promotion-banner-controls span {
+  width: 16px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ffffff55;
 }
-.promotion-banner-controls button:hover {
-  border-color: #ffcf73;
-  background: #e63740;
+.promotion-banner-controls span.is-active {
+  width: 34px;
+  background: linear-gradient(90deg, #ffd779, #f0444e);
 }
 .brand-page-layout {
   display: flex;
@@ -878,12 +886,12 @@ a {
   font-size: 23px !important;
 }
 .brand-footer-logo > div > div:last-child {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   margin-top: 3px !important;
   font-size: 7px !important;
-  text-align: justify;
-  text-align-last: justify;
-  letter-spacing: .16em !important;
+  letter-spacing: .12em !important;
 }
 .brand-footer-links {
   display: flex;
@@ -899,6 +907,9 @@ a {
   color: var(--color-muted-foreground);
   font-size: 13px;
   transition: color 0.2s ease;
+}
+.brand-footer-home .brand-wordmark-tagline span {
+  white-space: nowrap;
 }
 .brand-footer-links a:hover {
   color: #fff;
@@ -992,10 +1003,11 @@ a {
  .home-page{height:100svh;min-height:100svh;overflow:hidden;padding-bottom:0}
  .home-page main{display:flex;min-height:0;flex:1;flex-direction:column;overflow:hidden;padding:8px 12px 6px}
  .home-greeting-row{flex:0 0 auto;gap:8px}
+ .home-greeting-row{margin-top:auto}
  .home-greeting-row h1{margin:0;color:#b9c5d7;font-size:17px;font-weight:600;line-height:1.1}
  .home-attribution-badge{min-height:23px;padding:3px 8px;font-size:9px;opacity:.8}
  .home-page main>p{flex:0 0 auto;margin:4px 0 0;font-size:12px;line-height:1.2}
- .home-page .promotion-banner{display:block;min-height:184px;flex:0 0 auto;margin:9px 0 0;border-radius:17px;padding:12px 14px 42px}
+ .home-page .promotion-banner{display:block;min-height:184px;flex:0 0 auto;margin:36px 0 0;border-radius:17px;padding:12px 14px 42px}
  .promotion-banner-copy{max-width:100%}
  .promotion-banner-label{padding:4px 7px;font-size:7px;letter-spacing:.08em}
  .promotion-banner-code{margin:6px 0 2px;font-size:8px}
@@ -1010,21 +1022,21 @@ a {
  .promotion-banner-art::before{width:112px;height:112px}
  .promotion-banner-art img{max-height:106px}
  .promotion-banner-art span{top:-1px;right:3px;transform:rotate(5deg);padding:3px 5px;font-size:6px}
- .promotion-banner-controls{right:9px;bottom:7px;gap:6px;font-size:8px}
- .promotion-banner-controls button{width:24px;height:24px}
- .promotion-banner-controls button svg{width:15px;height:15px}
- .home-page .home-panels{min-height:0;flex:1;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
- .home-page .journey-choice{height:100%;min-height:0;gap:0;padding:14px;border-radius:15px}
+ .promotion-banner-controls{right:9px;bottom:7px;gap:5px;padding:5px 7px}
+ .promotion-banner-controls span{width:12px;height:3px}
+ .promotion-banner-controls span.is-active{width:24px}
+ .home-page .home-panels{min-height:0;flex:0 0 auto;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:12px;margin:22px 0 auto}
+ .home-page .journey-choice{height:auto;min-height:0;gap:0;padding:12px;border-radius:15px}
  .home-panel-heading{align-items:center;gap:6px;padding-bottom:8px}
  .home-panel-heading h2{font-size:17px}
  .home-panel-heading p{max-width:180px;margin-top:3px;font-size:9px;line-height:1.2}
  .home-panel-icon{width:28px;height:28px;border-radius:9px}
  .home-panel-icon svg{width:16px;height:16px}
- .home-page .journey-choice>div.grid{flex:1;align-content:center;grid-auto-rows:minmax(38px,1fr);grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+ .home-page .journey-choice>div.grid{flex:0 0 auto;align-content:start;grid-auto-rows:minmax(38px,auto);grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
  .home-page .action-card{min-height:38px;gap:5px;padding:6px;border-radius:9px}
  .home-page .action-card svg{width:14px;height:14px}
  .home-page .action-card h3{font-size:9px;line-height:1.15}
- .home-page .home-catalog-logos{flex:1;align-content:center;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+ .home-page .home-catalog-logos{flex:0 0 auto;align-content:start;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
  .home-page .home-catalog-link{min-height:72px;gap:4px;padding:5px;border-radius:9px}
  .home-page .home-catalog-link .supplier-logo{height:45px;padding:6px;border-radius:6px}
  .home-page .home-catalog-link>span{font-size:8px;line-height:1.1}
@@ -1040,9 +1052,9 @@ a {
 }
 @media(max-width:639px) and (max-height:700px){
  .home-page main{padding-top:5px;padding-bottom:4px}
- .home-page .promotion-banner{min-height:166px;margin-top:6px}
- .home-page .home-panels{gap:6px;margin-top:6px}
- .home-page .journey-choice{padding:8px}
+ .home-page .promotion-banner{min-height:166px;margin-top:28px}
+ .home-page .home-panels{gap:6px;margin-top:16px}
+ .home-page .journey-choice{padding:9px}
  .home-panel-heading p{font-size:8px}
  .home-page .action-card{min-height:34px}
  .home-page .home-catalog-link{min-height:64px}
