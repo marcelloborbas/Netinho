@@ -23,25 +23,37 @@ function playSoftIconClick() {
     if (!AudioContextConstructor) return;
     softClickAudioContext ??= new AudioContextConstructor();
     const context = softClickAudioContext;
-    if (context.state === "suspended") void context.resume().catch(() => undefined);
-
-    const now = context.currentTime;
-    const oscillator = context.createOscillator();
-    const volume = context.createGain();
-    const filter = context.createBiquadFilter();
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(720, now);
-    oscillator.frequency.exponentialRampToValueAtTime(510, now + 0.035);
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(1400, now);
-    volume.gain.setValueAtTime(0.0001, now);
-    volume.gain.exponentialRampToValueAtTime(0.012, now + 0.004);
-    volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-    oscillator.connect(filter);
-    filter.connect(volume);
-    volume.connect(context.destination);
-    oscillator.start(now);
-    oscillator.stop(now + 0.042);
+    const play = () => {
+      if (context.state !== "running") return;
+      const now = context.currentTime;
+      const oscillator = context.createOscillator();
+      const volume = context.createGain();
+      const filter = context.createBiquadFilter();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(720, now);
+      oscillator.frequency.exponentialRampToValueAtTime(510, now + 0.045);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(1400, now);
+      volume.gain.setValueAtTime(0.0001, now);
+      volume.gain.exponentialRampToValueAtTime(0.028, now + 0.006);
+      volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+      oscillator.connect(filter);
+      filter.connect(volume);
+      volume.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.057);
+      oscillator.onended = () => {
+        oscillator.disconnect();
+        filter.disconnect();
+        volume.disconnect();
+      };
+    };
+    if (context.state === "suspended") {
+      // Resume during the user's gesture, then schedule the sound against the live audio clock.
+      void context.resume().then(play).catch(() => undefined);
+    } else {
+      play();
+    }
   } catch {
     // Keep clicks silent when audio is unsupported or blocked by the browser.
   }
