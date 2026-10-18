@@ -21,12 +21,13 @@ export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ context, location }) => {
     const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/auth" });
+    if (!data.user && location.pathname !== "/catalogo") throw redirect({ to: "/auth" });
+    if (!data.user) return { user: null, access: null };
     draftActions.switchAccount(data.user.id);
     const access = await context.queryClient.fetchQuery(accessQuery);
     if (location.pathname === "/admin") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
-    } else if (!selectedProfile(access.email)) throw redirect({ to: "/auth" });
+    } else if (location.pathname !== "/catalogo" && !selectedProfile(access.email)) throw redirect({ to: "/auth" });
     if (!access.can_sell && access.level !== 1 && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
     return { user: data.user, access };
   },
@@ -36,7 +37,7 @@ function AppShell() {
   const draft = useDraft();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: access } = useQuery(accessQuery);
+  const { data: access } = useQuery({ ...accessQuery, retry: false });
   const canSell = access?.can_sell === true;
   const nav = canSell
     ? ([
