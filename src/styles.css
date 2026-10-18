@@ -675,7 +675,8 @@ a {
 
 /* Keep the welcome page aligned with Netinho's graphite, white and red interface. */
 .welcome-auth-stage,.welcome-art-frame{background:#101114}
-.welcome-auth-brands{background:linear-gradient(112deg,#082454f5 0%,#0e3a75f2 48%,#061d43f5 100%);border-bottom:2px solid #ef4444;box-shadow:0 10px 30px #00112c66;backdrop-filter:blur(16px)}
+.welcome-auth-brands{background:linear-gradient(112deg,#082454dd 0%,#0e3a75d9 48%,#061d43e6 100%),url('/images/welcome-screen-clean.webp') center 7%/100% auto no-repeat;border-bottom:2px solid #ef4444;box-shadow:0 10px 30px #00112c66;backdrop-filter:blur(16px)}
+.welcome-auth-footer{background:linear-gradient(180deg,#061d43c9,#04152ee8),url('/images/welcome-screen-clean.webp') center bottom/100% auto no-repeat}
 .welcome-representations p{color:#fff;text-shadow:none}
 .welcome-google-button:focus-visible{outline-color:#ef4444;box-shadow:0 0 0 3px #ef444455,0 0 22px #ef444477}
 .welcome-install-button:hover,.welcome-install-button:focus-visible,.welcome-install-button:active{border-color:#ef4444!important;background:#ef44441c!important;box-shadow:0 0 22px #ef444466!important}
