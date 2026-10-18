@@ -19,9 +19,10 @@ let softClickAudioContext: AudioContext | null = null;
 
 function playSoftIconClick() {
   try {
-    const AudioContextConstructor = window.AudioContext;
+    const AudioContextConstructor =
+      window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!AudioContextConstructor) return;
-    softClickAudioContext ??= new AudioContextConstructor();
+    softClickAudioContext ??= new AudioContextConstructor({ latencyHint: "interactive" });
     const context = softClickAudioContext;
     const play = () => {
       if (context.state !== "running") return;
@@ -30,18 +31,18 @@ function playSoftIconClick() {
       const volume = context.createGain();
       const filter = context.createBiquadFilter();
       oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(720, now);
-      oscillator.frequency.exponentialRampToValueAtTime(510, now + 0.045);
+      oscillator.frequency.setValueAtTime(820, now);
+      oscillator.frequency.exponentialRampToValueAtTime(560, now + 0.055);
       filter.type = "lowpass";
       filter.frequency.setValueAtTime(1400, now);
       volume.gain.setValueAtTime(0.0001, now);
-      volume.gain.exponentialRampToValueAtTime(0.028, now + 0.006);
-      volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+      volume.gain.exponentialRampToValueAtTime(0.04, now + 0.006);
+      volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
       oscillator.connect(filter);
       filter.connect(volume);
       volume.connect(context.destination);
       oscillator.start(now);
-      oscillator.stop(now + 0.057);
+      oscillator.stop(now + 0.072);
       oscillator.onended = () => {
         oscillator.disconnect();
         filter.disconnect();
@@ -160,14 +161,28 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
-    const playIconClick = (event: MouseEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
+    let lastPointerSoundAt = 0;
+    const findIconControl = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return null;
       const control = target.closest("button, a, [role='button']");
-      if (!control || control.matches(":disabled, [aria-disabled='true']")) return;
-      if (!control.querySelector("svg, img, [data-icon]")) return;
+      if (!control || control.matches(":disabled, [aria-disabled='true']")) return null;
+      if (!control.querySelector("svg, img, [data-icon]")) return null;
+      return control;
+    };
+    const playIconPointerDown = (event: PointerEvent) => {
+      const control = findIconControl(event.target);
+      if (!control || event.button !== 0) return;
+      lastPointerSoundAt = performance.now();
       playSoftIconClick();
     };
+    const playIconClick = (event: MouseEvent) => {
+      const control = findIconControl(event.target);
+      if (!control) return;
+      // Pointer clicks already played on pointerdown; preserve keyboard and assistive clicks.
+      if (event.detail !== 0 && performance.now() - lastPointerSoundAt < 500) return;
+      playSoftIconClick();
+    };
+    document.addEventListener("pointerdown", playIconPointerDown, true);
     document.addEventListener("click", playIconClick, true);
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       draftActions.switchAccount(session?.user.id ?? null);
@@ -178,6 +193,7 @@ function RootComponent() {
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => undefined);
     return () => {
+      document.removeEventListener("pointerdown", playIconPointerDown, true);
       document.removeEventListener("click", playIconClick, true);
       data.subscription.unsubscribe();
     };
