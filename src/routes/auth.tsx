@@ -180,13 +180,13 @@ function AuthPage() {
                 onClick={googleLogin}
                 disabled={busy}
                 aria-busy={busy}
+                aria-label="Continuar com o Google"
               >
-                {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <GoogleIcon />}
-                <span>Continuar com o Google</span>
+                <GoogleIcon />
               </button>
             </section>
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
-              <InstallAppButton className="welcome-install-button" label="Baixe em seu Celular" />
+              <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
             </footer>
           </div>
         </>

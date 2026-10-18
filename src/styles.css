@@ -647,3 +647,19 @@ a {
 @media(max-width:380px){.welcome-netinho-logo>img{width:48px!important;height:48px!important}.welcome-netinho-logo>div>div:first-child{font-size:24px!important}.welcome-netinho-logo>div>div:last-child{font-size:7px!important}.welcome-auth-actions{right:12px;left:12px;bottom:max(106px,calc(env(safe-area-inset-bottom) + 100px));gap:9px}.welcome-auth-footer{right:8px;left:8px}.welcome-install-button>img{width:44px!important;height:44px!important}.welcome-install-button span{font-size:14px!important}}
 @media(max-height:700px){.welcome-auth-actions{bottom:max(102px,calc(env(safe-area-inset-bottom) + 96px));gap:8px}.welcome-auth-actions h1{font-size:18px}.welcome-google-button{min-height:46px}.welcome-auth-footer{bottom:max(6px,env(safe-area-inset-bottom))}.welcome-install-button{gap:0!important;padding-block:2px 4px!important}.welcome-install-button>img{width:38px!important;height:38px!important}.welcome-install-button span{font-size:13px!important}}
 @media(prefers-reduced-motion:reduce){.welcome-google-button img,.welcome-install-button>img,.welcome-install-button span{animation:none!important}}
+
+/* Keep the welcome artwork under the brand bar and use the Google mark alone. */
+.welcome-art-frame{position:absolute;inset:0;z-index:0}
+.welcome-auth-art{object-fit:cover;object-position:center top}
+.welcome-auth-brands{background:linear-gradient(115deg,#06152ceb,#0b1f3fe3 55%,#05142be8);backdrop-filter:blur(5px)}
+.welcome-google-button{display:grid;width:78px;height:78px;min-height:78px;place-items:center;align-self:center;gap:0;border:0;border-radius:50%;padding:0;background:transparent;color:#fff;box-shadow:none}
+.welcome-google-button img{width:56px;height:56px;object-fit:contain;animation:googleLogoPulse 1.8s ease-in-out infinite}
+.welcome-google-button:hover{transform:scale(1.05);background:transparent;box-shadow:none}
+.welcome-google-button:focus-visible{outline:3px solid #f7bd32;outline-offset:2px;box-shadow:0 0 22px #ffd34e99}
+.welcome-google-button:active,.welcome-google-button[aria-busy="true"]{background:transparent;color:#fff;box-shadow:0 0 0 7px #f3ca5d22,0 0 30px #ffd34ecc}
+.welcome-google-button:active img,.welcome-google-button[aria-busy="true"] img{filter:drop-shadow(0 0 13px #ffd34e) brightness(1.13)}
+.welcome-install-button span{color:#fff;text-shadow:0 0 7px #ffffffaa,0 0 18px #ffffff66;animation:whiteTextPulse 2.2s ease-in-out infinite}
+@keyframes whiteTextPulse{0%,100%{text-shadow:0 0 5px #ffffff66,0 0 12px #ffffff33}50%{text-shadow:0 0 9px #fff,0 0 22px #ffffffaa}}
+@media(max-width:380px){.welcome-google-button{width:68px;height:68px;min-height:68px}.welcome-google-button img{width:50px;height:50px}}
+@media(max-height:700px){.welcome-google-button{width:64px;height:64px;min-height:64px}.welcome-google-button img{width:46px;height:46px}}
+@media(prefers-reduced-motion:reduce){.welcome-install-button span{animation:none!important}}
