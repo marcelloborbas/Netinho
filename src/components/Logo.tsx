@@ -50,9 +50,7 @@ export function Logo({ className, showPhone = false, size = "sm" }: LogoProps) {
             lg ? "text-xs" : "text-[9px]",
           )}
         >
-          <span>AUTO</span>
-          {" "}
-          <span>PARTS</span>
+          <span>AUTO PARTS</span>
         </div>
         {showPhone && (
           <div

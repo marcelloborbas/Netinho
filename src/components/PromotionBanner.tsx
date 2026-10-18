@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Megaphone } from "lucide-react";
 
 const promotions = [
   {
@@ -9,8 +9,7 @@ const promotions = [
     application: "Gol · Santana · Parati · Saveiro",
     price: "R$ 247,20",
     note: "Preço atacado à vista da campanha",
-    image:
-      "https://images.tcdn.com.br/img/img_prod/940224/caixa_de_direcao_mecanica_volkswagen_gol_quadrado_1980_ate_1996_24997_2_21cd19e4cbc35ad99ac7a705ad15fcbf.png",
+    image: "/images/promo-caixa-direcao.svg",
   },
   {
     code: "FCZB-0005A",
@@ -18,8 +17,7 @@ const promotions = [
     application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     price: "R$ 251,18",
     note: "Preço atacado à vista da campanha",
-    image:
-      "https://http2.mlstatic.com/D_NQ_NP_614804-MLA89986012424_082025-O.webp",
+    image: "/images/promo-caixa-direcao.svg",
   },
   {
     code: "FCZB-0020A",
@@ -27,8 +25,7 @@ const promotions = [
     application: "Elba · Fiorino · Prêmio · Uno Mille",
     price: "R$ 253,69",
     note: "Preço atacado à vista da campanha",
-    image:
-      "https://static.diskpecas.com.br/public/diskpecas/imagens/produtos/caixa-de-direcao-mecanica-elba-fiorino-premio-e-uno-93-97-ampri-23111-673df8679da5a.png",
+    image: "/images/promo-caixa-direcao.svg",
   },
 ] as const;
 
@@ -58,7 +55,8 @@ export function PromotionBanner() {
     >
       <div className="promotion-banner-copy" aria-live="polite" aria-atomic="true">
         <div className="promotion-banner-label">
-          <Sparkles size={14} aria-hidden="true" /> Campanha de outubro · FCO
+          <span className="promotion-campaign-icon"><Megaphone size={18} aria-hidden="true" /></span>
+          <span>Campanha de outubro · FCO</span>
         </div>
         <p className="promotion-banner-code">{promotion.code}</p>
         <h2>{promotion.title}</h2>
