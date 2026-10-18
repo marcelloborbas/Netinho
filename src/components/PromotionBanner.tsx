@@ -44,7 +44,7 @@ export const PROMOTIONS = [
 export function PromotionBanner() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const promotion = PROMOTIONS[active];
+  const promotion = PROMOTIONS[active] ?? PROMOTIONS[0];
 
   useEffect(() => {
     if (paused) return;

@@ -63,16 +63,20 @@ describe("catalog access presentation", () => {
     state.seller = true;
     render(<Home />);
     expect(screen.getByRole("heading", { name: /Sr. Marcello/ })).toBeVisible();
-    expect(screen.getByRole("img", { name: "FCO Automotive" })).toBeVisible();
-    expect(screen.getByRole("img", { name: "HD Embreagens" })).toBeVisible();
+    expect(screen.getAllByRole("img", { name: "FCO Automotive" })[0]).toBeVisible();
+    expect(screen.getAllByRole("img", { name: "HD Embreagens" })[0]).toBeVisible();
     expect(screen.getByRole("heading", { name: "Editar e revisar" })).toBeVisible();
-    expect(screen.getByText("netinhoautoparts@gmail.com")).toBeVisible();
+    expect(screen.getAllByText("netinhoautoparts@gmail.com")[0]).toBeVisible();
+    expect(screen.getByText("Consultar promoção")).toBeVisible();
   });
   it("does not give a visitor sales tools on the home screen", () => {
     state.seller = false;
     render(<Home />);
     expect(screen.queryByRole("heading", { name: "Montar venda" })).not.toBeInTheDocument();
-    expect(screen.getByText(/acesso a vendas precisa ser autorizado/)).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Clientes" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Meus pedidos" })).not.toBeInTheDocument();
+    expect(screen.getByText("Visitante")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Ver catálogos" })).toBeVisible();
   });
   it("keeps supplier consultation free of sales controls even for an authorized seller", () => {
     state.seller = true;

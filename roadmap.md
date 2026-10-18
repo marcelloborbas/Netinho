@@ -32,7 +32,7 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [x] Logo enviada como ícone e marca
 - [x] Fotos das peças no catálogo
 - [x] Estoque em cinza no campo de quantidade
-- [ ] Reativar login (temporariamente desativado; acesso anônimo ligado)
+- [x] Reativar login (reestabelecido pelo repositório em 18/10; entrada apenas com Google)
 
 ## Ajustes solicitados em 17/10/2026
 - [x] Compactar /auth para celular 9:16 com frase acima das logos, preservar todos os controles e conferir a prévia; sem publicar.
@@ -45,3 +45,10 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [x] Publicar a revisão compacta 9:16 no Lovable.
 
 - [x] Retirar PDFs da entrada e migrar arquivos para Storage privado com login.
+
+## Sincronização com o GitHub em 18/10/2026
+- [x] Conferir o repositório: nada novo a importar, app já igual ao `main`.
+- [x] Aplicar a migração de atribuição de cadastros, que estava no repositório sem efeito no banco.
+- [x] Corrigir erros de compilação da consulta de promoções e da visualização dos catálogos.
+- [x] Atualizar os testes da tela inicial ao layout novo; 26 testes e verificação de tipos sem erro.
+- [ ] Conferir a consulta de promoções dentro da área logada (precisa de uma conta Google real).

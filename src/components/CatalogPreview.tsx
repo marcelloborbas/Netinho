@@ -60,7 +60,7 @@ export function CatalogPreview({
             <Link
               key={option}
               to="/catalogo"
-              search={{ marca: option, modo }}
+              search={{ marca: option, modo: mode }}
               className={`catalog-brand-option ${brand === option ? "is-active" : ""}`}
               aria-label={`Visualizar catálogo ${option}`}
               aria-current={brand === option ? "page" : undefined}
