@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Users, ClipboardList, FilePenLine, BookOpen } from "lucide-react";
+import { ShoppingCart, Users, ClipboardList, FilePenLine, BookOpen, Settings, LogIn, ShieldCheck, MapPinned, Truck } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -21,9 +21,9 @@ export const Route = createFileRoute("/")({
 });
 function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
-  const firstName = access?.name?.trim().split(/\\s+/)[0];
+  const firstName = access?.name?.trim().split(/\s+/)[0];
   const savedRole = access?.email ? selectedProfile(access.email) : null;
-  const role = access?.attribution === "Representante"
+  const role = access?.level === 1 ? "Administrador" : access?.attribution === "Representante"
     ? "Representante Comercial"
     : access?.attribution === "Cliente"
       ? "Cliente"
@@ -45,6 +45,17 @@ function Home() {
           </span>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+          {access?.level === 1 ? (
+            <Link to="/admin" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-amber-400/60 px-4 py-2 text-sm font-bold">
+              <Settings size={18} /> Painel de Administração
+            </Link>
+          ) : (
+            <Link to="/auth" className="inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 py-2 text-sm font-bold">
+              <LogIn size={18} /> Identificar-me / Administração
+            </Link>
+          )}
+        </div>
         <PromotionBanner />
         <div className="home-panels mt-8 grid items-stretch gap-5 lg:grid-cols-2">
           <section className="journey-choice" aria-labelledby="selling-title">
@@ -118,6 +129,21 @@ function Home() {
             </div>
           </section>
         </div>
+        {access?.level === 1 && (
+          <section className="journey-choice mt-5" aria-labelledby="admin-home-title">
+            <div className="home-panel-heading">
+              <div><h2 id="admin-home-title">Administração e cadastros</h2><p>Gerencie os cadastros e as operações comerciais.</p></div>
+              <span className="home-panel-icon"><ShieldCheck size={22} /></span>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <Link to="/admin" className="action-card"><Settings className="text-primary" /><h3 className="mt-2 font-bold">Painel geral</h3><p className="text-xs text-muted-foreground">Autorizações e produtos</p></Link>
+              <Link to="/representante" className="action-card"><MapPinned className="text-primary" /><h3 className="mt-2 font-bold">Representantes</h3><p className="text-xs text-muted-foreground">Fichas e mapas</p></Link>
+              <Link to="/admin" className="action-card"><Truck className="text-primary" /><h3 className="mt-2 font-bold">Distribuidoras</h3><p className="text-xs text-muted-foreground">Fornecedores e produtos</p></Link>
+              <Link to="/clientes" className="action-card"><Users className="text-primary" /><h3 className="mt-2 font-bold">Clientes</h3><p className="text-xs text-muted-foreground">Cadastros</p></Link>
+              <Link to="/pedidos" className="action-card"><ClipboardList className="text-primary" /><h3 className="mt-2 font-bold">Pedidos</h3><p className="text-xs text-muted-foreground">Acompanhamento</p></Link>
+            </div>
+          </section>
+        )}
       </main>
       <BrandFooter />
     </div>
