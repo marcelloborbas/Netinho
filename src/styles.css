@@ -664,7 +664,7 @@ a {
 @media(max-height:700px){.welcome-google-button{width:64px;height:64px;min-height:64px}.welcome-google-button img{width:46px;height:46px}}
 @media(prefers-reduced-motion:reduce){.welcome-install-button span{animation:none!important}}
 
-.welcome-auth-art{top:86px;height:calc(100% - 86px);object-fit:contain;object-position:center top}
+.welcome-auth-art{top:0;left:0;height:100%;object-fit:cover;object-position:center top}
 .welcome-google-button{box-sizing:border-box;width:210px;height:88px;min-height:88px;border:2px solid transparent;border-radius:14px;background:#fff;box-shadow:0 8px 22px #00112c99}
 .welcome-google-button img{width:50px;height:50px}
 .welcome-google-button:hover{background:#fff;box-shadow:0 8px 22px #00112c99}
@@ -674,9 +674,9 @@ a {
 @media(max-width:380px){.welcome-google-button img{width:46px;height:46px}}
 
 /* Keep the welcome page aligned with Netinho's graphite, white and red interface. */
-.welcome-auth-stage,.welcome-art-frame{background:#101114}
-.welcome-auth-brands{background:linear-gradient(112deg,#082454dd 0%,#0e3a75d9 48%,#061d43e6 100%),url('/images/welcome-screen-clean.webp') center 7%/100% auto no-repeat;border-bottom:2px solid #ef4444;box-shadow:0 10px 30px #00112c66;backdrop-filter:blur(16px)}
-.welcome-auth-footer{background:linear-gradient(180deg,#061d43c9,#04152ee8),url('/images/welcome-screen-clean.webp') center bottom/100% auto no-repeat}
+.welcome-auth-stage,.welcome-art-frame{background:#041b4b}
+.welcome-auth-brands{background:linear-gradient(112deg,#082454bb 0%,#0e3a75b8 48%,#061d43c7 100%);border-bottom:2px solid #ef4444;box-shadow:0 10px 30px #00112c66;backdrop-filter:blur(2px)}
+.welcome-auth-footer{background:linear-gradient(180deg,#041b4b22,#04152e99)}
 .welcome-representations p{color:#fff;text-shadow:none}
 .welcome-google-button:focus-visible{outline-color:#ef4444;box-shadow:0 0 0 3px #ef444455,0 0 22px #ef444477}
 .welcome-install-button:hover,.welcome-install-button:focus-visible,.welcome-install-button:active{border-color:#ef4444!important;background:#ef44441c!important;box-shadow:0 0 22px #ef444466!important}
