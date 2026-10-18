@@ -169,6 +169,23 @@ function RootComponent() {
       if (!control.querySelector("svg, img, [data-icon]")) return null;
       return control;
     };
+    let hoveredIcon: Element | null = null;
+    const playIconPointerOver = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const icon = target.closest("svg, img, [data-icon]");
+      if (!icon || hoveredIcon === icon) return;
+      const control = findIconControl(icon);
+      if (!control) return;
+      hoveredIcon = icon;
+      playSoftIconClick();
+    };
+    const resetHoveredIcon = (event: PointerEvent) => {
+      if (!hoveredIcon) return;
+      const nextTarget = event.relatedTarget;
+      if (nextTarget instanceof Node && hoveredIcon.contains(nextTarget)) return;
+      hoveredIcon = null;
+    };
     const playIconPointerDown = (event: PointerEvent) => {
       const control = findIconControl(event.target);
       if (!control || event.button !== 0) return;
@@ -182,6 +199,8 @@ function RootComponent() {
       if (event.detail !== 0 && performance.now() - lastPointerSoundAt < 500) return;
       playSoftIconClick();
     };
+    document.addEventListener("pointerover", playIconPointerOver, true);
+    document.addEventListener("pointerout", resetHoveredIcon, true);
     document.addEventListener("pointerdown", playIconPointerDown, true);
     document.addEventListener("click", playIconClick, true);
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
@@ -193,6 +212,8 @@ function RootComponent() {
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => undefined);
     return () => {
+      document.removeEventListener("pointerover", playIconPointerOver, true);
+      document.removeEventListener("pointerout", resetHoveredIcon, true);
       document.removeEventListener("pointerdown", playIconPointerDown, true);
       document.removeEventListener("click", playIconClick, true);
       data.subscription.unsubscribe();
