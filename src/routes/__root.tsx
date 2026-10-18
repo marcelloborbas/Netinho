@@ -15,46 +15,14 @@ import { draftActions } from "@/lib/order-store";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
-let softClickAudioContext: AudioContext | null = null;
+let softClickAudio: HTMLAudioElement | null = null;
 
 function playSoftIconClick() {
   try {
-    const AudioContextConstructor =
-      window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextConstructor) return;
-    softClickAudioContext ??= new AudioContextConstructor({ latencyHint: "interactive" });
-    const context = softClickAudioContext;
-    const play = () => {
-      if (context.state !== "running") return;
-      const now = context.currentTime;
-      const oscillator = context.createOscillator();
-      const volume = context.createGain();
-      const filter = context.createBiquadFilter();
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(820, now);
-      oscillator.frequency.exponentialRampToValueAtTime(560, now + 0.055);
-      filter.type = "lowpass";
-      filter.frequency.setValueAtTime(1400, now);
-      volume.gain.setValueAtTime(0.0001, now);
-      volume.gain.exponentialRampToValueAtTime(0.04, now + 0.006);
-      volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
-      oscillator.connect(filter);
-      filter.connect(volume);
-      volume.connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + 0.072);
-      oscillator.onended = () => {
-        oscillator.disconnect();
-        filter.disconnect();
-        volume.disconnect();
-      };
-    };
-    if (context.state === "suspended") {
-      // Resume during the user's gesture, then schedule the sound against the live audio clock.
-      void context.resume().then(play).catch(() => undefined);
-    } else {
-      play();
-    }
+    softClickAudio ??= new Audio("/sounds/soft-click.wav");
+    softClickAudio.volume = 0.32;
+    softClickAudio.currentTime = 0;
+    void softClickAudio.play().catch(() => undefined);
   } catch {
     // Keep clicks silent when audio is unsupported or blocked by the browser.
   }
@@ -161,6 +129,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
+    softClickAudio ??= new Audio("/sounds/soft-click.wav");
+    softClickAudio.preload = "auto";
+    softClickAudio.load();
     let lastPointerSoundAt = 0;
     const findIconControl = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return null;
