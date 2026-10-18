@@ -122,11 +122,9 @@ function AuthPage() {
       {showWelcome && (
         <>
           <header className="welcome-auth-brands">
-            <p>Representante Oficial das Marcas</p>
-            <div className="welcome-brand-row">
-              <Logo className="welcome-netinho-logo" />
-              <PartnerLogos compact linked={false} />
-            </div>
+            <Logo className="welcome-netinho-logo" />
+            <p>Representante Oficial</p>
+            <PartnerLogos compact linked={false} />
           </header>
           <img
             className="welcome-auth-art"
