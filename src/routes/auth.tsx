@@ -34,7 +34,6 @@ function GoogleIcon() {
   return <img src="/images/google-logo.webp" width="30" height="30" alt="" aria-hidden="true" />;
 }
 function isDevicePreviewMode() {
-  if (!import.meta.env.DEV) return false;
   const params = new URLSearchParams(window.location.search);
   if (params.get("preview") === "device" && window.self === window.top) return true;
   // Restore the preview after OAuth without changing the configured auth redirect URL.
@@ -47,8 +46,7 @@ function isDevicePreviewMode() {
 }
 function AuthPage() {
   const previewMode = isDevicePreviewMode();
-  const devicePreviewFrame =
-    import.meta.env.DEV && new URLSearchParams(window.location.search).get("devicePreviewFrame") === "1";
+  const devicePreviewFrame = new URLSearchParams(window.location.search).get("devicePreviewFrame") === "1";
   const [previewDevice, setPreviewDevice] = useState<"phone" | "tablet" | "desktop">(() => {
     const saved = window.sessionStorage.getItem("netinho-preview-device");
     return saved === "phone" || saved === "tablet" || saved === "desktop" ? saved : "phone";
