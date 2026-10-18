@@ -664,7 +664,7 @@ a {
 @media(max-height:700px){.welcome-google-button{width:64px;height:64px;min-height:64px}.welcome-google-button img{width:46px;height:46px}}
 @media(prefers-reduced-motion:reduce){.welcome-install-button span{animation:none!important}}
 
-.welcome-auth-art{top:16px;height:calc(100% - 16px);object-fit:contain;object-position:center top}
+.welcome-auth-art{top:86px;height:calc(100% - 86px);object-fit:contain;object-position:center top}
 .welcome-google-button{border:1px solid #ffffff;background:#fff;box-shadow:0 5px 18px #00112c99,0 0 0 4px #ffffff20}
 .welcome-google-button img{width:52px;height:52px}
 .welcome-google-button:hover{background:#fff;box-shadow:0 5px 20px #00112caa,0 0 0 5px #ffffff2e}
