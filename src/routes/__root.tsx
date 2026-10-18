@@ -76,7 +76,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#1b1c1f" },
+      { name: "theme-color", content: "#0b1f3f" },
       { title: "Netinho Auto Parts" },
       { name: "description", content: "Catálogo e pedidos B2B da Netinho Auto Parts." },
       { property: "og:type", content: "website" },

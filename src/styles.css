@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* NETINHO design system — grafite, branco e vermelho de destaque. */
+/* NETINHO design system — azul-marinho, branco e vermelho de destaque. */
 
 @theme inline {
   --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
@@ -40,20 +40,20 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.17 0.004 260);
-  --surface: oklch(0.205 0.005 260);
+  --background: oklch(0.17 0.045 255);
+  --surface: oklch(0.205 0.05 255);
   --foreground: oklch(0.97 0 0);
-  --card: oklch(0.225 0.006 260);
+  --card: oklch(0.225 0.055 255);
   --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.225 0.006 260);
+  --popover: oklch(0.225 0.055 255);
   --popover-foreground: oklch(0.97 0 0);
   --primary: oklch(0.6 0.22 27);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.28 0.006 260);
+  --secondary: oklch(0.28 0.045 255);
   --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.27 0.005 260);
+  --muted: oklch(0.27 0.035 255);
   --muted-foreground: oklch(0.7 0.01 260);
-  --accent: oklch(0.3 0.008 260);
+  --accent: oklch(0.3 0.04 255);
   --accent-foreground: oklch(0.97 0 0);
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
@@ -63,7 +63,7 @@
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.6 0.22 27);
-  --gradient-metal: linear-gradient(180deg, oklch(0.26 0.006 260), oklch(0.2 0.005 260));
+  --gradient-metal: linear-gradient(180deg, oklch(0.26 0.05 255), oklch(0.2 0.04 255));
   --gradient-red: linear-gradient(135deg, oklch(0.62 0.22 27), oklch(0.52 0.21 25));
   --shadow-card: 0 1px 0 oklch(1 0 0 / 5%) inset, 0 8px 24px -12px oklch(0 0 0 / 60%);
   --shadow-glow: 0 10px 30px -10px oklch(0.6 0.22 27 / 55%);
@@ -111,7 +111,7 @@
 
 /* Netinho commercial application */
 .auth-stage {
-  background: radial-gradient(ellipse at 20% 20%, #08245466, transparent 55%), #101114;
+  background: radial-gradient(ellipse at 20% 20%, #08245488, transparent 62%), #06152c;
 }
 .welcome-frame {
   overflow: hidden;
@@ -225,7 +225,7 @@
   padding: 22px;
   border: 1px solid #ffffff16;
   border-radius: 18px;
-  background: linear-gradient(145deg, #25272b, #1b1d21);
+  background: linear-gradient(145deg, #102b50, #0a1b34);
   cursor: pointer;
   transition:
     border-color 0.2s,
@@ -234,7 +234,7 @@
 .profile-card:hover,
 .profile-card.selected {
   border-color: #ef4444;
-  background: linear-gradient(145deg, #402124, #241b20);
+  background: linear-gradient(145deg, #183a65, #10264a);
 }
 .icon-button {
   display: inline-flex;
@@ -258,6 +258,89 @@
   border-bottom: 1px solid #ef444455;
   background: linear-gradient(115deg, #06152cf5, #0b1f3ff2 55%, #05142bf5);
   backdrop-filter: blur(16px);
+}
+.brand-header {
+  border-bottom: 2px solid #e52b36;
+}
+.brand-header-inner {
+  display: flex;
+  width: min(100% - 24px, 1180px);
+  min-height: 78px;
+  margin-inline: auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 8px;
+}
+.brand-header-home {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+}
+.brand-header-logo {
+  gap: 8px !important;
+  color: #fff;
+}
+.brand-header-logo > img {
+  width: 48px !important;
+  height: 48px !important;
+}
+.brand-header-logo > div > div:first-child {
+  font-size: 23px !important;
+}
+.brand-header-logo > div > div:last-child {
+  margin-top: 3px !important;
+  font-size: 7px !important;
+}
+.brand-header-representations {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.brand-header-representations > p {
+  margin: 0 2px 0 0;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.brand-header-representations .partner-logos {
+  gap: 8px !important;
+}
+.brand-header-representations .partner-logo {
+  width: 42px !important;
+  height: 30px !important;
+  min-width: 42px;
+  min-height: 30px;
+  padding: 3px 5px !important;
+  border-radius: 7px;
+  background: #fff;
+}
+.brand-header-representations .partner-logo img {
+  max-width: 38px;
+  max-height: 24px;
+  object-fit: contain;
+}
+.app-navigation-bar {
+  display: none;
+}
+.app-navigation-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #ffffff22;
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #d6deeb;
+  font-size: 12px;
+  font-weight: 700;
+}
+.app-navigation-logout:hover {
+  border-color: #ef4444aa;
+  color: #fff;
 }
 .nav-link {
   display: inline-flex;
@@ -286,7 +369,7 @@
 .catalog-hero {
   background:
     radial-gradient(ellipse at 90% 80%, #9b252b35, transparent 60%),
-    linear-gradient(130deg, #25272e, #16171b);
+    linear-gradient(130deg, #12315a, #07172f);
 }
 .primary-link {
   display: inline-flex;
@@ -306,7 +389,7 @@
   padding: 24px;
   border: 1px solid #ffffff12;
   border-radius: 16px;
-  background: #1e2025;
+  background: linear-gradient(145deg, #102b50, #0a1b34);
   transition: border-color 0.2s;
 }
 .action-card:hover {
@@ -319,7 +402,7 @@
   display: grid;
   padding-bottom: env(safe-area-inset-bottom);
   border-top: 1px solid #ffffff19;
-  background: #17191ef5;
+  background: #06152cf5;
   backdrop-filter: blur(12px);
 }
 .order-dock {
@@ -366,6 +449,20 @@
   color: #fff;
 }
 @media (min-width: 768px) {
+  .app-navigation-bar {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    border-bottom: 1px solid #ffffff14;
+    background: #0a1b34;
+    padding-inline: max(calc((100vw - 1180px) / 2), 16px);
+  }
+  .app-navigation-bar nav {
+    flex: 1;
+    justify-content: flex-end;
+  }
   .mobile-nav {
     display: none;
   }
@@ -469,12 +566,102 @@ a {
   padding: 32px;
   border: 1px solid #ffffff20;
   border-radius: 20px;
-  background: linear-gradient(135deg, #25272e, #15171d);
+  background: linear-gradient(135deg, #102b52, #081a35);
   transition:
     border-color 0.2s,
     transform 0.2s;
 }
 .journey-choice > svg {
+  color: #ef4444;
+}
+.home-page .journey-choice > h2 {
+  color: var(--color-muted-foreground);
+}
+.home-greeting-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.home-attribution-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid #ef444455;
+  border-radius: 999px;
+  padding: 5px 12px;
+  background: #ef44441a;
+  color: #f4c4c4;
+  font-size: 12px;
+  font-weight: 700;
+}
+.brand-page-layout {
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+}
+.brand-page-header-inner {
+  display: flex;
+  width: min(100% - 32px, 1152px);
+  min-height: 80px;
+  margin-inline: auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 10px;
+}
+.brand-page-content {
+  flex: 1;
+}
+.brand-footer {
+  margin-top: auto;
+  border-top: 1px solid #ef444455;
+  background: linear-gradient(115deg, #06152cf5, #0b1f3ff2 55%, #05142bf5);
+}
+.brand-footer-inner {
+  display: flex;
+  width: min(100% - 32px, 1152px);
+  min-height: 92px;
+  margin-inline: auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 14px;
+}
+.brand-footer-home {
+  display: inline-flex;
+  align-items: center;
+}
+.brand-footer-logo > img {
+  width: 44px !important;
+  height: 44px !important;
+}
+.brand-footer-logo > div > div:first-child {
+  font-size: 21px !important;
+}
+.brand-footer-logo > div > div:last-child {
+  font-size: 7px !important;
+}
+.brand-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px 22px;
+}
+.brand-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted-foreground);
+  font-size: 13px;
+  transition: color 0.2s ease;
+}
+.brand-footer-links a:hover {
+  color: #fff;
+}
+.brand-footer-links svg {
   color: #ef4444;
 }
 .journey-choice:hover {
@@ -532,10 +719,8 @@ a {
  .home-page .app-header>div{padding:10px 16px;gap:4px 12px}
  .home-page .app-header img.rounded-full{width:40px;height:40px}
  .home-page .app-header .font-display{font-size:24px}
- .home-page .app-header .nav-link{font-size:11px;padding:6px 10px}
  .home-page main{padding-top:16px;padding-bottom:0}
- .home-page main>h1{font-size:24px;line-height:1.2;margin-top:6px}
- .home-page main>.eyebrow{font-size:8px}
+ .home-greeting-row h1{font-size:24px;line-height:1.2;margin-top:6px}
  .home-page main>p{margin-top:8px;font-size:13px;line-height:1.4}
  .home-page main>div.mt-4{margin-top:8px}
  .home-page main>div.mt-8{margin-top:14px;gap:12px}
@@ -550,6 +735,11 @@ a {
  .home-page .action-card p,.home-page .journey-choice>p.mt-6{display:none}
  .home-page .home-catalog-logos{margin-top:12px;max-width:none}
  .home-page .home-catalog-link .supplier-logo{height:64px;padding:10px}
+}
+@media(max-width:560px){
+ .brand-footer-inner{justify-content:center;text-align:center}
+ .brand-footer-links{justify-content:center}
+ .brand-footer-links a{font-size:12px}
 }
 @media(max-width:1023px){
  .auth-login{min-height:100svh;display:flex;flex-direction:column;padding:12px 16px;gap:0}

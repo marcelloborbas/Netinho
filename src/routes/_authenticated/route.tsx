@@ -10,8 +10,8 @@ import {
   Shield,
   Contact,
 } from "lucide-react";
-import { PartnerLogos } from "@/components/PartnerLogos";
-import { Logo } from "@/components/Logo";
+import { BrandHeader } from "@/components/BrandHeader";
+import { BrandFooter } from "@/components/BrandFooter";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -61,16 +61,10 @@ function AppShell() {
     navigate({ to: "/auth" });
   }
   return (
-    <div className="min-h-screen pb-36 md:pb-28">
-      <header className="app-header">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <Link to="/" aria-label="Início Netinho">
-              <Logo />
-            </Link>
-            <PartnerLogos compact />
-          </div>
-          <nav className="hidden items-center gap-1 md:flex">
+    <div className="flex min-h-screen flex-col pb-36 md:pb-28">
+      <BrandHeader />
+      <div className="app-navigation-bar">
+        <nav aria-label="Navegação da área" className="flex items-center gap-1">
             {nav.map((n) => (
               <Link
                 key={n.to}
@@ -87,25 +81,18 @@ function AppShell() {
                 Administração
               </Link>
             )}
-          </nav>
-          <div className="flex items-center gap-2">
-            {access?.level === 1 && (
-              <Link to="/admin" className="icon-button md:hidden" aria-label="Administração">
-                <Shield size={20} />
-              </Link>
-            )}
-            <button onClick={logout} className="icon-button" aria-label="Sair da conta">
-              <LogOut size={19} />
-            </button>
-          </div>
-        </div>
-      </header>
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        </nav>
+        <button onClick={logout} className="app-navigation-logout" aria-label="Sair da conta">
+          <LogOut size={18} /> Sair
+        </button>
+      </div>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
         <p className="operator-banner">
           Operando como <strong>{access?.name || access?.email}</strong>
         </p>
         <Outlet />
       </main>
+      <BrandFooter />
       {canSell && draft.items.length > 0 && (
         <Link to="/pedido" className="order-dock">
           <span className="flex items-center gap-3">
@@ -120,7 +107,7 @@ function AppShell() {
           <b className="text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length}, 1fr)` }}>
+      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length + (access?.level === 1 ? 2 : 1)}, 1fr)` }}>
         {nav.map((n) => (
           <Link
             key={n.to}
@@ -133,6 +120,14 @@ function AppShell() {
             {n.label}
           </Link>
         ))}
+        {access?.level === 1 && (
+          <Link to="/admin" className="flex flex-col items-center gap-1 py-3 text-[11px] text-muted-foreground" aria-label="Administração">
+            <Shield size={21} /> Admin
+          </Link>
+        )}
+        <button onClick={logout} className="flex flex-col items-center gap-1 py-3 text-[11px] text-muted-foreground" aria-label="Sair da conta">
+          <LogOut size={21} /> Sair
+        </button>
       </nav>
     </div>
   );

@@ -4,6 +4,7 @@ import { meQuery } from "@/lib/queries";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
+import { BrandPageLayout } from "@/components/BrandPageLayout";
 
 export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
@@ -68,7 +69,7 @@ function LivaldoPage() {
   const { data: me } = useQuery(meQuery);
   const { data: profile } = useQuery({ queryKey: ["representative-profile", "livaldo-souza-silva"], queryFn: async () => { const { data, error } = await supabase.from("representative_profiles" as never).select("full_name,region").eq("slug", "livaldo-souza-silva").maybeSingle(); if (error) return null; return data as { full_name: string; region: string } | null; } });
   return (
-    <main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
+    <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <section className="surface-card space-y-3 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
@@ -82,6 +83,6 @@ function LivaldoPage() {
         <BrazilMap />
       </section>
       <p className="text-xs text-muted-foreground">Este perfil é demonstrativo e não concede acesso a preços, estoque ou pedidos.</p>
-    </main>
+    </main></BrandPageLayout>
   );
 }

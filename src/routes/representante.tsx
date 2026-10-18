@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { meQuery } from "@/lib/queries";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin, ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
+import { BrandPageLayout } from "@/components/BrandPageLayout";
 
 export const Route = createFileRoute("/representante")({
   component: RepresentativePage,
@@ -83,7 +84,7 @@ function RepresentativePage() {
   const { data: me } = useQuery(meQuery);
   const { data: profile } = useQuery({ queryKey: ["representative-profile", "abdenego-eugenio"], queryFn: async () => { const { data, error } = await supabase.from("representative_profiles" as never).select("full_name,region").eq("slug", "abdenego-eugenio").maybeSingle(); if (error) return null; return data as { full_name: string; region: string } | null; } });
   return (
-    <main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
+    <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Brasil inteiro)</Link></div>
       <section className="surface-card space-y-4 p-5">
@@ -105,6 +106,6 @@ function RepresentativePage() {
         </div>
         <p className="text-xs text-muted-foreground">Os pinos vermelhos identificam a localização aproximada do centro de cada município atendido. Os nomes estão relacionados abaixo do mapa.</p>
       </section>
-    </main>
+    </main></BrandPageLayout>
   );
 }

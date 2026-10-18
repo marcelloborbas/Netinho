@@ -1,9 +1,8 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ShoppingCart, Users, ClipboardList, FilePenLine } from "lucide-react";
-import { PartnerLogos } from "@/components/PartnerLogos";
-import { Territory } from "@/components/Territory";
-import { Logo } from "@/components/Logo";
+import { BrandHeader } from "@/components/BrandHeader";
+import { BrandFooter } from "@/components/BrandFooter";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { greeting } from "@/components/ProfileAvatar";
@@ -28,31 +27,17 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: access } = useQuery(accessQuery);
   return (
-    <div className="home-page min-h-screen pb-12">
-      <header className="app-header">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <Logo />
-            <PartnerLogos compact />
-          </div>
-          <div className="flex gap-2">
-            {access?.level === 1 && (
-              <Link to="/admin" className="nav-link">
-                Administração
-              </Link>
-            )}
-            <Link to="/auth" className="nav-link">
-              Minha conta
-            </Link>
-          </div>
+    <div className="home-page flex min-h-screen flex-col pb-12">
+      <BrandHeader />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
+        <div className="home-greeting-row">
+          <h1 className="text-4xl font-bold sm:text-5xl">
+            {greeting(`Sr. ${access?.name.split(" ")[0] || "Usuário"}`)}
+          </h1>
+          <span className="home-attribution-badge">
+            {access?.attribution ?? (access?.can_sell ? "Representante" : "Visitante")}
+          </span>
         </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
-        <span className="eyebrow">BEM-VINDO À NETINHO AUTO PARTS</span>
-        <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
-          {greeting(`Sr. ${access?.name.split(" ")[0] || "Usuário"}`)}
-        </h1>
-        <Territory email={access?.email} />
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
         <div className="mt-8 grid items-start gap-5 lg:grid-cols-2">
           <section className="journey-choice" aria-labelledby="selling-title">
@@ -135,6 +120,7 @@ function Home() {
           </section>
         </div>
       </main>
+      <BrandFooter />
     </div>
   );
 }

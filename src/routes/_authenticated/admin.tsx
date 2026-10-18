@@ -42,6 +42,7 @@ function Admin() {
       </p>
       <SupplierCommissions />
       <RepresentativesAdmin />
+      <UserAttributionAdmin />
       <h2 className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
       <Input
         value={q}
@@ -55,6 +56,91 @@ function Admin() {
         ))}
       </ul>
     </div>
+  );
+}
+
+type ProfileAttribution = "Representante" | "Visitante" | "Cliente";
+type ProfileAccessRow = {
+  id: string;
+  full_name: string;
+  email: string;
+  attribution: ProfileAttribution;
+};
+
+function UserAttributionAdmin() {
+  const qc = useQueryClient();
+  const [savingUser, setSavingUser] = useState<string | null>(null);
+  const { data: profiles = [], isLoading, error } = useQuery({
+    queryKey: ["admin-profile-attributions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id,full_name,email,attribution")
+        .order("full_name");
+      if (error) throw error;
+      return (data ?? []) as ProfileAccessRow[];
+    },
+  });
+
+  async function updateAttribution(user: ProfileAccessRow, attribution: ProfileAttribution) {
+    if (attribution === user.attribution) return;
+    setSavingUser(user.id);
+    const { error } = await supabase.rpc("admin_set_profile_attribution", {
+      p_target_user: user.id,
+      p_attribution: attribution,
+    });
+    setSavingUser(null);
+    if (error) {
+      toast.error("Não foi possível salvar a atribuição.");
+      return;
+    }
+    toast.success(`Atribuição de ${user.full_name || user.email} atualizada.`);
+    void qc.invalidateQueries({ queryKey: ["admin-profile-attributions"] });
+    void qc.invalidateQueries({ queryKey: ["access"] });
+  }
+
+  return (
+    <section className="surface-card space-y-4 p-4">
+      <div>
+        <h2 className="text-xl font-bold">Cadastro e atribuição de usuários</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Defina como a conta será identificada na tela inicial. Esta atribuição não concede acesso a vendas.
+        </p>
+      </div>
+      {isLoading && <p className="text-sm text-muted-foreground">Carregando cadastros…</p>}
+      {error && (
+        <p className="text-sm text-amber-300" role="alert">
+          Não foi possível carregar os cadastros. Verifique se a migração de atribuições foi aplicada.
+        </p>
+      )}
+      {!isLoading && !error && profiles.length === 0 && (
+        <p className="text-sm text-muted-foreground">Nenhum usuário cadastrado ainda.</p>
+      )}
+      <ul className="space-y-2">
+        {profiles.map((user) => (
+          <li key={user.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
+            <div className="min-w-0">
+              <p className="truncate font-semibold">{user.full_name || "Sem nome"}</p>
+              <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+            </div>
+            <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              Atribuição
+              <select
+                aria-label={`Atribuição de ${user.full_name || user.email}`}
+                value={user.attribution}
+                disabled={savingUser === user.id}
+                onChange={(event) => updateAttribution(user, event.target.value as ProfileAttribution)}
+                className="min-h-10 rounded-lg border border-white/15 bg-[#0b1f3f] px-3 text-sm text-white outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <option value="Representante">Representante</option>
+                <option value="Visitante">Visitante</option>
+                <option value="Cliente">Cliente</option>
+              </select>
+            </label>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

@@ -8,6 +8,7 @@ import { meQuery } from "@/lib/queries";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { BrandPageLayout } from "@/components/BrandPageLayout";
 
 export const Route = createFileRoute("/editar-representante/$slug")({
   component: EditRepresentativePage,
@@ -85,12 +86,12 @@ function EditRepresentativePage() {
     }
   }
 
-  if (!profile) return <main className="mx-auto max-w-xl p-6">Representante não encontrado. <Link to="/auth" className="text-primary underline">Voltar</Link></main>;
-  if (checkingAdmin) return <main className="mx-auto max-w-xl p-6">Verificando permissão...</main>;
-  if (!me?.isAdmin) return <main className="mx-auto max-w-xl space-y-3 p-6"><p className="flex items-center gap-2"><LockKeyhole size={18} /> Acesso exclusivo do administrador.</p><Link to="/auth" className="text-primary underline">Voltar ao login</Link></main>;
+  if (!profile) return <BrandPageLayout><main className="mx-auto max-w-xl p-6">Representante não encontrado. <Link to="/auth" className="text-primary underline">Voltar</Link></main></BrandPageLayout>;
+  if (checkingAdmin) return <BrandPageLayout><main className="mx-auto max-w-xl p-6">Verificando permissão...</main></BrandPageLayout>;
+  if (!me?.isAdmin) return <BrandPageLayout><main className="mx-auto max-w-xl space-y-3 p-6"><p className="flex items-center gap-2"><LockKeyhole size={18} /> Acesso exclusivo do administrador.</p><Link to="/auth" className="text-primary underline">Voltar ao login</Link></main></BrandPageLayout>;
 
   return (
-    <main className="mx-auto max-w-2xl space-y-5 px-4 py-8">
+    <BrandPageLayout><main className="mx-auto max-w-2xl space-y-5 px-4 py-8">
       <Link to={profile.back} className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar ao representante</Link>
       <section className="surface-card space-y-5 p-5">
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
@@ -112,6 +113,6 @@ function EditRepresentativePage() {
           </form>
         )}
       </section>
-    </main>
+    </main></BrandPageLayout>
   );
 }

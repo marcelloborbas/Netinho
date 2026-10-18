@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { InstallAppButton } from "@/components/InstallAppButton";
 import { PartnerLogos } from "@/components/PartnerLogos";
 import { Logo } from "@/components/Logo";
+import { BrandFooter } from "@/components/BrandFooter";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -306,11 +307,7 @@ function AuthPage() {
         </div>
       ) : null}
       {!showWelcome && (
-        <footer className="mx-auto mt-10 max-w-5xl border-t pt-5 text-center text-xs leading-6 text-muted-foreground">
-          NETINHO AUTO PARTS · FCO Automotive & HD Embreagens
-          <br />
-          Peças, parceria e confiança em cada pedido.
-        </footer>
+        <BrandFooter />
       )}
     </main>
   );
