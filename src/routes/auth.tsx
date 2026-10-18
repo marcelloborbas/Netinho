@@ -30,14 +30,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 function GoogleIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true">
-      <path fill="#4285F4" d="M43.6 20.5H24v8h11.3C33.8 33.1 29.6 36 24 36a12 12 0 1 1 8.5-20.5l5.7-5.7A20 20 0 1 0 44 24c0-1.2-.1-2.4-.4-3.5Z" />
-      <path fill="#34A853" d="m6.3 33 6.6-5.1A12 12 0 0 0 24 36c3 0 5.7-1 7.7-2.8l6.2 4.8A20 20 0 0 1 6.3 33Z" />
-      <path fill="#FBBC05" d="m6.3 15 6.6 5.1a12 12 0 0 0 0 7.8L6.3 33a20 20 0 0 1 0-18Z" />
-      <path fill="#EA4335" d="M24 4a20 20 0 0 1 14.2 5.8l-5.7 5.7A12 12 0 0 0 12.9 20l-6.6-5A20 20 0 0 1 24 4Z" />
-    </svg>
-  );
+  return <img src="/images/google-logo.webp" width="30" height="30" alt="" aria-hidden="true" />;
 }
 function AuthPage() {
   const previewMode = import.meta.env.DEV && new URLSearchParams(window.location.search).get("preview") === "device";
@@ -186,12 +179,15 @@ function AuthPage() {
                 className="welcome-google-button"
                 onClick={googleLogin}
                 disabled={busy}
+                aria-busy={busy}
               >
                 {busy ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <GoogleIcon />}
                 <span>Continuar com o Google</span>
               </button>
-              <InstallAppButton className="welcome-install-button" />
             </section>
+            <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
+              <InstallAppButton className="welcome-install-button" label="Baixe em seu Celular" />
+            </footer>
           </div>
         </>
       )}

@@ -11,9 +11,11 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
-export interface InstallAppButtonProps extends ComponentProps<typeof Button> {}
+export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
+  label?: string;
+}
 
-export function InstallAppButton({ className, disabled, ...props }: InstallAppButtonProps) {
+export function InstallAppButton({ className, disabled, label = "Baixe para seu celular a Netinho", ...props }: InstallAppButtonProps) {
   const promptRef = useRef<InstallPromptEvent | null>(null);
   const [installing, setInstalling] = useState(false);
   const [instructions, setInstructions] = useState(false);
@@ -81,7 +83,7 @@ export function InstallAppButton({ className, disabled, ...props }: InstallAppBu
         className={cn("h-auto min-h-16 w-full justify-start gap-3 whitespace-normal rounded-lg border-primary/40 bg-primary/10 px-3 py-3 text-left text-foreground hover:bg-primary/20", className)}
       >
         <LogoMark className="h-10 w-10 shrink-0" />
-        <span className="min-w-0 flex-1 text-sm font-semibold leading-5">Baixe para seu celular a Netinho</span>
+        <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
         {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : <Download className="shrink-0 text-primary" aria-hidden="true" />}
       </Button>
       <Dialog open={instructions} onOpenChange={setInstructions}>
