@@ -31,7 +31,6 @@ function Home() {
     <div className="home-page flex min-h-screen flex-col pb-12">
       <BrandHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
-        <PromotionBanner />
         <div className="home-greeting-row">
           <h1 className="text-4xl font-bold sm:text-5xl">
             {greeting(`Sr. ${access?.name.split(" ")[0] || "Usuário"}`)}
@@ -41,6 +40,7 @@ function Home() {
           </span>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
+        <PromotionBanner />
         <div className="home-panels mt-8 grid items-stretch gap-5 lg:grid-cols-2">
           <section className="journey-choice" aria-labelledby="selling-title">
             <div className="home-panel-heading">

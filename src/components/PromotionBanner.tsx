@@ -9,6 +9,8 @@ const promotions = [
     application: "Gol · Santana · Parati · Saveiro",
     price: "R$ 247,20",
     note: "Preço atacado à vista da campanha",
+    image:
+      "https://f.fcdn.app/imgs/1fdfc9/cymaco.com.uy/cymuy/ba00/webp/catalogo/11802/1024-1024/cremallera-direccion-volkswagen-gol-senda-saveiro-santana-mecanica-lena-cremallera-direccion-volkswagen-gol-senda-saveiro-santana-mecanica-lena.jpg",
   },
   {
     code: "FCZB-0005A",
@@ -16,6 +18,8 @@ const promotions = [
     application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     price: "R$ 251,18",
     note: "Preço atacado à vista da campanha",
+    image:
+      "https://tgfautomotive.com.br/660498-large_default/caixa_direcao_manual_147-_oggi-_panorama-mille_s-axial.jpg",
   },
   {
     code: "FCZB-0020A",
@@ -23,6 +27,8 @@ const promotions = [
     application: "Elba · Fiorino · Prêmio · Uno Mille",
     price: "R$ 253,69",
     note: "Preço atacado à vista da campanha",
+    image:
+      "https://cdn.2rscms.com.br/imgcache/5354/600x/uploads/5354/product/photo_6615c3fa88f6d.jpeg.webp",
   },
 ] as const;
 
@@ -76,8 +82,15 @@ export function PromotionBanner() {
       </div>
 
       <div className="promotion-banner-art" aria-hidden="true">
-        <img src="/images/promo-caixa-direcao.svg" alt="" />
-        <span>OFERTA FCO</span>
+        <img
+          src={promotion.image}
+          alt=""
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = "/images/promo-caixa-direcao.svg";
+          }}
+        />
+        <span>IMAGEM ILUSTRATIVA</span>
       </div>
 
       <div className="promotion-banner-controls" aria-label="Navegar pelas promoções">
