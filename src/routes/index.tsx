@@ -45,10 +45,7 @@ function Home() {
               </div>
               <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
             </div>
-            {!access?.can_sell && (
-              <p className="mt-4 text-sm text-muted-foreground">As opções de venda estão disponíveis para consulta. Para realizar operações, será necessária a autorização do administrador.</p>
-            )}
-                <div className="mt-6 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
+                <div className="home-sales-actions mt-6 grid grid-cols-2 gap-3">
                   <Link to="/clientes" className="action-card">
                     <Users className="text-primary" />
                     <h3 className="mt-4 font-bold">Clientes</h3>
@@ -70,7 +67,7 @@ function Home() {
                     <p className="mt-2 text-xs text-muted-foreground">Histórico, PDF e envio</p>
                   </Link>
                 </div>
-                <p className="mt-6 text-sm text-muted-foreground">
+                <p className="home-sales-steps mt-6 text-sm text-muted-foreground">
                   Cliente → Peças → Editar e revisar → Registrar → Enviar para{" "}
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
