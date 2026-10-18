@@ -1123,19 +1123,20 @@ a {
 .welcome-install-button>svg{color:#f7bd32!important}
 @media(max-width:380px){.welcome-auth-brands{min-height:78px;gap:8px;padding-right:12px;padding-left:12px}.welcome-netinho-logo{gap:6px!important}.welcome-netinho-logo>img{width:38px!important;height:38px!important}.welcome-netinho-logo>div>div:first-child{font-size:18px!important}.welcome-netinho-logo>div>div:last-child{font-size:6px!important}.welcome-representations{gap:4px}.welcome-auth-brands .partner-logos{gap:10px!important}.welcome-auth-brands .partner-logo{width:46px!important;height:32px!important;min-width:46px;min-height:32px;padding:3px 5px}.welcome-auth-actions{right:12px;left:12px;gap:7px}.welcome-google-button{min-height:48px}.welcome-install-button{min-height:50px!important}}
 
-.device-preview-shell{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;background:#17181b;color:#f4f4f5}
-.device-preview-toolbar{display:flex;min-height:58px;align-items:center;justify-content:space-between;gap:16px;padding:8px 18px;border-bottom:1px solid #ffffff1a;background:#202124}
+.device-preview-shell{position:fixed;inset:0;z-index:100;display:grid;grid-template-columns:minmax(0,1fr) 212px;grid-template-areas:"workspace toolbar";background:#17181b;color:#f4f4f5}
+.device-preview-toolbar{grid-area:toolbar;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:14px;padding:18px 14px;border-left:1px solid #ffffff1a;background:#202124}
 .device-preview-toolbar strong{font-size:14px;font-weight:600}
-.device-preview-toolbar>div{display:flex;gap:6px;padding:4px;border:1px solid #ffffff20;border-radius:10px;background:#17181b}
-.device-preview-toolbar button{display:inline-flex;min-height:34px;align-items:center;justify-content:center;gap:7px;border:0;border-radius:7px;padding:0 12px;background:transparent;color:#c5c7ce;font-size:13px;cursor:pointer}
+.device-preview-toolbar>div{display:flex;flex-direction:column;gap:6px;padding:5px;border:1px solid #ffffff20;border-radius:10px;background:#17181b}
+.device-preview-toolbar button{display:inline-flex;min-height:40px;align-items:center;justify-content:flex-start;gap:9px;border:0;border-radius:7px;padding:0 12px;background:transparent;color:#c5c7ce;font-size:13px;cursor:pointer}
 .device-preview-toolbar button[aria-pressed="true"]{background:#315bce;color:white}
-.device-preview-toolbar>span{min-width:92px;text-align:right;color:#a3a5ad;font-size:12px;font-variant-numeric:tabular-nums}
-.device-preview-workspace{display:flex;min-height:0;flex:1;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;background:radial-gradient(ellipse at center,#2a2b30 0%,#17181b 72%)}
+.device-preview-toolbar>span{color:#a3a5ad;font-size:12px;font-variant-numeric:tabular-nums}
+.device-preview-workspace{grid-area:workspace;display:flex;min-width:0;min-height:0;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;background:radial-gradient(ellipse at center,#2a2b30 0%,#17181b 72%)}
 .device-preview-frame{flex:0 0 auto;overflow:hidden;border:1px solid #ffffff38;border-radius:18px;background:#080a0e;box-shadow:0 16px 48px #0008;transition:width .2s ease,height .2s ease}
 .device-preview-frame-tablet{border-radius:14px}
 .device-preview-frame-desktop{border-radius:8px}
 .device-preview-frame iframe{display:block;width:100%;height:100%;border:0;background:#041b4b}
-@media(max-width:520px){.device-preview-toolbar{gap:8px;padding:8px}.device-preview-toolbar strong{display:none}.device-preview-toolbar button{gap:5px;padding:0 8px;font-size:12px}.device-preview-toolbar>span{min-width:74px;font-size:11px}.device-preview-workspace{justify-content:flex-start;padding:12px}}
+@media(max-width:720px){.device-preview-shell{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"toolbar" "workspace"}.device-preview-toolbar{flex-direction:row;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-right:0;border-bottom:1px solid #ffffff1a;border-left:0}.device-preview-toolbar>div{flex-direction:row;gap:4px;padding:3px}.device-preview-toolbar button{min-height:34px;justify-content:center;gap:5px;padding:0 8px;font-size:12px}.device-preview-workspace{justify-content:flex-start;padding:12px}}
+@media(max-width:420px){.device-preview-toolbar strong{display:none}.device-preview-toolbar>span{font-size:11px}}
 
 /* Authentication welcome refinements */
 .welcome-netinho-logo>img{width:64px!important;height:64px!important}
