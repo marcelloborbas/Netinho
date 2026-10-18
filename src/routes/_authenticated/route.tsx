@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated")({
     if (location.pathname === "/admin") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
     } else if (!selectedProfile(access.email)) throw redirect({ to: "/auth" });
-    if (!access.can_sell && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
+    if (!access.can_sell && access.level !== 1 && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
     return { user: data.user, access };
   },
   component: AppShell,
