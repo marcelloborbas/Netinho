@@ -77,7 +77,7 @@ function Catalog() {
   const [manufacturer, setManufacturer] = useState<string>(search.marca ?? "all");
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
-  const { data: access } = useQuery(accessQuery);
+  const { data: access } = useQuery({ ...accessQuery, retry: false });
   const canSell = access?.can_sell === true && search.modo !== "consulta";
   useEffect(() => {
     setManufacturer(search.marca ?? "all");
