@@ -359,6 +359,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          attribution: string
           created_at: string
           email: string
           full_name: string
@@ -367,6 +368,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attribution?: string
           created_at?: string
           email?: string
           full_name?: string
@@ -375,6 +377,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attribution?: string
           created_at?: string
           email?: string
           full_name?: string
@@ -514,6 +517,10 @@ export type Database = {
     }
     Functions: {
       access_context: { Args: never; Returns: Json }
+      admin_set_profile_attribution: {
+        Args: { p_attribution: string; p_target_user: string }
+        Returns: undefined
+      }
       admin_supplier_commissions: { Args: never; Returns: Json }
       can_sell: { Args: never; Returns: boolean }
       catalog_products: { Args: never; Returns: Json }
