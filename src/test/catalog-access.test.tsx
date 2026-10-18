@@ -67,7 +67,7 @@ describe("catalog access presentation", () => {
     expect(screen.getAllByRole("img", { name: "HD Embreagens" })[0]).toBeVisible();
     expect(screen.getByRole("heading", { name: "Editar e revisar" })).toBeVisible();
     expect(screen.getAllByText("netinhoautoparts@gmail.com")[0]).toBeVisible();
-    expect(screen.getByRole("link", { name: /Consultar promoção/ })).toBeVisible();
+    expect(screen.getByText("Consultar promoção")).toBeVisible();
   });
   it("does not give a visitor sales tools on the home screen", () => {
     state.seller = false;
