@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ShoppingCart, Users, ClipboardList, FilePenLine, BookOpen } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
@@ -10,11 +10,6 @@ import { BRAND } from "@/lib/brand";
 import { PromotionBanner } from "@/components/PromotionBanner";
 export const Route = createFileRoute("/")({
   ssr: false,
-  beforeLoad: async ({ context }) => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/auth" });
-    await context.queryClient.fetchQuery(accessQuery);
-  },
   head: () => ({ meta: [
     { title: "O que deseja fazer? | Netinho Auto Parts" },
     { name: "description", content: "Sua área Netinho para consultar catálogos, selecionar clientes e acompanhar pedidos." },
@@ -26,17 +21,17 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 function Home() {
-  const { data: access } = useQuery(accessQuery);
+  const { data: access } = useQuery({ ...accessQuery, retry: false });
   return (
     <div className="home-page flex min-h-screen flex-col pb-12">
       <BrandHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
         <div className="home-greeting-row">
           <h1 className="text-4xl font-bold sm:text-5xl">
-            {greeting(`Sr. ${access?.name.split(" ")[0] || "Usuário"}`)}
+            {access ? greeting(`Sr. ${access.name.split(" ")[0]}`) : "Seja bem-vindo à Netinho Auto Parts"}
           </h1>
           <span className="home-attribution-badge">
-            {access?.attribution ?? (access?.can_sell ? "Representante" : "Visitante")}
+            {access?.attribution ?? "Visitante"}
           </span>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
@@ -79,7 +74,7 @@ function Home() {
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
               </>
-            ) : null}
+            ) : <p className="mt-6 text-sm text-muted-foreground">Explore nossos catálogos. O envio de pedidos será liberado após a configuração dos acessos.</p>}
           </section>
           <section className="journey-choice" aria-labelledby="catalogs-title">
             <div className="home-panel-heading">
