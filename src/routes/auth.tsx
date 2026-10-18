@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InstallAppButton } from "@/components/InstallAppButton";
 import { PartnerLogos } from "@/components/PartnerLogos";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -122,7 +123,10 @@ function AuthPage() {
         <>
           <header className="welcome-auth-brands">
             <p>Representante Oficial das Marcas</p>
-            <PartnerLogos compact linked={false} />
+            <div className="welcome-brand-row">
+              <Logo className="welcome-netinho-logo" />
+              <PartnerLogos compact linked={false} />
+            </div>
           </header>
           <img
             className="welcome-auth-art"

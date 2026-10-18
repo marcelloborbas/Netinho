@@ -588,9 +588,15 @@ a {
 .welcome-auth-stage{isolation:isolate;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;box-sizing:border-box;width:100%;height:100svh;min-height:100svh;overflow:auto;padding:max(12px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom));background:#041b4b}
 .welcome-auth-brands{display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:4px;color:#fff;text-align:center}
 .welcome-auth-brands p{margin:0;font-size:clamp(13px,3.5vw,17px);font-weight:700;letter-spacing:.04em;text-shadow:0 2px 10px #00112c}
-.welcome-auth-brands .partner-logos{justify-content:center;gap:10px}
-.welcome-auth-brands .partner-logo{display:grid;min-width:48px;min-height:32px;place-items:center;padding:3px 6px;border-radius:8px;background:#fff;box-shadow:0 3px 12px #00112c55}
-.welcome-auth-brands .partner-logo img{display:block;max-width:58px;max-height:26px;object-fit:contain}
+.welcome-brand-row{display:flex;width:min(430px,100%);align-items:center;justify-content:space-between;gap:clamp(12px,5vw,28px)}
+.welcome-netinho-logo{flex:0 0 auto;gap:7px!important;color:#fff}
+.welcome-netinho-logo>img{width:36px!important;height:36px!important}
+.welcome-netinho-logo>div>div:first-child{font-size:clamp(16px,4vw,20px)!important}
+.welcome-netinho-logo>div>div:last-child{margin-top:3px!important;font-size:6px!important;letter-spacing:.15em!important}
+.welcome-auth-brands .partner-logos{justify-content:center;gap:clamp(14px,5vw,26px)!important}
+.welcome-auth-brands .partner-logos>div{flex:0 0 auto}
+.welcome-auth-brands .partner-logo{display:grid;width:58px!important;height:38px!important;min-width:58px;min-height:38px;place-items:center;padding:4px 7px;border-radius:8px;background:#fff;box-shadow:0 3px 12px #00112c55}
+.welcome-auth-brands .partner-logo img{display:block;max-width:58px;max-height:28px;object-fit:contain}
 .welcome-auth-art{display:block;width:100%;height:100%;min-height:0;object-fit:contain;object-position:center;padding-top:6px}
 .welcome-auth-actions{display:flex;width:min(360px,100%);margin-inline:auto;flex-direction:column;align-items:stretch;gap:10px;padding-bottom:2px}
 .welcome-auth-actions h1{margin:0;color:#fff;text-align:center;font-size:clamp(18px,4.5vw,22px);font-weight:700}
@@ -603,4 +609,4 @@ a {
 .welcome-install-button:hover{border-color:#fff!important;background:#0a2a5ced!important}
 .welcome-install-button span{flex:0 1 auto!important;font-size:14px!important;font-weight:700;line-height:1.25}
 .welcome-install-button>svg{color:#f7bd32!important}
-@media(max-width:380px){.welcome-auth-stage{gap:5px;padding-right:12px;padding-left:12px}.welcome-auth-actions{gap:7px}.welcome-google-button{min-height:48px}.welcome-install-button{min-height:50px!important}}
+@media(max-width:380px){.welcome-auth-stage{gap:5px;padding-right:12px;padding-left:12px}.welcome-brand-row{gap:10px}.welcome-netinho-logo{gap:5px!important}.welcome-netinho-logo>img{width:30px!important;height:30px!important}.welcome-netinho-logo>div>div:first-child{font-size:15px!important}.welcome-auth-brands .partner-logos{gap:9px!important}.welcome-auth-brands .partner-logo{width:48px!important;height:34px!important;min-width:48px;min-height:34px;padding:3px 5px}.welcome-auth-actions{gap:7px}.welcome-google-button{min-height:48px}.welcome-install-button{min-height:50px!important}}
