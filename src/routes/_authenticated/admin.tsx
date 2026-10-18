@@ -243,7 +243,7 @@ function RepresentativesAdmin() {
   async function authorizeGoogle(rep: { slug: string; full_name: string }) {
     const googleEmail = (googleEmails[rep.slug] ?? "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(googleEmail)) {
-      toast.error("Informe o e-mail Google do representante.");
+      toast.error("Informe o e-mail do representante.");
       return;
     }
     setSavingAccess(rep.slug);
@@ -261,10 +261,10 @@ function RepresentativesAdmin() {
             .eq("id", current.id)
         : await supabase.from("commercial_representatives" as never).insert(payload as never);
       if (result.error) throw result.error;
-      toast.success("E-mail Google autorizado para " + rep.full_name);
+      toast.success("E-mail de acesso autorizado para " + rep.full_name);
       void qc.invalidateQueries({ queryKey: ["commercial-representatives"] });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível autorizar o Google.");
+      toast.error(err instanceof Error ? err.message : "Não foi possível autorizar o acesso.");
     } finally {
       setSavingAccess(null);
     }
@@ -327,7 +327,7 @@ function RepresentativesAdmin() {
       return;
     }
     toast.success(
-      "Representante cadastrado como inativo. Autorize o e-mail Google para liberar as vendas.",
+      "Representante cadastrado como inativo. Autorize o acesso para liberar as vendas.",
     );
     setName("");
     setEmail("");
@@ -381,10 +381,9 @@ function RepresentativesAdmin() {
     <section id="representantes" className="surface-card space-y-4 p-4">
       <h2 className="text-xl font-bold">Cadastro de Representantes Comerciais</h2>
       <p className="text-sm text-muted-foreground">
-        Somente administradores autorizam representantes. Cadastre o e-mail Google de cada
-        representante e clique em Autorizar Google.
+        Cadastre os representantes, consulte suas fichas e controle quem está autorizado a vender.\n        Novos cadastros começam inativos até sua aprovação.
       </p>
-      <form onSubmit={createRepresentative} className="grid gap-2 sm:grid-cols-4">
+      <form onSubmit={createRepresentative} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Input
           aria-label="Nome completo"
           required
@@ -412,7 +411,7 @@ function RepresentativesAdmin() {
         </Button>
       </form>
       <div className="space-y-3 border-t pt-4">
-        <h3 className="text-lg font-bold">Representantes cadastrados</h3>
+        <h3 className="text-lg font-bold">Fichas de representantes</h3>
         {profilesError && (
           <p className="text-xs text-amber-400">
             Falha ao consultar cadastros; exibindo representantes conhecidos.
@@ -430,9 +429,9 @@ function RepresentativesAdmin() {
             <div className="flex flex-wrap items-center gap-2">
               <Input
                 type="email"
-                aria-label={`E-mail Google de ${rep.full_name}`}
-                placeholder="E-mail Google autorizado"
-                className="w-56"
+                aria-label={`E-mail de acesso de ${rep.full_name}`}
+                placeholder="E-mail do representante"
+                className="w-full min-w-0 sm:w-64"
                 value={
                   googleEmails[rep.slug] ??
                   representatives.find(
@@ -452,7 +451,7 @@ function RepresentativesAdmin() {
                 disabled={savingAccess === rep.slug}
                 onClick={() => authorizeGoogle(rep)}
               >
-                {savingAccess === rep.slug ? "Autorizando..." : "Autorizar Google"}
+                {savingAccess === rep.slug ? "Autorizando..." : "Autorizar acesso"}
               </Button>
             </div>
             <Link
