@@ -2323,3 +2323,36 @@ html, body { max-width: 100%; overflow-x: hidden; }
     font-size: clamp(11.5px, 3.1vw, 13px) !important;
   }
 }
+
+
+/* NETINHO | Contorno de interação padronizado nos botões.
+   O anel externo não altera o tamanho ou desloca o layout. */
+:where(button:not(:disabled), a.action-card, a.home-action-card, a.primary-link, a.classic-button, a.promotion-campaign-link, a.nav-link, a.filter-pill) {
+  transition: box-shadow .18s ease, outline-color .18s ease, transform .18s ease;
+}
+@media (hover: hover) {
+  :where(button:not(:disabled), a.action-card, a.home-action-card, a.primary-link, a.classic-button, a.promotion-campaign-link, a.nav-link, a.filter-pill):hover {
+    outline: 3px solid #f3bc35 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 2px #174e9b55, 0 3px 12px #102a5226 !important;
+  }
+}
+:where(button:not(:disabled), a.action-card, a.home-action-card, a.primary-link, a.classic-button, a.promotion-campaign-link, a.nav-link, a.filter-pill):focus-visible {
+  outline: 4px solid #f3bc35 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px #174e9b88 !important;
+}
+:where(button:not(:disabled), a.action-card, a.home-action-card, a.primary-link, a.classic-button, a.promotion-campaign-link, a.nav-link, a.filter-pill):active {
+  outline: 4px solid #f3bc35 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px #174e9b88 !important;
+}
+:where(button[aria-pressed="true"], button[aria-selected="true"]) {
+  outline: 3px solid #f3bc35 !important;
+  outline-offset: 2px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a.action-card, a.home-action-card, a.primary-link, a.classic-button, a.promotion-campaign-link, a.nav-link, a.filter-pill) {
+    transition: none !important;
+  }
+}
