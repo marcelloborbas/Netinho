@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ShoppingCart, Tag } from "lucide-react";
+import { ShoppingCart, Tag } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 export const Route = createFileRoute("/ofertas")({ component: CampaignOffers });
 type Offer = [string, string, number, number];
