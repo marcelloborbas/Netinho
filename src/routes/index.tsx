@@ -38,7 +38,7 @@ function Home() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "flex", flexDirection: "column", gap: 16, padding: "20px 12px" }}>
         <h1 className="text-center text-xl font-bold text-amber-300 sm:text-3xl">O que o Sr. deseja fazer?</h1>
         <nav aria-label="Escolha uma ação" className="grid w-full max-w-xl grid-cols-2 gap-3 self-center">
-          <Link to="/catalogo" search={{ modo: access?.can_sell || access?.level === 1 ? "venda" : "consulta" }} className="action-card flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-amber-400/50 text-center">
+          <Link to={access?.can_sell || access?.level === 1 ? "/clientes" : "/auth"} className="action-card flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-amber-400/50 text-center">
             <ShoppingCart className="h-8 w-8 text-amber-300" />
             <span className="font-bold">Vender</span>
           </Link>
