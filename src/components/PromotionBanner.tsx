@@ -104,7 +104,7 @@ export function PromotionBanner() {
           <strong className={promotion.price === "Sob consulta" ? "promotion-price-ask" : undefined}>
             {promotion.price}
           </strong>
-          <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}<span style={{ display: "block", marginTop: 2 }}>30/45/60 dias</span></span>
+          <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}<span style={{ display: "block", marginTop: 4, color: "#64748b", fontWeight: 700 }}>30/45/60 dias</span></span>
         </div>
 
       </div>
