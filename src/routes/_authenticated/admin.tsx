@@ -7,8 +7,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 const options = [
-  { to: "/representantes", label: "Representantes e mapas", icon: Contact },
-  { to: "/vendedores", label: "Vendedores", icon: Users },
+  { to: "/representantes", label: "Representantes / Vendedores", icon: Contact },
   { to: "/clientes", label: "Clientes", icon: UserCog },
   { to: "/distribuidoras", label: "Distribuidoras", icon: Building2 },
   { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
