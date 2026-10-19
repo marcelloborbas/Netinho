@@ -3,41 +3,68 @@ import { Megaphone } from "lucide-react";
 
 export const PROMOTIONS = [
   {
-    code: "FCZA-0001A",
-    title: "Caixa de Direção Mecânica",
-    application: "Gol · Santana · Parati · Saveiro",
-    price: "R$ 247,20",
-    note: "Preço Atacado à vista",
-    image: "/images/campaign/vw-gol-caixa-direcao.webp",
-    searchTerm: "FCZA-0001A",
+    "code": "FCZA-0001A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Gol 1980–2010 · Santana · Parati · Saveiro",
+    "price": "R$ 247,20",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": "/images/campaign/vw-gol-caixa-direcao.webp",
+    "searchTerm": "FCZA-0001A"
   },
   {
-    code: "FCZB-0005A",
-    title: "Caixa de Direção Mecânica",
-    application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
-    price: "R$ 251,18",
-    note: "Preço Atacado à vista",
-    image: "/images/campaign/fiat-147-caixa-direcao.webp",
-    searchTerm: "FCZB-0005A",
+    "code": "FCZB-0005A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
+    "price": "R$ 251,18",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": "/images/campaign/fiat-147-caixa-direcao.webp",
+    "searchTerm": "FCZB-0005A"
   },
   {
-    code: "FCZB-0020A",
-    title: "Caixa de Direção Mecânica",
-    application: "Elba · Fiorino · Prêmio · Uno Mille",
-    price: "R$ 253,69",
-    note: "Preço Atacado à vista",
-    image: "/images/campaign/fiat-uno-caixa-direcao.webp",
-    searchTerm: "FCZB-0020A",
+    "code": "FCZF-0012A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Clio · Kangoo · Nissan Platina",
+    "price": "R$ 257,24",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": null,
+    "searchTerm": "FCZF-0012A"
   },
   {
-    code: "FIAT STRADA",
-    title: "Caixa de Direção Mecânica",
-    application: "Fiat Strada · 1996–2000",
-    price: "Sob consulta",
-    note: "Preço Atacado à vista",
-    image: "/images/campaign/fiat-strada-caixa-direcao.webp",
-    searchTerm: "Strada",
+    "code": "FCZI-0006A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Fiesta 1996–2006 · Courier 1996–2013",
+    "price": "R$ 257,31",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": null,
+    "searchTerm": "FCZI-0006A"
   },
+  {
+    "code": "FCZC-0005A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Corsa 1994–2002",
+    "price": "R$ 262,02",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": null,
+    "searchTerm": "FCZC-0005A"
+  },
+  {
+    "code": "FCZB-0011A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Palio · Palio Weekend · Siena 1996–2000",
+    "price": "R$ 263,64",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": null,
+    "searchTerm": "FCZB-0011A"
+  },
+  {
+    "code": "FCZF-0019A",
+    "title": "Caixa de Direção Mecânica",
+    "application": "Clio 1990–1998",
+    "price": "R$ 263,79",
+    "note": "Preço campanha · 30/45/60 dias",
+    "image": null,
+    "searchTerm": "FCZF-0019A"
+  }
 ] as const;
 
 export function PromotionBanner() {
@@ -82,12 +109,17 @@ export function PromotionBanner() {
       </div>
 
       <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)" }} aria-hidden="true">
-        <img
-          src={promotion.image}
-          alt=""
-          onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
-        />
-        <span>IMAGEM ILUSTRATIVA</span>
+        {promotion.image ? (
+          <>
+            <img src={promotion.image} alt="" onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
+            <span>IMAGEM ILUSTRATIVA</span>
+          </>
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-[#102a52] p-3 text-center text-amber-300">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Oferta FCO</span>
+            <span className="text-sm font-extrabold sm:text-lg">{promotion.code}</span>
+          </div>
+        )}
       </div>
 
 
