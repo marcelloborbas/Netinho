@@ -32,7 +32,7 @@ function selectCustomerForOrder(c: Customer) {
 
 function Customers() {
   const qc = useQueryClient();
-  const { data: access } = useQuery({ ...accessQuery, retry: false });
+  const { data: access } = useQuery(accessQuery);
   const isAdmin = access?.level === 1;
   const [deleting, setDeleting] = useState<Customer | null>(null);
   const [deletingBusy, setDeletingBusy] = useState(false);
@@ -54,14 +54,9 @@ function Customers() {
   async function deleteCustomer() {
     if (!isAdmin || !deleting || deletingBusy) return;
     setDeletingBusy(true);
-    const { data: session } = await supabase.auth.getUser();
-    if (!session.user) {
-      toast.error("É necessário estar autenticado.");
-      setDeletingBusy(false);
-      return;
-    }
     const { data: permission, error: permissionError } = await supabase.rpc("access_context");
-    if (permissionError || (permission as { level?: number } | null)?.level !== 1) {
+    const permissionLevel = Array.isArray(permission) ? permission[0]?.level : (permission as { level?: number } | null)?.level;
+    if (permissionError || permissionLevel !== 1) {
       toast.error("Somente o administrador pode excluir clientes.");
       setDeletingBusy(false);
       return;
