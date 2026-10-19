@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 
-import { greeting } from "@/components/ProfileAvatar";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -92,7 +91,6 @@ function AppShell() {
         </button>
       </div>
       <main className={pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
-        {pathname !== "/catalogo" && pathname !== "/clientes" && (!hideFooter || pathname !== "/admin") ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
         <Outlet />
       </main>
       {canSell && draft.items.length > 0 && (
