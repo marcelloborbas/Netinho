@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl, PAYMENT_TERMS, BRAND, type PaymentTerm } from "@/lib/brand";
 import { accessQuery } from "@/lib/access";
+import { greeting } from "@/components/ProfileAvatar";
 import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
 import { Button } from "@/components/ui/button";
 import { partImage } from "@/lib/part-images";
@@ -78,14 +79,16 @@ function Catalog() {
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
   const { data: access } = useQuery({ ...accessQuery, retry: false });
-  const canSell = access?.can_sell === true && search.modo !== "consulta";
+  const canSell = (access?.can_sell === true || access?.level === 1) && search.modo !== "consulta";
+  const showCustomer = access?.can_sell === true || access?.level === 1;
+  const firstName = access?.name?.trim().split(/\\s+/)[0] || "Usuário";
   useEffect(() => {
     setManufacturer(search.marca ?? "all");
     setPage(1);
     setQ(search.q ?? "");
   }, [search.marca, search.modo, search.q]);
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
-  const { data: customers } = useQuery({ ...customersQuery, enabled: canSell });
+  const { data: customers } = useQuery({ ...customersQuery, enabled: showCustomer });
   const draft = useDraft();
   const combined = useMemo(
     () => [
@@ -118,23 +121,8 @@ function Catalog() {
         <Link to="/" className="return-button">
           ← Vender ou ver catálogos
         </Link>
-        <section className="catalog-hero rounded-2xl border p-5 sm:p-8">
-          <div className="flex flex-wrap justify-between gap-5">
-            <div>
-              <PartnerLogos />
-              <p className="official-brands mt-5">Representante Oficial das Marcas</p>
-              <h1 className="mt-2 text-4xl font-bold sm:text-5xl">
-                A peça certa. Sem perder tempo.
-              </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-                Do código à aplicação, encontre o que precisa com a confiança de quem entende de
-                peças.
-              </p>
-            </div>
-          </div>
-        </section>
-        <CatalogPreview brand={search.marca ?? "FCO"} mode={search.modo ?? "consulta"} />
-        {canSell ? (
+        <h1 className="text-center text-xl font-bold text-amber-300 sm:text-2xl">{greeting(`Sr. ${firstName}`)}</h1>
+        {showCustomer ? (
           <section className="surface-card grid items-center gap-4 p-4 sm:grid-cols-[1fr_1fr_auto]">
             <div>
               <span className="eyebrow">COMECE PELO CLIENTE</span>
