@@ -37,9 +37,6 @@ function Admin() {
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold uppercase">Administração</h1>
-      <p className="text-sm text-muted-foreground">
-        Todos os pedidos dos vendedores aparecem em “Pedidos”, onde você também altera o status.
-      </p>
       <nav aria-label="Gestão do site" className="surface-card grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
         <Link to="/representantes" className="action-card">Representantes e mapas</Link>
         <Link to="/vendedores" className="action-card">Vendedores</Link>
@@ -61,7 +58,7 @@ function Admin() {
           </Link>
           <Link to="/representante-livaldo" className="action-card min-h-24">
             <span className="font-bold text-amber-400">Livaldo Souza Silva</span>
-            <span className="block text-sm text-muted-foreground">Brasil inteiro · Ver mapa e cadastro de teste</span>
+            <span className="block text-sm text-muted-foreground">Sorocaba e região · Ver mapa e cadastro de teste</span>
           </Link>
         </div>
       </nav>
@@ -329,7 +326,7 @@ function RepresentativesAdmin() {
     {
       slug: "livaldo-souza-silva",
       full_name: "Livaldo Souza Silva",
-      region: "Todo o Brasil · Teste",
+      region: "Sorocaba e região · DDD 015",
     },
   ];
   const visibleProfiles = [
