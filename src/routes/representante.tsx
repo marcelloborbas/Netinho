@@ -4,6 +4,7 @@ import { meQuery } from "@/lib/queries";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin, ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 import { BrandPageLayout } from "@/components/BrandPageLayout";
+import { ExpandableMap } from "@/components/ExpandableMap";
 
 export const Route = createFileRoute("/representante")({
   component: RepresentativePage,
@@ -100,7 +101,7 @@ function RepresentativePage() {
       <section className="surface-card space-y-4 p-5">
         <h2 className="text-xl font-bold">Mapa de atuação</h2>
         <p className="text-sm text-muted-foreground">Brasil → São Paulo → municípios atendidos</p>
-        <div className="overflow-hidden rounded-xl border bg-white"><img src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Abdenego%20Eug%C3%AAnio.png" alt="Mapa de São Paulo com marcações vermelhas dos municípios de atuação de Abdenego Eugênio" className="block h-auto w-full" loading="lazy" /></div>
+        <ExpandableMap src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Abdenego%20Eug%C3%AAnio.png" alt="Mapa de São Paulo com marcações vermelhas dos municípios de atuação de Abdenego Eugênio" />
         <div className="grid gap-2 sm:grid-cols-3">
           {cities.map(city => <div key={city} className="flex items-start gap-2 rounded-lg border p-3 text-sm"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />{city}</div>)}
         </div>
