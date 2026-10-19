@@ -1686,3 +1686,68 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
     top: -36px !important;
   }
 }
+
+
+/* Layout responsivo do recipiente Vender/Orçamento: todos os botões dentro da borda. */
+.home-page .journey-choice {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 14px !important;
+  gap: 12px !important;
+}
+.home-page .journey-choice > h2 {
+  margin: 0 !important;
+  width: 100%;
+  line-height: 1.3 !important;
+}
+.home-page .journey-choice > nav {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: minmax(90px, auto) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex: none !important;
+}
+.home-page .journey-choice > nav > .home-action-card {
+  box-sizing: border-box !important;
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 90px !important;
+  height: auto !important;
+  padding: 12px 6px !important;
+  margin: 0 !important;
+  gap: 7px !important;
+  overflow-wrap: anywhere;
+  transform: none !important;
+}
+.home-page .journey-choice > nav > .home-action-card svg {
+  display: block !important;
+  width: 27px !important;
+  height: 27px !important;
+  flex: 0 0 auto !important;
+}
+.home-page .journey-choice > nav > .home-action-card span {
+  display: block !important;
+  font-size: clamp(13px, 3.4vw, 16px) !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+@media (min-width: 640px) {
+  .home-page .journey-choice > nav { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
