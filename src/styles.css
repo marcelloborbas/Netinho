@@ -1629,3 +1629,27 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
   .home-page .promotion-banner h2 { font-size: 24px !important; }
   .home-page .promotion-banner-application { font-size: 15px !important; }
 }
+
+
+/* Indicador pulsante acima do acesso à Campanha FCO. */
+.promotion-banner .promotion-campaign-link { position: relative; overflow: visible; }
+.promotion-banner .campaign-pointing-hand {
+  position: absolute;
+  right: -15px;
+  top: -30px;
+  z-index: 40;
+  display: block;
+  font-size: 35px;
+  line-height: 1;
+  pointer-events: none;
+  transform-origin: center bottom;
+  animation: campaign-hand-pulse 1.15s ease-in-out infinite;
+  filter: drop-shadow(0 2px 2px #102a5255);
+}
+@keyframes campaign-hand-pulse {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.2) translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .promotion-banner .campaign-pointing-hand { animation: none; }
+}
