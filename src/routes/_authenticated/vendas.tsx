@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { Search, Plus, Minus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
-import { customersQuery, productsQuery, productMatches } from "@/lib/queries";
+import { customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
 import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
 import { brl } from "@/lib/brand";
 import { readOffers, type Offer } from "@/routes/ofertas";
@@ -37,7 +37,7 @@ function SalesPage() {
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const term = useDeferredValue(q);
-  const campaignProducts = useMemo(() => offers.filter(([code]) => !products.some((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO")).map(([code, application, price, stock]) => ({ id: `fco-campaign-${code}`, code, application, manufacturer: "FCO", categories: { name: "Caixas de direção" }, price_cash: null, price_30: null, price_30_45_60: price, price_30_45_60_75: null, stock })), [offers, products]);
+  const campaignProducts = useMemo(() => offers.filter(([code]) => !products.some((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO")).map(([code, application, price, stock]) => ({ id: `fco-campaign-${code}`, code, application, manufacturer: "FCO", categories: { name: "Caixas de direção" }, price_cash: null, price_30: null, price_30_45_60: price, price_30_45_60_75: null, stock })) as unknown as Product[], [offers, products]);
   const matches = useMemo(() => [...products, ...campaignProducts].filter((p) =>
     (brand === "all" || (p.manufacturer ?? "FCO") === brand) && productMatches(p, term)
   ), [products, campaignProducts, brand, term]);
