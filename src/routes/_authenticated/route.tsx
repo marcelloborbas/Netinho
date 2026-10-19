@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 function AppShell() {
   const draft = useDraft();
-  const isAdminPage = useLocation().pathname === "/admin";
+  const hideFooter = ["/admin", "/clientes", "/pedidos"].includes(useLocation().pathname);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: access } = useQuery({ ...accessQuery, enabled: !!Route.useRouteContext().user, retry: false });
@@ -93,7 +93,7 @@ function AppShell() {
         <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p>
         <Outlet />
       </main>
-      {!isAdminPage && <BrandFooter />}
+      {!hideFooter && <BrandFooter />}
       {canSell && draft.items.length > 0 && (
         <Link to="/pedido" className="order-dock">
           <span className="flex items-center gap-3">
