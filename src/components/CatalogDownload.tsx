@@ -5,10 +5,16 @@ export function CatalogDownload({
   brand,
   page,
   className = "supplier-download",
+  iconOnly = false,
+  image,
+  name,
 }: {
   brand: "FCO" | "HD";
   page?: number;
   className?: string;
+  iconOnly?: boolean;
+  image?: string;
+  name?: string;
 }) {
   const [busy, setBusy] = useState(false);
   async function download() {
