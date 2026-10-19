@@ -9,8 +9,7 @@ import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InstallAppButton } from "@/components/InstallAppButton";
-import { PartnerLogos } from "@/components/PartnerLogos";
-import { Logo } from "@/components/Logo";
+import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 
 export const Route = createFileRoute("/auth")({
@@ -234,13 +233,7 @@ function AuthPage() {
     <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen px-4 py-6 sm:py-10"}>
       {showWelcome && (
         <>
-          <header className="app-header welcome-auth-brands">
-            <Logo className="welcome-netinho-logo" />
-            <div className="welcome-representations">
-              <p>Representante Oficial</p>
-              <PartnerLogos compact linked={false} />
-            </div>
-          </header>
+          <BrandHeader />
           <div className="welcome-art-frame">
             <img
               className="welcome-auth-art"
