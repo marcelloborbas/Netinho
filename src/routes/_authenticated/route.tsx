@@ -90,7 +90,7 @@ function AppShell() {
         </button>
       </div>
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
-        <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p>
+        {!hideFooter || useLocation().pathname !== "/admin" ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
         <Outlet />
       </main>
       {!hideFooter && <BrandFooter />}
