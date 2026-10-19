@@ -40,10 +40,20 @@ function Admin() {
       <p className="text-sm text-muted-foreground">
         Todos os pedidos dos vendedores aparecem em “Pedidos”, onde você também altera o status.
       </p>
+      <nav aria-label="Gestão do site" className="surface-card grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
+        <Link to="/representantes" className="action-card">Representantes e mapas</Link>
+        <Link to="/vendedores" className="action-card">Vendedores</Link>
+        <Link to="/clientes" className="action-card">Clientes</Link>
+        <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
+        <Link to="/pedidos" className="action-card">Pedidos</Link>
+        <a href="#representantes" className="action-card">Cadastrar representantes</a>
+        <a href="#usuarios" className="action-card">Usuários e permissões</a>
+        <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
+      </nav>
       <SupplierCommissions />
       <nav aria-label="Fichas e mapas dos representantes" className="surface-card space-y-3 p-4">\n        <h2 className="text-xl font-bold">Representantes e regiões de atuação</h2>\n        <p className="text-sm text-muted-foreground">Acesse os cadastros originais e seus mapas, sem perder as informações já registradas.</p>\n        <div className="grid gap-3 sm:grid-cols-2">\n          <Link to="/representante" className="action-card min-h-24">\n            <span className="font-bold text-amber-400">Abdenego Eugênio</span>\n            <span className="block text-sm text-muted-foreground">Vale do Paraíba e Litoral Norte · Ver mapa e cadastro</span>\n          </Link>\n          <Link to="/representante-livaldo" className="action-card min-h-24">\n            <span className="font-bold text-amber-400">Livaldo Souza Silva</span>\n            <span className="block text-sm text-muted-foreground">Brasil inteiro · Ver mapa e cadastro de teste</span>\n          </Link>\n        </div>\n      </nav>\n      <RepresentativesAdmin />
-      <UserAttributionAdmin />
-      <h2 className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
+      <div id="usuarios"><UserAttributionAdmin /></div>
+      <h2 id="produtos" className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
       <Input
         value={q}
         onChange={(e) => setQ(e.target.value)}
