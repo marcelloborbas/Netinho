@@ -5,7 +5,7 @@ import { ArrowUpRight, Megaphone } from "lucide-react";
 export const PROMOTIONS = [
   {
     code: "FCZA-0001A",
-    title: "Caixa de direção mecânica",
+    title: "Caixa de Direção Mecânica",
     application: "Gol · Santana · Parati · Saveiro",
     price: "R$ 247,20",
     note: "Preço atacado à vista",
@@ -14,7 +14,7 @@ export const PROMOTIONS = [
   },
   {
     code: "FCZB-0005A",
-    title: "Caixa de direção mecânica",
+    title: "Caixa de Direção Mecânica",
     application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     price: "R$ 251,18",
     note: "Preço atacado à vista",
@@ -23,7 +23,7 @@ export const PROMOTIONS = [
   },
   {
     code: "FCZB-0020A",
-    title: "Caixa de direção mecânica",
+    title: "Caixa de Direção Mecânica",
     application: "Elba · Fiorino · Prêmio · Uno Mille",
     price: "R$ 253,69",
     note: "Preço atacado à vista",
@@ -32,7 +32,7 @@ export const PROMOTIONS = [
   },
   {
     code: "FIAT STRADA",
-    title: "Caixa de direção mecânica",
+    title: "Caixa de Direção Mecânica",
     application: "Fiat Strada · 1996–2000",
     price: "Sob consulta",
     note: "Preço atacado à vista",
@@ -71,9 +71,9 @@ export function PromotionBanner() {
           <span>Campanha de outubro · FCO</span>
         </div>
         <p className="promotion-banner-code">{promotion.code}</p>
-        <h2>{promotion.title}</h2>
+        <h2 style={{ maxWidth: "54%", lineHeight: 1.08 }}><span style={{ display: "block", whiteSpace: "nowrap" }}>Caixa de Direção</span><span style={{ display: "block" }}>Mecânica</span></h2>
         <p className="promotion-banner-application">{promotion.application}</p>
-        <div className="promotion-banner-price-row">
+        <div className="promotion-banner-price-row" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
           <strong className={promotion.price === "Sob consulta" ? "promotion-price-ask" : undefined}>
             {promotion.price}
           </strong>
