@@ -10,7 +10,7 @@ export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
   head: () => ({ meta: [
     { title: "Livaldo Souza Silva — Representante Comercial | Netinho" },
-    { name: "description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua cobertura nacional pela Netinho." },
+    { name: "description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua área de atuação em Sorocaba e região pela Netinho." },
     { property: "og:title", content: "Livaldo Souza Silva — Representante Comercial | Netinho" },
     { property: "og:description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua cobertura nacional pela Netinho." },
     { property: "og:type", content: "website" },
@@ -18,51 +18,20 @@ export const Route = createFileRoute("/representante-livaldo")({
   ] }),
 });
 
-type PolygonCoordinates = number[][][];
-type BrazilGeometry = { type: "Polygon" | "MultiPolygon"; coordinates: PolygonCoordinates | PolygonCoordinates[] };
-const geojsonUrl = "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
-const width = 680;
-const height = 610;
-const project = (coordinate: number[]): [number, number] => {
-  const [lon = 0, lat = 0] = coordinate;
-  return [((lon + 75) / 43) * width, ((7 - lat) / 42) * height];
-};
-function ringsToPath(rings: PolygonCoordinates) {
-  return rings.map(ring => ring.map((point, index) => {
-    const [x, y] = project(point);
-    return (index === 0 ? "M" : "L") + x.toFixed(2) + " " + y.toFixed(2);
-  }).join(" ") + " Z").join(" ");
-}
-
-function BrazilMap() {
-  const [paths, setPaths] = useState<string[]>([]);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(geojsonUrl, { signal: controller.signal })
-      .then(response => { if (!response.ok) throw new Error("Mapa indisponível"); return response.json(); })
-      .then(data => {
-        const feature = data.features?.find((item: { properties?: Record<string, string> }) =>
-          item.properties?.["name"] === "Brazil" || item.properties?.["ADMIN"] === "Brazil" || item.properties?.["name"] === "Brasil");
-        if (!feature?.geometry) throw new Error("Brasil não encontrado");
-        const geometry = feature.geometry as BrazilGeometry;
-        setPaths(geometry.type === "Polygon"
-          ? [ringsToPath(geometry.coordinates as PolygonCoordinates)]
-          : (geometry.coordinates as PolygonCoordinates[]).map(ringsToPath));
-      })
-      .catch(error => { if (error.name !== "AbortError") setFailed(true); });
-    return () => controller.abort();
-  }, []);
-  return (
-    <div className="rounded-xl border bg-sky-50 p-3 text-slate-900">
-      {failed ? <p className="p-6 text-center text-sm">Não foi possível carregar os limites do Brasil. Verifique a conexão.</p> :
-        <svg viewBox="0 0 680 610" className="mx-auto w-full max-w-2xl" role="img" aria-label="Mapa do Brasil com área nacional de representação destacada em vermelho">
-          {paths.length ? <>{paths.map((path, i) => <path key={i} d={path} fill="#fee2e2" stroke="#dc2626" strokeWidth="3" strokeLinejoin="round" fillRule="evenodd" />)}<g transform="translate(350 305)"><circle r="12" fill="#dc2626" stroke="white" strokeWidth="4" /><path d="M0 0 L-8 -16 A11 11 0 1 1 8 -16 Z" fill="#dc2626" stroke="white" strokeWidth="2" /><text x="0" y="38" textAnchor="middle" fontSize="19" fontWeight="bold" fill="#991b1b">TODO O BRASIL</text></g></> :
-            <text x="340" y="300" textAnchor="middle" fontSize="20" fill="#1e40af">Carregando mapa do Brasil...</text>}
-        </svg>}
-      <p className="text-center text-xs text-slate-600">Área vermelha: cobertura nacional do representante · Brasil inteiro</p>
+const cities = [{"name":"Sorocaba","x":475,"y":285},{"name":"Votorantim","x":466,"y":349},{"name":"Araçoiaba da Serra","x":389,"y":319},{"name":"Alumínio","x":543,"y":316},{"name":"Mairinque","x":549,"y":285},{"name":"São Roque","x":614,"y":324},{"name":"Ibiúna","x":577,"y":434},{"name":"Piedade","x":469,"y":437},{"name":"Salto","x":526,"y":167},{"name":"Itu","x":531,"y":218},{"name":"Porto Feliz","x":447,"y":188},{"name":"Boituva","x":372,"y":238},{"name":"Tatuí","x":304,"y":242},{"name":"Cerquilho","x":359,"y":167},{"name":"Tietê","x":349,"y":113},{"name":"Jumirim","x":337,"y":129},{"name":"Capela do Alto","x":350,"y":285},{"name":"Iperó","x":376,"y":266},{"name":"Salto de Pirapora","x":414,"y":372},{"name":"Pilar do Sul","x":357,"y":473},{"name":"São Miguel Arcanjo","x":249,"y":491},{"name":"Tapiraí","x":417,"y":530},{"name":"Itapetininga","x":178,"y":373},{"name":"Alambari","x":300,"y":327},{"name":"Sarapuí","x":331,"y":377},{"name":"Cesário Lange","x":286,"y":175}];
+function SorocabaMap() {
+  return <div className="space-y-3">
+    <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-white">
+      <img src="/Mapa%20Infogr%C3%A1fico%20dos%20Munic%C3%ADpios%20Paulistas%20Livaldo.webp" alt="Região Metropolitana de Sorocaba dividida em três sub-regiões" className="block h-auto w-full" />
+      <svg viewBox="0 0 850 606" className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" role="img" aria-label="Pontos vermelhos nas cidades atendidas">
+        {cities.map(city => <circle key={city.name} cx={city.x} cy={city.y} r="5" fill="#dc2626" stroke="white" strokeWidth="1.6"><title>{city.name}</title></circle>)}
+      </svg>
     </div>
-  );
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      {cities.map(city => <div key={city.name} className="flex items-center gap-2 rounded-lg border p-2 text-sm"><span className="h-3 w-3 shrink-0 rounded-full bg-red-600" />{city.name}</div>)}
+    </div>
+    <p className="text-xs text-muted-foreground">Pontos vermelhos indicam a localização aproximada dos municípios no mapa fornecido. Região de Sorocaba e entorno (DDD 015).</p>
+  </div>;
 }
 
 function LivaldoPage() {
@@ -75,12 +44,12 @@ function LivaldoPage() {
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
         <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Livaldo Souza Silva"}</h2>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
         <p className="text-sm font-semibold text-primary">Cadastro de teste</p>
-        <p><span className="text-muted-foreground">Área de representação:</span> {profile?.region ?? "Todo o Brasil — todos os estados e o Distrito Federal"}</p>
+        <p><span className="text-muted-foreground">Área de representação:</span> {profile?.region ?? "Sorocaba e região — DDD 015"}</p>
         <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole size={16} /> Dados somente para visualização. Alterações exclusivas da administração.</p>
       </section>
       <section className="surface-card space-y-3 p-5">
         <h2 className="text-xl font-bold">Mapa da área de atuação</h2>
-        <BrazilMap />
+        <SorocabaMap />
       </section>
       <p className="text-xs text-muted-foreground">Este perfil é demonstrativo e não concede acesso a preços, estoque ou pedidos.</p>
     </main></BrandPageLayout>
