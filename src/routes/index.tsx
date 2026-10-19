@@ -26,12 +26,7 @@ function Home() {
   ];
   return (
     <div className="home-page flex min-h-screen flex-col">
-      <BrandHeader actions={
-        <div className="flex items-center gap-2">
-          {access?.level === 1 && <Link to="/admin" title="Administração" aria-label="Abrir Administração" className="rounded-full border border-amber-400/60 bg-[#102a52] p-1.5 text-amber-300"><Settings size={18}/></Link>}
-          {!access && <Link to="/auth" title="Entrar" aria-label="Fazer login" className="rounded-full border border-white/30 p-1.5 text-white"><LogIn size={18}/></Link>}
-        </div>
-      } />
+      <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6">
         <h1 className="text-center text-lg font-bold text-amber-300 sm:text-2xl">O que o Sr. deseja fazer?</h1>
         <PromotionBanner />
