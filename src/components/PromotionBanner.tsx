@@ -9,7 +9,7 @@ export const PROMOTIONS = [
     "application": "Gol 1980–2010 · Santana · Parati · Saveiro",
     "price": "R$ 247,20",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": "/images/campaign/novo-gol.webp",
+    "image": "/images/campaign/vw-gol-caixa-direcao.webp",
     "searchTerm": "FCZA-0001A"
   },
   {
@@ -18,7 +18,7 @@ export const PROMOTIONS = [
     "application": "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     "price": "R$ 251,18",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": "/images/campaign/novo-fiat147.webp",
+    "image": "/images/campaign/fiat-147-caixa-direcao.webp",
     "searchTerm": "FCZB-0005A"
   },
   {
@@ -112,7 +112,8 @@ export function PromotionBanner() {
       <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)", background: "transparent", boxShadow: "none", border: "none", overflow: "visible" }}>
         {promotion.image ? (
           <>
-            <img src={promotion.image} alt={promotion.title + " " + promotion.code} style={{ background: "transparent", objectFit: "contain" }} onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
+            <img src={promotion.image} alt={promotion.title + " " + promotion.code} style={{ background: "transparent", objectFit: "contain" }} onError={(event) => { event.currentTarget.style.display = "none"; const fallback = event.currentTarget.nextElementSibling as HTMLElement | null; if (fallback) fallback.style.display = "flex"; }} />
+            <div style={{display:"none"}} className="h-full w-full flex-col items-center justify-center text-center text-amber-300"><span className="text-xs font-bold">Oferta FCO</span><span className="text-sm font-extrabold">{promotion.code}</span></div>
           </>
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-[#102a52] p-3 text-center text-amber-300">
