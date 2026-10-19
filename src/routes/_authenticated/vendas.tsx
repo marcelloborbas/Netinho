@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useMemo, useState } from "react";
-import { Search, Plus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
+import { Search, Plus, Minus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches } from "@/lib/queries";
 import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
@@ -97,8 +97,19 @@ function SalesPage() {
             <p className="line-clamp-2 text-xs">{p.application}</p>
             <p className="mt-1 text-sm font-bold text-[#174e9b]">{p.price_cash != null ? `À vista: ${brl(p.price_cash)}` : "Consulte valores"}</p>
           </div>
-          <button type="button" disabled={!draft.customerId} onClick={() => add(p)} aria-label={`Adicionar ${p.code}`}
-            className="flex min-h-11 shrink-0 items-center gap-1 rounded-xl border border-[#174e9b] bg-[#eaf2ff] px-3 font-bold text-[#102a52] disabled:cursor-not-allowed disabled:opacity-40"><Plus size={18}/> Adicionar</button>
+          {(() => {
+            const item = draft.items.find((i) => i.productId === p.id);
+            return item ? (
+              <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[#a7c1e5] bg-white p-1" aria-label={`Quantidade de ${p.code}`}>
+                <button type="button" disabled={item.quantity <= 1} onClick={() => draftActions.updateItem(p.id, { quantity: Math.max(1, item.quantity - 1) })} aria-label={`Diminuir uma unidade de ${p.code}`} className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52] disabled:opacity-40"><Minus size={18}/></button>
+                <span aria-live="polite" className="min-w-8 text-center text-base font-extrabold text-[#102a52]">{item.quantity}</span>
+                <button type="button" onClick={() => draftActions.updateItem(p.id, { quantity: item.quantity + 1 })} aria-label={`Adicionar uma unidade de ${p.code}`} className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52]"><Plus size={18}/></button>
+              </div>
+            ) : (
+              <button type="button" disabled={!draft.customerId} onClick={() => add(p)} aria-label={`Adicionar ${p.code}`}
+                className="flex min-h-11 shrink-0 items-center gap-1 rounded-xl border border-[#174e9b] bg-[#eaf2ff] px-3 font-bold text-[#102a52] disabled:cursor-not-allowed disabled:opacity-40"><Plus size={18}/> Adicionar</button>
+            );
+          })()}
         </li>)}
       </ul>
       {matches.length > 12 && <div className="flex items-center justify-center gap-3">
