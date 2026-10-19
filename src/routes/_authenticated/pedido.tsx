@@ -102,7 +102,7 @@ function OrderPage() {
           Pesquise produtos e adicione ao pedido.
         </p>
         <Button asChild className="mt-5 bg-gradient-red">
-          <Link to="/catalogo" search={{ modo: "venda" }}>Pesquisar produtos</Link>
+          <Link to="/vendas" search={{ modo: "venda" }}>Selecionar cliente e peças</Link>
         </Button>
       </div>
     );
