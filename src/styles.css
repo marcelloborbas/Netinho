@@ -1497,3 +1497,67 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
   color: #d8e4f5 !important;
   -webkit-text-fill-color: #d8e4f5 !important;
 }
+
+
+/* Diagramação renovada da página inicial — espaçamento, hierarquia e legibilidade. */
+.home-page { background: #fff; }
+.home-page > main {
+  width: 100%;
+  max-width: 1120px;
+  gap: 0 !important;
+  padding-top: clamp(22px, 4vw, 44px);
+  padding-bottom: 110px;
+}
+.home-page .promotion-banner {
+  position: relative;
+  min-height: 280px;
+  margin: 0 auto;
+  padding: 20px clamp(8px, 2.4vw, 26px) 38px;
+}
+.home-page .promotion-banner-copy { position: relative; z-index: 1; }
+.home-page .promotion-banner-price-row > span > span {
+  color: #64748b !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+.home-page .journey-choice {
+  width: 100%;
+  max-width: 900px;
+  margin: clamp(54px, 8vw, 105px) auto 30px !important;
+  padding: clamp(18px, 3vw, 30px) !important;
+  border-radius: 22px !important;
+  border: 1px solid #d5e1ee !important;
+  background: #f8fbff !important;
+  box-shadow: 0 12px 36px #0e2e5514 !important;
+}
+.home-page .journey-choice > h2 {
+  margin-bottom: 20px !important;
+  color: #102a52 !important;
+  font-size: clamp(20px, 2.7vw, 28px) !important;
+  line-height: 1.25 !important;
+}
+.home-page .journey-choice nav {
+  display: grid !important;
+  gap: clamp(10px, 1.7vw, 18px) !important;
+}
+.home-page .home-action-card {
+  min-height: 106px !important;
+  padding: 16px 10px !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  border: 1px solid #c7d8eb !important;
+  box-shadow: 0 4px 12px #0c315012 !important;
+}
+.home-page .home-action-card:hover,
+.home-page .home-action-card:focus-visible {
+  background: #eaf2ff !important;
+  border-color: #2563a6 !important;
+  box-shadow: 0 7px 18px #1552a022 !important;
+}
+@media (max-width: 640px) {
+  .home-page .promotion-banner { min-height: 260px; padding-inline: 4px; }
+  .home-page .journey-choice { margin-top: 72px !important; }
+  .home-page .home-action-card { min-height: 94px !important; }
+  .home-page .journey-choice > h2 { font-size: 20px !important; }
+}
