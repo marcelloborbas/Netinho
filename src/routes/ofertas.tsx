@@ -47,7 +47,6 @@ function CampaignOffers() {
           <strong className="mt-4 text-3xl font-extrabold text-[#bd2026]">{brl.format(price)}</strong>
           <span className="mt-1 text-base font-semibold text-[#176a37]">Preço de campanha</span>
           <span className="mb-4 text-sm text-[#64748b]">30/45/60 dias · Estoque na tabela: {stock}</span>
-          <Link to="/vendas" search={{modo:"venda",q:code}} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1552a0] px-4 py-3 font-bold text-white hover:bg-[#103b78]"><ShoppingCart size={18}/> Comprar peça</Link>
         </article>)}
       </div>
       {offers.length>0 && filtered.length===0 && <p>Nenhuma oferta encontrada para esta busca.</p>}
