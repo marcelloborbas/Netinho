@@ -2295,3 +2295,19 @@ html, body { max-width: 100%; overflow-x: hidden; }
     margin-top: 0 !important;
   }
 }
+
+
+/* Grade final: três intervalos realmente iguais (1fr / 1fr / 1fr). */
+@media (max-width: 639px) {
+  .home-page > main {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(12px, 1fr) auto minmax(12px, 1fr) auto minmax(12px, 1fr) !important;
+    align-content: stretch !important;
+    justify-content: stretch !important;
+  }
+  .home-page > main::before { grid-row: 1 !important; min-height: 0 !important; }
+  .home-page > main > .promotion-banner { grid-row: 2 !important; }
+  .home-page > main > .journey-choice { grid-row: 4 !important; }
+  .home-page > main::after { grid-row: 5 !important; min-height: 0 !important; }
+}
