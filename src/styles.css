@@ -1614,3 +1614,18 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
   box-shadow: 0 4px 14px #102a5226;
   outline-offset: 3px;
 }
+
+
+/* Tipografia maior e mais legível na apresentação das ofertas. */
+.home-page .promotion-banner-code { font-size: clamp(14px, 1.8vw, 18px) !important; }
+.home-page .promotion-banner h2 { font-size: clamp(23px, 3.1vw, 35px) !important; line-height: 1.15 !important; }
+.home-page .promotion-banner-application { font-size: clamp(15px, 1.85vw, 19px) !important; line-height: 1.4 !important; }
+.home-page .promotion-banner-price-row > strong { font-size: clamp(27px, 3.5vw, 39px) !important; }
+.home-page .promotion-banner-price-row > span { font-size: clamp(15px, 1.8vw, 19px) !important; }
+.home-page .promotion-banner-price-row > span > span { font-size: clamp(14px, 1.7vw, 17px) !important; }
+.home-page .promotion-banner-label { font-size: clamp(13px, 1.6vw, 16px) !important; }
+@media (max-width: 640px) {
+  .home-page .promotion-banner { min-height: 290px; }
+  .home-page .promotion-banner h2 { font-size: 24px !important; }
+  .home-page .promotion-banner-application { font-size: 15px !important; }
+}
