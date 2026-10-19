@@ -2256,3 +2256,42 @@ html, body { max-width: 100%; overflow-x: hidden; }
     font-size: clamp(21px, 5.8vw, 26px) !important;
   }
 }
+
+
+/* Distribuição vertical em três espaços equivalentes na home 9:16:
+   1) cabeçalho → campanha, 2) campanha → ações, 3) ações → rodapé.
+   O espaço flexível nunca comprime os cartões. */
+@media (max-width: 639px) {
+  .home-page {
+    --home-footer-space: calc(70px + env(safe-area-inset-bottom, 0px));
+    min-height: 100dvh !important;
+  }
+  .home-page > main {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 0 auto !important;
+    min-height: calc(100dvh - 88px - var(--home-footer-space)) !important;
+    padding: 0 12px var(--home-footer-space) !important;
+    gap: 0 !important;
+    justify-content: space-evenly !important;
+  }
+  .home-page > main::before,
+  .home-page > main::after {
+    content: "";
+    display: block;
+    flex: 1 1 0 !important;
+    min-height: 12px !important;
+  }
+  .home-page > main .promotion-banner {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+  .home-page > main .journey-choice {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+  /* Espaço central igual aos espaços externos, sem criar barra de rolagem artificial. */
+  .home-page > main .promotion-banner + .journey-choice {
+    margin-top: 0 !important;
+  }
+}
