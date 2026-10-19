@@ -39,7 +39,7 @@ function SalesPage() {
   const term = useDeferredValue(q);
   const campaignProducts = useMemo(() => offers.filter(([code]) => !products.some((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO")).map(([code, application, price, stock]) => ({ id: `fco-campaign-${code}`, code, application, manufacturer: "FCO", categories: { name: "Caixas de direção" }, price_cash: null, price_30: null, price_30_45_60: price, price_30_45_60_75: null, stock })) as unknown as Product[], [offers, products]);
   const matches = useMemo(() => [...products, ...campaignProducts].filter((p) =>
-    (brand === "all" || (p.manufacturer ?? "FCO") === brand) && productMatches(p, term)
+    p.manufacturer !== "HD" && (brand === "all" || (p.manufacturer ?? "FCO") === brand) && productMatches(p, term)
   ), [products, campaignProducts, brand, term]);
   const kind = draft.items.length || draft.customerId ? draft.kind : (search.modo === "consulta" ? "orcamento" : "pedido");
   const selected = customers.find((c) => c.id === draft.customerId);
@@ -96,10 +96,10 @@ function SalesPage() {
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="font-extrabold text-[#102a52]">3. Adicionar peças</h2>
       <div className="grid grid-cols-3 gap-2">
-        {(["all", "FCO", "HD"] as const).map((value) => <button key={value} type="button" aria-pressed={brand === value}
-          onClick={() => { setBrand(value); setPage(1); }}
-          className={`min-h-12 rounded-xl border-2 px-2 font-extrabold ${brand === value ? "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset" : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52]"}`}>
-          {value === "all" ? "Geral" : <img className="mx-auto h-9 max-w-full object-contain" alt={value} src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"}/>}
+        {(["all", "FCO", "HD"] as const).map((value) => <button key={value} type="button" disabled={value === "HD"} aria-label={value === "HD" ? "HD Embreagens — em breve" : value} aria-pressed={brand === value}
+          onClick={() => { if (value === "HD") return; setBrand(value); setPage(1); }}
+          className={`min-h-12 rounded-xl border-2 px-2 font-extrabold ${value === "HD" ? "cursor-not-allowed bg-zinc-200 grayscale opacity-65" : ""} ${brand === value ? "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset" : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52]"}`}>
+          {value === "all" ? "Geral" : <img className="mx-auto h-9 max-w-full object-contain" alt={value} src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"}/>}{value === "HD" && <span className="block text-xs font-extrabold text-zinc-700">Em breve</span>}
         </button>)}
       </div>
       <div className="relative">
