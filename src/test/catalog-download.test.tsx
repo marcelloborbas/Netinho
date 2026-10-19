@@ -22,9 +22,9 @@ describe("catalog download authentication", () => {
     async (user) => {
       state.user = user;
       render(<CatalogDownload brand="FCO" />);
-      fireEvent.click(screen.getByRole("button", { name: "Baixar PDF FCO" }));
+      fireEvent.click(screen.getByRole("button", { name: "Baixar catálogo PDF FCO" }));
       await waitFor(() =>
-        expect(screen.getByRole("button", { name: "Baixar PDF FCO" })).toBeEnabled(),
+        expect(screen.getByRole("button", { name: "Baixar catálogo PDF FCO" })).toBeEnabled(),
       );
       expect(state.download).not.toHaveBeenCalled();
     },
@@ -33,7 +33,7 @@ describe("catalog download authentication", () => {
     state.user = { id: "seller", is_anonymous: false };
     state.download.mockResolvedValue({ data: null, error: new Error("Offline") });
     render(<CatalogDownload brand="HD" />);
-    fireEvent.click(screen.getByRole("button", { name: "Baixar PDF HD" }));
+    fireEvent.click(screen.getByRole("button", { name: "Baixar catálogo PDF HD" }));
     await waitFor(() => expect(state.download).toHaveBeenCalledWith("hd-catalogo.pdf"));
   });
 });

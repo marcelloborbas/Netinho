@@ -31,9 +31,11 @@ beforeEach(() => {
   );
 });
 describe("commercial route boundaries", () => {
-  it("requires a real session even with a forged local profile", async () => {
+  it("keeps the catalog consultation open without a session but blocks every other area", async () => {
     state.user = null;
-    await expect(enter("/catalogo")).rejects.toEqual({ redirect: { to: "/auth" } });
+    await expect(enter("/catalogo")).resolves.toBeTruthy();
+    for (const path of ["/clientes", "/pedido", "/pedidos", "/admin"])
+      await expect(enter(path)).rejects.toEqual({ redirect: { to: "/auth" } });
   });
   it("allows a Google visitor to browse but blocks orders, customer data and admin", async () => {
     await expect(enter("/catalogo")).resolves.toBeTruthy();
@@ -55,6 +57,7 @@ describe("commercial route boundaries", () => {
   });
   it("does not reuse a profile belonging to another account", async () => {
     state.access.email = "other@example.com";
-    await expect(enter("/catalogo")).rejects.toEqual({ redirect: { to: "/auth" } });
+    await expect(enter("/catalogo")).resolves.toBeTruthy();
+    await expect(enter("/pedido")).rejects.toEqual({ redirect: { to: "/auth" } });
   });
 });
