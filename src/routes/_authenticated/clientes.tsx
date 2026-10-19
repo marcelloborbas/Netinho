@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search, Star, Plus, Pencil, Trash2 } from "lucide-react";
+import { Search, Star, Plus, Pencil, Trash2, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { customersQuery, type Customer } from "@/lib/queries";
 import { draftActions } from "@/lib/order-store";
 import { accessQuery } from "@/lib/access";
 import { CustomerForm } from "@/components/CustomerForm";
+import { downloadCustomerXlsx } from "@/lib/customer-xlsx";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -103,6 +104,7 @@ function Customers() {
                 <p className="truncate text-base font-extrabold text-[#102a52]">{c.trade_name || c.company_name}</p>
                 <p className="truncate text-xs text-muted-foreground">{[c.cnpj, c.city && `${c.city}/${c.state ?? ""}`].filter(Boolean).join(" · ")}</p>
               </button>
+              <button type="button" onClick={() => void downloadCustomerXlsx(c).catch(() => toast.error("Não foi possível gerar a ficha Excel."))} title="Baixar ficha cadastral Excel" aria-label={`Baixar ficha cadastral de ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:border-[#174e9b] hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><FileSpreadsheet className="h-4 w-4" /></button>
               <button onClick={() => setEditing(c)} aria-label={`Editar ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:bg-[#dbeafe]"><Pencil className="h-4 w-4" /></button>
               {isAdmin && <button onClick={() => setDeleting(c)} aria-label={`Excluir ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 hover:bg-red-100"><Trash2 className="h-4 w-4" /></button>}
             </li>
