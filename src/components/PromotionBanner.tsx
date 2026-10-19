@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Megaphone, ShoppingCart } from "lucide-react";
+import { Megaphone, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const PROMOTIONS = [
@@ -132,19 +132,10 @@ export function PromotionBanner() {
         <ShoppingCart size={16} aria-hidden="true" /> Ver
       </Link>
 
-      <div
-        className="promotion-banner-controls"
-        role="status"
-        aria-label={`Oferta ${active + 1} de ${PROMOTIONS.length}`}
-        data-paused={paused}
-      >
-        {PROMOTIONS.map((item, index) => (
-          <span
-            key={item.code}
-            className={index === active ? "is-active" : undefined}
-            aria-hidden="true"
-          />
-        ))}
+      <div className="promotion-banner-arrows" aria-label="Navegar entre ofertas">
+        <button type="button" aria-label="Oferta anterior" onClick={() => setActive((current) => (current - 1 + PROMOTIONS.length) % PROMOTIONS.length)}><ChevronLeft size={22} /></button>
+        <span aria-live="polite">{active + 1} / {PROMOTIONS.length}</span>
+        <button type="button" aria-label="Próxima oferta" onClick={() => setActive((current) => (current + 1) % PROMOTIONS.length)}><ChevronRight size={22} /></button>
       </div>
     </section>
   );
