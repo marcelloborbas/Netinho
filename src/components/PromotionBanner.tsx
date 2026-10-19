@@ -8,7 +8,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Gol · Santana · Parati · Saveiro",
     price: "R$ 247,20",
-    note: "Preço em Atacado à vista",
+    note: "Preço Atacado à vista",
     image: "/images/campaign/vw-gol-caixa-direcao.webp",
     searchTerm: "FCZA-0001A",
   },
@@ -17,7 +17,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     price: "R$ 251,18",
-    note: "Preço em Atacado à vista",
+    note: "Preço Atacado à vista",
     image: "/images/campaign/fiat-147-caixa-direcao.webp",
     searchTerm: "FCZB-0005A",
   },
@@ -26,7 +26,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Elba · Fiorino · Prêmio · Uno Mille",
     price: "R$ 253,69",
-    note: "Preço em Atacado à vista",
+    note: "Preço Atacado à vista",
     image: "/images/campaign/fiat-uno-caixa-direcao.webp",
     searchTerm: "FCZB-0020A",
   },
@@ -35,7 +35,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Fiat Strada · 1996–2000",
     price: "Sob consulta",
-    note: "Preço em Atacado à vista",
+    note: "Preço Atacado à vista",
     image: "/images/campaign/fiat-strada-caixa-direcao.webp",
     searchTerm: "Strada",
   },
@@ -79,14 +79,7 @@ export function PromotionBanner() {
           </strong>
           <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}</span>
         </div>
-        <Link
-          className="promotion-banner-cta"
-          to="/promocao"
-          search={{ codigo: promotion.code }}
-          aria-label={`Consultar ${promotion.code} no catálogo FCO`}
-        >
-          Consultar promoção <ArrowUpRight size={17} aria-hidden="true" />
-        </Link>
+
       </div>
 
       <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)" }} aria-hidden="true">
@@ -97,6 +90,15 @@ export function PromotionBanner() {
         />
         <span>IMAGEM ILUSTRATIVA</span>
       </div>
+
+        <Link
+          className="promotion-banner-cta" style={{ position: "absolute", left: "50%", bottom: 12, transform: "translateX(-50%)", zIndex: 5, whiteSpace: "nowrap" }}
+          to="/promocao"
+          search={{ codigo: promotion.code }}
+          aria-label={`Comprar ${promotion.code} no catálogo FCO`}
+        >
+          Comprar <ArrowUpRight size={17} aria-hidden="true" />
+        </Link>
 
       <div
         className="promotion-banner-controls"
