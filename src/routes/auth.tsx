@@ -56,8 +56,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [accessEmail, setAccessEmail] = useState("");
-  const [accessCode, setAccessCode] = useState("");
-  const [codeSent, setCodeSent] = useState(false);
+  const [linkSent, setLinkSent] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
   const [showLogin, setShowLogin] = useState(false);
   const [recovery, setRecovery] = useState(false);
@@ -74,7 +73,6 @@ function AuthPage() {
   }, [signedIn, access, recovery, navigate, previewMode]);
   useEffect(() => {
     // Keep the preview shell mounted after OAuth, then show the signed-in app in its frame.
-    if (devicePreviewFrame) return;
     void supabase.auth.getUser().then(({ data }) => {
       setSignedIn(!!data.user);
       setChecking(false);
@@ -90,7 +88,7 @@ function AuthPage() {
       toast.error("O Google não concluiu o acesso. Tente novamente.");
     return () => data.subscription.unsubscribe();
   }, [previewMode, devicePreviewFrame]);
-  async function sendAccessCode(event: FormEvent) {
+  async function sendAccessLink(event: FormEvent) {
     event.preventDefault();
     if (!accessEmail.trim()) return;
     setBusy(true);
@@ -100,28 +98,11 @@ function AuthPage() {
     });
     setBusy(false);
     if (error) {
-      toast.error("Não foi possível enviar o código. Tente novamente.");
+      toast.error("Não foi possível enviar o link. Tente novamente.");
       return;
     }
-    setCodeSent(true);
-    toast.success("Confira seu e-mail para continuar o acesso.");
-  }
-  async function verifyAccessCode(event: FormEvent) {
-    event.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.verifyOtp({
-      email: accessEmail.trim().toLowerCase(),
-      token: accessCode.trim(),
-      type: "email",
-    });
-    setBusy(false);
-    if (error) {
-      toast.error("Código inválido ou expirado. Solicite outro código.");
-      return;
-    }
-    setAccessCode("");
-    toast.success("E-mail confirmado. Verificando seu perfil.");
-    await qc.invalidateQueries({ queryKey: ["access"] });
+    setLinkSent(true);
+    toast.success("Enviamos um link de acesso. Abra seu e-mail e clique em Log In.");
   }
   async function emailLogin(event: FormEvent) {
     event.preventDefault();
@@ -283,15 +264,11 @@ function AuthPage() {
               </button>
               <div className="mx-auto mt-3 w-full max-w-xs rounded-xl bg-slate-950/90 p-3 text-white">
                 <p className="mb-2 text-center text-sm font-bold">Ou acesse com seu e-mail</p>
-                <form onSubmit={codeSent ? verifyAccessCode : sendAccessCode} className="flex flex-col gap-2">
-                  <Input type="email" aria-label="Seu e-mail" placeholder="Seu e-mail (Gmail, Outlook, Yahoo...)" autoComplete="email" value={accessEmail} disabled={codeSent || busy} onChange={(event) => setAccessEmail(event.target.value)} required />
-                  {codeSent && <Input type="text" aria-label="Código recebido por e-mail" placeholder="Código recebido no e-mail" inputMode="numeric" autoComplete="one-time-code" value={accessCode} onChange={(event) => setAccessCode(event.target.value)} required />}
-                  <Button type="submit" disabled={busy || (codeSent && !accessCode.trim())}>{busy ? "Aguarde..." : codeSent ? "Confirmar código" : "Receber código por e-mail"}</Button>
+                <form onSubmit={sendAccessLink} className="flex flex-col gap-2">
+                  <Input type="email" aria-label="Seu e-mail" placeholder="Seu e-mail (Gmail, Outlook, Yahoo...)" autoComplete="email" value={accessEmail} disabled={busy} onChange={(event) => { setAccessEmail(event.target.value); setLinkSent(false); }} required />
+                  <Button type="submit" disabled={busy}>{busy ? "Enviando..." : linkSent ? "Reenviar link de acesso" : "Receber link de acesso"}</Button>
                 </form>
-                {codeSent && <div className="mt-2 flex justify-between gap-2 text-xs">
-                  <button type="button" className="underline" disabled={busy} onClick={() => { setCodeSent(false); setAccessCode(""); }}>Alterar e-mail</button>
-                  <button type="button" className="underline" disabled={busy} onClick={() => { void sendAccessCode({ preventDefault: () => {} } as FormEvent); }}>Reenviar código</button>
-                </div>}
+                {linkSent && <p role="status" className="mt-2 text-center text-sm font-semibold text-white">Confira sua caixa de entrada e o spam. Abra o e-mail do Netinho e clique em “Log In” para entrar. Você pode voltar a esta página depois.</p>}
                 <p className="mt-2 text-center text-xs text-slate-200">Não é necessário ter conta Google. O acesso às funções depende do seu perfil.</p>
               </div>
               <button type="button" className="mt-2 text-xs font-semibold text-white underline" onClick={() => setShowLogin((value) => !value)}>
@@ -360,7 +337,7 @@ function AuthPage() {
                     Preparando suas opções de vendas e catálogos.
                   </p>
                 </div>
-                <button onClick={logout} className="icon-button" aria-label="Trocar conta Google">
+                <button onClick={logout} className="icon-button" aria-label="Trocar conta">
                   <LogOut size={20} />
                 </button>
               </div>
