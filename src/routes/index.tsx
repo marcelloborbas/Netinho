@@ -40,9 +40,12 @@ function Home() {
           <h1 className="text-4xl font-bold sm:text-5xl">
             {greeting(firstName || "Visitante")}
           </h1>
-          <span className="home-attribution-badge">
-            {role}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="home-attribution-badge">{role}</span>
+            <Link to="/admin" aria-label="Abrir Administração" title="Administração (requer autorização)" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-400/70 bg-slate-900/80 text-amber-300 shadow-md transition-transform hover:scale-110">
+              <Settings size={20} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
         <PromotionBanner />
