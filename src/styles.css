@@ -1751,3 +1751,47 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
 @media (min-width: 640px) {
   .home-page .journey-choice > nav { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
 }
+
+
+/* Corrige corte dos botões no celular e garante espaço até o menu fixo. */
+.home-page { min-height: 100dvh !important; height: auto !important; overflow: visible !important; }
+.home-page > main {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
+}
+.home-page .journey-choice {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 245px !important;
+  margin-bottom: 26px !important;
+  padding: 16px 12px 20px !important;
+}
+.home-page .journey-choice > nav {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  grid-auto-rows: minmax(98px, auto) !important;
+}
+.home-page .journey-choice > nav > .home-action-card {
+  min-height: 98px !important;
+}
+.home-page .promotion-banner .campaign-pointing-hand {
+  display: block !important;
+  position: absolute !important;
+  top: -42px !important;
+  right: -9px !important;
+  width: 52px !important;
+  height: 52px !important;
+  max-width: none !important;
+  object-fit: contain !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 50 !important;
+}
+@media (max-width: 640px) {
+  .home-page .journey-choice { margin-top: 60px !important; }
+}
