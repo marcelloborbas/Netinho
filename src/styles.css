@@ -2181,3 +2181,30 @@ html, body { max-width: 100%; overflow-x: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .home-page .promotion-banner .campaign-pointing-hand { animation: none !important; }
 }
+
+
+/* Mãozinha acima do cabeçalho do site, sem cobrir o selo FCO. */
+.home-page { position: relative !important; isolation: isolate !important; }
+.home-page > .brand-header { position: relative !important; z-index: 1 !important; }
+.home-page > main { position: relative !important; z-index: 2 !important; }
+.home-page .promotion-banner,
+.home-page .promotion-banner-copy,
+.home-page .promotion-banner .promotion-campaign-link { overflow: visible !important; }
+.home-page .promotion-banner .campaign-pointing-hand {
+  top: -128px !important;
+  right: auto !important;
+  left: 50% !important;
+  width: 48px !important;
+  height: 48px !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+  animation: fco-hand-soft-pulse 1.9s ease-in-out infinite !important;
+}
+@media (max-width: 639px) {
+  .home-page .promotion-banner .campaign-pointing-hand {
+    top: -118px !important;
+    left: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
