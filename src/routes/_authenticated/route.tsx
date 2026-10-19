@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Home,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
+import { greeting } from "@/components/ProfileAvatar";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 function AppShell() {
   const draft = useDraft();
+  const isAdminPage = useLocation().pathname === "/admin";
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: access } = useQuery({ ...accessQuery, enabled: !!Route.useRouteContext().user, retry: false });
@@ -88,12 +90,10 @@ function AppShell() {
         </button>
       </div>
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
-        <p className="operator-banner">
-          Operando como <strong>{access?.name || access?.email}</strong>
-        </p>
+        <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p>
         <Outlet />
       </main>
-      <BrandFooter />
+      {!isAdminPage && <BrandFooter />}
       {canSell && draft.items.length > 0 && (
         <Link to="/pedido" className="order-dock">
           <span className="flex items-center gap-3">
