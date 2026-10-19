@@ -66,7 +66,7 @@ function AppShell() {
     navigate({ to: "/auth" });
   }
   return (
-    <div className="flex min-h-screen flex-col pb-36 md:pb-28">
+    <div className={pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
       <BrandHeader />
       <div className="app-navigation-bar">
         <nav aria-label="Navegação da área" className="flex items-center gap-1">
@@ -91,7 +91,7 @@ function AppShell() {
           <LogOut size={18} /> Sair
         </button>
       </div>
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
+      <main className={pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
         {!hideFooter || pathname !== "/admin" ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
         <Outlet />
       </main>
