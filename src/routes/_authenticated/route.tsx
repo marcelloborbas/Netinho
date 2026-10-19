@@ -11,7 +11,7 @@ import {
   Contact,
 } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
-import { BrandFooter } from "@/components/BrandFooter";
+
 import { greeting } from "@/components/ProfileAvatar";
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
@@ -95,7 +95,6 @@ function AppShell() {
         {!hideFooter || pathname !== "/admin" ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
         <Outlet />
       </main>
-      {!hideFooter && <BrandFooter />}
       {canSell && draft.items.length > 0 && (
         <Link to="/pedido" className="order-dock">
           <span className="flex items-center gap-3">
