@@ -45,7 +45,7 @@ export const PROMOTIONS = [
     "application": "Corsa 1994–2002",
     "price": "R$ 262,02",
     "note": "Preço de Campanha",
-    "image": null,
+    "image": "/images/campaign/Caixa-direcao-corsa-wind-94-95-96-97-98-99-2000-mecanica.webp",
     "searchTerm": "FCZC-0005A"
   },
   {
