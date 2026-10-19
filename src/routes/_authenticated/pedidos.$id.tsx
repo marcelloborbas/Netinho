@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FileDown, Repeat, Mail, MessageCircle } from "lucide-react";
+import { FileDown, FileSpreadsheet, Repeat, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery, orderQuery, productsQuery } from "@/lib/queries";
 import { BRAND, ORDER_STATUS, brl, termLabel, type PaymentTerm } from "@/lib/brand";
 import { downloadOrderPdf } from "@/lib/pdf";
+import { downloadOrderXlsx } from "@/lib/xlsx";
 import { draftActions } from "@/lib/order-store";
 import { Button } from "@/components/ui/button";
 import {
@@ -191,6 +192,9 @@ function OrderDetail() {
           onClick={() => downloadOrderPdf(order, items, sellerName)}
         >
           <FileDown className="h-4 w-4" /> PDF
+        </Button>
+        <Button variant="secondary" className="h-12" onClick={() => void downloadOrderXlsx(order, items, sellerName).catch(() => toast.error("Não foi possível gerar o Excel."))}>
+          <FileSpreadsheet className="h-4 w-4" /> Excel
         </Button>
         <Button variant="secondary" className="h-12" asChild>
           <a
