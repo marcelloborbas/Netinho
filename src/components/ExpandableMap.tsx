@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Maximize2, X } from "lucide-react";
 
-type Props = { src: string; alt: string };
+type Props = { src: string; alt: string; focus?: "sorocaba" | "vale" };
 
-export function ExpandableMap({ src, alt }: Props) {
+export function ExpandableMap({ src, alt, focus }: Props) {
   const [open, setOpen] = useState(false);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -19,7 +19,7 @@ export function ExpandableMap({ src, alt }: Props) {
     </button>
     {open && <div role="dialog" aria-modal="true" aria-label="Mapa ampliado" className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-3" onClick={() => setOpen(false)}>
       <button type="button" onClick={() => setOpen(false)} aria-label="Fechar mapa ampliado" className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 text-slate-900"><X size={24}/></button>
-      <img src={src} alt={alt} className="max-h-[92vh] max-w-full object-contain" onClick={(event) => event.stopPropagation()} />
+      <div className="relative h-[80vh] w-[95vw] max-w-5xl overflow-hidden rounded-lg bg-white" onClick={(event) => event.stopPropagation()}><img src={src} alt={alt} className="absolute h-full w-full object-contain" style={focus ? { transform: focus === "vale" ? "scale(2.35)" : "scale(2.15)", transformOrigin: focus === "vale" ? "88% 63%" : "60% 66%" } : undefined} /><span className="absolute bottom-3 left-3 rounded bg-slate-900/85 px-3 py-2 text-xs font-bold text-white">Região de atuação ampliada</span></div>
     </div>}
   </>;
 }
