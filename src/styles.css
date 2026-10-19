@@ -1795,3 +1795,36 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
 @media (max-width: 640px) {
   .home-page .journey-choice { margin-top: 60px !important; }
 }
+
+
+/* Navegação unificada em todos os cabeçalhos. */
+.brand-header-inner { flex-wrap: wrap !important; }
+.brand-header-menu {
+  display: flex;
+  flex: 0 0 100%;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px 0 3px;
+  width: 100%;
+}
+.brand-header-menu-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px clamp(8px, 2vw, 16px);
+  border-radius: 8px;
+  color: #fff !important;
+  font-size: clamp(11px, 2.8vw, 14px);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-header-menu-link:hover,
+.brand-header-menu-link.is-active { background: #244c80; color: #ffe29b !important; }
+@media (max-width: 370px) {
+  .brand-header-menu { gap: 1px; }
+  .brand-header-menu-link { padding-inline: 7px; font-size: 11px; }
+}
