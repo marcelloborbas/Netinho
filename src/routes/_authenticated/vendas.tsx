@@ -1,14 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { Search, Plus, Minus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches } from "@/lib/queries";
 import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
 import { brl } from "@/lib/brand";
+import { readOffers, type Offer } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/vendas")({
-  validateSearch: (s: Record<string, unknown>) => ({ modo: s.modo === "consulta" ? "consulta" as const : "venda" as const, q: typeof s.q === "string" ? s.q : "" }),
+  validateSearch: (s: Record<string, unknown>) => ({ modo: s.modo === "consulta" ? "consulta" as const : "venda" as const, q: typeof s.q === "string" ? s.q : "", promo: typeof s.promo === "string" ? s.promo : "" }),
   head: () => ({ meta: [{ title: "Vendas e Orçamentos | Netinho Auto Parts" }] }),
   component: SalesPage,
 });
@@ -18,21 +19,35 @@ function SalesPage() {
   const draft = useDraft();
   const { data: customers = [], isLoading: loadingCustomers } = useQuery(customersQuery);
   const { data: products = [], isLoading: loadingProducts } = useQuery(productsQuery);
-  const [q, setQ] = useState(search.q);
+  const [q, setQ] = useState(search.q || search.promo);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const appliedPromo = useRef<string | null>(null);
+  useEffect(() => { readOffers().then(setOffers).catch(() => toast.error("Não foi possível carregar os preços da campanha.")); }, []);
+  useEffect(() => {
+    if (!search.promo || appliedPromo.current === search.promo || !offers.length) return;
+    const offer = offers.find(([code]) => code.toUpperCase() === search.promo.toUpperCase());
+    if (!offer) { toast.error("Produto promocional não encontrado."); return; }
+    appliedPromo.current = search.promo;
+    const [code, application, price] = offer;
+    draftActions.update({ kind: "pedido", paymentTerm: "30_45_60" });
+    draftActions.addItem({ productId: `fco-campaign-${code}`, code, category: "Caixas de direção · Promoção FCO", application, prices: { cash: null, "30": null, "30_45_60": price, "30_45_60_75": null }, quantity: 1 });
+    toast.success(`Peça ${code} adicionada ao pedido com preço promocional.`);
+  }, [offers, search.promo]);
   const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const term = useDeferredValue(q);
-  const matches = useMemo(() => products.filter((p) =>
+  const campaignProducts = useMemo(() => offers.filter(([code]) => !products.some((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO")).map(([code, application, price, stock]) => ({ id: `fco-campaign-${code}`, code, application, manufacturer: "FCO", categories: { name: "Caixas de direção" }, price_cash: null, price_30: null, price_30_45_60: price, price_30_45_60_75: null, stock })), [offers, products]);
+  const matches = useMemo(() => [...products, ...campaignProducts].filter((p) =>
     (brand === "all" || (p.manufacturer ?? "FCO") === brand) && productMatches(p, term)
-  ), [products, brand, term]);
+  ), [products, campaignProducts, brand, term]);
   const kind = draft.items.length || draft.customerId ? draft.kind : (search.modo === "consulta" ? "orcamento" : "pedido");
   const selected = customers.find((c) => c.id === draft.customerId);
   const total = draftTotals(draft);
   function setKind(next: "pedido" | "orcamento") {
     draftActions.update({ kind: next });
   }
-  function add(p: (typeof products)[number]) {
+  function add(p: (typeof matches)[number]) {
     if (!draft.customerId) { toast.error("Identifique o cliente antes de adicionar peças."); return; }
     const prices = {
       cash: p.price_cash,
@@ -43,6 +58,7 @@ function SalesPage() {
     if (Object.values(prices).every((v) => v == null)) {
       toast.error("Peça sem preço cadastrado. Consulte a distribuidora."); return;
     }
+    if (p.id.startsWith("fco-campaign-")) draftActions.update({ paymentTerm: "30_45_60" });
     draftActions.addItem({
       productId: p.id, code: p.code, category: p.categories?.name ?? "Peça automotiva",
       application: p.application ?? "", prices, quantity: quantities[p.id] ?? 1,
@@ -64,11 +80,12 @@ function SalesPage() {
           </button>)}
       </div>
       <h2 className="font-extrabold text-[#102a52]">2. Identificar cliente</h2>
+      {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça promocional {search.promo} incluída no rascunho. Selecione o cliente para continuar.</p>}
       <select aria-label="Selecionar cliente" value={draft.customerId ?? ""} onChange={(e) => {
         const c = customers.find((x) => x.id === e.target.value);
         if (c) draftActions.update({ customerId: c.id, customerName: c.trade_name || c.company_name, buyer: c.buyer ?? "", carrier: c.carrier ?? "", kind });
       }} className="min-h-12 w-full rounded-xl border border-[#a7c1e5] bg-[#f7faff] px-3 text-[#102a52]">
-        <option value="">{loadingCustomers ? "Carregando clientes..." : "Selecione um cliente antes de adicionar peças"}</option>
+        <option value="">{loadingCustomers ? "Carregando clientes..." : "Selecione o cliente para finalizar o pedido"}</option>
         {customers.map((c) => <option key={c.id} value={c.id}>{c.trade_name || c.company_name}</option>)}
       </select>
       <div className="flex items-center justify-between gap-2">
@@ -96,7 +113,7 @@ function SalesPage() {
           <div className="min-w-0 flex-1">
             <p className="font-extrabold text-[#102a52]">{p.code} · {p.manufacturer ?? "FCO"}</p>
             <p className="line-clamp-2 text-xs">{p.application}</p>
-            <p className="mt-1 text-sm font-bold text-[#174e9b]">{p.price_cash != null ? `À vista: ${brl(p.price_cash)}` : "Consulte valores"}</p>
+            <p className="mt-1 text-sm font-bold text-[#174e9b]">{p.price_cash != null ? `À vista: ${brl(p.price_cash)}` : p.price_30_45_60 != null ? `30/45/60 dias: ${brl(p.price_30_45_60)}` : "Consulte valores"}</p>
           </div>
           <div className="flex shrink-0 flex-col items-center gap-2">
             <div className="flex items-center gap-1 rounded-xl border border-[#a7c1e5] bg-white p-1" aria-label={`Quantidade de ${p.code}`}>
