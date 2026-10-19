@@ -77,10 +77,6 @@ function Home() {
                     <p className="mt-2 text-xs text-muted-foreground">Histórico, PDF e envio</p>
                   </Link>
                 </div>
-                <p className="home-sales-steps mt-2 text-sm text-muted-foreground">
-                  Cliente → Peças → Editar e revisar → Registrar → Enviar para{" "}
-                  <strong className="text-foreground">{BRAND.orderEmail}</strong>.
-                </p>
           </section>
         </div>
         {access?.level === 1 && (
