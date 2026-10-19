@@ -38,14 +38,14 @@ const localHd = hdCatalog.map((p) => ({
 function Catalog() {
   const search = Route.useSearch();
   const [q, setQ] = useState(search.q ?? "");
-  const [manufacturer, setManufacturer] = useState(search.marca ?? "all");
+  const [manufacturer, setManufacturer] = useState(search.marca === "HD" ? "all" : (search.marca ?? "all"));
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
-    setManufacturer(search.marca ?? "all");
+    setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all"));
     setQ(search.q ?? "");
     setPage(1);
   }, [search.marca, search.q]);
@@ -64,7 +64,7 @@ function Catalog() {
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
   const list = useMemo(() => combined.filter((p) =>
-    (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq),
+    p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq),
   ), [combined, manufacturer, dq]);
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
@@ -80,9 +80,9 @@ function Catalog() {
       <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Pesquisar catálogo">
         <nav aria-label="Selecionar fabricante" className="grid grid-cols-3 gap-2">
           {([["all", "Geral"], ["FCO", "FCO"], ["HD", "HD"]] as const).map(([value, label]) => (
-            <button key={value} type="button" aria-pressed={manufacturer === value}
-              className={`min-h-12 rounded-xl border px-2 text-base font-extrabold shadow-sm transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${manufacturer === value ? (value === "all" ? "border-[#174e9b] bg-[#174e9b] text-white" : "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset") : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52] hover:bg-[#dbeafe]"}`}
-              onClick={() => { setManufacturer(value); setPage(1); }}>{value === "all" ? label : <img src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"} alt={`Logomarca ${label}`} className="mx-auto h-9 w-full max-w-28 object-contain" />}</button>
+            <button key={value} type="button" disabled={value === "HD"} aria-label={value === "HD" ? "HD Embreagens — em breve" : label} aria-pressed={manufacturer === value}
+              className={`relative min-h-12 rounded-xl border px-2 ${value === "HD" ? "cursor-not-allowed bg-zinc-200 grayscale opacity-65" : ""} text-base font-extrabold shadow-sm transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${manufacturer === value ? (value === "all" ? "border-[#174e9b] bg-[#174e9b] text-white" : "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset") : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52] hover:bg-[#dbeafe]"}`}
+              onClick={() => { if (value === "HD") return; setManufacturer(value); setPage(1); }}>{value === "all" ? label : <img src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"} alt={`Logomarca ${label}`} className="mx-auto h-9 w-full max-w-28 object-contain" />}{value === "HD" && <span className="block text-xs font-extrabold text-zinc-700">Em breve</span>}</button>
           ))}
         </nav>
         <div className="relative">
@@ -119,6 +119,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
   const [details, setDetails] = useState(false);
   const navigate = useNavigate();
   function buy() {
+    if (p.manufacturer === "HD") { toast.info("HD Embreagens: em breve."); return; }
     const prices = { cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
     if (Object.values(prices).every((value) => value == null)) {
       toast.info("Peça sem preço cadastrado. Consulte a distribuidora.");
