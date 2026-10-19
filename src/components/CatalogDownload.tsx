@@ -45,8 +45,8 @@ export function CatalogDownload({
     }
   }
   return (
-    <button type="button" className={className} disabled={busy} onClick={download}>
-      {busy ? "Baixando..." : page ? `Baixar catálogo · pág. ${page}` : `Baixar PDF ${brand}`}
+    <button type="button" className={className} disabled={busy} onClick={download} aria-label={`Baixar catálogo PDF ${name ?? brand}`} title={`Baixar catálogo PDF ${name ?? brand}`}>
+      {iconOnly && image ? <img src={image} alt={name ?? brand} style={{ width: "100%", height: "100%", objectFit: "contain" }} /> : busy ? "Baixando..." : page ? `Baixar catálogo · pág. ${page}` : `Baixar PDF ${brand}`}
     </button>
   );
 }
