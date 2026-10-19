@@ -5,6 +5,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, LockKeyhole, Pencil } from "lucide-react";
 import { BrandPageLayout } from "@/components/BrandPageLayout";
+import { ExpandableMap } from "@/components/ExpandableMap";
 
 export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
@@ -21,8 +22,8 @@ export const Route = createFileRoute("/representante-livaldo")({
 const cities = [{"name":"Sorocaba","x":475,"y":285},{"name":"Votorantim","x":466,"y":349},{"name":"Araçoiaba da Serra","x":389,"y":319},{"name":"Alumínio","x":543,"y":316},{"name":"Mairinque","x":549,"y":285},{"name":"São Roque","x":614,"y":324},{"name":"Ibiúna","x":577,"y":434},{"name":"Piedade","x":469,"y":437},{"name":"Salto","x":526,"y":167},{"name":"Itu","x":531,"y":218},{"name":"Porto Feliz","x":447,"y":188},{"name":"Boituva","x":372,"y":238},{"name":"Tatuí","x":304,"y":242},{"name":"Cerquilho","x":359,"y":167},{"name":"Tietê","x":349,"y":113},{"name":"Jumirim","x":337,"y":129},{"name":"Capela do Alto","x":350,"y":285},{"name":"Iperó","x":376,"y":266},{"name":"Salto de Pirapora","x":414,"y":372},{"name":"Pilar do Sul","x":357,"y":473},{"name":"São Miguel Arcanjo","x":249,"y":491},{"name":"Tapiraí","x":417,"y":530},{"name":"Itapetininga","x":178,"y":373},{"name":"Alambari","x":300,"y":327},{"name":"Sarapuí","x":331,"y":377},{"name":"Cesário Lange","x":286,"y":175}];
 function SorocabaMap() {
   return <div className="space-y-3">
-    <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-white">
-      <img src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa de São Paulo fornecido pelo usuário, com pontos vermelhos na região de Sorocaba" className="block h-auto w-full" />
+    <div className="relative mx-auto w-full max-w-4xl">
+      <ExpandableMap src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa de atuação de Livaldo em Sorocaba e região" />
       <svg viewBox="0 0 850 606" className="hidden" preserveAspectRatio="none" role="img" aria-label="Pontos vermelhos nas cidades atendidas">
         {cities.map(city => <circle key={city.name} cx={city.x} cy={city.y} r="5" fill="#dc2626" stroke="white" strokeWidth="1.6"><title>{city.name}</title></circle>)}
       </svg>
