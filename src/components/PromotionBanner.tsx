@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Megaphone, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Megaphone, ShoppingCart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const PROMOTIONS = [
@@ -77,7 +77,7 @@ export function PromotionBanner() {
     if (paused) return;
     const timer = window.setInterval(() => {
       setActive((current) => (current + 1) % PROMOTIONS.length);
-    }, 5000);
+    }, 3500);
     return () => window.clearInterval(timer);
   }, [paused]);
 
@@ -121,11 +121,6 @@ export function PromotionBanner() {
             <span className="text-sm font-extrabold sm:text-lg">{promotion.code}</span>
           </div>
         )}
-      </div>
-      <div className="promotion-banner-arrows" aria-label="Navegar entre ofertas">
-        <button type="button" aria-label="Oferta anterior" onClick={() => setActive((current) => (current - 1 + PROMOTIONS.length) % PROMOTIONS.length)}><ChevronLeft size={22} /></button>
-        <span aria-live="polite">{active + 1} / {PROMOTIONS.length}</span>
-        <button type="button" aria-label="Próxima oferta" onClick={() => setActive((current) => (current + 1) % PROMOTIONS.length)}><ChevronRight size={22} /></button>
       </div>
     </section>
   );
