@@ -21,13 +21,7 @@ export function CatalogDownload({
     if (busy) return;
     setBusy(true);
     try {
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
-      if (authError || !user || user.is_anonymous)
-        throw new Error("Faça login para baixar o catálogo.");
-      const filename = `${brand.toLowerCase()}-catalogo.pdf`;
+const filename = `${brand.toLowerCase()}-catalogo.pdf`;
       const { data, error } = await supabase.storage.from("catalogs").download(filename);
       if (error || !data) throw new Error("Não foi possível baixar o catálogo. Tente novamente.");
       const url = URL.createObjectURL(data);
