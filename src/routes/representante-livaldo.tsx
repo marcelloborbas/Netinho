@@ -12,7 +12,7 @@ export const Route = createFileRoute("/representante-livaldo")({
     { title: "Livaldo Souza Silva — Representante Comercial | Netinho" },
     { name: "description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua área de atuação em Sorocaba e região pela Netinho." },
     { property: "og:title", content: "Livaldo Souza Silva — Representante Comercial | Netinho" },
-    { property: "og:description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua cobertura nacional pela Netinho." },
+    { property: "og:description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua atuação em Sorocaba e região pela Netinho." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -22,7 +22,7 @@ const cities = [{"name":"Sorocaba","x":475,"y":285},{"name":"Votorantim","x":466
 function SorocabaMap() {
   return <div className="space-y-3">
     <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-white">
-      <img src="/mapa_livaldo_sorocaba.webp" alt="Mapa de São Paulo fornecido pelo usuário, com pontos vermelhos na região de Sorocaba" className="block h-auto w-full" />
+      <img src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa de São Paulo fornecido pelo usuário, com pontos vermelhos na região de Sorocaba" className="block h-auto w-full" />
       <svg viewBox="0 0 850 606" className="hidden" preserveAspectRatio="none" role="img" aria-label="Pontos vermelhos nas cidades atendidas">
         {cities.map(city => <circle key={city.name} cx={city.x} cy={city.y} r="5" fill="#dc2626" stroke="white" strokeWidth="1.6"><title>{city.name}</title></circle>)}
       </svg>
