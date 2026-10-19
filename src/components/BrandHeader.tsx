@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
-import { CatalogDownload } from "@/components/CatalogDownload";
+import { PartnerLogos } from "@/components/PartnerLogos";
 
 export function BrandHeader() {
   return (
@@ -11,11 +11,7 @@ export function BrandHeader() {
         </Link>
         <div className="brand-header-representations">
           <p>Representante Oficial</p>
-          <div className="partner-logos partner-logos-compact" aria-label="Baixar catálogos">
-            {([{ brand: "FCO", image: "/images/brands/fco.webp", name: "FCO Automotive" }, { brand: "HD", image: "/images/brands/hd.png", name: "HD Embreagens" }] as const).map(item => (
-              <CatalogDownload key={item.brand} brand={item.brand} className="partner-logo" iconOnly image={item.image} name={item.name} />
-            ))}
-          </div>
+          <PartnerLogos compact downloads linked={false} />
         </div>
       </div>
     </header>
