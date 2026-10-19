@@ -21,6 +21,7 @@ function SalesPage() {
   const [q, setQ] = useState("");
   const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
   const [page, setPage] = useState(1);
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const term = useDeferredValue(q);
   const matches = useMemo(() => products.filter((p) =>
     (brand === "all" || (p.manufacturer ?? "FCO") === brand) && productMatches(p, term)
@@ -44,7 +45,7 @@ function SalesPage() {
     }
     draftActions.addItem({
       productId: p.id, code: p.code, category: p.categories?.name ?? "Peça automotiva",
-      application: p.application ?? "", prices, quantity: 1,
+      application: p.application ?? "", prices, quantity: quantities[p.id] ?? 1,
     });
     toast.success("Peça adicionada ao " + (kind === "pedido" ? "pedido." : "orçamento."));
   }
@@ -97,19 +98,18 @@ function SalesPage() {
             <p className="line-clamp-2 text-xs">{p.application}</p>
             <p className="mt-1 text-sm font-bold text-[#174e9b]">{p.price_cash != null ? `À vista: ${brl(p.price_cash)}` : "Consulte valores"}</p>
           </div>
-          {(() => {
-            const item = draft.items.find((i) => i.productId === p.id);
-            return item ? (
-              <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[#a7c1e5] bg-white p-1" aria-label={`Quantidade de ${p.code}`}>
-                <button type="button" disabled={item.quantity <= 1} onClick={() => draftActions.updateItem(p.id, { quantity: Math.max(1, item.quantity - 1) })} aria-label={`Diminuir uma unidade de ${p.code}`} className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52] disabled:opacity-40"><Minus size={18}/></button>
-                <span aria-live="polite" className="min-w-8 text-center text-base font-extrabold text-[#102a52]">{item.quantity}</span>
-                <button type="button" onClick={() => draftActions.updateItem(p.id, { quantity: item.quantity + 1 })} aria-label={`Adicionar uma unidade de ${p.code}`} className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52]"><Plus size={18}/></button>
-              </div>
-            ) : (
-              <button type="button" disabled={!draft.customerId} onClick={() => add(p)} aria-label={`Adicionar ${p.code}`}
-                className="flex min-h-11 shrink-0 items-center gap-1 rounded-xl border border-[#174e9b] bg-[#eaf2ff] px-3 font-bold text-[#102a52] disabled:cursor-not-allowed disabled:opacity-40"><Plus size={18}/> Adicionar</button>
-            );
-          })()}
+          <div className="flex shrink-0 flex-col items-center gap-2">
+            <div className="flex items-center gap-1 rounded-xl border border-[#a7c1e5] bg-white p-1" aria-label={`Quantidade de ${p.code}`}>
+              <button type="button" disabled={(quantities[p.id] ?? 1) <= 1}
+                onClick={() => setQuantities((old) => ({ ...old, [p.id]: Math.max(1, (old[p.id] ?? 1) - 1) }))}
+                aria-label={`Diminuir quantidade de ${p.code}`} className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52] disabled:opacity-40"><Minus size={17}/></button>
+              <span aria-live="polite" className="min-w-7 text-center font-extrabold text-[#102a52]">{quantities[p.id] ?? 1}</span>
+              <button type="button" onClick={() => setQuantities((old) => ({ ...old, [p.id]: (old[p.id] ?? 1) + 1 }))}
+                aria-label={`Aumentar quantidade de ${p.code}`} className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52]"><Plus size={17}/></button>
+            </div>
+            <button type="button" disabled={!draft.customerId} onClick={() => add(p)} aria-label={`Adicionar ${p.code} ao pedido`}
+              className="flex min-h-10 w-full items-center justify-center gap-1 rounded-xl border border-[#174e9b] bg-[#eaf2ff] px-2 text-sm font-bold text-[#102a52] disabled:cursor-not-allowed disabled:opacity-40"><Plus size={16}/> Adicionar</button>
+          </div>
         </li>)}
       </ul>
       {matches.length > 12 && <div className="flex items-center justify-center gap-3">
