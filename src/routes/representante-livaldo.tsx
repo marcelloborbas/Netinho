@@ -22,15 +22,15 @@ const cities = [{"name":"Sorocaba","x":475,"y":285},{"name":"Votorantim","x":466
 function SorocabaMap() {
   return <div className="space-y-3">
     <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-xl border bg-white">
-      <img src="/Mapa%20Infogr%C3%A1fico%20dos%20Munic%C3%ADpios%20Paulistas%20Livaldo.webp" alt="Região Metropolitana de Sorocaba dividida em três sub-regiões" className="block h-auto w-full" />
-      <svg viewBox="0 0 850 606" className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="none" role="img" aria-label="Pontos vermelhos nas cidades atendidas">
+      <img src="https://www3.al.sp.gov.br/repositorio/noticia/N-05-2024/fg323690.jpg" alt="Mapa da Região Metropolitana de Sorocaba, fonte Assembleia Legislativa de São Paulo" className="block h-auto w-full" />
+      <svg viewBox="0 0 850 606" className="hidden" preserveAspectRatio="none" role="img" aria-label="Pontos vermelhos nas cidades atendidas">
         {cities.map(city => <circle key={city.name} cx={city.x} cy={city.y} r="5" fill="#dc2626" stroke="white" strokeWidth="1.6"><title>{city.name}</title></circle>)}
       </svg>
     </div>
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
       {cities.map(city => <div key={city.name} className="flex items-center gap-2 rounded-lg border p-2 text-sm"><span className="h-3 w-3 shrink-0 rounded-full bg-red-600" />{city.name}</div>)}
     </div>
-    <p className="text-xs text-muted-foreground">Pontos vermelhos indicam a localização aproximada dos municípios no mapa fornecido. Região de Sorocaba e entorno (DDD 015).</p>
+    <p className="text-xs text-muted-foreground">As cidades atendidas estão identificadas na relação abaixo. Mapa regional: Assembleia Legislativa do Estado de São Paulo.</p>
   </div>;
 }
 
