@@ -33,71 +33,21 @@ function Home() {
           ? savedRole
           : "Visitante";
   return (
-    <div className="home-page flex min-h-screen flex-col" style={{ height: "100svh", minHeight: "100svh", overflow: "hidden", paddingBottom: 0 }}>
+    <div className="home-page flex min-h-screen flex-col" style={{ minHeight: "100svh" }}>
       <BrandHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 12, overflow: "hidden", minHeight: 0, padding: "8px 12px" }}>
-        <div className="home-greeting-row" style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: 10, textAlign: "center" }}>
-          <h1 className="text-4xl font-bold sm:text-5xl">
-            {greeting(firstName || "Visitante")}
-          </h1>
-          <div className="flex items-center justify-center gap-2">
-            <Link to="/admin" aria-label="Abrir Administração" title="Administração (requer autorização)" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-400/70 bg-slate-900/80 text-amber-300 shadow-md transition-transform hover:scale-110">
-              <Settings size={20} aria-hidden="true" />
-            </Link>
-            <span className="home-attribution-badge" style={{ fontSize: 17, fontWeight: 800 }}>{role}</span>
-          </div>
-        </div>
-        <p className="mt-2 text-center text-xl text-muted-foreground">O que deseja fazer?</p>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "flex", flexDirection: "column", gap: 16, padding: "20px 12px" }}>
+        <h1 className="text-center text-xl font-bold text-amber-300 sm:text-3xl">O que o Sr. deseja fazer?</h1>
+        <nav aria-label="Escolha uma ação" className="grid w-full max-w-xl grid-cols-2 gap-3 self-center">
+          <Link to="/catalogo" search={{ modo: access?.can_sell || access?.level === 1 ? "venda" : "consulta" }} className="action-card flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-amber-400/50 text-center">
+            <ShoppingCart className="h-8 w-8 text-amber-300" />
+            <span className="font-bold">Vender</span>
+          </Link>
+          <Link to="/catalogo" search={{ modo: "consulta" }} className="action-card flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-amber-400/50 text-center">
+            <FilePenLine className="h-8 w-8 text-amber-300" />
+            <span className="font-bold">Orçamento</span>
+          </Link>
+        </nav>
         <PromotionBanner />
-        <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0, 1fr)", marginTop: 8, marginBottom: 8 }}>
-          <section className="journey-choice" aria-labelledby="selling-title" style={{ width: "100%", minHeight: 0, padding: 12 }}>
-            <div className="home-panel-heading">
-              <div>
-                <h2 id="selling-title">Vender</h2>
-                <p>Tudo preparado para sua próxima venda</p>
-              </div>
-              <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
-            </div>
-                <div className="home-sales-actions mt-2 grid grid-cols-2 gap-3" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-                  <Link to={access?.can_sell || access?.level === 1 ? "/clientes" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? {} : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Clientes" : "Consulte o catálogo; operações comerciais exigem autorização"}>
-                    <Users className="text-primary" />
-                    <h3 className="mt-4 font-bold">Clientes</h3>
-                    <p className="mt-2 text-xs text-muted-foreground">Cadastrar ou selecionar</p>
-                  </Link>
-                  <Link to="/catalogo" search={{ modo: access?.can_sell || access?.level === 1 ? "venda" : "consulta" }} className="action-card">
-                    <ShoppingCart className="text-primary" />
-                    <h3 className="mt-4 font-bold">Montar venda</h3>
-                    <p className="mt-2 text-xs text-muted-foreground">Escolher peças e condições</p>
-                  </Link>
-                  <Link to={access?.can_sell || access?.level === 1 ? "/pedido" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? {} : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Editar e revisar" : "Consulte o catálogo; operações comerciais exigem autorização"}>
-                    <FilePenLine className="text-primary" />
-                    <h3 className="mt-4 font-bold">Editar e revisar</h3>
-                    <p className="mt-2 text-xs text-muted-foreground">Conferir pedido atual</p>
-                  </Link>
-                  <Link to={access?.can_sell || access?.level === 1 ? "/pedidos" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? {} : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Meus pedidos" : "Consulte o catálogo; operações comerciais exigem autorização"}>
-                    <ClipboardList className="text-primary" />
-                    <h3 className="mt-4 font-bold">Meus pedidos</h3>
-                    <p className="mt-2 text-xs text-muted-foreground">Histórico, PDF e envio</p>
-                  </Link>
-                </div>
-          </section>
-        </div>
-        {access?.level === 1 && (
-          <section className="journey-choice mt-5" aria-labelledby="admin-home-title">
-            <div className="home-panel-heading">
-              <div><h2 id="admin-home-title">Administração e cadastros</h2><p>Gerencie os cadastros e as operações comerciais.</p></div>
-              <span className="home-panel-icon"><ShieldCheck size={22} /></span>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <Link to="/admin" className="action-card"><Settings className="text-primary" /><h3 className="mt-2 font-bold">Painel geral</h3><p className="text-xs text-muted-foreground">Autorizações e produtos</p></Link>
-              <Link to="/representantes" className="action-card"><MapPinned className="text-primary" /><h3 className="mt-2 font-bold">Representantes</h3><p className="text-xs text-muted-foreground">Fichas e mapas</p></Link>
-              <Link to="/distribuidoras" className="action-card"><Truck className="text-primary" /><h3 className="mt-2 font-bold">Distribuidoras</h3><p className="text-xs text-muted-foreground">Fornecedores e produtos</p></Link>
-              <Link to="/vendedores" className="action-card"><Users className="text-primary" /><h3 className="mt-2 font-bold">Vendedores</h3><p className="text-xs text-muted-foreground">Equipe comercial</p></Link>
-              <Link to="/clientes" className="action-card"><Users className="text-primary" /><h3 className="mt-2 font-bold">Clientes</h3><p className="text-xs text-muted-foreground">Cadastros</p></Link>
-              <Link to="/pedidos" className="action-card"><ClipboardList className="text-primary" /><h3 className="mt-2 font-bold">Pedidos</h3><p className="text-xs text-muted-foreground">Acompanhamento</p></Link>
-            </div>
-          </section>
-        )}
       </main>
       <BrandFooter />
     </div>
