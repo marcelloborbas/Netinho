@@ -21,8 +21,8 @@ function Home() {
   const canSell = access?.can_sell === true || access?.level === 1;
   const actions = [
     { label: "Clientes", icon: Users, to: canSell ? "/clientes" : "/auth", search: {} },
-    { label: "Vender", icon: ShoppingCart, to: canSell ? "/clientes" : "/auth", search: {} },
-    { label: "Orçamento", icon: FilePenLine, to: "/catalogo", search: { modo: "consulta" as const } },
+    { label: "Vender", icon: ShoppingCart, to: canSell ? "/catalogo" : "/auth", search: { modo: "venda" as const } },
+    { label: "Orçamento", icon: FilePenLine, to: canSell ? "/catalogo" : "/auth", search: { modo: "consulta" as const } },
     { label: "Meus Pedidos", icon: ClipboardList, to: canSell ? "/pedidos" : "/auth", search: {} },
   ];
   return (
