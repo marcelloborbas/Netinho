@@ -125,11 +125,11 @@ export function PromotionBanner() {
       <Link
         to="/catalogo"
         search={{ modo: "venda", q: promotion.searchTerm }}
-        aria-label={`Comprar peça ${promotion.code}`}
+        aria-label={`Ver peça ${promotion.code}`}
         className="absolute z-20 inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/30 bg-red-600 px-3 py-2 text-xs font-extrabold text-white shadow-lg transition-transform hover:scale-105"
         style={{ right: "clamp(10px, 3%, 22px)", top: "12px", width: "clamp(112px, 32%, 190px)" }}
       >
-        <ShoppingCart size={16} aria-hidden="true" /> Comprar
+        <ShoppingCart size={16} aria-hidden="true" /> Ver
       </Link>
 
       <div
