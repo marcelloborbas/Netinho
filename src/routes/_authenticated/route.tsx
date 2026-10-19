@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated")({
     if (!data.user) return { user: null, access: null };
     if (data.user) draftActions.switchAccount(data.user.id);
     const access = await context.queryClient.fetchQuery(accessQuery);
-    if (location.pathname === "/admin") {
+    if (location.pathname === "/admin" || location.pathname === "/admin-gestao") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
     } else if (location.pathname !== "/catalogo" && !selectedProfile(access.email)) throw redirect({ to: "/auth" });
     if (!access.can_sell && access.level !== 1 && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
@@ -38,7 +38,7 @@ function AppShell() {
   const draft = useDraft();
   // Read the location once: hooks must never be called conditionally.
   const pathname = useLocation().pathname;
-  const hideFooter = ["/admin", "/clientes", "/pedidos"].includes(pathname);
+  const hideFooter = ["/admin", "/admin-gestao", "/clientes", "/pedidos"].includes(pathname);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: access } = useQuery({ ...accessQuery, enabled: !!Route.useRouteContext().user, retry: false });
