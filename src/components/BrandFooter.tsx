@@ -16,7 +16,7 @@ export function BrandFooter() {
             <span>{BRAND.phone}</span>
           </a>
         </div>
-        <div className="brand-footer-links" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "10px 18px", fontSize: "clamp(14px, 1.5vw, 17px)", fontWeight: 700 }}>
+        <div className="brand-footer-links" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "10px 18px", fontSize: "clamp(18px, 2.2vw, 23px)", fontWeight: 700 }}>
           <a href={`https://${BRAND.domain}`} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
             <Globe2 size={23} strokeWidth={2.2} color="#38bdf8" aria-hidden="true" />
             {BRAND.domain}
