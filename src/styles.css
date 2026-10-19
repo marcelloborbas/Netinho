@@ -1449,3 +1449,36 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
 .mobile-nav { background: #06152c; }
 .mobile-nav a, .mobile-nav button { color: #fff; }
 .mobile-nav a[aria-current="page"] { color: #facc15; }
+
+/* Contraste dos quatro acessos comerciais sobre a nova página branca. */
+.home-page .journey-choice {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 5px 20px #102a5210;
+}
+.home-page .journey-choice > h2 { color: #102a52 !important; }
+.home-page .home-action-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 96px !important;
+  gap: 8px !important;
+  border: 1px solid #9ebbe2 !important;
+  background: #eaf2ff !important;
+  color: #102a52 !important;
+  box-shadow: 0 3px 10px #102a5217;
+}
+.home-page .home-action-card svg {
+  width: 30px !important;
+  height: 30px !important;
+  color: #1552a0 !important;
+}
+.home-page .home-action-card span {
+  display: block;
+  color: #102a52 !important;
+  font-size: clamp(12px, 1.6vw, 16px) !important;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.home-page .home-action-card:hover { background: #dbeafe !important; border-color: #1552a0 !important; }
