@@ -36,7 +36,9 @@ export const Route = createFileRoute("/_authenticated")({
 });
 function AppShell() {
   const draft = useDraft();
-  const hideFooter = ["/admin", "/clientes", "/pedidos"].includes(useLocation().pathname);
+  // Read the location once: hooks must never be called conditionally.
+  const pathname = useLocation().pathname;
+  const hideFooter = ["/admin", "/clientes", "/pedidos"].includes(pathname);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: access } = useQuery({ ...accessQuery, enabled: !!Route.useRouteContext().user, retry: false });
@@ -90,7 +92,7 @@ function AppShell() {
         </button>
       </div>
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
-        {!hideFooter || useLocation().pathname !== "/admin" ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
+        {!hideFooter || pathname !== "/admin" ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
         <Outlet />
       </main>
       {!hideFooter && <BrandFooter />}
