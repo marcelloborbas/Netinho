@@ -109,14 +109,14 @@ function SalesPage() {
       </div>
       <p className="text-sm font-semibold text-[#102a52]">{loadingProducts ? "Carregando peças..." : `${matches.length} peças encontradas`}</p>
       <ul className="grid gap-3 sm:grid-cols-2">
-        {matches.slice((page-1)*12,page*12).map((p) => <li key={p.id} className="flex min-w-0 items-center gap-3 rounded-xl border border-[#b8cee8] bg-[#f7faff] p-3">
+        {matches.slice((page-1)*12,page*12).map((p) => <li key={p.id} className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#b8cee8] bg-[#f7faff] p-3">
           <div className="min-w-0 flex-1">
             <p className="font-extrabold text-[#102a52]">{p.code} · {p.manufacturer ?? "FCO"}</p>
-            <p className="line-clamp-2 text-xs">{p.application}</p>
+            <p className="whitespace-pre-wrap break-words text-sm leading-6">{p.application}</p>
             <p className="mt-1 text-sm font-bold text-[#174e9b]">{p.price_cash != null ? `À vista: ${brl(p.price_cash)}` : p.price_30_45_60 != null ? `30/45/60 dias: ${brl(p.price_30_45_60)}` : "Consulte valores"}</p>
           </div>
-          <div className="flex shrink-0 flex-col items-center gap-2">
-            <div className="flex items-center gap-1 rounded-xl border border-[#a7c1e5] bg-white p-1" aria-label={`Quantidade de ${p.code}`}>
+          <div className="flex w-full flex-col gap-2 border-t border-[#b8cee8] pt-3">
+            <div className="flex w-fit items-center gap-1 self-center rounded-xl border border-[#a7c1e5] bg-white p-1" aria-label={`Quantidade de ${p.code}`}>
               <button type="button" disabled={(quantities[p.id] ?? 1) <= 1}
                 onClick={() => setQuantities((old) => ({ ...old, [p.id]: Math.max(1, (old[p.id] ?? 1) - 1) }))}
                 aria-label={`Diminuir quantidade de ${p.code}`} className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52] disabled:opacity-40"><Minus size={17}/></button>
@@ -125,7 +125,7 @@ function SalesPage() {
                 aria-label={`Aumentar quantidade de ${p.code}`} className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf2ff] text-[#102a52]"><Plus size={17}/></button>
             </div>
             <button type="button" disabled={!draft.customerId} onClick={() => add(p)} aria-label={`Adicionar ${p.code} ao pedido`}
-              className="flex min-h-10 w-full items-center justify-center gap-1 rounded-xl border border-[#174e9b] bg-[#eaf2ff] px-2 text-sm font-bold text-[#102a52] disabled:cursor-not-allowed disabled:opacity-40"><Plus size={16}/> Adicionar</button>
+              className="flex min-h-11 w-full items-center justify-center gap-1 rounded-xl border border-[#174e9b] bg-[#eaf2ff] px-2 text-sm font-bold text-[#102a52] disabled:cursor-not-allowed disabled:opacity-40"><Plus size={16}/> Adicionar</button>
           </div>
         </li>)}
       </ul>
