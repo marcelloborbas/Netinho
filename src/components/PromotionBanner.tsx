@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Megaphone } from "lucide-react";
+import { Megaphone, ShoppingCart } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const PROMOTIONS = [
   {
@@ -108,6 +109,14 @@ export function PromotionBanner() {
 
       </div>
 
+      <Link
+        to="/catalogo"
+        search={{ modo: "venda", q: promotion.searchTerm }}
+        aria-label={`Comprar peça ${promotion.code}`}
+        className="absolute right-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-lg border border-white/30 bg-red-600 px-3 py-2 text-xs font-extrabold text-white shadow-lg transition-transform hover:scale-105 sm:right-5 sm:top-4"
+      >
+        <ShoppingCart size={16} aria-hidden="true" /> Comprar
+      </Link>
       <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)" }} aria-hidden="true">
         {promotion.image ? (
           <>
