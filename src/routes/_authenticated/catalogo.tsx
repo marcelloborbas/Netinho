@@ -81,7 +81,7 @@ function Catalog() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
   const canSell = (access?.can_sell === true || access?.level === 1) && search.modo !== "consulta";
   const showCustomer = access?.can_sell === true || access?.level === 1;
-  const firstName = access?.name?.trim().split(/\\s+/)[0] || "Usuário";
+  const firstName = access?.name?.trim().split(/\s+/)[0] || "Usuário";
   useEffect(() => {
     setManufacturer(search.marca ?? "all");
     setPage(1);
