@@ -63,7 +63,7 @@ export const PROMOTIONS = [
     "application": "Clio 1990–1998",
     "price": "R$ 263,79",
     "note": "Preço de Campanha",
-    "image": null,
+    "image": "/images/campaign/Caixa-direcao-mecanica-renault-clio-kangoo-10-16-19992017.webp",
     "searchTerm": "FCZF-0019A"
   }
 ] as const;
