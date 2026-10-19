@@ -1653,3 +1653,17 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
 @media (prefers-reduced-motion: reduce) {
   .promotion-banner .campaign-pointing-hand { animation: none; }
 }
+
+
+/* Centralizar o selo clicável FCO na linha superior da campanha. */
+.promotion-banner .promotion-banner-copy { position: relative; }
+.promotion-banner .promotion-campaign-link {
+  display: flex !important;
+  width: max-content !important;
+  max-width: calc(100% - 32px);
+  margin-left: auto !important;
+  margin-right: auto !important;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
