@@ -19,8 +19,8 @@ function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
   const canSell = access?.can_sell === true || access?.level === 1;
   const actions = [
-    { label: "Orçamento", icon: FilePenLine, to: canSell ? "/catalogo" : "/auth", search: { modo: "consulta" as const } },
     { label: "Vender", icon: ShoppingCart, to: canSell ? "/catalogo" : "/auth", search: { modo: "venda" as const } },
+    { label: "Orçamento", icon: FilePenLine, to: canSell ? "/catalogo" : "/auth", search: { modo: "consulta" as const } },
     { label: "Clientes", icon: Users, to: canSell ? "/clientes" : "/auth", search: {} },
     { label: "Meus Pedidos", icon: ClipboardList, to: canSell ? "/pedidos" : "/auth", search: {} },
   ];
