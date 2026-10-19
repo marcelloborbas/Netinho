@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Megaphone, ShoppingCart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
-export const PROMOTIONS = [
+type Promotion = { code: string; title: string; application: string; price: string; note: string; image?: string; searchTerm: string };
+
+export const PROMOTIONS: readonly Promotion[] = [
   {
     "code": "FCZA-0001A",
     "title": "Caixa de Direção Mecânica",
@@ -66,7 +68,7 @@ export const PROMOTIONS = [
     "image": "/images/campaign/Caixa-direcao-mecanica-renault-clio-kangoo-10-16-19992017.webp",
     "searchTerm": "FCZF-0019A"
   }
-] as const;
+];
 
 export function PromotionBanner() {
   const [active, setActive] = useState(0);
