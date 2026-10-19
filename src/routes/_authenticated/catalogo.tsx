@@ -1,10 +1,12 @@
 import { CatalogDownload } from "@/components/CatalogDownload";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart } from "lucide-react";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl } from "@/lib/brand";
+import { draftActions } from "@/lib/order-store";
+import { toast } from "sonner";
 import { partImage } from "@/lib/part-images";
 import hdCatalog from "@/data/hd-catalog.json";
 import { readOffers } from "@/routes/ofertas";
@@ -115,6 +117,31 @@ function Catalog() {
 
 function CatalogCard({ p }: { p: CatalogProduct }) {
   const [details, setDetails] = useState(false);
+  const navigate = useNavigate();
+  function buy() {
+    const prices = { cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
+    if (Object.values(prices).every((value) => value == null)) {
+      toast.info("Peça sem preço cadastrado. Consulte a distribuidora.");
+      void navigate({ to: "/vendas", search: { modo: "venda", q: p.code, promo: "" } });
+      return;
+    }
+    if (p.id.startsWith("fco-campaign-")) {
+      void navigate({ to: "/vendas", search: { modo: "venda", q: p.code, promo: p.code } });
+      return;
+    }
+    if (p.localOnly) {
+      toast.info("Esta peça ainda não está cadastrada para pedidos. Consulte a distribuidora.");
+      void navigate({ to: "/vendas", search: { modo: "venda", q: p.code, promo: "" } });
+      return;
+    }
+    const draft = draftActions.get();
+    if (draft.kind === "orcamento" && draft.items.length > 0 && !window.confirm("Transformar o orçamento em andamento em venda?")) return;
+    const term = prices[draft.paymentTerm] != null ? draft.paymentTerm : (prices.cash != null ? "cash" : prices["30"] != null ? "30" : prices["30_45_60"] != null ? "30_45_60" : "30_45_60_75");
+    draftActions.update({ kind: "pedido", paymentTerm: term });
+    draftActions.addItem({ productId: p.id, code: p.code, category: `${brand} · ${p.categories?.name ?? "Peça automotiva"}`, application: p.application ?? "", prices, quantity: 1 });
+    toast.success(`Peça ${p.code} adicionada à venda.`);
+    void navigate({ to: "/vendas", search: { modo: "venda", q: "", promo: "" } });
+  }
   const brand = p.manufacturer ?? "FCO";
   const img = p.image_url || partImage(p.categories?.name);
   const prices = [
@@ -125,8 +152,13 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
     <div className="product-visual">{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div>
     <div className="flex flex-1 flex-col px-1 pb-2 pt-4">
       <span className="text-xs font-extrabold uppercase tracking-wider text-[#174e9b]">{brand === "HD" ? "HD Embreagens" : "FCO Automotive"}</span>
-      <h2 className="mt-2 text-lg font-extrabold">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
-      <p className="mt-1 text-base font-bold text-muted-foreground">Código: {p.code}</p>
+      <div className="mt-2 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-lg font-extrabold">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
+          <p className="mt-1 break-words text-base font-bold text-muted-foreground">Código: {p.code}</p>
+        </div>
+        <button type="button" onClick={buy} title={`Comprar peça ${p.code}`} aria-label={`Comprar peça ${p.code}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] text-[#174e9b] shadow-sm hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#174e9b]"><ShoppingCart size={23} /></button>
+      </div>
       <p className={`mt-3 text-sm leading-6 ${details ? "" : "line-clamp-3"}`}>{p.application}</p>
       {details && p.refs && <p className="mt-2 text-sm text-muted-foreground">Referências: {p.refs}</p>}
       <button type="button" aria-expanded={details} onClick={() => setDetails(!details)} className="my-3 self-start text-sm font-bold text-[#174e9b] underline">{details ? "Ocultar detalhes" : "Ver aplicações e referências"}</button>
