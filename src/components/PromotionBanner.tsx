@@ -95,7 +95,7 @@ export function PromotionBanner() {
       <div className="promotion-banner-copy" aria-live="polite" aria-atomic="true">
         <Link to="/ofertas" aria-label="Abrir todos os itens promocionais da Campanha de outubro FCO" className="promotion-banner-label promotion-campaign-link">
           <span className="promotion-campaign-icon"><Megaphone size={18} aria-hidden="true" /></span>
-          <span>Campanha de outubro · FCO</span>
+          <span>Campanha de outubro · FCO</span>\n          <span className="campaign-pointing-hand" aria-hidden="true">👆</span>
         </Link>
         <p className="promotion-banner-code">{promotion.code}</p>
         <h2 style={{ maxWidth: "54%", lineHeight: 1.08 }}><span style={{ display: "block", whiteSpace: "nowrap" }}>Caixa de Direção</span><span style={{ display: "block" }}>Mecânica</span></h2>
