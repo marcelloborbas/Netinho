@@ -68,7 +68,7 @@ function Catalog() {
         <nav aria-label="Selecionar fabricante" className="grid grid-cols-3 gap-2">
           {([["all", "Geral"], ["FCO", "FCO"], ["HD", "HD"]] as const).map(([value, label]) => (
             <button key={value} type="button" aria-pressed={manufacturer === value}
-              className={`min-h-12 rounded-xl border px-2 text-base font-extrabold shadow-sm transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${manufacturer === value ? "border-[#174e9b] bg-[#174e9b] text-white" : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52] hover:bg-[#dbeafe]"}`}
+              className={`min-h-12 rounded-xl border px-2 text-base font-extrabold shadow-sm transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${manufacturer === value ? (value === "all" ? "border-[#174e9b] bg-[#174e9b] text-white" : "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset") : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52] hover:bg-[#dbeafe]"}`}
               onClick={() => { setManufacturer(value); setPage(1); }}>{value === "all" ? label : <img src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"} alt={`Logomarca ${label}`} className="mx-auto h-9 w-full max-w-28 object-contain" />}</button>
           ))}
         </nav>
