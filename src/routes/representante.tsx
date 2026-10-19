@@ -86,7 +86,7 @@ function RepresentativePage() {
   return (
     <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
-      <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Brasil inteiro)</Link></div>
+      <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Sorocaba e região)</Link></div>
       <section className="surface-card space-y-4 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
         <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Abdenego Eugênio"}</h2>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "abdenego-eugenio" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Abdenego Eugênio" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
@@ -100,7 +100,7 @@ function RepresentativePage() {
       <section className="surface-card space-y-4 p-5">
         <h2 className="text-xl font-bold">Mapa de atuação</h2>
         <p className="text-sm text-muted-foreground">Brasil → São Paulo → municípios atendidos</p>
-        <div className="overflow-hidden rounded-xl border bg-white"><img src="/Mapa%20Infogr%C3%A1fico%20dos%20Munic%C3%ADpios%20Paulistas%20Abdnego.webp" alt="Mapa de São Paulo com marcações vermelhas dos municípios de atuação de Abdenego Eugênio" className="block h-auto w-full" loading="lazy" /></div>
+        <div className="overflow-hidden rounded-xl border bg-white"><img src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Abdenego%20Eug%C3%AAnio.png" alt="Mapa de São Paulo com marcações vermelhas dos municípios de atuação de Abdenego Eugênio" className="block h-auto w-full" loading="lazy" /></div>
         <div className="grid gap-2 sm:grid-cols-3">
           {cities.map(city => <div key={city} className="flex items-start gap-2 rounded-lg border p-3 text-sm"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />{city}</div>)}
         </div>
