@@ -1354,3 +1354,6 @@ a {
 }
 .brand-header-whatsapp span { white-space: nowrap; }
 .brand-header-whatsapp svg { width: 20px; height: 20px; }
+
+/* Ajuste fino: deslocar levemente o WhatsApp para a direita sob a marca. */
+.brand-header-whatsapp { margin-left: 9px; }
