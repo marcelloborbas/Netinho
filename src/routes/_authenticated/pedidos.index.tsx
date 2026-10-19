@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ordersQuery } from "@/lib/queries";
+import { accessQuery } from "@/lib/access";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 import { ORDER_STATUS, brl, termLabel } from "@/lib/brand";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -20,6 +24,25 @@ export const Route = createFileRoute("/_authenticated/pedidos/")({
 
 function Orders() {
   const { data, isLoading } = useQuery(ordersQuery);
+  const { data: access } = useQuery(accessQuery);
+  const qc = useQueryClient();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const isAdmin = access?.level === 1;
+  async function deleteOrder(id: string) {
+    if (!isAdmin || deletingId) return;
+    const order = data?.find((o) => o.id === id);
+    if (!order || !window.confirm(`Excluir permanentemente o pedido nº ${order.number}? Esta ação não poderá ser desfeita.`)) return;
+    setDeletingId(id);
+    try {
+      const { data: permission, error: permissionError } = await supabase.rpc("access_context");
+      const level = Array.isArray(permission) ? permission[0]?.level : (permission as { level?: number } | null)?.level;
+      if (permissionError || level !== 1) { toast.error("Somente o administrador pode excluir pedidos."); return; }
+      const { data: removed, error } = await supabase.from("orders").delete().eq("id", id).select("id");
+      if (error || !removed?.length) { toast.error("Não foi possível excluir o pedido. Verifique as permissões do banco de dados e os itens vinculados."); return; }
+      toast.success("Pedido excluído com sucesso.");
+      await qc.invalidateQueries({ queryKey: ["orders"] });
+    } finally { setDeletingId(null); }
+  }
   const [q, setQ] = useState("");
   const t = q.toLowerCase().trim();
   const list = (data ?? []).filter((o) => {
@@ -38,8 +61,8 @@ function Orders() {
             const c = o.customer_snapshot as { company_name?: string; trade_name?: string };
             const st = ORDER_STATUS[o.status];
             return (
-              <li key={o.id}>
-                <Link to="/pedidos/$id" params={{ id: o.id }} className="surface-card flex items-center justify-between gap-3 p-4">
+              <li key={o.id} className="flex items-center gap-2">
+                <Link to="/pedidos/$id" params={{ id: o.id }} className="surface-card flex min-w-0 flex-1 items-center justify-between gap-3 p-4">
                   <div className="min-w-0">
                     <p className="truncate font-semibold">Nº {o.number} · {c.trade_name || c.company_name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -51,6 +74,7 @@ function Orders() {
                     <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
                   </div>
                 </Link>
+                {isAdmin && <button type="button" disabled={deletingId !== null} onClick={() => void deleteOrder(o.id)} aria-label={`Excluir pedido nº ${o.number}`} title={`Excluir pedido nº ${o.number}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-40"><Trash2 size={19}/></button>}
               </li>
             );
           })}
