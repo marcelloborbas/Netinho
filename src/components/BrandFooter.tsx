@@ -1,4 +1,4 @@
-import { Globe2, Mail } from "lucide-react";
+import { Globe2, MailCheck } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { BRAND } from "@/lib/brand";
@@ -16,13 +16,13 @@ export function BrandFooter() {
             <span>{BRAND.phone}</span>
           </a>
         </div>
-        <div className="brand-footer-links">
-          <a href={`https://${BRAND.domain}`}>
-            <Globe2 size={16} aria-hidden="true" />
+        <div className="brand-footer-links" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "10px 18px", fontSize: "clamp(14px, 1.5vw, 17px)", fontWeight: 700 }}>
+          <a href={`https://${BRAND.domain}`} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
+            <Globe2 size={23} strokeWidth={2.2} color="#38bdf8" aria-hidden="true" />
             {BRAND.domain}
           </a>
-          <a href={`mailto:${BRAND.orderEmail}`}>
-            <Mail size={16} aria-hidden="true" />
+          <a href={`mailto:${BRAND.orderEmail}`} style={{ display: "inline-flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
+            <MailCheck size={23} strokeWidth={2.2} color="#fbbf24" aria-hidden="true" />
             {BRAND.orderEmail}
           </a>
         </div>
