@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Megaphone, ShoppingCart, Tag } from "lucide-react";
+import { Megaphone, ShoppingCart, Tag, Home, Search, Users, ClipboardList } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 export const Route = createFileRoute("/ofertas")({
   head: () => ({
@@ -50,5 +50,8 @@ function CampaignOffers() {
       </div>
       {offers.length>0 && filtered.length===0 && <p>Nenhuma oferta encontrada para esta busca.</p>}
     </main>
+    <nav aria-label="Navegação inferior" className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-[#29476c] bg-[#061b3c] pb-[env(safe-area-inset-bottom)] text-white shadow-[0_-4px_18px_rgba(0,0,0,0.14)] md:hidden">
+      {([{to:"/",label:"Início",icon:Home},{to:"/catalogo",label:"Catálogo",icon:Search},{to:"/clientes",label:"Clientes",icon:Users},{to:"/pedidos",label:"Pedidos",icon:ClipboardList}] as const).map(({to,label,icon:Icon}) => <Link key={to} to={to} className="flex min-h-16 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-semibold text-white transition hover:bg-[#174e9b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-400"><Icon size={21}/>{label}</Link>)}
+    </nav>
   </div>;
 }
