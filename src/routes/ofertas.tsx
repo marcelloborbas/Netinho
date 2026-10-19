@@ -33,9 +33,8 @@ function CampaignOffers() {
     <BrandHeader />
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex justify-center"><a href="#ofertas-campanha" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] px-5 py-3 text-center font-extrabold text-[#102a52] shadow-sm transition hover:border-4 hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><Megaphone size={20}/> Campanha de Outubro · FCO</a></div>
-      <p className="text-base font-bold uppercase tracking-wider text-[#a24c17]">Campanha de outubro · FCO</p>
-      <h1 className="mb-2 text-3xl font-extrabold text-[#102a52]">Todas as ofertas de caixas de direção</h1>
-      <p className="mb-4 text-base text-[#475569]">Condições de pagamento: 30/45/60 dias · {offers.length} itens promocionais</p>
+      <h1 className="mb-2 text-3xl font-extrabold text-[#102a52]">Ofertas de caixas de direção</h1>
+      <p className="mb-4 text-base text-[#475569]">Condições de pagamento: 30/45/60 dias</p>
       <input aria-label="Buscar oferta por código ou aplicação" placeholder="Buscar por código, veículo ou descrição..." value={search} onChange={e=>setSearch(e.target.value)} className="mb-6 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900" />
       {error && <p role="alert">Não foi possível carregar a relação de ofertas.</p>}
       {!error && offers.length===0 && <p>Carregando ofertas...</p>}
