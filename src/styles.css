@@ -1482,3 +1482,18 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
   line-height: 1.2;
 }
 .home-page .home-action-card:hover { background: #dbeafe !important; border-color: #1552a0 !important; }
+
+
+/* A marca no cabeçalho escuro não pode herdar o texto escuro do tema branco. */
+.brand-header { background: #06152c; color: #fff; }
+.brand-header .brand-wordmark-name,
+.brand-header .brand-header-logo .brand-wordmark-name {
+  color: #fff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.brand-header .brand-wordmark-tagline {
+  color: #d8e4f5 !important;
+  -webkit-text-fill-color: #d8e4f5 !important;
+}
