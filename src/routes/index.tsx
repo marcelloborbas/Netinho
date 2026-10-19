@@ -35,19 +35,19 @@ function Home() {
   return (
     <div className="home-page flex min-h-screen flex-col" style={{ height: "100svh", minHeight: "100svh", overflow: "hidden", paddingBottom: 0 }}>
       <BrandHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly", overflow: "hidden", minHeight: 0, padding: "8px 12px" }}>
-        <div className="home-greeting-row">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 12, overflow: "hidden", minHeight: 0, padding: "8px 12px" }}>
+        <div className="home-greeting-row" style={{ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: 10, textAlign: "center" }}>
           <h1 className="text-4xl font-bold sm:text-5xl">
             {greeting(firstName || "Visitante")}
           </h1>
-          <div className="flex items-center gap-2">
-            <span className="home-attribution-badge">{role}</span>
+          <div className="flex items-center justify-center gap-2">
             <Link to="/admin" aria-label="Abrir Administração" title="Administração (requer autorização)" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-400/70 bg-slate-900/80 text-amber-300 shadow-md transition-transform hover:scale-110">
               <Settings size={20} aria-hidden="true" />
             </Link>
+            <span className="home-attribution-badge" style={{ fontSize: 17, fontWeight: 800 }}>{role}</span>
           </div>
         </div>
-        <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
+        <p className="mt-2 text-center text-xl text-muted-foreground">O que deseja fazer?</p>
         <PromotionBanner />
         <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0, 1fr)", marginTop: 8, marginBottom: 8 }}>
           <section className="journey-choice" aria-labelledby="selling-title" style={{ width: "100%", minHeight: 0, padding: 12 }}>
