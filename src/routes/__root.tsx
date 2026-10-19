@@ -11,7 +11,6 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { draftActions } from "@/lib/order-store";
 import appCss from "../styles.css?url";
@@ -189,13 +188,6 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-      {pathname !== "/" && pathname !== "/auth" && pathname !== "/admin" && (
-        <button type="button" title="Voltar" aria-label="Voltar à página anterior"
-          onClick={() => { if (window.history.length > 1) window.history.back(); else void router.navigate({ to: "/" }); }}
-          className="fixed left-3 top-24 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-amber-400 bg-[#102a52] text-amber-300 shadow-xl transition-transform hover:scale-110">
-          <ArrowLeft size={23} />
-        </button>
-      )}
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
