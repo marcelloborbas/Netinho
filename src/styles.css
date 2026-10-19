@@ -2209,3 +2209,36 @@ html, body { max-width: 100%; overflow-x: hidden; }
   position: relative;
   transform: translateX(-7px);
 }
+
+
+/* Chamada mais legível e botão FCO com a identidade das ações comerciais. */
+.home-page .journey-choice > h2 {
+  font-size: clamp(19px, 3vw, 26px) !important;
+  font-weight: 800 !important;
+  line-height: 1.28 !important;
+  text-wrap: balance;
+}
+.home-page .promotion-banner .promotion-campaign-link {
+  background: #edf4ff !important;
+  color: #102a52 !important;
+  border: 1px solid #b8cee8 !important;
+  border-radius: 15px !important;
+  box-shadow: 0 2px 5px #102a5212 !important;
+  font-weight: 800 !important;
+  transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease !important;
+}
+.home-page .promotion-banner .promotion-campaign-link:hover {
+  background: #dbeafe !important;
+  box-shadow: 0 4px 12px #102a5220 !important;
+}
+.home-page .promotion-banner .promotion-campaign-link:focus-visible {
+  outline: 3px solid #ffcc56 !important;
+  outline-offset: 2px !important;
+}
+.home-page .promotion-banner .promotion-campaign-icon,
+.home-page .promotion-banner .promotion-campaign-icon svg {
+  color: #174e9b !important;
+}
+@media (max-width: 639px) {
+  .home-page .journey-choice > h2 { font-size: clamp(19px, 5.2vw, 23px) !important; }
+}
