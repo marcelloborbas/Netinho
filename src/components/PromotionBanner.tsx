@@ -8,7 +8,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Gol 1980–2010 · Santana · Parati · Saveiro",
     "price": "R$ 247,20",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": "/images/campaign/D_NQ_NP_2X_917476-MLB97432137041_112025-F-caixa-setor-tf-direcao-mecanica-gol-quadrado-19801990.webp",
     "searchTerm": "FCZA-0001A"
   },
@@ -17,7 +17,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     "price": "R$ 251,18",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": "/images/campaign/D_NQ_NP_2X_988940-MLB78796923933_082024-F-caixa-direcao-fiat-147--spazio--panorama-nova-completa.webp",
     "searchTerm": "FCZB-0005A"
   },
@@ -26,7 +26,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Clio · Kangoo · Nissan Platina",
     "price": "R$ 257,24",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": "/images/campaign/D_NQ_NP_2X_781181-MLB107638058802_032026-F-caixa-direcao-mecanica-renault-clio-kangoo-10-16-19992017.webp",
     "searchTerm": "FCZF-0012A"
   },
@@ -35,7 +35,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Fiesta 1996–2006 · Courier 1996–2013",
     "price": "R$ 257,31",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": "/images/campaign/D_NQ_NP_2X_812744-MLB100270252286_122025-F-caixa-direcao-fiesta-97a02-courier-1996-97-98-99-00-01a-2013.webp",
     "searchTerm": "FCZI-0006A"
   },
@@ -44,7 +44,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Corsa 1994–2002",
     "price": "R$ 262,02",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": null,
     "searchTerm": "FCZC-0005A"
   },
@@ -53,7 +53,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Palio · Palio Weekend · Siena 1996–2000",
     "price": "R$ 263,64",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": "/images/campaign/D_NQ_NP_2X_833998-MLB52685329598_122022-F-caixa-direcao-palio-fire-2002-2003-2004-2005-2006-2007-2008.webp",
     "searchTerm": "FCZB-0011A"
   },
@@ -62,7 +62,7 @@ export const PROMOTIONS = [
     "title": "Caixa de Direção Mecânica",
     "application": "Clio 1990–1998",
     "price": "R$ 263,79",
-    "note": "Preço campanha · 30/45/60 dias",
+    "note": "Preço de Campanha",
     "image": null,
     "searchTerm": "FCZF-0019A"
   }
@@ -104,7 +104,7 @@ export function PromotionBanner() {
           <strong className={promotion.price === "Sob consulta" ? "promotion-price-ask" : undefined}>
             {promotion.price}
           </strong>
-          <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}</span>
+          <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}<span style={{ display: "block", marginTop: 2 }}>30/45/60 dias</span></span>
         </div>
 
       </div>
