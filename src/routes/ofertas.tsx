@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ShoppingCart, Tag } from "lucide-react";
+import { Megaphone, ShoppingCart, Tag } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 export const Route = createFileRoute("/ofertas")({
   head: () => ({
@@ -32,22 +32,22 @@ function CampaignOffers() {
   return <div className="min-h-screen bg-white pb-20 text-[#17263e]">
     <BrandHeader />
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <Link to="/" className="mb-6 inline-flex items-center gap-2 font-semibold text-[#1552a0]"><ArrowLeft size={18}/> Voltar ao início</Link>
+      <div className="mb-6 flex justify-center"><a href="#ofertas-campanha" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] px-5 py-3 text-center font-extrabold text-[#102a52] shadow-sm transition hover:border-4 hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><Megaphone size={20}/> Campanha de Outubro · FCO</a></div>
       <p className="text-base font-bold uppercase tracking-wider text-[#a24c17]">Campanha de outubro · FCO</p>
       <h1 className="mb-2 text-3xl font-extrabold text-[#102a52]">Todas as ofertas de caixas de direção</h1>
       <p className="mb-4 text-base text-[#475569]">Condições de pagamento: 30/45/60 dias · {offers.length} itens promocionais</p>
       <input aria-label="Buscar oferta por código ou aplicação" placeholder="Buscar por código, veículo ou descrição..." value={search} onChange={e=>setSearch(e.target.value)} className="mb-6 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900" />
       {error && <p role="alert">Não foi possível carregar a relação de ofertas.</p>}
       {!error && offers.length===0 && <p>Carregando ofertas...</p>}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div id="ofertas-campanha" className="grid scroll-mt-5 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(([code,description,price,stock])=><article key={code} className="relative flex flex-col rounded-2xl border border-[#d5e1ee] bg-white p-5 shadow-sm">
-          <div className="mb-3 inline-flex w-fit items-center gap-1 rounded-full bg-[#b91c1c] px-3 py-1 text-sm font-extrabold text-white"><Tag size={15}/> PROMOÇÃO FCO</div>
+          <div className="mb-3 flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-1 rounded-full bg-[#b91c1c] px-3 py-1 text-sm font-extrabold text-white"><Tag size={15}/> PROMOÇÃO FCO</span><Link to="/vendas" search={{ modo: "venda", q: code }} aria-label={`Comprar peça ${code}`} className="inline-flex min-h-9 items-center gap-1 rounded-full border-2 border-[#174e9b] bg-[#eaf2ff] px-3 py-1 text-sm font-extrabold text-[#102a52] hover:border-4 hover:bg-white focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><ShoppingCart size={16}/> Comprar</Link></div>
           <span className="text-base font-bold text-[#475569]">{code}</span>
           <h2 className="mt-2 flex-1 text-lg font-bold leading-relaxed text-[#102a52]">{description}</h2>
           <strong className="mt-4 text-3xl font-extrabold text-[#bd2026]">{brl.format(price)}</strong>
           <span className="mt-1 text-base font-semibold text-[#176a37]">Preço de campanha</span>
           <span className="mb-4 text-sm text-[#64748b]">30/45/60 dias · Estoque na tabela: {stock}</span>
-          <Link to="/catalogo" search={{modo:"venda",q:code}} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1552a0] px-4 py-3 font-bold text-white hover:bg-[#103b78]"><ShoppingCart size={18}/> Consultar peça</Link>
+          <Link to="/vendas" search={{modo:"venda",q:code}} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1552a0] px-4 py-3 font-bold text-white hover:bg-[#103b78]"><ShoppingCart size={18}/> Comprar peça</Link>
         </article>)}
       </div>
       {offers.length>0 && filtered.length===0 && <p>Nenhuma oferta encontrada para esta busca.</p>}
