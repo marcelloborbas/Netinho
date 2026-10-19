@@ -5,7 +5,7 @@ import { ordersQuery } from "@/lib/queries";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Ban } from "lucide-react";
 import { ORDER_STATUS, brl, termLabel } from "@/lib/brand";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -28,20 +28,33 @@ function Orders() {
   const qc = useQueryClient();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const isAdmin = access?.level === 1;
-  async function deleteOrder(id: string) {
+  async function cancelOrder(id: string) {
     if (!isAdmin || deletingId) return;
     const order = data?.find((o) => o.id === id);
-    if (!order || !window.confirm(`Excluir permanentemente o pedido nº ${order.number}? Esta ação não poderá ser desfeita.`)) return;
+    if (!order || order.status === "cancelled") return;
+    const kind = order.kind === "orcamento" ? "orçamento" : "pedido";
+    const warning = order.status === "invoiced"
+      ? "ATENÇÃO: este pedido está FATURADO. Alterar o status no site não cancela a nota fiscal ou a venda na distribuidora. Confirma a alteração do status?"
+      : `Deseja cancelar o ${kind} nº ${order.number}? Ele continuará no histórico como Cancelado.`;
+    if (!window.confirm(warning)) return;
     setDeletingId(id);
     try {
-      const { data: permission, error: permissionError } = await supabase.rpc("access_context");
-      const level = Array.isArray(permission) ? permission[0]?.level : (permission as { level?: number } | null)?.level;
-      if (permissionError || level !== 1) { toast.error("Somente o administrador pode excluir pedidos."); return; }
-      const { data: removed, error } = await supabase.from("orders").delete().eq("id", id).select("id");
-      if (error || !removed?.length) { toast.error("Não foi possível excluir o pedido. Verifique as permissões do banco de dados e os itens vinculados."); return; }
-      toast.success("Pedido excluído com sucesso.");
+      const { error } = await supabase.rpc("update_order_status", {
+        order_id: id,
+        new_status: "cancelled",
+      });
+      if (error) {
+        toast.error(`Não foi possível cancelar o ${kind}. Verifique a permissão do administrador. ${error.message}`);
+        return;
+      }
+      toast.success(`${kind === "pedido" ? "Pedido" : "Orçamento"} nº ${order.number} cancelado.`);
       await qc.invalidateQueries({ queryKey: ["orders"] });
-    } finally { setDeletingId(null); }
+      await qc.invalidateQueries({ queryKey: ["order", id] });
+    } catch {
+      toast.error("Falha de comunicação ao cancelar. Tente novamente.");
+    } finally {
+      setDeletingId(null);
+    }
   }
   const [q, setQ] = useState("");
   const t = q.toLowerCase().trim();
@@ -74,7 +87,7 @@ function Orders() {
                     <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
                   </div>
                 </Link>
-                {isAdmin && <button type="button" disabled={deletingId !== null} onClick={() => void deleteOrder(o.id)} aria-label={`Excluir pedido nº ${o.number}`} title={`Excluir pedido nº ${o.number}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-40"><Trash2 size={19}/></button>}
+                {isAdmin && o.status !== "cancelled" && <button type="button" disabled={deletingId !== null} onClick={() => void cancelOrder(o.id)} aria-label={`Cancelar ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} title={`Cancelar ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-50 text-red-700 hover:border-red-600 hover:bg-red-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-red-400 disabled:opacity-40"><Ban size={19}/></button>}
               </li>
             );
           })}
