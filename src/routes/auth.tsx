@@ -247,36 +247,12 @@ function AuthPage() {
               src="/images/welcome-screen-clean.webp"
               alt="Seja bem-vindo ao mundo automotivo."
             />
-            <section className="welcome-auth-actions" aria-label="Acesso à Netinho">
-
-              <button
-                type="button"
-                className="welcome-google-button"
-                onClick={() => navigate({ to: "/" })}
-                aria-label="Entrar no site"
-              >
-                Entrar
-              </button>
-              <button type="button" className="mt-3 rounded-lg border border-white/50 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white" onClick={() => setShowLogin(value => !value)}>
-                {showLogin ? "Fechar login" : "Fazer login"}
-              </button>
-              <button type="button" className="mt-3 rounded-lg border border-white/50 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white" onClick={googleLogin} disabled={busy}>
-                {busy ? "Conectando..." : "Identificar-me com Google"}
+            <section className="welcome-auth-actions" aria-label="Login com Google">
+              <p className="text-center text-sm font-bold text-white">Faça seu login a partir de sua conta do Google</p>
+              <button type="button" className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-amber-300/60 bg-white shadow-lg transition-transform duration-300 hover:scale-110 active:scale-95 motion-safe:animate-pulse" aria-label="Entrar com Google" onClick={() => { try { const AudioContextClass = window.AudioContext; if (AudioContextClass) { const ctx = new AudioContextClass(); const oscillator = ctx.createOscillator(); const gain = ctx.createGain(); oscillator.type = "sine"; oscillator.frequency.value = 660; gain.gain.value = 0.035; oscillator.connect(gain); gain.connect(ctx.destination); oscillator.start(); oscillator.stop(ctx.currentTime + 0.10); oscillator.onended = () => { void ctx.close(); }; } } catch { /* Audio may be unavailable */ } void googleLogin(); }} disabled={busy}>
+                <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9c3.6 0 6.8 1.2 9.3 3.6l6.8-6.8C35.9 1.9 30.5 0 24 0 14.6 0 6.4 5.4 2.4 13.3l7.9 6.1C12.2 13.3 17.7 9 24 9Z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.2-3.2-.5-4.7H24v9.1h12.4c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-4 7.1-9.8 7.1-17.3Z"/><path fill="#FBBC05" d="M10.3 28.6a15 15 0 0 1 0-9.2l-7.9-6.1a24 24 0 0 0 0 21.4l7.9-6.1Z"/><path fill="#34A853" d="M24 48c6.5 0 12-2.1 16-6.2l-7.3-5.7C30.6 37.5 27.7 39 24 39c-6.3 0-11.8-4.3-13.7-10.4l-7.9 6.1C6.4 42.6 14.6 48 24 48Z"/></svg>
               </button>
             </section>
-            {showLogin && (
-              <section className="surface-card mx-auto my-4 w-full max-w-md space-y-3 rounded-xl p-5" aria-label="Faça seu login">
-                <h2 className="text-2xl font-bold">Faça seu Login</h2>
-                <p className="text-sm text-muted-foreground">Use seu e-mail e senha ou acesse pelo Google</p>
-                <form onSubmit={emailLogin} className="space-y-3">
-                  <Input type="email" autoComplete="email" aria-label="Seu e-mail" placeholder="Seu e-mail" value={loginEmail} onChange={event => setLoginEmail(event.target.value)} required />
-                  <Input type="password" autoComplete="current-password" aria-label="Senha" placeholder="Senha" value={loginPassword} onChange={event => setLoginPassword(event.target.value)} required />
-                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={busy}>Entrar</Button>
-                </form>
-                <button type="button" onClick={recoverPassword} className="text-sm underline">Esqueci minha senha</button>
-                <Button type="button" variant="outline" className="w-full" onClick={googleLogin} disabled={busy}>Continuar com Google</Button>
-              </section>
-            )}
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
               <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
             </footer>
