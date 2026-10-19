@@ -21,7 +21,9 @@ export function PartnerLogos({
         ] as const
       ).map((s) => (
         <div key={s.brand}>
-          {linked ? (
+          {downloads && compact ? (
+            <CatalogDownload brand={s.brand} iconOnly image={s.image} name={s.name} className="partner-logo" />
+          ) : linked ? (
             <Link
               to="/catalogo"
               search={{ marca: s.brand, modo: "consulta" }}
