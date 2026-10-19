@@ -1667,3 +1667,22 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
   align-items: center;
   text-align: center;
 }
+
+
+/* Mãozinha apontando para o botão FCO, na posição indicada pela referência. */
+.promotion-banner .promotion-campaign-link { isolation: isolate; }
+.promotion-banner .campaign-pointing-hand {
+  right: -12px !important;
+  top: -38px !important;
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  font-size: 35px;
+  transform-origin: 50% 75%;
+}
+@media (max-width: 640px) {
+  .promotion-banner .campaign-pointing-hand {
+    right: -9px !important;
+    top: -36px !important;
+  }
+}
