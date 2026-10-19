@@ -1596,3 +1596,21 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
   background: #eaf2ff;
   border-color: #1552a0;
 }
+
+/* O selo da campanha é o único botão de acesso à lista de ofertas. */
+.promotion-banner .promotion-campaign-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 30;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.promotion-banner .promotion-campaign-link:hover,
+.promotion-banner .promotion-campaign-link:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px #102a5226;
+  outline-offset: 3px;
+}
