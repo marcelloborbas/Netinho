@@ -67,7 +67,7 @@ function AuthPage() {
   useEffect(() => {
     if (signedIn && access && !recovery && !previewMode) {
       saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
-      void navigate({ to: "/" });
+      void navigate({ to: access.level === 1 ? "/admin" : "/" });
     }
   }, [signedIn, access, recovery, navigate, previewMode]);
   useEffect(() => {
