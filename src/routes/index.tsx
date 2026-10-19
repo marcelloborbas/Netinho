@@ -5,6 +5,7 @@ import { BrandHeader } from "@/components/BrandHeader";
 
 import { accessQuery } from "@/lib/access";
 import { PromotionBanner } from "@/components/PromotionBanner";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -42,12 +43,6 @@ function Home() {
           </nav>
         </section>
       </main>
-      <nav aria-label="Menu inferior" className="mobile-nav" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
-        <Link to="/" className="flex flex-col items-center gap-1 py-3 text-[11px] text-amber-300"><Users size={21}/> Início</Link>
-        <Link to="/catalogo" search={{ modo: "consulta" }} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><FilePenLine size={21}/> Catálogo</Link>
-        <Link to={canSell ? "/pedidos" : "/auth"} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><ClipboardList size={21}/> Pedidos</Link>
-        <Link to={access?.level === 1 ? "/admin" : "/auth"} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><Settings size={21}/> {access?.level === 1 ? "Admin" : "Entrar"}</Link>
-      </nav>
-    </div>
+      <PublicFooter />   </div>
   );
 }
