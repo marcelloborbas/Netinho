@@ -60,7 +60,7 @@ function Catalog() {
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
       <header className="catalog-showcase-heading rounded-2xl border border-[#b8cee8] bg-[#edf4ff] px-4 py-5 text-center text-[#102a52] shadow-sm">
-        <h1 className="text-2xl font-extrabold sm:text-3xl">Catálogo de Peças</h1>
+        <h1 className="text-[28px] font-extrabold leading-tight sm:text-[34px]">Catálogo de Peças</h1>
         <p className="mt-2 text-sm">Todas as peças FCO e HD, com aplicações, referências e valores disponíveis.</p>
       </header>
 
