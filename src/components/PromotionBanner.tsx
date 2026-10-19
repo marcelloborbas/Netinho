@@ -9,7 +9,7 @@ export const PROMOTIONS = [
     "application": "Gol 1980–2010 · Santana · Parati · Saveiro",
     "price": "R$ 247,20",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": "/images/campaign/vw-gol-caixa-direcao.webp",
+    "image": "/images/campaign/novo-gol.webp",
     "searchTerm": "FCZA-0001A"
   },
   {
@@ -18,7 +18,7 @@ export const PROMOTIONS = [
     "application": "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     "price": "R$ 251,18",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": "/images/campaign/fiat-147-caixa-direcao.webp",
+    "image": "/images/campaign/novo-fiat147.webp",
     "searchTerm": "FCZB-0005A"
   },
   {
@@ -27,7 +27,7 @@ export const PROMOTIONS = [
     "application": "Clio · Kangoo · Nissan Platina",
     "price": "R$ 257,24",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": null,
+    "image": "/images/campaign/novo-clio-kangoo.webp",
     "searchTerm": "FCZF-0012A"
   },
   {
@@ -36,7 +36,7 @@ export const PROMOTIONS = [
     "application": "Fiesta 1996–2006 · Courier 1996–2013",
     "price": "R$ 257,31",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": null,
+    "image": "/images/campaign/novo-fiesta-courier.webp",
     "searchTerm": "FCZI-0006A"
   },
   {
@@ -54,7 +54,7 @@ export const PROMOTIONS = [
     "application": "Palio · Palio Weekend · Siena 1996–2000",
     "price": "R$ 263,64",
     "note": "Preço campanha · 30/45/60 dias",
-    "image": null,
+    "image": "/images/campaign/novo-palio.webp",
     "searchTerm": "FCZB-0011A"
   },
   {
@@ -109,19 +109,10 @@ export function PromotionBanner() {
 
       </div>
 
-      <Link
-        to="/catalogo"
-        search={{ modo: "venda", q: promotion.searchTerm }}
-        aria-label={`Comprar peça ${promotion.code}`}
-        className="absolute right-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-lg border border-white/30 bg-red-600 px-3 py-2 text-xs font-extrabold text-white shadow-lg transition-transform hover:scale-105 sm:right-5 sm:top-4"
-      >
-        <ShoppingCart size={16} aria-hidden="true" /> Comprar
-      </Link>
-      <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)" }} aria-hidden="true">
+      <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)", background: "transparent", boxShadow: "none", border: "none", overflow: "visible" }}>
         {promotion.image ? (
           <>
-            <img src={promotion.image} alt="" onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
-            <span>IMAGEM ILUSTRATIVA</span>
+            <img src={promotion.image} alt={promotion.title + " " + promotion.code} style={{ background: "transparent", objectFit: "contain" }} onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
           </>
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-[#102a52] p-3 text-center text-amber-300">
@@ -130,7 +121,15 @@ export function PromotionBanner() {
           </div>
         )}
       </div>
-
+      <Link
+        to="/catalogo"
+        search={{ modo: "venda", q: promotion.searchTerm }}
+        aria-label={`Comprar peça ${promotion.code}`}
+        className="absolute z-20 inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/30 bg-red-600 px-3 py-2 text-xs font-extrabold text-white shadow-lg transition-transform hover:scale-105"
+        style={{ right: "clamp(10px, 3%, 22px)", top: "12px", width: "clamp(112px, 32%, 190px)" }}
+      >
+        <ShoppingCart size={16} aria-hidden="true" /> Comprar
+      </Link>
 
       <div
         className="promotion-banner-controls"
