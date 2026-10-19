@@ -93,10 +93,10 @@ export function PromotionBanner() {
       }}
     >
       <div className="promotion-banner-copy" aria-live="polite" aria-atomic="true">
-        <div className="promotion-banner-label">
+        <Link to="/ofertas" aria-label="Abrir todos os itens promocionais da Campanha de outubro FCO" className="promotion-banner-label promotion-campaign-link">
           <span className="promotion-campaign-icon"><Megaphone size={18} aria-hidden="true" /></span>
           <span>Campanha de outubro · FCO</span>
-        </div>
+        </Link>
         <p className="promotion-banner-code">{promotion.code}</p>
         <h2 style={{ maxWidth: "54%", lineHeight: 1.08 }}><span style={{ display: "block", whiteSpace: "nowrap" }}>Caixa de Direção</span><span style={{ display: "block" }}>Mecânica</span></h2>
         <p className="promotion-banner-application">{promotion.application}</p>
@@ -122,16 +122,6 @@ export function PromotionBanner() {
           </div>
         )}
       </div>
-      <Link
-        to="/catalogo"
-        search={{ modo: "venda", q: promotion.searchTerm }}
-        aria-label={`Ver peça ${promotion.code}`}
-        className="absolute z-20 inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/30 bg-red-600 px-3 py-2 text-xs font-extrabold text-white shadow-lg transition-transform hover:scale-105"
-        style={{ right: "clamp(10px, 3%, 22px)", top: "12px", width: "clamp(112px, 32%, 190px)" }}
-      >
-        <ShoppingCart size={16} aria-hidden="true" /> Ver
-      </Link>
-
       <div className="promotion-banner-arrows" aria-label="Navegar entre ofertas">
         <button type="button" aria-label="Oferta anterior" onClick={() => setActive((current) => (current - 1 + PROMOTIONS.length) % PROMOTIONS.length)}><ChevronLeft size={22} /></button>
         <span aria-live="polite">{active + 1} / {PROMOTIONS.length}</span>
