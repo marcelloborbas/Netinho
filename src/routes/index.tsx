@@ -102,8 +102,9 @@ function Home() {
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
               <Link to="/admin" className="action-card"><Settings className="text-primary" /><h3 className="mt-2 font-bold">Painel geral</h3><p className="text-xs text-muted-foreground">Autorizações e produtos</p></Link>
-              <Link to="/representante" className="action-card"><MapPinned className="text-primary" /><h3 className="mt-2 font-bold">Representantes</h3><p className="text-xs text-muted-foreground">Fichas e mapas</p></Link>
-              <Link to="/admin" className="action-card"><Truck className="text-primary" /><h3 className="mt-2 font-bold">Distribuidoras</h3><p className="text-xs text-muted-foreground">Fornecedores e produtos</p></Link>
+              <Link to="/representantes" className="action-card"><MapPinned className="text-primary" /><h3 className="mt-2 font-bold">Representantes</h3><p className="text-xs text-muted-foreground">Fichas e mapas</p></Link>
+              <Link to="/distribuidoras" className="action-card"><Truck className="text-primary" /><h3 className="mt-2 font-bold">Distribuidoras</h3><p className="text-xs text-muted-foreground">Fornecedores e produtos</p></Link>
+              <Link to="/vendedores" className="action-card"><Users className="text-primary" /><h3 className="mt-2 font-bold">Vendedores</h3><p className="text-xs text-muted-foreground">Equipe comercial</p></Link>
               <Link to="/clientes" className="action-card"><Users className="text-primary" /><h3 className="mt-2 font-bold">Clientes</h3><p className="text-xs text-muted-foreground">Cadastros</p></Link>
               <Link to="/pedidos" className="action-card"><ClipboardList className="text-primary" /><h3 className="mt-2 font-bold">Pedidos</h3><p className="text-xs text-muted-foreground">Acompanhamento</p></Link>
             </div>
