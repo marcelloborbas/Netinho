@@ -51,7 +51,20 @@ function Admin() {
         <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
       </nav>
       <SupplierCommissions />
-      <nav aria-label="Fichas e mapas dos representantes" className="surface-card space-y-3 p-4">\n        <h2 className="text-xl font-bold">Representantes e regiões de atuação</h2>\n        <p className="text-sm text-muted-foreground">Acesse os cadastros originais e seus mapas, sem perder as informações já registradas.</p>\n        <div className="grid gap-3 sm:grid-cols-2">\n          <Link to="/representante" className="action-card min-h-24">\n            <span className="font-bold text-amber-400">Abdenego Eugênio</span>\n            <span className="block text-sm text-muted-foreground">Vale do Paraíba e Litoral Norte · Ver mapa e cadastro</span>\n          </Link>\n          <Link to="/representante-livaldo" className="action-card min-h-24">\n            <span className="font-bold text-amber-400">Livaldo Souza Silva</span>\n            <span className="block text-sm text-muted-foreground">Brasil inteiro · Ver mapa e cadastro de teste</span>\n          </Link>\n        </div>\n      </nav>\n      <RepresentativesAdmin />
+      <nav aria-label="Fichas e mapas dos representantes" className="surface-card space-y-3 p-4">
+        <h2 className="text-xl font-bold">Representantes e regiões de atuação</h2>
+        <p className="text-sm text-muted-foreground">Acesse os cadastros originais e seus mapas, sem perder as informações já registradas.</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link to="/representante" className="action-card min-h-24">
+            <span className="font-bold text-amber-400">Abdenego Eugênio</span>
+            <span className="block text-sm text-muted-foreground">Vale do Paraíba e Litoral Norte · Ver mapa e cadastro</span>
+          </Link>
+          <Link to="/representante-livaldo" className="action-card min-h-24">
+            <span className="font-bold text-amber-400">Livaldo Souza Silva</span>
+            <span className="block text-sm text-muted-foreground">Brasil inteiro · Ver mapa e cadastro de teste</span>
+          </Link>
+        </div>
+      </nav>\n      <RepresentativesAdmin />
       <div id="usuarios"><UserAttributionAdmin /></div>
       <h2 id="produtos" className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
       <Input
