@@ -103,7 +103,7 @@ function AuthPage() {
     setLoginPassword("");
     toast.success("Acesso identificado.");
     await qc.invalidateQueries({ queryKey: ["access"] });
-    void navigate({ to: "/" });
+    void navigate({ to: "/admin" });
   }
   async function recoverPassword() {
     if (!loginEmail.trim()) {
@@ -252,6 +252,16 @@ function AuthPage() {
               <button type="button" className="welcome-google-button" onClick={() => navigate({ to: "/" })}>
                 Entrar no Netinho
               </button>
+              <button type="button" className="mt-2 text-xs font-semibold text-white underline" onClick={() => setShowLogin((value) => !value)}>
+                {showLogin ? "Fechar acesso administrativo" : "Acesso administrativo"}
+              </button>
+              {showLogin && (
+                <form onSubmit={emailLogin} className="mx-auto mt-2 flex w-full max-w-xs flex-col gap-2 rounded-lg bg-slate-950/90 p-3">
+                  <Input type="email" aria-label="E-mail administrativo" placeholder="E-mail do administrador" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required />
+                  <Input type="password" aria-label="Senha administrativa" placeholder="Senha" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required />
+                  <Button type="submit" disabled={busy}>{busy ? "Entrando..." : "Entrar na administração"}</Button>
+                </form>
+              )}
             </section>
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
               <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
