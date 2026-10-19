@@ -1,11 +1,12 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search, Star, Plus, Pencil } from "lucide-react";
+import { Search, Star, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { customersQuery, type Customer } from "@/lib/queries";
 import { draftActions } from "@/lib/order-store";
+import { accessQuery } from "@/lib/access";
 import { CustomerForm } from "@/components/CustomerForm";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,10 @@ function selectCustomerForOrder(c: Customer) {
 
 function Customers() {
   const qc = useQueryClient();
-  const navigate = useNavigate();
+  const { data: access } = useQuery({ ...accessQuery, retry: false });
+  const isAdmin = access?.level === 1;
+  const [deleting, setDeleting] = useState<Customer | null>(null);
+  const [deletingBusy, setDeletingBusy] = useState(false);
   const { data, isLoading } = useQuery(customersQuery);
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Customer | null | "new">(null);
@@ -47,10 +51,30 @@ function Customers() {
     if (error) toast.error("Erro ao atualizar"); else qc.invalidateQueries({ queryKey: ["customers"] });
   }
 
-  function choose(c: Customer) {
-    selectCustomerForOrder(c);
-    toast.success(`Cliente: ${c.trade_name || c.company_name}`);
-    navigate({ to: "/catalogo", search: { modo: "venda" } });
+  async function deleteCustomer() {
+    if (!isAdmin || !deleting || deletingBusy) return;
+    setDeletingBusy(true);
+    const { data: session } = await supabase.auth.getUser();
+    if (!session.user) {
+      toast.error("É necessário estar autenticado.");
+      setDeletingBusy(false);
+      return;
+    }
+    const { data: permission, error: permissionError } = await supabase.rpc("access_context");
+    if (permissionError || (permission as { level?: number } | null)?.level !== 1) {
+      toast.error("Somente o administrador pode excluir clientes.");
+      setDeletingBusy(false);
+      return;
+    }
+    const { error } = await supabase.from("customers").delete().eq("id", deleting.id);
+    setDeletingBusy(false);
+    if (error) {
+      toast.error("Não foi possível excluir. Verifique as permissões ou os pedidos vinculados ao cliente.");
+      return;
+    }
+    toast.success("Cliente excluído.");
+    setDeleting(null);
+    await qc.invalidateQueries({ queryKey: ["customers"] });
   }
 
   return (
@@ -80,15 +104,27 @@ function Customers() {
               <button onClick={() => toggleFav(c)} aria-label={c.favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} className="shrink-0 rounded-lg p-2 hover:bg-[#edf4ff]">
                 <Star className={cn("h-5 w-5", c.favorite ? "fill-warning text-warning" : "text-muted-foreground")} />
               </button>
-              <button onClick={() => choose(c)} className="min-w-0 flex-1 rounded-lg text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#174e9b]">
+              <button onClick={() => setEditing(c)} className="min-w-0 flex-1 rounded-lg text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#174e9b]">
                 <p className="truncate text-base font-extrabold text-[#102a52]">{c.trade_name || c.company_name}</p>
                 <p className="truncate text-xs text-muted-foreground">{[c.cnpj, c.city && `${c.city}/${c.state ?? ""}`].filter(Boolean).join(" · ")}</p>
               </button>
               <button onClick={() => setEditing(c)} aria-label={`Editar ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:bg-[#dbeafe]"><Pencil className="h-4 w-4" /></button>
+              {isAdmin && <button onClick={() => setDeleting(c)} aria-label={`Excluir ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 hover:bg-red-100"><Trash2 className="h-4 w-4" /></button>}
             </li>
           ))}
         </ul>
       )}
+
+      <Dialog open={deleting !== null} onOpenChange={(open) => { if (!open && !deletingBusy) setDeleting(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Excluir cliente?</DialogTitle></DialogHeader>
+          <p className="text-sm">Você está prestes a excluir permanentemente <strong>{deleting?.trade_name || deleting?.company_name}</strong>. Essa ação não poderá ser desfeita.</p>
+          <div className="flex flex-wrap justify-end gap-3">
+            <Button type="button" variant="outline" disabled={deletingBusy} onClick={() => setDeleting(null)}>Cancelar</Button>
+            <Button type="button" disabled={!isAdmin || deletingBusy} onClick={deleteCustomer} className="bg-red-700 text-white hover:bg-red-800">{deletingBusy ? "Excluindo..." : "Confirmar exclusão"}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={editing !== null} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
