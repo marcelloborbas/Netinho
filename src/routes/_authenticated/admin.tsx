@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const options = [
   { to: "/representantes", label: "Representantes / Vendedores", icon: Contact },
   { to: "/clientes", label: "Clientes", icon: UserCog },
-  { to: "/distribuidoras", label: "Distribuidoras", icon: Building2 },
+  { to: "/transportadoras", label: "Transportadoras", icon: Building2 },
   { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
 ] as const;
 
