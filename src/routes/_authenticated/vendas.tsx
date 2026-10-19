@@ -8,7 +8,7 @@ import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
 import { brl } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/vendas")({
-  validateSearch: (s: Record<string, unknown>) => ({ modo: s.modo === "consulta" ? "consulta" as const : "venda" as const }),
+  validateSearch: (s: Record<string, unknown>) => ({ modo: s.modo === "consulta" ? "consulta" as const : "venda" as const, q: typeof s.q === "string" ? s.q : "" }),
   head: () => ({ meta: [{ title: "Vendas e Orçamentos | Netinho Auto Parts" }] }),
   component: SalesPage,
 });
@@ -18,7 +18,7 @@ function SalesPage() {
   const draft = useDraft();
   const { data: customers = [], isLoading: loadingCustomers } = useQuery(customersQuery);
   const { data: products = [], isLoading: loadingProducts } = useQuery(productsQuery);
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(search.q);
   const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
