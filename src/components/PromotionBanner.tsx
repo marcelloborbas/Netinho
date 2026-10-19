@@ -8,7 +8,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Gol · Santana · Parati · Saveiro",
     price: "R$ 247,20",
-    note: "Preço atacado à vista",
+    note: "Preço em Atacado à vista",
     image: "/images/campaign/vw-gol-caixa-direcao.webp",
     searchTerm: "FCZA-0001A",
   },
@@ -17,7 +17,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     price: "R$ 251,18",
-    note: "Preço atacado à vista",
+    note: "Preço em Atacado à vista",
     image: "/images/campaign/fiat-147-caixa-direcao.webp",
     searchTerm: "FCZB-0005A",
   },
@@ -26,7 +26,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Elba · Fiorino · Prêmio · Uno Mille",
     price: "R$ 253,69",
-    note: "Preço atacado à vista",
+    note: "Preço em Atacado à vista",
     image: "/images/campaign/fiat-uno-caixa-direcao.webp",
     searchTerm: "FCZB-0020A",
   },
@@ -35,7 +35,7 @@ export const PROMOTIONS = [
     title: "Caixa de Direção Mecânica",
     application: "Fiat Strada · 1996–2000",
     price: "Sob consulta",
-    note: "Preço atacado à vista",
+    note: "Preço em Atacado à vista",
     image: "/images/campaign/fiat-strada-caixa-direcao.webp",
     searchTerm: "Strada",
   },
@@ -73,11 +73,11 @@ export function PromotionBanner() {
         <p className="promotion-banner-code">{promotion.code}</p>
         <h2 style={{ maxWidth: "54%", lineHeight: 1.08 }}><span style={{ display: "block", whiteSpace: "nowrap" }}>Caixa de Direção</span><span style={{ display: "block" }}>Mecânica</span></h2>
         <p className="promotion-banner-application">{promotion.application}</p>
-        <div className="promotion-banner-price-row" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
+        <div className="promotion-banner-price-row" style={{ display: "inline-flex", flexDirection: "column", alignItems: "stretch", gap: 4, width: "max-content", maxWidth: "100%" }}>
           <strong className={promotion.price === "Sob consulta" ? "promotion-price-ask" : undefined}>
             {promotion.price}
           </strong>
-          <span>{promotion.note}</span>
+          <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}</span>
         </div>
         <Link
           className="promotion-banner-cta"
