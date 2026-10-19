@@ -2183,28 +2183,29 @@ html, body { max-width: 100%; overflow-x: hidden; }
 }
 
 
-/* Mãozinha acima do cabeçalho do site, sem cobrir o selo FCO. */
-.home-page { position: relative !important; isolation: isolate !important; }
-.home-page > .brand-header { position: relative !important; z-index: 1 !important; }
-.home-page > main { position: relative !important; z-index: 2 !important; }
-.home-page .promotion-banner,
-.home-page .promotion-banner-copy,
-.home-page .promotion-banner .promotion-campaign-link { overflow: visible !important; }
+
+/* Restaurar a mãozinha apontando para a campanha, como antes. */
 .home-page .promotion-banner .campaign-pointing-hand {
-  top: -128px !important;
-  right: auto !important;
-  left: 50% !important;
-  width: 48px !important;
-  height: 48px !important;
-  z-index: 9999 !important;
+  top: -39px !important;
+  right: -13px !important;
+  left: auto !important;
+  width: 51px !important;
+  height: 51px !important;
+  z-index: 999 !important;
   pointer-events: none !important;
   animation: fco-hand-soft-pulse 1.9s ease-in-out infinite !important;
 }
 @media (max-width: 639px) {
   .home-page .promotion-banner .campaign-pointing-hand {
-    top: -118px !important;
-    left: 50% !important;
-    width: 44px !important;
-    height: 44px !important;
+    top: -39px !important;
+    right: -10px !important;
+    left: auto !important;
+    width: 47px !important;
+    height: 47px !important;
   }
+}
+/* Aproximar apenas a marca FCO da esquerda no cabeçalho. */
+.brand-header .partner-logos-compact > div:first-child {
+  position: relative;
+  transform: translateX(-7px);
 }
