@@ -20,8 +20,12 @@ export function PartnerLogos({
           { brand: "HD", name: "HD Embreagens", image: "/images/brands/hd.png" },
         ] as const
       ).map((s) => (
-        <div key={s.brand}>
-          {downloads && compact ? (
+        <div key={s.brand} className={s.brand === "HD" ? "flex flex-col items-center opacity-65 grayscale" : ""}>
+          {s.brand === "HD" ? (
+            <span className="partner-logo cursor-not-allowed" aria-label="HD Embreagens — em breve" aria-disabled="true">
+              <img src={s.image} alt={s.name} />
+            </span>
+          ) : downloads && compact ? (
             <CatalogDownload brand={s.brand} iconOnly image={s.image} name={s.name} className="partner-logo" />
           ) : linked ? (
             <Link
@@ -37,7 +41,8 @@ export function PartnerLogos({
               <img src={s.image} alt={s.name} />
             </span>
           )}
-          {!compact && downloads && <CatalogDownload brand={s.brand} />}
+          {s.brand === "HD" && <span className="block text-center text-xs font-extrabold text-zinc-500">Em breve</span>}
+          {s.brand !== "HD" && !compact && downloads && <CatalogDownload brand={s.brand} />}
         </div>
       ))}
     </div>
