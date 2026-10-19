@@ -9,7 +9,7 @@ export const PROMOTIONS = [
     "application": "Gol 1980–2010 · Santana · Parati · Saveiro",
     "price": "R$ 247,20",
     "note": "Preço de Campanha",
-    "image": "/images/campaign/D_NQ_NP_2X_917476-MLB97432137041_112025-F-caixa-setor-tf-direcao-mecanica-gol-quadrado-19801990.webp",
+    "image": "/images/campaign/Caixa-setor-tf-direcao-mecanica-gol-quadrado-19801990.webp",
     "searchTerm": "FCZA-0001A"
   },
   {
@@ -18,7 +18,7 @@ export const PROMOTIONS = [
     "application": "Fiat 147 · Elba · Fiorino · Uno · Prêmio",
     "price": "R$ 251,18",
     "note": "Preço de Campanha",
-    "image": "/images/campaign/D_NQ_NP_2X_988940-MLB78796923933_082024-F-caixa-direcao-fiat-147--spazio--panorama-nova-completa.webp",
+    "image": "/images/campaign/Caixa-direcao-fiat-147--spazio--panorama-nova-completa.webp",
     "searchTerm": "FCZB-0005A"
   },
   {
@@ -27,7 +27,7 @@ export const PROMOTIONS = [
     "application": "Clio · Kangoo · Nissan Platina",
     "price": "R$ 257,24",
     "note": "Preço de Campanha",
-    "image": "/images/campaign/D_NQ_NP_2X_781181-MLB107638058802_032026-F-caixa-direcao-mecanica-renault-clio-kangoo-10-16-19992017.webp",
+    "image": "/images/campaign/Caixa-direcao-mecanica-renault-clio-kangoo-10-16-19992017.webp",
     "searchTerm": "FCZF-0012A"
   },
   {
@@ -36,7 +36,7 @@ export const PROMOTIONS = [
     "application": "Fiesta 1996–2006 · Courier 1996–2013",
     "price": "R$ 257,31",
     "note": "Preço de Campanha",
-    "image": "/images/campaign/D_NQ_NP_2X_812744-MLB100270252286_122025-F-caixa-direcao-fiesta-97a02-courier-1996-97-98-99-00-01a-2013.webp",
+    "image": "/images/campaign/Caixa-direcao-fiesta-97a02-courier-1996-97-98-99-00-01a-2013.webp",
     "searchTerm": "FCZI-0006A"
   },
   {
@@ -54,7 +54,7 @@ export const PROMOTIONS = [
     "application": "Palio · Palio Weekend · Siena 1996–2000",
     "price": "R$ 263,64",
     "note": "Preço de Campanha",
-    "image": "/images/campaign/D_NQ_NP_2X_833998-MLB52685329598_122022-F-caixa-direcao-palio-fire-2002-2003-2004-2005-2006-2007-2008.webp",
+    "image": "/images/campaign/Caixa-direcao-palio-fire-2002-2003-2004-2005-2006-2007-2008.webp",
     "searchTerm": "FCZB-0011A"
   },
   {
