@@ -28,6 +28,12 @@ function Home() {
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6">
+        <div className="mx-auto flex w-full flex-col items-center gap-2 pt-2 text-center">
+          <p className="text-base font-bold text-[#475569] sm:text-lg">Clique e veja todas as ofertas</p>
+          <Link to="/ofertas" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#b91c1c] px-6 py-3 text-sm font-extrabold text-white shadow-md transition-colors hover:bg-[#991b1b]">
+            Campanha de outubro · Ver todas as ofertas
+          </Link>
+        </div>
         <PromotionBanner />
         <section className="journey-choice rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5" aria-labelledby="vender-orcar-title">
           <h2 id="vender-orcar-title" className="mb-3 text-center text-xl font-bold text-[#102a52] sm:text-2xl">Quer Vender ou fazer um Orçamento ?</h2>
