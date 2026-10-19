@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Megaphone, ShoppingCart, Tag, Home, Search, ClipboardList, Settings } from "lucide-react";
+import { Megaphone, ShoppingCart, Tag } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
+import { PublicFooter } from "@/components/PublicFooter";
 export const Route = createFileRoute("/ofertas")({
   head: () => ({
     meta: [
@@ -33,6 +34,7 @@ function CampaignOffers() {
     <BrandHeader />
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex justify-center"><a href="#ofertas-campanha" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] px-5 py-3 text-center font-extrabold text-[#102a52] shadow-sm transition hover:border-4 hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><Megaphone size={20}/> Campanha de Outubro · FCO</a></div>
+      <div className="mb-5 flex justify-center"><span role="img" aria-label="Promoção FCO" className="inline-flex -rotate-3 items-center gap-2 rounded-2xl border-4 border-white bg-[#c71920] px-6 py-3 text-lg font-black tracking-wide text-white shadow-[0_5px_0_#8d1118,0_10px_22px_rgba(0,0,0,.2)]"><Tag size={24}/> PROMOÇÃO FCO</span></div>
       <h1 className="mb-2 text-3xl font-extrabold text-[#102a52]">Ofertas de caixas de direção</h1>
       <p className="mb-4 text-base text-[#475569]">Condições de pagamento: 30/45/60 dias</p>
       <input aria-label="Buscar oferta por código ou aplicação" placeholder="Buscar por código, veículo ou descrição..." value={search} onChange={e=>setSearch(e.target.value)} className="mb-6 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900" />
@@ -40,18 +42,16 @@ function CampaignOffers() {
       {!error && offers.length===0 && <p>Carregando ofertas...</p>}
       <div id="ofertas-campanha" className="grid scroll-mt-5 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(([code,description,price,stock])=><article key={code} className="relative flex flex-col rounded-2xl border border-[#d5e1ee] bg-white p-5 shadow-sm">
-          <div className="mb-3 flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-1 rounded-full bg-[#b91c1c] px-3 py-1 text-sm font-extrabold text-white"><Tag size={15}/> PROMOÇÃO FCO</span><Link to="/vendas" search={{ modo: "venda", promo: code }} aria-label={`Comprar peça ${code}`} className="inline-flex min-h-9 items-center gap-1 rounded-full border-2 border-[#174e9b] bg-[#eaf2ff] px-3 py-1 text-sm font-extrabold text-[#102a52] hover:border-4 hover:bg-white focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><ShoppingCart size={16}/> Comprar</Link></div>
           <span className="text-base font-bold text-[#475569]">{code}</span>
           <h2 className="mt-2 flex-1 text-lg font-bold leading-relaxed text-[#102a52]">{description}</h2>
-          <strong className="mt-4 text-3xl font-extrabold text-[#bd2026]">{brl.format(price)}</strong>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3"><strong className="text-3xl font-extrabold text-[#bd2026]">{brl.format(price)}</strong><Link to="/vendas" search={{ modo: "venda", promo: code }} aria-label={`Comprar peça ${code}`} className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] px-4 py-2 text-sm font-extrabold text-[#102a52] transition hover:border-4 hover:bg-white focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><ShoppingCart size={19}/> Comprar</Link></div>
           <span className="mt-1 text-base font-semibold text-[#176a37]">Preço de campanha</span>
           <span className="mb-4 text-sm text-[#64748b]">30/45/60 dias · Estoque na tabela: {stock}</span>
         </article>)}
       </div>
       {offers.length>0 && filtered.length===0 && <p>Nenhuma oferta encontrada para esta busca.</p>}
     </main>
-    <nav aria-label="Navegação inferior" className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-[#29476c] bg-[#061b3c] pb-[env(safe-area-inset-bottom)] text-white shadow-[0_-4px_18px_rgba(0,0,0,0.14)] md:hidden">
-      {([{to:"/",label:"Início",icon:Home},{to:"/catalogo",label:"Catálogo",icon:Search},{to:"/pedidos",label:"Pedidos",icon:ClipboardList},{to:"/admin",label:"Admin",icon:Settings}] as const).map(({to,label,icon:Icon}) => <Link key={to} to={to} className="flex min-h-14 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-semibold text-white transition hover:bg-[#174e9b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-400"><Icon size={21}/>{label}</Link>)}
-    </nav>
+    <PublicFooter />
+
   </div>;
 }
