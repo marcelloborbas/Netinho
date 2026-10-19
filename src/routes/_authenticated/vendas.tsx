@@ -35,9 +35,9 @@ function SalesPage() {
     if (!draft.customerId) { toast.error("Identifique o cliente antes de adicionar peças."); return; }
     const prices = {
       cash: p.price_cash,
-      d30: p.price_30,
-      d30_45_60: p.price_30_45_60,
-      d30_45_60_75: p.price_30_45_60_75,
+      "30": p.price_30,
+      "30_45_60": p.price_30_45_60,
+      "30_45_60_75": p.price_30_45_60_75,
     };
     if (Object.values(prices).every((v) => v == null)) {
       toast.error("Peça sem preço cadastrado. Consulte a distribuidora."); return;
