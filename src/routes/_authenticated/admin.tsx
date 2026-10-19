@@ -64,7 +64,8 @@ function Admin() {
             <span className="block text-sm text-muted-foreground">Brasil inteiro · Ver mapa e cadastro de teste</span>
           </Link>
         </div>
-      </nav>\n      <RepresentativesAdmin />
+      </nav>
+      <RepresentativesAdmin />
       <div id="usuarios"><UserAttributionAdmin /></div>
       <h2 id="produtos" className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
       <Input
@@ -404,7 +405,7 @@ function RepresentativesAdmin() {
     <section id="representantes" className="surface-card space-y-4 p-4">
       <h2 className="text-xl font-bold">Cadastro de Representantes Comerciais</h2>
       <p className="text-sm text-muted-foreground">
-        Cadastre os representantes, consulte suas fichas e controle quem está autorizado a vender.\n        Novos cadastros começam inativos até sua aprovação.
+        Cadastre os representantes, consulte suas fichas e controle quem está autorizado a vender. Novos cadastros começam inativos até sua aprovação.
       </p>
       <form onSubmit={createRepresentative} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Input
