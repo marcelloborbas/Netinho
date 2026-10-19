@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Megaphone, ShoppingCart, Tag, Home, Search, Users, ClipboardList } from "lucide-react";
+import { Megaphone, ShoppingCart, Tag, Home, Search, ClipboardList, Settings } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 export const Route = createFileRoute("/ofertas")({
   head: () => ({
@@ -40,7 +40,7 @@ function CampaignOffers() {
       {!error && offers.length===0 && <p>Carregando ofertas...</p>}
       <div id="ofertas-campanha" className="grid scroll-mt-5 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(([code,description,price,stock])=><article key={code} className="relative flex flex-col rounded-2xl border border-[#d5e1ee] bg-white p-5 shadow-sm">
-          <div className="mb-3 flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-1 rounded-full bg-[#b91c1c] px-3 py-1 text-sm font-extrabold text-white"><Tag size={15}/> PROMOÇÃO FCO</span><Link to="/vendas" search={{ modo: "venda", q: code }} aria-label={`Comprar peça ${code}`} className="inline-flex min-h-9 items-center gap-1 rounded-full border-2 border-[#174e9b] bg-[#eaf2ff] px-3 py-1 text-sm font-extrabold text-[#102a52] hover:border-4 hover:bg-white focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><ShoppingCart size={16}/> Comprar</Link></div>
+          <div className="mb-3 flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-1 rounded-full bg-[#b91c1c] px-3 py-1 text-sm font-extrabold text-white"><Tag size={15}/> PROMOÇÃO FCO</span><Link to="/vendas" search={{ modo: "venda", promo: code }} aria-label={`Comprar peça ${code}`} className="inline-flex min-h-9 items-center gap-1 rounded-full border-2 border-[#174e9b] bg-[#eaf2ff] px-3 py-1 text-sm font-extrabold text-[#102a52] hover:border-4 hover:bg-white focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><ShoppingCart size={16}/> Comprar</Link></div>
           <span className="text-base font-bold text-[#475569]">{code}</span>
           <h2 className="mt-2 flex-1 text-lg font-bold leading-relaxed text-[#102a52]">{description}</h2>
           <strong className="mt-4 text-3xl font-extrabold text-[#bd2026]">{brl.format(price)}</strong>
@@ -51,7 +51,7 @@ function CampaignOffers() {
       {offers.length>0 && filtered.length===0 && <p>Nenhuma oferta encontrada para esta busca.</p>}
     </main>
     <nav aria-label="Navegação inferior" className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-4 border-t border-[#29476c] bg-[#061b3c] pb-[env(safe-area-inset-bottom)] text-white shadow-[0_-4px_18px_rgba(0,0,0,0.14)] md:hidden">
-      {([{to:"/",label:"Início",icon:Home},{to:"/catalogo",label:"Catálogo",icon:Search},{to:"/clientes",label:"Clientes",icon:Users},{to:"/pedidos",label:"Pedidos",icon:ClipboardList}] as const).map(({to,label,icon:Icon}) => <Link key={to} to={to} className="flex min-h-16 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-semibold text-white transition hover:bg-[#174e9b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-400"><Icon size={21}/>{label}</Link>)}
+      {([{to:"/",label:"Início",icon:Home},{to:"/catalogo",label:"Catálogo",icon:Search},{to:"/pedidos",label:"Pedidos",icon:ClipboardList},{to:"/admin",label:"Admin",icon:Settings}] as const).map(({to,label,icon:Icon}) => <Link key={to} to={to} className="flex min-h-14 flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-semibold text-white transition hover:bg-[#174e9b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-amber-400"><Icon size={21}/>{label}</Link>)}
     </nav>
   </div>;
 }
