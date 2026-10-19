@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 
 import { Logo } from "@/components/Logo";
 import { PartnerLogos } from "@/components/PartnerLogos";
 import { BRAND } from "@/lib/brand";
 
 export function BrandHeader({ actions }: { actions?: ReactNode }) {
+  const pathname = useLocation().pathname;
+  const items = [{ to: "/", label: "Início" }, { to: "/catalogo", label: "Catálogo" }, { to: "/clientes", label: "Clientes" }, { to: "/pedidos", label: "Pedidos" }];
   return (
     <header className="app-header brand-header">
       <div className="brand-header-inner">
@@ -25,6 +27,9 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
           <PartnerLogos compact downloads linked={false} />
           {actions && <div className="brand-header-actions">{actions}</div>}
         </div>
+        <nav className="brand-header-menu" aria-label="Menu principal do cabeçalho">
+          {items.map((item) => <Link key={item.to} to={item.to} className={`brand-header-menu-link ${pathname === item.to ? "is-active" : ""}`}>{item.label}</Link>)}
+        </nav>
       </div>
     </header>
   );
