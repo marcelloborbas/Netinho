@@ -23,7 +23,7 @@ const cities = [{"name":"Sorocaba","x":475,"y":285},{"name":"Votorantim","x":466
 function SorocabaMap() {
   return <div className="space-y-3">
     <div className="relative mx-auto w-full max-w-4xl">
-      <ExpandableMap src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa de atuação de Livaldo em Sorocaba e região" />
+      <ExpandableMap focus="sorocaba" src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa de atuação de Livaldo em Sorocaba e região" />
       <svg viewBox="0 0 850 606" className="hidden" preserveAspectRatio="none" role="img" aria-label="Pontos vermelhos nas cidades atendidas">
         {cities.map(city => <circle key={city.name} cx={city.x} cy={city.y} r="5" fill="#dc2626" stroke="white" strokeWidth="1.6"><title>{city.name}</title></circle>)}
       </svg>
