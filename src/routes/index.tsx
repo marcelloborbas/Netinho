@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Users, ClipboardList, FilePenLine, Settings } from "lucide-react";
+import { ShoppingCart, Users, ClipboardList, FilePenLine, Settings, ShieldCheck, MapPinned, Truck } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -56,7 +56,7 @@ function Home() {
               <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
             </div>
                 <div className="home-sales-actions mt-2 grid grid-cols-2 gap-3" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-                  <Link to={access?.can_sell || access?.level === 1 ? "/clientes" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? undefined : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Clientes" : "Consulte o catálogo; operações comerciais exigem autorização"}>
+                  <Link to={access?.can_sell || access?.level === 1 ? "/clientes" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? {} : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Clientes" : "Consulte o catálogo; operações comerciais exigem autorização"}>
                     <Users className="text-primary" />
                     <h3 className="mt-4 font-bold">Clientes</h3>
                     <p className="mt-2 text-xs text-muted-foreground">Cadastrar ou selecionar</p>
@@ -66,12 +66,12 @@ function Home() {
                     <h3 className="mt-4 font-bold">Montar venda</h3>
                     <p className="mt-2 text-xs text-muted-foreground">Escolher peças e condições</p>
                   </Link>
-                  <Link to={access?.can_sell || access?.level === 1 ? "/pedido" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? undefined : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Editar e revisar" : "Consulte o catálogo; operações comerciais exigem autorização"}>
+                  <Link to={access?.can_sell || access?.level === 1 ? "/pedido" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? {} : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Editar e revisar" : "Consulte o catálogo; operações comerciais exigem autorização"}>
                     <FilePenLine className="text-primary" />
                     <h3 className="mt-4 font-bold">Editar e revisar</h3>
                     <p className="mt-2 text-xs text-muted-foreground">Conferir pedido atual</p>
                   </Link>
-                  <Link to={access?.can_sell || access?.level === 1 ? "/pedidos" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? undefined : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Meus pedidos" : "Consulte o catálogo; operações comerciais exigem autorização"}>
+                  <Link to={access?.can_sell || access?.level === 1 ? "/pedidos" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? {} : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Meus pedidos" : "Consulte o catálogo; operações comerciais exigem autorização"}>
                     <ClipboardList className="text-primary" />
                     <h3 className="mt-4 font-bold">Meus pedidos</h3>
                     <p className="mt-2 text-xs text-muted-foreground">Histórico, PDF e envio</p>
