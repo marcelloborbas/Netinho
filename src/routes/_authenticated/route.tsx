@@ -92,7 +92,7 @@ function AppShell() {
         </button>
       </div>
       <main className={pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
-        {!hideFooter || pathname !== "/admin" ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
+        {pathname !== "/catalogo" && (!hideFooter || pathname !== "/admin") ? <p className="operator-banner">{greeting(access?.name?.trim().split(/\s+/)[0] || "Visitante")}</p> : null}
         <Outlet />
       </main>
       {canSell && draft.items.length > 0 && (
