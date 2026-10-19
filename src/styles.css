@@ -1319,3 +1319,25 @@ a {
 .welcome-install-button span{color:#fff;text-shadow:0 0 8px #ffffff66;animation:whiteTextPulse 2.2s ease-in-out infinite}
 .device-preview-toolbar button[aria-pressed="true"]{background:var(--gradient-red);color:var(--primary-foreground)}
 @media(prefers-reduced-motion:reduce){.welcome-install-button span{animation:none!important}}
+
+/* Cabeçalho oficial unificado: telefone alinhado entre a borda do ícone e o fim de AUTO PARTS. */
+.brand-header-whatsapp {
+  display: flex;
+  width: 172px;
+  max-width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  color: #22c55e;
+  font-size: clamp(10px, 2.65vw, 13px);
+  font-weight: 800;
+  line-height: 1.15;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-header-whatsapp svg { flex: 0 0 auto; }
+.brand-header-actions { display: flex; justify-content: flex-end; margin-top: 3px; }
+@media (max-width: 390px) {
+  .brand-header-inner { gap: 5px; }
+  .brand-header-whatsapp { width: 157px; font-size: 10px; }
+}
