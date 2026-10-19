@@ -9,7 +9,7 @@ import { partImage } from "@/lib/part-images";
 import hdCatalog from "@/data/hd-catalog.json";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
-  validateSearch: (search: Record<string, unknown>): { marca?: "FCO" | "HD"; modo?: "consulta" | "venda"; q?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { marca?: "FCO" | "HD" | undefined; modo?: "consulta" | "venda" | undefined; q?: string | undefined } => ({
     marca: search["marca"] === "FCO" || search["marca"] === "HD" ? search["marca"] : undefined,
     modo: search["modo"] === "consulta" || search["modo"] === "venda" ? search["modo"] : undefined,
     q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : undefined,
