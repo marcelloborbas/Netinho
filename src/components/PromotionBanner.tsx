@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, Megaphone } from "lucide-react";
+import { Megaphone } from "lucide-react";
 
 export const PROMOTIONS = [
   {
@@ -91,14 +90,6 @@ export function PromotionBanner() {
         <span>IMAGEM ILUSTRATIVA</span>
       </div>
 
-        <Link
-          className="promotion-banner-cta" style={{ position: "absolute", left: "50%", bottom: 12, transform: "translateX(-50%)", zIndex: 5, whiteSpace: "nowrap" }}
-          to="/promocao"
-          search={{ codigo: promotion.code }}
-          aria-label={`Comprar ${promotion.code} no catálogo FCO`}
-        >
-          Comprar <ArrowUpRight size={17} aria-hidden="true" />
-        </Link>
 
       <div
         className="promotion-banner-controls"
