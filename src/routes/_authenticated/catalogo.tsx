@@ -7,6 +7,7 @@ import { productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import { partImage } from "@/lib/part-images";
 import hdCatalog from "@/data/hd-catalog.json";
+import { readOffers } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
   validateSearch: (search: Record<string, unknown>): { marca?: "FCO" | "HD" | undefined; modo?: "consulta" | "venda" | undefined; q?: string | undefined } => ({
@@ -39,6 +40,7 @@ function Catalog() {
   const [page, setPage] = useState(1);
   const dq = useDeferredValue(q);
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
+  const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
     setManufacturer(search.marca ?? "all");
@@ -46,10 +48,19 @@ function Catalog() {
     setPage(1);
   }, [search.marca, search.q]);
 
+  const localFco = useMemo(() => campaignOffers.filter(([code]) => !products.some((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO")).map(([code, application, price, stock]) => ({
+    id: `fco-campaign-${code}`, code, application, refs: "",
+    categories: { name: "Caixas de direção" }, category_id: "fco-campaign",
+    manufacturer: "FCO" as const, image_url: null, catalog_page: null,
+    price_cash: null, price_30: null, price_30_45_60: price,
+    price_30_45_60_75: null, price_note: "Campanha outubro/2026", search_text: null,
+    stock, active: true, brand: "FCO", created_at: "", updated_at: "", localOnly: true,
+  })) as CatalogProduct[], [campaignOffers, products]);
   const combined = useMemo(() => [
     ...products,
+    ...localFco,
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
-  ], [products]);
+  ], [products, localFco]);
   const list = useMemo(() => combined.filter((p) =>
     (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq),
   ), [combined, manufacturer, dq]);
@@ -87,7 +98,7 @@ function Catalog() {
       </section>
 
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
-      {isLoading && <p role="status" className="text-sm">Carregando catálogo...</p>}
+      {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
       {list.length ? (
         <ul className="catalog-product-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => <CatalogCard key={p.id} p={p}/>)}
