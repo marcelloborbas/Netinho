@@ -1357,3 +1357,52 @@ a {
 
 /* Ajuste fino: deslocar levemente o WhatsApp para a direita sob a marca. */
 .brand-header-whatsapp { margin-left: 9px; }
+
+
+/* Campanha sem moldura ou fundo: conteúdo distribuído pela área disponível. */
+.promotion-banner {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  padding: 16px 0 34px;
+  min-height: 250px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.promotion-banner::before,
+.promotion-banner-art::before { display: none !important; content: none !important; }
+.promotion-banner-copy { min-width: 0; }
+.promotion-banner-art {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 49%;
+  height: 205px;
+  right: 0;
+}
+.promotion-banner-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (max-width: 640px) {
+  .promotion-banner {
+    display: block;
+    min-height: 238px;
+    margin-top: 20px;
+    margin-bottom: 12px;
+    padding: 12px 0 32px;
+  }
+  .promotion-banner-copy { width: 100%; }
+  .promotion-banner-art {
+    position: absolute;
+    right: 0;
+    width: 49%;
+    height: 168px;
+    top: 54% !important;
+  }
+  .promotion-banner-controls { right: 6px; bottom: 4px; }
+}
