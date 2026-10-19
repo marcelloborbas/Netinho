@@ -55,6 +55,9 @@ function AuthPage() {
 
   const [password, setPassword] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
+  const [accessEmail, setAccessEmail] = useState("");
+  const [accessCode, setAccessCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
   const [loginPassword, setLoginPassword] = useState("");
   const [showLogin, setShowLogin] = useState(false);
   const [recovery, setRecovery] = useState(false);
@@ -87,6 +90,39 @@ function AuthPage() {
       toast.error("O Google não concluiu o acesso. Tente novamente.");
     return () => data.subscription.unsubscribe();
   }, [previewMode, devicePreviewFrame]);
+  async function sendAccessCode(event: FormEvent) {
+    event.preventDefault();
+    if (!accessEmail.trim()) return;
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: accessEmail.trim().toLowerCase(),
+      options: { shouldCreateUser: true, emailRedirectTo: window.location.origin + "/auth" },
+    });
+    setBusy(false);
+    if (error) {
+      toast.error("Não foi possível enviar o código. Tente novamente.");
+      return;
+    }
+    setCodeSent(true);
+    toast.success("Confira seu e-mail para continuar o acesso.");
+  }
+  async function verifyAccessCode(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email: accessEmail.trim().toLowerCase(),
+      token: accessCode.trim(),
+      type: "email",
+    });
+    setBusy(false);
+    if (error) {
+      toast.error("Código inválido ou expirado. Solicite outro código.");
+      return;
+    }
+    setAccessCode("");
+    toast.success("E-mail confirmado. Verificando seu perfil.");
+    await qc.invalidateQueries({ queryKey: ["access"] });
+  }
   async function emailLogin(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
@@ -245,6 +281,19 @@ function AuthPage() {
               <button type="button" className="welcome-google-button" onClick={() => navigate({ to: "/" })}>
                 Entrar no Netinho
               </button>
+              <div className="mx-auto mt-3 w-full max-w-xs rounded-xl bg-slate-950/90 p-3 text-white">
+                <p className="mb-2 text-center text-sm font-bold">Ou acesse com seu e-mail</p>
+                <form onSubmit={codeSent ? verifyAccessCode : sendAccessCode} className="flex flex-col gap-2">
+                  <Input type="email" aria-label="Seu e-mail" placeholder="Seu e-mail (Gmail, Outlook, Yahoo...)" autoComplete="email" value={accessEmail} disabled={codeSent || busy} onChange={(event) => setAccessEmail(event.target.value)} required />
+                  {codeSent && <Input type="text" aria-label="Código recebido por e-mail" placeholder="Código recebido no e-mail" inputMode="numeric" autoComplete="one-time-code" value={accessCode} onChange={(event) => setAccessCode(event.target.value)} required />}
+                  <Button type="submit" disabled={busy || (codeSent && !accessCode.trim())}>{busy ? "Aguarde..." : codeSent ? "Confirmar código" : "Receber código por e-mail"}</Button>
+                </form>
+                {codeSent && <div className="mt-2 flex justify-between gap-2 text-xs">
+                  <button type="button" className="underline" disabled={busy} onClick={() => { setCodeSent(false); setAccessCode(""); }}>Alterar e-mail</button>
+                  <button type="button" className="underline" disabled={busy} onClick={() => { void sendAccessCode({ preventDefault: () => {} } as FormEvent); }}>Reenviar código</button>
+                </div>}
+                <p className="mt-2 text-center text-xs text-slate-200">Não é necessário ter conta Google. O acesso às funções depende do seu perfil.</p>
+              </div>
               <button type="button" className="mt-2 text-xs font-semibold text-white underline" onClick={() => setShowLogin((value) => !value)}>
                 {showLogin ? "Fechar acesso administrativo" : "Acesso administrativo"}
               </button>
