@@ -1406,3 +1406,46 @@ a {
   }
   .promotion-banner-controls { right: 6px; bottom: 4px; }
 }
+
+
+/* Tema claro do conteúdo: cabeçalho e menu inferior preservam o azul Netinho. */
+:root {
+  --background: #ffffff;
+  --surface: #f5f7fb;
+  --foreground: #17263e;
+  --card: #ffffff;
+  --card-foreground: #17263e;
+  --popover: #ffffff;
+  --popover-foreground: #17263e;
+  --secondary: #edf2f8;
+  --secondary-foreground: #18345b;
+  --muted: #f0f3f8;
+  --muted-foreground: #56657b;
+  --accent: #e9f0f9;
+  --accent-foreground: #18345b;
+  --border: #d9e1ec;
+  --input: #d9e1ec;
+  --gradient-metal: linear-gradient(180deg, #fff, #f5f7fb);
+  --shadow-card: 0 5px 18px #0a244515;
+}
+html { color-scheme: light; }
+body { background: #fff; color: #17263e; }
+main { background: #fff; color: #17263e; }
+main .promotion-banner,
+main .promotion-banner-copy { color: #17263e; }
+main .promotion-banner h2,
+main .promotion-banner-code { color: #122c54; }
+main .promotion-banner-application { color: #42526a; }
+main .promotion-banner-price-row strong { color: #bd2026; }
+main .promotion-banner-price-row > span { color: #176a37; }
+main .promotion-banner-label { color: #9b5300; }
+main .operator-banner { color: #233d60; }
+main input, main select, main textarea { color: #17263e; }
+main input::placeholder, main textarea::placeholder { color: #64748b; }
+/* As barras de marca e navegação permanecem escuras, com texto claro. */
+.brand-header, .brand-header-inner, .mobile-nav {
+  color: #fff;
+}
+.mobile-nav { background: #06152c; }
+.mobile-nav a, .mobile-nav button { color: #fff; }
+.mobile-nav a[aria-current="page"] { color: #facc15; }
