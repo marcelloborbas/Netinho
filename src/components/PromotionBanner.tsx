@@ -89,7 +89,7 @@ export function PromotionBanner() {
         </Link>
       </div>
 
-      <div className="promotion-banner-art" key={promotion.code} aria-hidden="true">
+      <div className="promotion-banner-art" key={promotion.code} style={{ display: "flex", alignItems: "center", justifyContent: "center", top: "50%", bottom: "auto", transform: "translateY(-50%)" }} aria-hidden="true">
         <img
           src={promotion.image}
           alt=""
