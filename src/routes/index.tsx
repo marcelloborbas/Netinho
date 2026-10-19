@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Users, ClipboardList, FilePenLine, Settings, LogIn, ShieldCheck, MapPinned, Truck } from "lucide-react";
+import { ShoppingCart, Users, ClipboardList, FilePenLine, Settings } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 import { accessQuery, selectedProfile } from "@/lib/access";
@@ -33,9 +33,9 @@ function Home() {
           ? savedRole
           : "Visitante";
   return (
-    <div className="home-page flex min-h-screen flex-col pb-12" style={{ height: "auto", minHeight: "100svh", overflow: "visible" }}>
+    <div className="home-page flex min-h-screen flex-col" style={{ height: "100svh", minHeight: "100svh", overflow: "hidden", paddingBottom: 0 }}>
       <BrandHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "block", overflow: "visible", minHeight: "auto", paddingTop: 24, paddingBottom: 32 }}>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12" style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly", overflow: "hidden", minHeight: 0, padding: "8px 12px" }}>
         <div className="home-greeting-row">
           <h1 className="text-4xl font-bold sm:text-5xl">
             {greeting(firstName || "Visitante")}
@@ -45,20 +45,9 @@ function Home() {
           </span>
         </div>
         <p className="mt-4 text-xl text-muted-foreground">O que deseja fazer?</p>
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-          {access?.level === 1 ? (
-            <Link to="/admin" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-amber-400/60 px-4 py-2 text-sm font-bold">
-              <Settings size={18} /> Painel de Administração
-            </Link>
-          ) : (
-            <Link to="/auth" className="inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 py-2 text-sm font-bold">
-              <LogIn size={18} /> Identificar-me / Administração
-            </Link>
-          )}
-        </div>
         <PromotionBanner />
-        <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0, 1fr)", marginTop: 20, marginBottom: 24 }}>
-          <section className="journey-choice" aria-labelledby="selling-title" style={{ width: "100%", minHeight: "auto", padding: 18 }}>
+        <div className="home-panels mt-5 grid items-stretch gap-5 lg:grid-cols-1" style={{ gridTemplateColumns: "minmax(0, 1fr)", marginTop: 8, marginBottom: 8 }}>
+          <section className="journey-choice" aria-labelledby="selling-title" style={{ width: "100%", minHeight: 0, padding: 12 }}>
             <div className="home-panel-heading">
               <div>
                 <h2 id="selling-title">Vender</h2>
@@ -66,7 +55,7 @@ function Home() {
               </div>
               <span className="home-panel-icon"><ShoppingCart size={22} aria-hidden="true" /></span>
             </div>
-                <div className="home-sales-actions mt-6 grid grid-cols-2 gap-3" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+                <div className="home-sales-actions mt-2 grid grid-cols-2 gap-3" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
                   <Link to={access?.can_sell || access?.level === 1 ? "/clientes" : "/catalogo"} search={access?.can_sell || access?.level === 1 ? undefined : { modo: "consulta" }} className="action-card" title={access?.can_sell || access?.level === 1 ? "Clientes" : "Consulte o catálogo; operações comerciais exigem autorização"}>
                     <Users className="text-primary" />
                     <h3 className="mt-4 font-bold">Clientes</h3>
@@ -88,7 +77,7 @@ function Home() {
                     <p className="mt-2 text-xs text-muted-foreground">Histórico, PDF e envio</p>
                   </Link>
                 </div>
-                <p className="home-sales-steps mt-6 text-sm text-muted-foreground">
+                <p className="home-sales-steps mt-2 text-sm text-muted-foreground">
                   Cliente → Peças → Editar e revisar → Registrar → Enviar para{" "}
                   <strong className="text-foreground">{BRAND.orderEmail}</strong>.
                 </p>
@@ -111,6 +100,10 @@ function Home() {
           </section>
         )}
       </main>
+      <BrandFooter />
+    </div>
+  );
+}      </main>
       <BrandFooter />
     </div>
   );
