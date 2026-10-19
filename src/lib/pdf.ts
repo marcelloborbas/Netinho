@@ -1,7 +1,7 @@
 import type { Order, OrderItem } from "./queries";
 import { BRAND, brl, termLabel } from "./brand";
 
-/** Gera o PDF no layout do formulário de pedido atual. */
+/** Formulário único de pedidos e orçamentos para peças FCO e HD. */
 export async function downloadOrderPdf(
   order: Order,
   items: OrderItem[],
@@ -31,6 +31,15 @@ export async function downloadOrderPdf(
     >
   >;
   const c = (order.customer_snapshot ?? {}) as Snap;
+  const documentKind = order.kind === "orcamento" ? "orçamento" : "pedido";
+  const fileName = `${documentKind}-${order.number}.pdf`;
+  const manufacturer = (item: OrderItem) => {
+    const stored = (item as OrderItem & { manufacturer?: string }).manufacturer;
+    if (stored === "FCO" || stored === "HD") return stored;
+    const category = item.category ?? "";
+    const prefix = category.match(/^(FCO|HD)\b/i)?.[1]?.toUpperCase();
+    return prefix ?? "—";
+  };
   const v = (x: unknown) => (x == null || x === "" ? "-" : String(x));
 
   doc.setFillColor(28, 29, 32);
@@ -89,7 +98,7 @@ export async function downloadOrderPdf(
       6: { halign: "right" },
     },
     body: items.map((i) => [
-      `${(i as OrderItem & { manufacturer?: string }).manufacturer ?? "FCO"} ${i.code}`,
+      `${manufacturer(i)} ${i.code}`,
       i.category,
       i.application,
       String(i.quantity),
@@ -101,12 +110,12 @@ export async function downloadOrderPdf(
     footStyles: { fillColor: [28, 29, 32], halign: "right" },
   });
 
-  if (order.notes) {
+  {
     let y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 8;
-    const lines: string[] = doc.splitTextToSize(order.notes, 180);
+    const lines: string[] = doc.splitTextToSize(order.notes || "Sem observações.", 180);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    for (const line of ["Observações:", ...lines]) {
+    for (const line of ["OBSERVAÇÕES / AUTORIZAÇÃO:", ...lines, "", "Conferido por: _______________________    Data: ____/____/________"]) {
       if (y > 276) {
         doc.addPage();
         y = 18;
@@ -123,6 +132,6 @@ export async function downloadOrderPdf(
     doc.text(`Netinho Auto Parts | FCO Automotive e HD Embreagens`, 14, 289);
     doc.text(`${page} / ${pages}`, 196, 289, { align: "right" });
   }
-  if (save) doc.save(`pedido-${order.number}.pdf`);
-  return new File([doc.output("blob")], `pedido-${order.number}.pdf`, { type: "application/pdf" });
+  if (save) doc.save(fileName);
+  return new File([doc.output("blob")], fileName, { type: "application/pdf" });
 }
