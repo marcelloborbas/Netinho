@@ -103,8 +103,4 @@ function Home() {
       <BrandFooter />
     </div>
   );
-}      </main>
-      <BrandFooter />
-    </div>
-  );
 }
