@@ -14,7 +14,7 @@ import { BrandHeader } from "@/components/BrandHeader";
 
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
-import { accessQuery, selectedProfile } from "@/lib/access";
+import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated")({
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated")({
     const access = await context.queryClient.fetchQuery(accessQuery);
     if (location.pathname === "/admin" || location.pathname === "/admin-gestao") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
-    } else if (location.pathname !== "/catalogo" && !selectedProfile(access.email)) throw redirect({ to: "/auth" });
+    }
     if (!access.can_sell && access.level !== 1 && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
     return { user: data.user, access };
   },
