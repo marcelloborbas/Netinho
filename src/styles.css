@@ -1291,7 +1291,8 @@ a {
 .welcome-google-button:active,.welcome-google-button[aria-busy="true"]{border-color:#ffe08a;background:#fff6d9;box-shadow:0 0 34px #ffc83dcc,0 0 0 3px #ffd34e66;color:#30230a}
 .welcome-auth-footer{position:absolute;right:16px;bottom:max(12px,env(safe-area-inset-bottom));left:16px;z-index:3;display:flex;justify-content:center;pointer-events:none}
 .welcome-install-button{display:flex!important;width:auto!important;min-height:0!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:1px solid transparent!important;border-radius:14px!important;padding:5px 16px 8px!important;background:transparent!important;color:#fff!important;box-shadow:none!important;text-align:center!important;pointer-events:auto;flex-direction:column!important}
-.welcome-install-button>img{width:52px!important;height:52px!important;animation:netinhoFloat 2.4s ease-in-out infinite}
+.welcome-install-button>img{width:80px!important;height:80px!important;max-width:none!important;object-fit:contain;animation:netinhoFloat 2.4s ease-in-out infinite}
+@media(min-width:640px){.welcome-install-button>img{width:96px!important;height:96px!important}}
 .welcome-install-button span{flex:initial!important;color:#ffe08a;font-size:15px!important;font-weight:800!important;line-height:1.25!important;text-shadow:0 0 7px #ffc83daa,0 0 18px #f2b72c88;animation:goldTextPulse 2.2s ease-in-out infinite}
 .welcome-install-button>svg{display:none!important}
 .welcome-install-button:hover,.welcome-install-button:focus-visible,.welcome-install-button:active{border-color:#ffd767!important;background:#fff2c422!important;box-shadow:0 0 24px #ffd34e66!important}
