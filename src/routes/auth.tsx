@@ -54,11 +54,6 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   const [password, setPassword] = useState("");
-  const [loginEmail, setLoginEmail] = useState("");
-  const [accessEmail, setAccessEmail] = useState("");
-  const [linkSent, setLinkSent] = useState(false);
-  const [loginPassword, setLoginPassword] = useState("");
-  const [showLogin, setShowLogin] = useState(false);
   const [recovery, setRecovery] = useState(false);
   const showWelcome = !signedIn && !recovery;
   const { data: access, error, refetch, isPending } = useQuery({
@@ -88,50 +83,6 @@ function AuthPage() {
       toast.error("O Google não concluiu o acesso. Tente novamente.");
     return () => data.subscription.unsubscribe();
   }, [previewMode, devicePreviewFrame]);
-  async function sendAccessLink(event: FormEvent) {
-    event.preventDefault();
-    if (!accessEmail.trim()) return;
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email: accessEmail.trim().toLowerCase(),
-      options: { shouldCreateUser: true, emailRedirectTo: window.location.origin + "/auth" },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error("Não foi possível enviar o link. Tente novamente.");
-      return;
-    }
-    setLinkSent(true);
-    toast.success("Enviamos um link de acesso. Abra seu e-mail e clique em Log In.");
-  }
-  async function emailLogin(event: FormEvent) {
-    event.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginEmail.trim().toLowerCase(),
-      password: loginPassword,
-    });
-    setBusy(false);
-    if (error) {
-      toast.error("Não foi possível entrar. Verifique e-mail e senha.");
-      return;
-    }
-    setLoginPassword("");
-    toast.success("Acesso identificado.");
-    await qc.invalidateQueries({ queryKey: ["access"] });
-    void navigate({ to: "/admin" });
-  }
-  async function recoverPassword() {
-    if (!loginEmail.trim()) {
-      toast.error("Informe seu e-mail para recuperar a senha.");
-      return;
-    }
-    const { error } = await supabase.auth.resetPasswordForEmail(loginEmail.trim().toLowerCase(), {
-      redirectTo: window.location.origin + "/auth",
-    });
-    if (error) toast.error("Não foi possível enviar a recuperação.");
-    else toast.success("Se o e-mail estiver cadastrado, você receberá as instruções.");
-  }
   function playLoginTap() {
     try {
       const ctx = new AudioContext();
@@ -285,13 +236,6 @@ function AuthPage() {
               <button type="button" className="netinho-google-icon mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-transparent p-2 transition-transform active:scale-90 disabled:opacity-60" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
                 <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
               </button>
-              {new URLSearchParams(window.location.search).get("admin") === "1" && (
-                <form onSubmit={emailLogin} className="mx-auto mt-2 flex w-full max-w-xs flex-col gap-2 rounded-lg bg-slate-950/90 p-3">
-                  <Input type="email" aria-label="E-mail administrativo" placeholder="E-mail do administrador" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required />
-                  <Input type="password" aria-label="Senha administrativa" placeholder="Senha" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required />
-                  <Button type="submit" disabled={busy}>{busy ? "Entrando..." : "Entrar na administração"}</Button>
-                </form>
-              )}
             </section>
             <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
               <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
