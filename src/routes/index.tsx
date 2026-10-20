@@ -26,8 +26,8 @@ function Home() {
   const userName = access?.name?.trim().split(/\s+/)[0];
   const canSell = access?.can_sell === true;
   const actions = [
-    { label: "Vender", icon: ShoppingCart, to: "/vendas", search: { modo: "venda" as const } },
-    { label: "Orçamento", icon: FilePenLine, to: canSell ? "/vendas" : "/auth", search: { modo: "consulta" as const } },
+    { label: "Vender", icon: ShoppingCart, to: canSell ? "/vendas" : "/representante", search: { modo: "venda" as const } },
+    { label: "Orçamento", icon: FilePenLine, to: canSell ? "/vendas" : "/representante", search: { modo: "consulta" as const } },
     { label: "Clientes", icon: Users, to: "/clientes", search: {} },
     { label: "Meus Pedidos", icon: ClipboardList, to: "/pedidos", search: {} },
   ];
@@ -38,6 +38,7 @@ function Home() {
         <PromotionBanner />
         <section className="journey-choice rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5" aria-labelledby="vender-orcar-title">
           <h2 id="vender-orcar-title" className="mb-3 text-center text-xl font-bold text-[#102a52] sm:text-2xl">{userName ? "Sr. " + userName + ", quer Vender ou Orçar ?" : "Sr. usuário, quer Vender ou Orçar ?"}</h2>
+          {access && !canSell && <p role="status" className="mb-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-center text-sm font-semibold text-amber-950">Sua conta Google está com acesso de visitante. Para vender, orçar e consultar preços de atacado, o administrador precisa autorizar seu cadastro como representante comercial. Os botões Vender e Orçamento abrem as informações de representante até a liberação.</p>}
           <nav aria-label="Ações comerciais" className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {actions.map(({ label, icon: Icon, to, search }) => (
               <Link key={label} to={to} search={search} className="action-card home-action-card flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-[#a7c1e5] bg-[#eaf2ff] p-3 text-center font-bold text-[#102a52] shadow-sm transition-transform hover:scale-[1.03] hover:bg-[#dbeafe]">
