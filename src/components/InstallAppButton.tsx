@@ -10,6 +10,29 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
+
+function downloadShortcutFile() {
+  const siteUrl = window.location.origin + "/auth";
+  const logoUrl = window.location.origin + "/favicon.png";
+  const html = `<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Netinho Auto Parts</title>
+<link rel="icon" href="${logoUrl}" type="image/png">
+<meta http-equiv="refresh" content="0; url=${siteUrl}">
+<style>html,body{margin:0;min-height:100%;background:#102a52;color:white;font-family:system-ui,sans-serif}
+main{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+img{width:150px;height:150px;object-fit:contain}a{color:white;text-decoration:none}</style>
+</head><body><main><a href="${siteUrl}"><img src="${logoUrl}" alt="Netinho Auto Parts"><h1>Netinho Auto Parts</h1><p>Abrindo o site… toque aqui se necessário.</p></a></main></body></html>`;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "Netinho Auto Parts.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
 export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
   label?: string;
 }
@@ -74,25 +97,12 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         if (choice.outcome === "accepted") return;
         return;
       }
-      // Embedded Android browsers often block installation. Try to open the site in Chrome
-      // from the user's click, where the native add-to-home-screen action is available.
-      const ua = navigator.userAgent;
-      const android = /Android/i.test(ua);
-      const embedded = /; wv\)|\bwv\b|Instagram|FBAN|FBAV|WhatsApp|GSA|EdgA/i.test(ua) ||
-        (android && !/Chrome\/\d+/i.test(ua));
-      if (android && embedded) {
-        const url = new URL(window.location.origin + "/auth");
-        const intent = "intent://" + url.host + url.pathname +
-          "#Intent;scheme=https;package=com.android.chrome;" +
-          "S.browser_fallback_url=" + encodeURIComponent(url.href) + ";end";
-        window.location.href = intent;
-        return;
-      }
-      toast.info(android
-        ? "No menu ⋮ do navegador, toque em “Adicionar à tela inicial”."
-        : "No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”.");
+      // Same fallback as Lemos a Palavra: download a simple HTML link to the site.
+      downloadShortcutFile();
+      toast.success("Atalho Netinho baixado. Abra o arquivo em Downloads para acessar o site.");
     } catch {
-      toast.info("Use a opção “Adicionar à tela inicial” no menu do navegador.");
+      downloadShortcutFile();
+      toast.success("Atalho Netinho baixado. Abra o arquivo em Downloads.");
     } finally {
       setInstalling(false);
     }
