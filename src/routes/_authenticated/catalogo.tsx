@@ -150,7 +150,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
     ["30/45/60 dias", p.price_30_45_60], ["30/45/60/75 dias", p.price_30_45_60_75],
   ] as const;
   return <li className="catalog-product-card surface-card flex min-w-0 flex-col overflow-hidden rounded-2xl p-3">
-    <div className="product-visual">{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div>
+    <button type="button" onClick={buy} aria-label={`Comprar peça ${p.code}`} title={`Comprar peça ${p.code}`} className="product-visual cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]">{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</button>
     <div className="flex flex-1 flex-col px-1 pb-2 pt-4">
       <span className="text-xs font-extrabold uppercase tracking-wider text-[#174e9b]">{brand === "HD" ? "HD Embreagens" : "FCO Automotive"}</span>
       <div className="mt-2 flex items-start justify-between gap-2">
