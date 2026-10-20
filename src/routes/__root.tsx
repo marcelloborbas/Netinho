@@ -171,8 +171,11 @@ function RootComponent() {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       draftActions.switchAccount(session?.user.id ?? null);
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      router.invalidate();
-      queryClient.clear();
+      // Invalidate cached access without deleting an in-flight query.
+      // Clearing the entire query client during SIGNED_IN can strand the
+      // OAuth callback at "Verificando seu acesso..." indefinitely.
+      void queryClient.invalidateQueries({ queryKey: ["access"] });
+      void router.invalidate();
     });
     if ("serviceWorker" in navigator)
       navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).catch(() => undefined);
