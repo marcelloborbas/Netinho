@@ -18,13 +18,12 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
-  const canSell = access?.can_sell === true || access?.level === 1;
   const userName = access?.name?.trim().split(/\s+/)[0];
   const actions = [
-    { label: "Vender", icon: ShoppingCart, to: canSell ? "/vendas" : "/auth", search: { modo: "venda" as const } },
+    { label: "Vender", icon: ShoppingCart, to: "/vendas", search: { modo: "venda" as const } },
     { label: "Orçamento", icon: FilePenLine, to: canSell ? "/vendas" : "/auth", search: { modo: "consulta" as const } },
-    { label: "Clientes", icon: Users, to: canSell ? "/clientes" : "/auth", search: {} },
-    { label: "Meus Pedidos", icon: ClipboardList, to: canSell ? "/pedidos" : "/auth", search: {} },
+    { label: "Clientes", icon: Users, to: "/clientes", search: {} },
+    { label: "Meus Pedidos", icon: ClipboardList, to: "/pedidos", search: {} },
   ];
   return (
     <div className="home-page flex min-h-screen flex-col">
