@@ -70,29 +70,37 @@ function AuthPage() {
   useEffect(() => {
     // Keep the preview shell mounted after OAuth, then show the signed-in app in its frame.
     let active = true;
+    let sessionConfirmed = false;
     const timeout = window.setTimeout(() => {
-      if (!active) return;
+      if (!active || sessionConfirmed) return;
       setChecking(false);
       setAuthCheckError(true);
     }, 12000);
-    void supabase.auth.getUser().then(({ data, error }) => {
+    // getSession reads the persisted OAuth session without requiring a
+    // potentially stalled remote getUser request on every page load.
+    void supabase.auth.getSession().then(({ data, error }) => {
       if (!active) return;
       window.clearTimeout(timeout);
-      setSignedIn(!!data.user);
-      setAuthCheckError(!!error);
+      sessionConfirmed = !!data.session?.user;
+      setSignedIn(sessionConfirmed);
+      setAuthCheckError(!!error && !sessionConfirmed);
       setChecking(false);
     }).catch(() => {
-      if (!active) return;
+      if (!active || sessionConfirmed) return;
       window.clearTimeout(timeout);
       setAuthCheckError(true);
       setChecking(false);
     });
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      setSignedIn(!!session?.user);
-      setChecking(false);
-      if (event === "PASSWORD_RECOVERY") {
-        setRecovery(true);
+      if (!active) return;
+      sessionConfirmed = !!session?.user;
+      if (sessionConfirmed) {
+        window.clearTimeout(timeout);
+        setAuthCheckError(false);
       }
+      setSignedIn(sessionConfirmed);
+      setChecking(false);
+      if (event === "PASSWORD_RECOVERY") setRecovery(true);
     });
     if (window.location.hash.includes("error_description"))
       toast.error("O Google não concluiu o acesso. Tente novamente.");
