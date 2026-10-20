@@ -167,7 +167,7 @@ function AuthPage() {
   async function emailLogin(event: FormEvent) {
     event.preventDefault();
     const email = emailAddress.trim().toLowerCase();
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Informe um e-mail válido.");
       return;
     }
