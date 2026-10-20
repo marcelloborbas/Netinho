@@ -12,7 +12,7 @@ interface InstallPromptEvent extends Event {
 
 
 function downloadShortcutFile() {
-  const siteUrl = window.location.origin + "/auth";
+  const siteUrl = window.location.origin + "/";
   const logoUrl = window.location.origin + "/favicon.png";
   const html = `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><title>Netinho Auto Parts</title>
