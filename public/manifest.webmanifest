@@ -11,15 +11,15 @@
   "icons": [
     {
       "src": "/icons/%C3%8Dcone%20192%20%C3%97%20192.webp",
-      "sizes": "192x192",
+      "sizes": "635x625",
       "type": "image/webp",
-      "purpose": "any"
+      "purpose": "maskable"
     },
     {
       "src": "/icons/%C3%8Dcone%20512%20%C3%97%20512.webp",
-      "sizes": "512x512",
+      "sizes": "897x845",
       "type": "image/webp",
-      "purpose": "any"
+      "purpose": "maskable"
     }
   ],
   "id": "/auth"
