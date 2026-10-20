@@ -499,6 +499,23 @@
 .action-card:hover {
   border-color: #ef444477;
 }
+/* Keep action labels legible on dark cards, including mobile admin screens. */
+.action-card,
+.action-card:link,
+.action-card:visited {
+  color: #ffffff;
+  font-weight: 700;
+}
+.action-card:focus-visible {
+  outline: 2px solid #e6bc67;
+  outline-offset: 3px;
+}
+.classic-button,
+.classic-button:link,
+.classic-button:visited {
+  color: #ffffff;
+}
+
 .mobile-nav {
   position: fixed;
   inset: auto 0 0;
