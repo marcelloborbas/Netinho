@@ -123,21 +123,38 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true || access?.level === 1;
   const [showContact, setShowContact] = useState(false);
+  const [city, setCity] = useState("");
   const { data: representatives = [], isError: representativesError } = useQuery({
     queryKey: ["public-sales-contacts"],
     enabled: showContact,
     staleTime: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase.from("commercial_representatives")
-        .select("id,full_name,phone").eq("active", true).order("full_name");
+        .select("id,full_name,email,phone").eq("active", true).order("full_name");
       if (error) throw error;
       return (data ?? []).filter((seller) => !!seller.phone);
     },
   });
+
+  const { data: regions = [] } = useQuery({
+    queryKey: ["public-representative-regions"],
+    enabled: showContact,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("representative_profiles").select("email,region");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  const matchedRepresentatives = city.trim().length >= 2 ? representatives.filter((seller) =>
+    regions.some((region) => region.email?.toLowerCase() === seller.email?.toLowerCase() &&
+      normalize(region.region).includes(normalize(city)))
+  ) : [];
   function whatsapp(phone: string) {
     const number = phone.replace(/\D/g, "");
     const target = number.length === 10 || number.length === 11 ? "55" + number : number;
-    const message = "Olá! Tenho interesse na peça " + p.code + " (" + (p.manufacturer ?? "FCO") + ") do catálogo Netinho Auto Parts. Gostaria de falar com um vendedor sobre a compra.";
+    const message = "Olá! Tenho interesse na peça " + p.code + " (" + (p.manufacturer ?? "FCO") + ") do catálogo Netinho Auto Parts. Gostaria de falar com um vendedor sobre a compra. Minha cidade é " + (city.trim() || "não informada") + ".";
     window.open("https://wa.me/" + target + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   }
   function buy() {
@@ -177,8 +194,11 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
       <div className="mb-2 flex items-start justify-between gap-2"><p className="font-extrabold">Deseja comprar a peça {p.code}?</p><button type="button" aria-label="Fechar opções de contato" onClick={() => setShowContact(false)}><X size={20}/></button></div>
-      <p className="mb-3 text-sm">Escolha um representante ou fale com o atendimento Netinho. A peça selecionada irá na mensagem.</p>
-      {representatives.map((seller) => <button key={seller.id} type="button" onClick={() => whatsapp(seller.phone!)} className="mb-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#a7c1e5] bg-white p-2 text-sm font-bold text-[#102a52]"><MessageCircle size={18}/> {seller.full_name}</button>)}
+      <label htmlFor={"city-" + p.id} className="mb-1 block text-sm font-bold">Qual é a sua cidade?</label>
+      <input id={"city-" + p.id} value={city} onChange={(event) => setCity(event.target.value)} placeholder="Digite sua cidade" autoComplete="address-level2" className="mb-3 min-h-12 w-full rounded-lg border border-[#a7c1e5] bg-white px-3 text-[#102a52]" />
+      <p className="mb-3 text-sm">Representantes que atendem sua cidade, quando cadastrados. A peça escolhida irá na mensagem.</p>
+      {matchedRepresentatives.map((seller) => <button key={seller.id} type="button" onClick={() => whatsapp(seller.phone!)} className="mb-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#a7c1e5] bg-white p-2 text-sm font-bold text-[#102a52]"><MessageCircle size={18}/> {seller.full_name}</button>)}
+      {city.trim().length >= 2 && matchedRepresentatives.length === 0 && <p className="mb-2 text-sm">Nenhum representante localizado para essa cidade. Consulte o atendimento Netinho.</p>}
       <button type="button" onClick={() => whatsapp("5515992458492")} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#137c45] p-3 text-center text-sm font-extrabold text-white"><MessageCircle size={20}/> Falar com o atendimento Netinho</button>
       {representativesError && <p className="mt-2 text-xs">A lista de representantes não está disponível. Utilize o atendimento Netinho.</p>}
     </div>}
