@@ -21,6 +21,10 @@ function AdminDashboard() {
         <ShieldCheck size={30} className="shrink-0 text-amber-300 drop-shadow-md sm:h-9 sm:w-9" aria-hidden="true"/>
         <h1 className="text-[clamp(1.1rem,4.5vw,2.3rem)] font-black uppercase tracking-wide text-amber-300 drop-shadow-md">Administração</h1>
       </header>
+      <Link to="/admin-gestao" hash="representantes" className="flex min-h-16 items-center justify-center gap-3 rounded-xl bg-green-600 px-4 py-4 text-center text-base font-extrabold text-white shadow-lg transition-colors hover:bg-green-700">
+        <ShieldCheck className="h-6 w-6 shrink-0" aria-hidden="true" />
+        Autorizar representantes / vendedores
+      </Link>
       <nav aria-label="Acessos da administração" className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
         {options.map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className="group flex min-h-[clamp(100px,17vh,160px)] flex-col items-center justify-center gap-2 rounded-2xl border border-amber-400/35 bg-gradient-to-b from-[#173d70] to-[#0c2346] p-3 text-center shadow-lg transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-amber-400/20">
