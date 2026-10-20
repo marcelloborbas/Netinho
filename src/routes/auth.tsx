@@ -55,6 +55,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   const [password, setPassword] = useState("");
+  const [emailLoginOpen, setEmailLoginOpen] = useState(false);
+  const [emailAddress, setEmailAddress] = useState("");
   const [recovery, setRecovery] = useState(false);
   const showWelcome = !signedIn && !recovery;
   const { data: access, error, refetch, isPending } = useQuery({
@@ -162,6 +164,28 @@ function AuthPage() {
       setBusy(false);
     }
   }
+  async function emailLogin(event: FormEvent) {
+    event.preventDefault();
+    const email = emailAddress.trim().toLowerCase();
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+      toast.error("Informe um e-mail válido.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/auth`, shouldCreateUser: false },
+      });
+      if (error) throw error;
+      toast.success("Se a conta estiver habilitada, você receberá um link de acesso por e-mail.");
+      setEmailLoginOpen(false);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível enviar o link de acesso.");
+    } finally {
+      setBusy(false);
+    }
+  }
   async function adminLogin(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
@@ -256,10 +280,22 @@ function AuthPage() {
                 .netinho-google-icon { animation: netinhoGooglePulse 2s ease-in-out infinite; }
                 @media (prefers-reduced-motion: reduce) { .netinho-google-icon { animation: none; } }
               `}</style>
-              <p className="mb-3 text-center text-sm font-bold text-white">Login pela conta google</p>
-              <button type="button" className="netinho-google-icon mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-transparent p-2 transition-transform active:scale-90 disabled:opacity-60" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
-                <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
-              </button>
+              <p className="mb-3 text-center text-sm font-bold text-white">Escolha como deseja entrar</p>
+              <div className="mx-auto flex w-full max-w-xs items-center justify-between px-5">
+                <button type="button" className="netinho-google-icon flex h-20 w-20 items-center justify-center rounded-full bg-transparent p-1 transition-transform active:scale-90 disabled:opacity-60 sm:h-24 sm:w-24" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
+                  <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
+                </button>
+                <button type="button" className="netinho-google-icon flex h-20 w-20 items-center justify-center rounded-full bg-transparent p-1 transition-transform active:scale-90 disabled:opacity-60 sm:h-24 sm:w-24" disabled={busy} onClick={() => setEmailLoginOpen((value) => !value)} aria-label="Entrar por e-mail" title="Entrar por e-mail">
+                  <img src="/images/email-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
+                </button>
+              </div>
+              {emailLoginOpen && (
+                <form onSubmit={(event) => void emailLogin(event)} className="mx-auto mt-3 flex w-full max-w-xs flex-col gap-2 rounded-xl bg-slate-950/85 p-3">
+                  <label htmlFor="netinho-email-login" className="text-center text-xs font-semibold text-white">Receber link de acesso no e-mail</label>
+                  <Input id="netinho-email-login" type="email" autoComplete="email" required value={emailAddress} onChange={(event) => setEmailAddress(event.target.value)} placeholder="seuemail@exemplo.com" className="bg-white text-slate-950" />
+                  <Button type="submit" disabled={busy}>{busy ? "Enviando..." : "Enviar link de acesso"}</Button>
+                </form>
+              )}
             </section>
             <footer className="welcome-auth-footer" aria-label="Criar atalho do Netinho">
               <InstallAppButton className="welcome-install-button" label="Criar atalho no celular" />
