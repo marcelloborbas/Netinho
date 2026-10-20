@@ -262,7 +262,10 @@ function RepresentativesAdmin() {
   const [savingAccess, setSavingAccess] = useState<string | null>(null);
   const [googleEmails, setGoogleEmails] = useState<Record<string, string>>({});
   async function authorizeGoogle(rep: { slug: string; full_name: string }) {
-    const googleEmail = (googleEmails[rep.slug] ?? "").trim().toLowerCase();
+    const existingEmail = representatives.find(
+      (item) => item.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR")
+    )?.email ?? "";
+    const googleEmail = (googleEmails[rep.slug] ?? existingEmail).trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(googleEmail)) {
       toast.error("Informe o e-mail do representante.");
       return;
