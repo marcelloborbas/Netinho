@@ -2373,3 +2373,33 @@ html, body { max-width: 100%; overflow-x: hidden; }
     transition: none !important;
   }
 }
+
+
+/* Netinho: subtle modern motion for interactive icons throughout the site. */
+@keyframes netinho-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .admin-entry-action svg { animation: netinho-icon-float 2.7s ease-in-out infinite; }
+  .admin-entry-action:nth-child(2) svg { animation-delay: -1.3s; }
+  :where(.action-card, .home-action-card, .nav-link, .mobile-nav a, .app-navigation-bar a, .promotion-campaign-link, button):not(:disabled) svg {
+    transition: transform .24s ease, filter .24s ease;
+    transform-origin: center;
+  }
+  @media (hover: hover) {
+    :where(.action-card, .home-action-card, .nav-link, .mobile-nav a, .app-navigation-bar a, .promotion-campaign-link, button):not(:disabled):hover svg {
+      transform: translateY(-3px) scale(1.1);
+      filter: drop-shadow(0 3px 5px #174e9b44);
+    }
+  }
+  :where(.action-card, .home-action-card, .nav-link, .mobile-nav a, .app-navigation-bar a, .promotion-campaign-link, button):not(:disabled):active svg {
+    transform: scale(.91);
+  }
+  .admin-entry-action { transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease; }
+  .admin-entry-action:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #174e9b26; }
+  .admin-entry-action:active { transform: scale(.97); }
+}
+@media (max-width: 639px) {
+  .home-page > main > .admin-entry-choice { grid-row: 4 !important; align-self: center; width: 100%; }
+}
