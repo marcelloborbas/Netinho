@@ -74,9 +74,25 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         if (choice.outcome === "accepted") return;
         return;
       }
-      toast.info("Para criar o atalho, abra o menu do navegador e escolha “Adicionar à tela inicial”.");
+      // Embedded Android browsers often block installation. Try to open the site in Chrome
+      // from the user's click, where the native add-to-home-screen action is available.
+      const ua = navigator.userAgent;
+      const android = /Android/i.test(ua);
+      const embedded = /; wv\)|\bwv\b|Instagram|FBAN|FBAV|WhatsApp|GSA|EdgA/i.test(ua) ||
+        (android && !/Chrome\/\d+/i.test(ua));
+      if (android && embedded) {
+        const url = new URL(window.location.origin + "/auth");
+        const intent = "intent://" + url.host + url.pathname +
+          "#Intent;scheme=https;package=com.android.chrome;" +
+          "S.browser_fallback_url=" + encodeURIComponent(url.href) + ";end";
+        window.location.href = intent;
+        return;
+      }
+      toast.info(android
+        ? "No menu ⋮ do navegador, toque em “Adicionar à tela inicial”."
+        : "No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”.");
     } catch {
-      toast.info("Abra o menu do navegador e escolha “Adicionar à tela inicial”.");
+      toast.info("Use a opção “Adicionar à tela inicial” no menu do navegador.");
     } finally {
       setInstalling(false);
     }
