@@ -53,7 +53,22 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
     };
   }, []);
 
+  function playTap() {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.setValueAtTime(720, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(960, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.16);
+      osc.onended = () => void ctx.close();
+    } catch { /* Sound is optional. */ }
+  }
   async function install() {
+    playTap();
     if (installed || !promptRef.current) {
       setInstructions(true);
       return;
@@ -80,7 +95,7 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
         variant="outline"
         disabled={disabled || installing}
         onClick={() => void install()}
-        className={cn("h-auto min-h-16 w-full justify-start gap-3 whitespace-normal rounded-lg border-primary/40 bg-primary/10 px-3 py-3 text-left text-foreground hover:bg-primary/20", className)}
+        className={cn("h-auto min-h-16 w-full justify-start gap-3 whitespace-normal rounded-lg border-primary/40 bg-primary/10 px-3 py-3 text-left text-foreground hover:bg-primary/20 shadow-md transition-transform duration-300 hover:scale-[1.03] active:scale-95 motion-reduce:transform-none", className)}
       >
         <LogoMark className="h-10 w-10 shrink-0" />
         <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
