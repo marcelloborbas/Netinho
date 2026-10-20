@@ -24,15 +24,28 @@ function SalesPage() {
   const appliedPromo = useRef<string | null>(null);
   useEffect(() => { readOffers().then(setOffers).catch(() => toast.error("Não foi possível carregar os preços da campanha.")); }, []);
   useEffect(() => {
-    if (!search.promo || appliedPromo.current === search.promo || !offers.length) return;
+    if (!search.promo || appliedPromo.current === search.promo || !offers.length || loadingProducts) return;
+    appliedPromo.current = search.promo;
     const offer = offers.find(([code]) => code.toUpperCase() === search.promo.toUpperCase());
     if (!offer) { toast.error("Produto promocional não encontrado."); return; }
-    appliedPromo.current = search.promo;
-    const [code, application, price] = offer;
-    draftActions.update({ kind: "pedido", paymentTerm: "30_45_60" });
-    draftActions.addItem({ productId: `fco-campaign-${code}`, code, category: "Caixas de direção · Promoção FCO", application, prices: { cash: null, "30": null, "30_45_60": price, "30_45_60_75": null }, quantity: 1 });
-    toast.success(`Peça ${code} adicionada ao pedido com preço promocional.`);
-  }, [offers, search.promo]);
+    const [code] = offer;
+    // Orders must reference a real product UUID. The temporary campaign IDs
+    // are display-only and cannot be accepted by create_order in Supabase.
+    const product = products.find((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO");
+    if (!product) {
+      toast.error(`A peça ${code} ainda não está cadastrada no banco de dados para pedidos.`);
+      return;
+    }
+    const prices = { cash: product.price_cash, "30": product.price_30, "30_45_60": product.price_30_45_60, "30_45_60_75": product.price_30_45_60_75 };
+    if (Object.values(prices).every((price) => price == null)) {
+      toast.error(`A peça ${code} está sem preço autorizado para sua conta.`);
+      return;
+    }
+    const paymentTerm = prices["30_45_60"] != null ? "30_45_60" : prices.cash != null ? "cash" : prices["30"] != null ? "30" : "30_45_60_75";
+    draftActions.update({ kind: "pedido", paymentTerm });
+    draftActions.addItem({ productId: product.id, code: product.code, category: product.categories?.name ?? "Peça FCO", application: product.application ?? "", prices, quantity: 1 });
+    toast.success(`Peça ${code} adicionada ao pedido.`);
+  }, [offers, search.promo, products, loadingProducts]);
   const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
