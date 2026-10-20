@@ -261,8 +261,8 @@ function AuthPage() {
                 <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
               </button>
             </section>
-            <footer className="welcome-auth-footer" aria-label="Instalar o aplicativo Netinho">
-              <InstallAppButton className="welcome-install-button" label="Baixe em seu celular" />
+            <footer className="welcome-auth-footer" aria-label="Criar atalho do Netinho">
+              <InstallAppButton className="welcome-install-button" label="Criar atalho no celular" />
             </footer>
           </div>
         </>
