@@ -19,6 +19,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
   const userName = access?.name?.trim().split(/\s+/)[0];
+  const canSell = access?.can_sell === true;
   const actions = [
     { label: "Vender", icon: ShoppingCart, to: "/vendas", search: { modo: "venda" as const } },
     { label: "Orçamento", icon: FilePenLine, to: canSell ? "/vendas" : "/auth", search: { modo: "consulta" as const } },
