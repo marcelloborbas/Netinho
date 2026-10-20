@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Megaphone, ShoppingCart, Tag } from "lucide-react";
+import { ShoppingCart, Tag } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 export const Route = createFileRoute("/ofertas")({
@@ -33,8 +33,7 @@ function CampaignOffers() {
   return <div className="min-h-screen bg-white pb-20 text-[#17263e]">
     <BrandHeader />
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-6 flex justify-center"><a href="#ofertas-campanha" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] px-5 py-3 text-center font-extrabold text-[#102a52] shadow-sm transition hover:border-4 hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><Megaphone size={20}/> Campanha de Outubro · FCO</a></div>
-      <div className="mb-5 flex justify-center"><span role="img" aria-label="Promoção FCO" className="inline-flex -rotate-3 items-center gap-2 rounded-2xl border-4 border-white bg-[#c71920] px-6 py-3 text-lg font-black tracking-wide text-white shadow-[0_5px_0_#8d1118,0_10px_22px_rgba(0,0,0,.2)]"><Tag size={24}/> PROMOÇÃO FCO</span></div>
+      <div className="mb-5 flex justify-center"><span role="img" aria-label="Promoção FCO" className="inline-flex -rotate-3 animate-pulse motion-reduce:animate-none items-center gap-3 rounded-2xl border-4 border-white bg-[#c71920] px-8 py-4 text-xl font-black tracking-wide text-white shadow-[0_5px_0_#8d1118,0_10px_22px_rgba(0,0,0,.2)] sm:text-2xl"><Tag size={30}/> PROMOÇÃO FCO</span></div>
       <h1 className="mb-2 text-3xl font-extrabold text-[#102a52]">Ofertas de caixas de direção</h1>
       <p className="mb-4 text-base text-[#475569]">Condições de pagamento: 30/45/60 dias</p>
       <input aria-label="Buscar oferta por código ou aplicação" placeholder="Buscar por código, veículo ou descrição..." value={search} onChange={e=>setSearch(e.target.value)} className="mb-6 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900" />
