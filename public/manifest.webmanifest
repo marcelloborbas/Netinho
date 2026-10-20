@@ -2,15 +2,15 @@
   "name": "Netinho Auto Parts",
   "short_name": "Netinho",
   "description": "Catálogo e pedidos B2B da Netinho Auto Parts.",
-  "start_url": "/auth",
+  "start_url": "/auth?source=installed",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#1b1c1f",
-  "theme_color": "#1b1c1f",
+  "background_color": "#0b1f3f",
+  "theme_color": "#0b1f3f",
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/icons/netinho-logo.svg",
+      "src": "/icons/netinho-logo.svg?v=2",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
