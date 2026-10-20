@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 export function CatalogDownload({
   brand,
   page,
@@ -38,9 +37,12 @@ export function CatalogDownload({
     setBusy(true);
     try {
 const filename = `${brand.toLowerCase()}-catalogo.pdf`;
-      const { data, error } = await supabase.storage.from("catalogs").download(filename);
-      if (error || !data) throw new Error("Não foi possível baixar o catálogo. Tente novamente.");
-      const url = URL.createObjectURL(data);
+      const response = await fetch(`/downloads/${filename}`, { cache: "no-store" });
+      if (!response.ok || !(response.headers.get("content-type") ?? "").toLowerCase().includes("pdf")) {
+        throw new Error("O catálogo PDF ainda não está disponível para download.");
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = filename;
