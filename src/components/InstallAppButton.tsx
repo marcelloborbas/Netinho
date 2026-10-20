@@ -18,7 +18,6 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
   const promptRef = useRef<InstallPromptEvent | null>(null);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)");
@@ -65,7 +64,6 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
     playTap();
     if (installing) return;
     if (installed) { toast.info("Netinho já está instalado neste dispositivo."); return; }
-    setShowHelp(false);
     setInstalling(true);
     try {
       if (promptRef.current) {
@@ -76,9 +74,9 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
         if (choice.outcome === "accepted") return;
         return;
       }
-      setShowHelp(true);
+      toast.info("A instalação direta não está disponível neste navegador. Abra o site no Chrome ou Safari.");
     } catch {
-      setShowHelp(true);
+      toast.info("Não foi possível abrir a instalação neste navegador.");
     } finally {
       setInstalling(false);
     }
@@ -98,14 +96,7 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
         <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
         {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : <Download className="shrink-0 text-primary" aria-hidden="true" />}
       </Button>
-      {showHelp && (
-        <div role="status" className="mt-2 rounded-lg border border-white/30 bg-slate-900 p-3 text-sm text-white">
-          <p className="font-semibold">Instalar Netinho Auto Parts</p>
-          <p className="mt-1">Android (Chrome): abra o menu ⋮ e escolha “Instalar app” ou “Adicionar à tela inicial”.</p>
-          <p className="mt-1">iPhone (Safari): toque em Compartilhar e escolha “Adicionar à Tela de Início”.</p>
-          <p className="mt-1">Computador (Chrome ou Edge): use o ícone de instalação na barra de endereços ou a opção Instalar no menu do navegador, quando disponível.</p>
-        </div>
-      )}
+
     </>
   );
 }
