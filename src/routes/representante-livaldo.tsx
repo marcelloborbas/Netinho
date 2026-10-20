@@ -38,12 +38,26 @@ function SorocabaMap() {
 function LivaldoPage() {
   const { data: me } = useQuery(meQuery);
   const { data: profile } = useQuery({ queryKey: ["representative-profile", "livaldo-souza-silva"], queryFn: async () => { const { data, error } = await supabase.from("representative_profiles" as never).select("full_name,region").eq("slug", "livaldo-souza-silva").maybeSingle(); if (error) return null; return data as { full_name: string; region: string } | null; } });
+  const { data: authorization, isPending: checkingAuthorization, isError: authorizationError } = useQuery({
+    queryKey: ["representative-authorization", "Livaldo Souza Silva"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commercial_representatives" as never)
+        .select("active")
+        .eq("full_name", "Livaldo Souza Silva")
+        .maybeSingle();
+      if (error) throw error;
+      return data as { active: boolean } | null;
+    },
+  });
+  const authorizationLabel = checkingAuthorization ? "Verificando autorização" : authorizationError ? "Status indisponível" : authorization?.active ? "Autorizado" : "Não autorizado";
+  const authorizationColor = authorizationError || checkingAuthorization ? "bg-slate-500/15 text-slate-600" : authorization?.active ? "bg-green-600 text-white" : "bg-red-600 text-white";
   return (
     <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <section className="surface-card space-y-3 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Livaldo Souza Silva"}</h2>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
+        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Livaldo Souza Silva"}</h2><span className={`rounded-full px-3 py-1 text-xs font-bold ${authorizationColor}`}>{authorizationLabel}</span>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
         <p className="text-sm font-semibold text-primary">Cadastro de teste</p>
         <p><span className="text-muted-foreground">Área de representação:</span> {profile?.region ?? "Sorocaba e região — DDD 015"}</p>
         <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole size={16} /> Dados somente para visualização. Alterações exclusivas da administração.</p>
