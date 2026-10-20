@@ -3,7 +3,6 @@ import { Download, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { LogoMark } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 interface InstallPromptEvent extends Event {
@@ -18,14 +17,9 @@ export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
 export function InstallAppButton({ className, disabled, label = "Baixe para seu celular a Netinho", ...props }: InstallAppButtonProps) {
   const promptRef = useRef<InstallPromptEvent | null>(null);
   const [installing, setInstalling] = useState(false);
-  const [instructions, setInstructions] = useState(false);
-  const [platform, setPlatform] = useState<"ios" | "android" | "desktop">("desktop");
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
-    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    setPlatform(ios ? "ios" : /Android/.test(navigator.userAgent) ? "android" : "desktop");
     const standalone = window.matchMedia("(display-mode: standalone)");
     const syncInstalled = () => setInstalled(standalone.matches ||
       (navigator as Navigator & { standalone?: boolean }).standalone === true);
@@ -39,7 +33,6 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
     const finishInstall = () => {
       promptRef.current = null;
       setInstalled(true);
-      setInstructions(false);
       toast.success("Netinho adicionada à tela inicial.");
     };
     window.addEventListener("beforeinstallprompt", capturePrompt);
@@ -67,21 +60,41 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
       osc.onended = () => void ctx.close();
     } catch { /* Sound is optional. */ }
   }
+  function downloadShortcutFile() {
+    const siteUrl = new URL("/", window.location.origin).href;
+    const iconUrl = new URL("/favicon.png", window.location.origin).href;
+    const html = `<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>Netinho Auto Parts</title>
+<link rel="icon" href="${iconUrl}"><meta http-equiv="refresh" content="0;url=${siteUrl}">
+</head><body style="font-family:Arial,sans-serif;text-align:center;padding:3rem">
+<a href="${siteUrl}"><img src="${iconUrl}" alt="Netinho Auto Parts" width="110">
+<h1>Netinho Auto Parts</h1><p>Toque para abrir o site</p></a></body></html>`;
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Netinho Auto Parts.html";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    toast.success("Atalho baixado. Abra o arquivo para acessar o Netinho.");
+  }
+
   async function install() {
     playTap();
-    if (installed || !promptRef.current) {
-      setInstructions(true);
-      return;
-    }
-    const pendingPrompt = promptRef.current;
-    promptRef.current = null;
+    if (installing) return;
     setInstalling(true);
     try {
-      await pendingPrompt.prompt();
-      const choice = await pendingPrompt.userChoice;
-      if (choice.outcome === "dismissed") setInstructions(true);
+      if (!installed && promptRef.current) {
+        const pending = promptRef.current;
+        promptRef.current = null;
+        await pending.prompt();
+        const choice = await pending.userChoice;
+        if (choice.outcome === "accepted") return;
+      }
+      downloadShortcutFile();
     } catch {
-      setInstructions(true);
+      downloadShortcutFile();
     } finally {
       setInstalling(false);
     }
@@ -101,40 +114,7 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
         <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
         {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : <Download className="shrink-0 text-primary" aria-hidden="true" />}
       </Button>
-      <Dialog open={instructions} onOpenChange={setInstructions}>
-        <DialogContent className="max-h-[85svh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-lg">
-          <DialogHeader>
-            <DialogTitle>{installed ? "Netinho no seu celular" : "Adicionar Netinho à tela inicial"}</DialogTitle>
-            <DialogDescription>
-              {installed ? "A Netinho já está instalada neste aparelho. Abra pelo ícone na tela inicial." : "Abra o site diretamente no navegador do celular e siga os passos abaixo."}
-            </DialogDescription>
-          </DialogHeader>
-          {!installed && (
-            <ol className="list-decimal space-y-3 pl-5 text-sm leading-6 text-foreground">
-              {platform === "ios" ? (
-                <>
-                  <li>Abra a Netinho no Safari.</li>
-                  <li>Toque em Compartilhar (quadrado com seta para cima).</li>
-                  <li>Selecione “Adicionar à Tela de Início” e confirme em “Adicionar”.</li>
-                </>
-              ) : platform === "android" ? (
-                <>
-                  <li>Abra a Netinho no Chrome.</li>
-                  <li>Toque no menu de três pontos.</li>
-                  <li>Selecione “Instalar aplicativo” ou “Adicionar à tela inicial” e confirme.</li>
-                </>
-              ) : (
-                <>
-                  <li>No celular, abra o site da Netinho no Chrome (Android) ou Safari (iPhone).</li>
-                  <li>No Android, use o menu de três pontos e “Instalar aplicativo” ou “Adicionar à tela inicial”.</li>
-                  <li>No iPhone, use Compartilhar e “Adicionar à Tela de Início”.</li>
-                </>
-              )}
-            </ol>
-          )}
-          <Button type="button" onClick={() => setInstructions(false)}>Entendi</Button>
-        </DialogContent>
-      </Dialog>
+
     </>
   );
 }
