@@ -2,7 +2,9 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart, MessageCircle } from "lucide-react";
+import { accessQuery } from "@/lib/access";
+import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import { draftActions } from "@/lib/order-store";
@@ -118,7 +120,28 @@ function Catalog() {
 function CatalogCard({ p }: { p: CatalogProduct }) {
   const [details, setDetails] = useState(false);
   const navigate = useNavigate();
+  const { data: access } = useQuery(accessQuery);
+  const canSell = access?.can_sell === true || access?.level === 1;
+  const [showContact, setShowContact] = useState(false);
+  const { data: representatives = [], isError: representativesError } = useQuery({
+    queryKey: ["public-sales-contacts"],
+    enabled: showContact,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("commercial_representatives")
+        .select("id,full_name,phone").eq("active", true).order("full_name");
+      if (error) throw error;
+      return (data ?? []).filter((seller) => !!seller.phone);
+    },
+  });
+  function whatsapp(phone: string) {
+    const number = phone.replace(/\D/g, "");
+    const target = number.length === 10 || number.length === 11 ? "55" + number : number;
+    const message = "Olá! Tenho interesse na peça " + p.code + " (" + (p.manufacturer ?? "FCO") + ") do catálogo Netinho Auto Parts. Gostaria de falar com um vendedor sobre a compra.";
+    window.open("https://wa.me/" + target + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
+  }
   function buy() {
+    if (!canSell) { setShowContact(true); return; }
     if (p.manufacturer === "HD") { toast.info("HD Embreagens: em breve."); return; }
     const prices = { cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
     if (Object.values(prices).every((value) => value == null)) {
@@ -151,6 +174,14 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
   ] as const;
   return <li className="catalog-product-card surface-card flex min-w-0 flex-col overflow-hidden rounded-2xl p-3">
     <button type="button" onClick={buy} aria-label={`Comprar peça ${p.code}`} title={`Comprar peça ${p.code}`} className="product-visual cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]">{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</button>
+
+    {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
+      <div className="mb-2 flex items-start justify-between gap-2"><p className="font-extrabold">Deseja comprar a peça {p.code}?</p><button type="button" aria-label="Fechar opções de contato" onClick={() => setShowContact(false)}><X size={20}/></button></div>
+      <p className="mb-3 text-sm">Escolha um representante ou fale com o atendimento Netinho. A peça selecionada irá na mensagem.</p>
+      {representatives.map((seller) => <button key={seller.id} type="button" onClick={() => whatsapp(seller.phone!)} className="mb-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#a7c1e5] bg-white p-2 text-sm font-bold text-[#102a52]"><MessageCircle size={18}/> {seller.full_name}</button>)}
+      <button type="button" onClick={() => whatsapp("5515992458492")} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#137c45] p-3 text-center text-sm font-extrabold text-white"><MessageCircle size={20}/> Falar com o atendimento Netinho</button>
+      {representativesError && <p className="mt-2 text-xs">A lista de representantes não está disponível. Utilize o atendimento Netinho.</p>}
+    </div>}
     <div className="flex flex-1 flex-col px-1 pb-2 pt-4">
       <span className="text-xs font-extrabold uppercase tracking-wider text-[#174e9b]">{brand === "HD" ? "HD Embreagens" : "FCO Automotive"}</span>
       <div className="mt-2 flex items-start justify-between gap-2">
