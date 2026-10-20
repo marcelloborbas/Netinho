@@ -132,7 +132,23 @@ function AuthPage() {
     if (error) toast.error("Não foi possível enviar a recuperação.");
     else toast.success("Se o e-mail estiver cadastrado, você receberá as instruções.");
   }
+  function playLoginTap() {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(660, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.07, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.17);
+      osc.onended = () => void ctx.close();
+    } catch { /* Browser may block sound. */ }
+  }
   async function googleLogin() {
+    playLoginTap();
     // OAuth must leave the device-preview iframe before contacting Google.
     if (window.self !== window.top) {
       const isDevicePreviewFrame = new URLSearchParams(window.location.search).get("devicePreviewFrame") === "1";
@@ -259,8 +275,14 @@ function AuthPage() {
             />
             <section className="welcome-auth-actions" aria-label="Acesso temporário ao site">
               <p className="text-center text-sm font-bold text-white">Acesso livre para conhecer o projeto</p>
-              <button type="button" className="welcome-google-button" onClick={() => navigate({ to: "/" })}>
-                Entrar no Netinho
+              <style>{`
+                @keyframes netinhoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+                .netinho-login-google { animation: netinhoFloat 2.6s ease-in-out infinite; }
+                @media (prefers-reduced-motion: reduce) { .netinho-login-google { animation: none; } }
+              `}</style>
+              <button type="button" className="welcome-google-button netinho-login-google flex items-center justify-center gap-2" disabled={busy} onClick={() => void googleLogin()}>
+                <span aria-hidden="true" className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-lg font-extrabold text-blue-600">G</span>
+                {busy ? "Conectando..." : "Continuar com Google"}
               </button>
               <div className="mx-auto mt-3 w-full max-w-xs rounded-xl bg-slate-950/90 p-3 text-white">
                 <p className="mb-2 text-center text-sm font-bold">Ou acesse com seu e-mail</p>
