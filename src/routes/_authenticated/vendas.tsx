@@ -137,6 +137,7 @@ function SalesPage() {
         {matches.slice((page-1)*12,page*12).map((p) => <li key={p.id} className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#b8cee8] bg-[#f7faff] p-3">
           <div className="min-w-0 flex-1">
             <p className="font-extrabold text-[#102a52]">{p.code} · {p.manufacturer ?? "FCO"}</p>
+            <p className="mt-1 text-base font-extrabold text-[#102a52]">{p.categories?.name || "Peça automotiva"}</p>
             <p className="whitespace-pre-wrap break-words text-sm leading-6">{p.application}</p>
             <div className="mt-1 space-y-0.5 text-sm font-bold text-[#174e9b]">
               {p.price_cash != null && <p>À vista: {brl(p.price_cash)}</p>}
