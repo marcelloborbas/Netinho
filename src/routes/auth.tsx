@@ -274,29 +274,18 @@ function AuthPage() {
               alt="Seja bem-vindo ao mundo automotivo."
             />
             <section className="welcome-auth-actions" aria-label="Acesso temporário ao site">
-              <p className="text-center text-sm font-bold text-white">Acesso livre para conhecer o projeto</p>
               <style>{`
-                @keyframes netinhoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-                .netinho-login-google { animation: netinhoFloat 2.6s ease-in-out infinite; }
-                @media (prefers-reduced-motion: reduce) { .netinho-login-google { animation: none; } }
+                @keyframes netinhoGooglePulse {
+                  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,.3)); }
+                  50% { transform: scale(1.12); filter: drop-shadow(0 0 18px rgba(255,215,70,.9)); }
+                }
+                .netinho-google-icon { animation: netinhoGooglePulse 2s ease-in-out infinite; }
+                @media (prefers-reduced-motion: reduce) { .netinho-google-icon { animation: none; } }
               `}</style>
-              <button type="button" className="welcome-google-button netinho-login-google flex items-center justify-center gap-2" disabled={busy} onClick={() => void googleLogin()}>
-                <span aria-hidden="true" className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-lg font-extrabold text-blue-600">G</span>
-                {busy ? "Conectando..." : "Continuar com Google"}
+              <button type="button" className="netinho-google-icon mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-transparent p-2 transition-transform active:scale-90 disabled:opacity-60" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
+                <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
               </button>
-              <div className="mx-auto mt-3 w-full max-w-xs rounded-xl bg-slate-950/90 p-3 text-white">
-                <p className="mb-2 text-center text-sm font-bold">Ou acesse com seu e-mail</p>
-                <form onSubmit={sendAccessLink} className="flex flex-col gap-2">
-                  <Input type="email" aria-label="Seu e-mail" placeholder="Seu e-mail (Gmail, Outlook, Yahoo...)" autoComplete="email" value={accessEmail} disabled={busy} onChange={(event) => { setAccessEmail(event.target.value); setLinkSent(false); }} required />
-                  <Button type="submit" disabled={busy}>{busy ? "Enviando..." : linkSent ? "Reenviar link de acesso" : "Receber link de acesso"}</Button>
-                </form>
-                {linkSent && <p role="status" className="mt-2 text-center text-sm font-semibold text-white">Confira sua caixa de entrada e o spam. Abra o e-mail do Netinho e clique em “Log In” para entrar. Você pode voltar a esta página depois.</p>}
-                <p className="mt-2 text-center text-xs text-slate-200">Não é necessário ter conta Google. O acesso às funções depende do seu perfil.</p>
-              </div>
-              <button type="button" className="mt-2 text-xs font-semibold text-white underline" onClick={() => setShowLogin((value) => !value)}>
-                {showLogin ? "Fechar acesso administrativo" : "Acesso administrativo"}
-              </button>
-              {showLogin && (
+              {new URLSearchParams(window.location.search).get("admin") === "1" && (
                 <form onSubmit={emailLogin} className="mx-auto mt-2 flex w-full max-w-xs flex-col gap-2 rounded-lg bg-slate-950/90 p-3">
                   <Input type="email" aria-label="E-mail administrativo" placeholder="E-mail do administrador" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required />
                   <Input type="password" aria-label="Senha administrativa" placeholder="Senha" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required />
