@@ -39,7 +39,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
   return (
     <header className="app-header brand-header">
       <div className="brand-header-inner">
-        <div className="flex min-w-0 flex-col items-start gap-0.5">
+        <div className="flex min-w-0 shrink-0 flex-col items-start gap-0.5">
           <Link to="/" aria-label="Início Netinho" className="brand-header-home">
             <Logo className="brand-header-logo" />
           </Link>
@@ -50,10 +50,10 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
             <span>{BRAND.phone}</span>
           </a>
         </div>
-        <div className="brand-header-representations">
-          <div className="flex items-center justify-end gap-2">
-            <div className="flex flex-col items-center gap-1">
-              <p className="text-center">Representante Oficial</p>
+        <div className="brand-header-representations min-w-0">
+          <div className="flex w-full items-center justify-end gap-2 sm:gap-3">
+            <div className="flex shrink-0 flex-col items-center gap-1">
+              <p className="m-0 text-center text-[9px] font-bold leading-tight whitespace-nowrap sm:text-[10px]">Representante Oficial</p>
               <PartnerLogos compact downloads linked={false} />
             </div>
           {user && (
