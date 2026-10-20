@@ -52,9 +52,10 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
         </div>
         <div className="brand-header-representations">
           <p>Representante Oficial</p>
-          <PartnerLogos compact downloads linked={false} />
+          <div className="flex items-center justify-end gap-2">
+            <PartnerLogos compact downloads linked={false} />
           {user && (
-            <div className="relative flex items-center justify-end pt-1">
+            <div className="relative flex shrink-0 items-center justify-end">
               <button type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
                 {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-8 w-8 rounded-full object-cover" /> : <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={19} /></span>}
               </button>
@@ -66,6 +67,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
               )}
             </div>
           )}
+          </div>
           {actions && <div className="brand-header-actions">{actions}</div>}
         </div>
       </div>
