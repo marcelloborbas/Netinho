@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/vendas")({
 function SalesPage() {
   const search = Route.useSearch();
   const draft = useDraft();
-  const { data: customers = [], isLoading: loadingCustomers } = useQuery(customersQuery);
+  const { data: customers = [], isLoading: loadingCustomers, isError: customersError, refetch: retryCustomers } = useQuery(customersQuery);
   const { data: products = [], isLoading: loadingProducts } = useQuery(productsQuery);
   const [q, setQ] = useState(search.q || search.promo);
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -86,6 +86,17 @@ function SalesPage() {
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="font-extrabold text-[#102a52]">1. Cliente</h2>
       {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça promocional {search.promo} incluída no rascunho. Selecione o cliente para continuar.</p>}
+      {customersError && (
+        <div role="alert" className="space-y-2 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-900">
+          <p>Não foi possível carregar os clientes. Verifique sua autorização ou a conexão com o servidor. Nenhum cadastro foi excluído.</p>
+          <button type="button" onClick={() => void retryCustomers()} className="rounded-lg bg-red-700 px-3 py-2 font-bold text-white">Tentar novamente</button>
+        </div>
+      )}
+      {!loadingCustomers && !customersError && customers.length === 0 && (
+        <p role="status" className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm font-semibold text-amber-950">
+          Nenhum cliente disponível para esta conta. Os clientes de outro representante podem não aparecer aqui. Confira a conta usada no login ou consulte a Administração.
+        </p>
+      )}
       <select aria-label="Selecionar cliente" value={draft.customerId ?? ""} onChange={(e) => {
         const c = customers.find((x) => x.id === e.target.value);
         if (c) draftActions.update({ customerId: c.id, customerName: c.trade_name || c.company_name, buyer: c.buyer ?? "", carrier: c.carrier ?? "", kind });
