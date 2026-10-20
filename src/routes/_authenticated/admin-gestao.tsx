@@ -139,19 +139,19 @@ function UserAttributionAdmin() {
       )}
       <ul className="space-y-2">
         {profiles.map((user) => (
-          <li key={user.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
-            <div className="min-w-0">
-              <p className="truncate font-semibold">{user.full_name || "Sem nome"}</p>
-              <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+          <li key={user.id} className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 w-full flex-1">
+              <p className="break-words font-semibold text-slate-900">{user.full_name || "Sem nome"}</p>
+              <p className="break-all text-xs text-slate-600">{user.email}</p>
             </div>
-            <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+            <label className="flex w-full min-w-0 flex-col gap-1.5 text-xs font-semibold text-slate-700 sm:w-48">
               Atribuição
               <select
                 aria-label={`Atribuição de ${user.full_name || user.email}`}
                 value={user.attribution}
                 disabled={savingUser === user.id}
                 onChange={(event) => updateAttribution(user, event.target.value as ProfileAttribution)}
-                className="min-h-10 rounded-lg border border-white/15 bg-[#0b1f3f] px-3 text-sm text-white outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="min-h-11 w-full min-w-0 appearance-auto rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-900 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-60"
               >
                 <option value="Representante">Representante</option>
                 <option value="Visitante">Visitante</option>
