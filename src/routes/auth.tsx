@@ -233,6 +233,7 @@ function AuthPage() {
                 .netinho-google-icon { animation: netinhoGooglePulse 2s ease-in-out infinite; }
                 @media (prefers-reduced-motion: reduce) { .netinho-google-icon { animation: none; } }
               `}</style>
+              <p className="mb-3 text-center text-sm font-bold text-white">Login pela conta google</p>
               <button type="button" className="netinho-google-icon mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-transparent p-2 transition-transform active:scale-90 disabled:opacity-60" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
                 <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
               </button>
