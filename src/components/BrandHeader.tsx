@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { ClipboardList, UserRound } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Link } from "@tanstack/react-router";
 
 import { Logo } from "@/components/Logo";
@@ -6,6 +8,22 @@ import { PartnerLogos } from "@/components/PartnerLogos";
 import { BRAND } from "@/lib/brand";
 
 export function BrandHeader({ actions }: { actions?: ReactNode }) {
+  const [user, setUser] = useState<{ name: string; picture: string | null } | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    const sync = (session: { user?: { user_metadata?: Record<string, unknown>; email?: string } } | null) => {
+      if (!mounted) return;
+      const u = session?.user;
+      if (!u) { setUser(null); return; }
+      const meta = u.user_metadata ?? {};
+      const picture = meta.avatar_url ?? meta.picture;
+      const name = meta.full_name ?? meta.name ?? u.email ?? "Usuário";
+      setUser({ name: String(name), picture: typeof picture === "string" && picture.startsWith("https://") ? picture : null });
+    };
+    void supabase.auth.getSession().then(({ data }) => sync(data.session));
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => sync(session));
+    return () => { mounted = false; data.subscription.unsubscribe(); };
+  }, []);
   return (
     <header className="app-header brand-header">
       <div className="brand-header-inner">
@@ -23,6 +41,16 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
         <div className="brand-header-representations">
           <p>Representante Oficial</p>
           <PartnerLogos compact downloads linked={false} />
+          {user && (
+            <div className="flex items-center justify-end gap-2 pt-1">
+              <Link to="/pedidos" aria-label="Pedidos" title="Pedidos" className="flex items-center gap-1 rounded-lg border border-white/30 px-2 py-1 text-xs font-bold text-white hover:bg-white/10">
+                <ClipboardList size={16} aria-hidden="true" /> Pedidos
+              </Link>
+              <Link to="/auth" title={user.name} aria-label={`Perfil de ${user.name}`} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
+                {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-8 w-8 rounded-full object-cover" /> : <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={19} /></span>}
+              </Link>
+            </div>
+          )}
           {actions && <div className="brand-header-actions">{actions}</div>}
         </div>
       </div>
