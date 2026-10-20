@@ -51,13 +51,15 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
           </a>
         </div>
         <div className="brand-header-representations">
-          <p>Representante Oficial</p>
           <div className="flex items-center justify-end gap-2">
-            <PartnerLogos compact downloads linked={false} />
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-center">Representante Oficial</p>
+              <PartnerLogos compact downloads linked={false} />
+            </div>
           {user && (
             <div className="relative flex shrink-0 items-center justify-end">
               <button type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
-                {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-8 w-8 rounded-full object-cover" /> : <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={19} /></span>}
+                {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-11 w-11 rounded-full object-cover" /> : <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={25} /></span>}
               </button>
               {menuOpen && (
                 <div role="menu" aria-label="Opções do usuário" className="absolute right-0 top-full z-50 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl">
