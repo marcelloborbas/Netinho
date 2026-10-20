@@ -84,13 +84,27 @@ const cities = locations.map((location) => location.name);
 function RepresentativePage() {
   const { data: me } = useQuery(meQuery);
   const { data: profile } = useQuery({ queryKey: ["representative-profile", "abdenego-eugenio"], queryFn: async () => { const { data, error } = await supabase.from("representative_profiles" as never).select("full_name,region").eq("slug", "abdenego-eugenio").maybeSingle(); if (error) return null; return data as { full_name: string; region: string } | null; } });
+  const { data: authorization, isPending: checkingAuthorization, isError: authorizationError } = useQuery({
+    queryKey: ["representative-authorization", "Abdenego Eugênio"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commercial_representatives" as never)
+        .select("active")
+        .eq("full_name", "Abdenego Eugênio")
+        .maybeSingle();
+      if (error) throw error;
+      return data as { active: boolean } | null;
+    },
+  });
+  const authorizationLabel = checkingAuthorization ? "Verificando autorização" : authorizationError ? "Status indisponível" : authorization?.active ? "Autorizado" : "Não autorizado";
+  const authorizationColor = authorizationError || checkingAuthorization ? "bg-slate-500/15 text-slate-600" : authorization?.active ? "bg-green-600 text-white" : "bg-red-600 text-white";
   return (
     <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Sorocaba e região)</Link></div>
       <section className="surface-card space-y-4 p-5">
         <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Abdenego Eugênio"}</h2>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "abdenego-eugenio" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Abdenego Eugênio" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
+        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Abdenego Eugênio"}</h2><span className={`rounded-full px-3 py-1 text-xs font-bold ${authorizationColor}`}>{authorizationLabel}</span>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "abdenego-eugenio" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Abdenego Eugênio" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
         <p className="text-sm text-muted-foreground">Dados de representação cadastrados pela administração — somente leitura.</p>
         <dl className="grid gap-3 sm:grid-cols-2">
           <div><dt className="text-xs text-muted-foreground">Área de atuação</dt><dd className="font-medium">{profile?.region ?? "Vale do Paraíba e Litoral Norte de São Paulo"}</dd></div>
