@@ -2,7 +2,7 @@
   "name": "Netinho Auto Parts",
   "short_name": "Netinho",
   "description": "Catálogo e pedidos B2B da Netinho Auto Parts.",
-  "start_url": "/auth?source=installed",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0b1f3f",
@@ -28,5 +28,5 @@
       "purpose": "any"
     }
   ],
-  "id": "/auth"
+  "id": "/"
 }
