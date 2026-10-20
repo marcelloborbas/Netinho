@@ -36,8 +36,8 @@ export function CatalogDownload({
     if (busy) return;
     setBusy(true);
     try {
-const filename = `${brand.toLowerCase()}-catalogo.pdf`;
-      const response = await fetch(`/downloads/${filename}`, { cache: "no-store" });
+const filename = brand === "FCO" ? "Catalogo_Completo_FCO.pdf" : "hd-catalogo.pdf";
+      const response = await fetch(`/downloads/${encodeURIComponent(filename)}`, { cache: "no-store" });
       if (!response.ok || !(response.headers.get("content-type") ?? "").toLowerCase().includes("pdf")) {
         throw new Error("O catálogo PDF ainda não está disponível para download.");
       }
