@@ -200,31 +200,6 @@ function OrderPage() {
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-1.5">
-          <Label>Tipo</Label>
-          <Select
-            value={d.kind}
-            onValueChange={(v) => draftActions.update({ kind: v as "pedido" | "orcamento" })}
-          >
-            <SelectTrigger className="h-12">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pedido">Pedido</SelectItem>
-              <SelectItem value="orcamento">Orçamento</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Field
-          label="Entrega"
-          value={d.delivery}
-          onChange={(v) => draftActions.update({ delivery: v })}
-        />
-        <Field
-          label="Transportadora"
-          value={d.carrier}
-          onChange={(v) => draftActions.update({ carrier: v })}
-        />
         <Field
           label="Comprador"
           value={d.buyer}
@@ -382,7 +357,7 @@ function OrderPage() {
           </Button>
           <Button asChild variant="outline" className="h-12">
             <Link to="/catalogo" search={{ modo: "venda" }}>
-              Continuar escolhendo peças
+              Continuar comprando
             </Link>
           </Button>
         </div>
