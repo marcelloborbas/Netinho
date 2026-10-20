@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ComponentProps } from "react";
-import { Download, LoaderCircle } from "lucide-react";
+import { Smartphone, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { LogoMark } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
   label?: string;
 }
 
-export function InstallAppButton({ className, disabled, label = "Baixe para seu celular a Netinho", ...props }: InstallAppButtonProps) {
+export function InstallAppButton({ className, disabled, label = "Crie um atalho no celular", ...props }: InstallAppButtonProps) {
   const promptRef = useRef<InstallPromptEvent | null>(null);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
@@ -33,7 +33,7 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
     const finishInstall = () => {
       promptRef.current = null;
       setInstalled(true);
-      toast.success("Netinho adicionada à tela inicial.");
+      toast.success("Atalho do Netinho adicionado à tela inicial.");
     };
     window.addEventListener("beforeinstallprompt", capturePrompt);
     window.addEventListener("appinstalled", finishInstall);
@@ -63,7 +63,7 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
   async function install() {
     playTap();
     if (installing) return;
-    if (installed) { toast.info("Netinho já está instalado neste dispositivo."); return; }
+    if (installed) { toast.info("O atalho do Netinho já está na tela inicial."); return; }
     setInstalling(true);
     try {
       if (promptRef.current) {
@@ -74,9 +74,9 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
         if (choice.outcome === "accepted") return;
         return;
       }
-      toast.info("A instalação direta não está disponível neste navegador. Abra o site no Chrome ou Safari.");
+      toast.info("Para criar o atalho, abra o menu do navegador e escolha “Adicionar à tela inicial”.");
     } catch {
-      toast.info("Não foi possível abrir a instalação neste navegador.");
+      toast.info("Abra o menu do navegador e escolha “Adicionar à tela inicial”.");
     } finally {
       setInstalling(false);
     }
@@ -94,7 +94,7 @@ export function InstallAppButton({ className, disabled, label = "Baixe para seu 
       >
         <LogoMark className="h-10 w-10 shrink-0" />
         <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
-        {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : <Download className="shrink-0 text-primary" aria-hidden="true" />}
+        {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : <Smartphone className="shrink-0 text-primary" aria-hidden="true" />}
       </Button>
 
     </>
