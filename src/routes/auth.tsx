@@ -51,6 +51,7 @@ function AuthPage() {
   const qc = useQueryClient();
   const [signedIn, setSignedIn] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [authCheckError, setAuthCheckError] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const [password, setPassword] = useState("");
@@ -68,8 +69,22 @@ function AuthPage() {
   }, [signedIn, access, recovery, navigate, previewMode]);
   useEffect(() => {
     // Keep the preview shell mounted after OAuth, then show the signed-in app in its frame.
-    void supabase.auth.getUser().then(({ data }) => {
+    let active = true;
+    const timeout = window.setTimeout(() => {
+      if (!active) return;
+      setChecking(false);
+      setAuthCheckError(true);
+    }, 12000);
+    void supabase.auth.getUser().then(({ data, error }) => {
+      if (!active) return;
+      window.clearTimeout(timeout);
       setSignedIn(!!data.user);
+      setAuthCheckError(!!error);
+      setChecking(false);
+    }).catch(() => {
+      if (!active) return;
+      window.clearTimeout(timeout);
+      setAuthCheckError(true);
       setChecking(false);
     });
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
@@ -81,7 +96,7 @@ function AuthPage() {
     });
     if (window.location.hash.includes("error_description"))
       toast.error("O Google não concluiu o acesso. Tente novamente.");
-    return () => data.subscription.unsubscribe();
+    return () => { active = false; window.clearTimeout(timeout); data.subscription.unsubscribe(); };
   }, [previewMode, devicePreviewFrame]);
   function playLoginTap() {
     try {
@@ -258,6 +273,12 @@ function AuthPage() {
           />
           <Button disabled={busy} className="w-full">Salvar nova senha</Button>
         </form>
+      )}
+      {authCheckError && !signedIn && !checking && (
+        <div className="mx-auto mt-6 max-w-md rounded-lg bg-white p-5 text-center text-slate-900">
+          <p>Não foi possível confirmar o login do Google. Atualize a página e tente novamente.</p>
+          <Button className="mt-3" onClick={() => window.location.assign("/auth")}>Tentar novamente</Button>
+        </div>
       )}
       {!showWelcome && checking ? (
         <div className="flex justify-center p-24">
