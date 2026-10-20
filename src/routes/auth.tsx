@@ -175,7 +175,7 @@ function AuthPage() {
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: `${window.location.origin}/auth`, shouldCreateUser: false },
+        options: { emailRedirectTo: `${window.location.origin}/auth`, shouldCreateUser: true },
       });
       if (error) throw error;
       toast.success("Se a conta estiver habilitada, você receberá um link de acesso por e-mail.");
