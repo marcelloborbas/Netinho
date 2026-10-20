@@ -1,13 +1,16 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ClipboardList, UserRound } from "lucide-react";
+import { ClipboardList, UserRound, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import { Logo } from "@/components/Logo";
 import { PartnerLogos } from "@/components/PartnerLogos";
 import { BRAND } from "@/lib/brand";
 
 export function BrandHeader({ actions }: { actions?: ReactNode }) {
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [user, setUser] = useState<{ name: string; picture: string | null } | null>(null);
   useEffect(() => {
     let mounted = true;
@@ -24,6 +27,15 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => sync(session));
     return () => { mounted = false; data.subscription.unsubscribe(); };
   }, []);
+  async function signOut() {
+    setSigningOut(true);
+    const { error } = await supabase.auth.signOut();
+    setSigningOut(false);
+    if (error) { window.alert("Não foi possível sair. Tente novamente."); return; }
+    setMenuOpen(false);
+    localStorage.removeItem("netinho-vendedor");
+    void navigate({ to: "/auth" });
+  }
   return (
     <header className="app-header brand-header">
       <div className="brand-header-inner">
@@ -42,13 +54,16 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
           <p>Representante Oficial</p>
           <PartnerLogos compact downloads linked={false} />
           {user && (
-            <div className="flex items-center justify-end gap-2 pt-1">
-              <Link to="/pedidos" aria-label="Pedidos" title="Pedidos" className="flex items-center gap-1 rounded-lg border border-white/30 px-2 py-1 text-xs font-bold text-white hover:bg-white/10">
-                <ClipboardList size={16} aria-hidden="true" /> Pedidos
-              </Link>
-              <Link to="/auth" title={user.name} aria-label={`Perfil de ${user.name}`} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
+            <div className="relative flex items-center justify-end pt-1">
+              <button type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
                 {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-8 w-8 rounded-full object-cover" /> : <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={19} /></span>}
-              </Link>
+              </button>
+              {menuOpen && (
+                <div role="menu" aria-label="Opções do usuário" className="absolute right-0 top-full z-50 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl">
+                  <Link role="menuitem" to="/pedidos" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-100"><ClipboardList size={18} /> Meus Pedidos</Link>
+                  <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
+                </div>
+              )}
             </div>
           )}
           {actions && <div className="brand-header-actions">{actions}</div>}
