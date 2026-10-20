@@ -473,9 +473,20 @@ function RepresentativesAdmin() {
                 type="button"
                 size="sm"
                 disabled={savingAccess === rep.slug}
+                className={representatives.some(
+                  (item) =>
+                    item.active &&
+                    item.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR") &&
+                    item.email.toLowerCase() === (googleEmails[rep.slug] ?? item.email).trim().toLowerCase(),
+                ) ? "bg-green-600 text-white hover:bg-green-700" : undefined}
                 onClick={() => authorizeGoogle(rep)}
               >
-                {savingAccess === rep.slug ? "Autorizando..." : "Autorizar acesso"}
+                {savingAccess === rep.slug ? "Autorizando..." : representatives.some(
+                  (item) =>
+                    item.active &&
+                    item.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR") &&
+                    item.email.toLowerCase() === (googleEmails[rep.slug] ?? item.email).trim().toLowerCase(),
+                ) ? "Acesso liberado ✓" : "Autorizar acesso"}
               </Button>
             </div>
             <Link
