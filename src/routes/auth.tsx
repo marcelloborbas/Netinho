@@ -9,7 +9,6 @@ import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InstallAppButton } from "@/components/InstallAppButton";
-import { BrandFooter } from "@/components/BrandFooter";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -373,7 +372,6 @@ function AuthPage() {
           )}
         </div>
       ) : null}
-      {!showWelcome && <BrandFooter />}
     </main>
   );
 }
