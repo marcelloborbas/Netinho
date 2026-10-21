@@ -2460,19 +2460,6 @@ html, body { max-width: 100%; overflow-x: hidden; }
   min-height: 0;
 }
 
-/* Login: centralizar o convite e os botões Google/e-mail no espaço disponível,
-   sem deslocar o atalho fixado ao rodapé. */
-.welcome-auth-stage .welcome-auth-actions {
-  top: 46% !important;
-  bottom: auto !important;
-  transform: translateY(-50%);
-}
-@media (max-height: 700px) {
-  .welcome-auth-stage .welcome-auth-actions {
-    top: 44% !important;
-    bottom: auto !important;
-  }
-}
 
 /* Cabeçalho compacto: marca, parceiros e usuário na mesma linha superior. */
 .brand-header .brand-header-inner {
