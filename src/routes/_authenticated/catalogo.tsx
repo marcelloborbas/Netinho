@@ -2,7 +2,7 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart, MessageCircle } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Wrench } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -42,6 +42,7 @@ function Catalog() {
   const [q, setQ] = useState(search.q ?? "");
   const [manufacturer, setManufacturer] = useState(search.marca === "HD" ? "all" : (search.marca ?? "all"));
   const [page, setPage] = useState(1);
+  const [category, setCategory] = useState("all");
   const dq = useDeferredValue(q);
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
@@ -65,12 +66,13 @@ function Catalog() {
     ...localFco,
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
+  const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD").map((p) => p.categories?.name).filter((n): n is string => !!n))).sort(), [combined]);
   const list = useMemo(() => combined.filter((p) =>
-    p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq),
-  ), [combined, manufacturer, dq]);
+    p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq),
+  ), [combined, manufacturer, category, dq]);
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setQ(""); setManufacturer("all"); setPage(1); };
+  const reset = () => { setQ(""); setManufacturer("all"); setCategory("all"); setPage(1); };
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
@@ -97,10 +99,14 @@ function Catalog() {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p role="status" className="text-sm font-semibold text-[#102a52]">{list.length} peças encontradas</p>
-          {(q || manufacturer !== "all") && <button type="button" onClick={reset} className="text-sm font-bold text-[#174e9b] underline">Limpar filtros</button>}
+          {(q || manufacturer !== "all" || category !== "all") && <button type="button" onClick={reset} className="text-sm font-bold text-[#174e9b] underline">Limpar filtros</button>}
         </div>
       </section>
 
+      <nav className="catalog-category-filters" aria-label="Categorias de peças">
+        <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/> Todas</button>
+        {categories.map((name) => <button key={name} type="button" aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}><Wrench size={19}/><span>{name}</span></button>)}
+      </nav>
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
       {list.length ? (
@@ -215,6 +221,11 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
       {details && p.refs && <p className="mt-2 text-sm text-muted-foreground">Referências: {p.refs}</p>}
       <button type="button" aria-expanded={details} onClick={() => setDetails(!details)} className="my-3 self-start text-sm font-bold text-[#174e9b] underline">{details ? "Ocultar detalhes" : "Ver aplicações e referências"}</button>
       {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="mb-3 text-xs underline"/>}
+      <div className="catalog-card-stock">{p.stock > 0 ? `● Em estoque · ${p.stock} un.` : "Estoque sob consulta"}</div>
+      <div className="catalog-card-actions">
+        <button type="button" onClick={buy}><ShoppingCart size={19}/> Fazer pedido</button>
+        <button type="button" aria-expanded={details} onClick={() => setDetails(!details)}><PackageSearch size={19}/> {details ? "Ocultar detalhes" : "Ver detalhes"}</button>
+      </div>
       <div className="mt-auto border-t border-[#b8cee8] pt-3">
         <p className="mb-2 text-sm font-extrabold text-[#102a52]">Valores</p>
         {!canSell ? <p className="text-sm text-muted-foreground">Valores disponíveis somente para representantes. Fale com um vendedor.</p>
