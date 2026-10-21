@@ -2534,3 +2534,65 @@ button[title*="Excluir" i], button[title*="Remover" i], button[title*="Descartar
 button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, button[aria-label*="Descartar" i]:hover {
   color: #b91c1c !important;
 }
+
+/* Catálogo digital: acabamento escuro contínuo, acompanhando o fundo das fotos.
+   Mantém todos os dados reais, filtros e ações existentes. */
+.catalog-showcase { color:#f5f8ff; }
+.catalog-showcase-heading {
+  background:linear-gradient(145deg,#071b34,#102a49) !important;
+  border-color:#244361 !important;
+  color:#fff !important;
+}
+.catalog-showcase > section[aria-label="Pesquisar catálogo"] {
+  background:#081e36 !important;
+  border-color:#28445e !important;
+  color:#f5f8ff !important;
+}
+.catalog-showcase #catalog-search {
+  background:#102a43 !important;
+  border-color:#35546e !important;
+  color:#fff !important;
+}
+.catalog-showcase #catalog-search::placeholder { color:#b9c9d9 !important; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] p[role="status"] { color:#f5f8ff !important; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] nav button:not([disabled]) {
+  background:#142c46;
+  border-color:#35546e;
+  color:#f5f8ff;
+}
+.catalog-showcase section[aria-label="Pesquisar catálogo"] nav button[aria-pressed="true"] {
+  background:#075fbd !important;
+  border-color:#2d9dff !important;
+  color:#fff !important;
+}
+.catalog-showcase .catalog-product-card {
+  background:linear-gradient(150deg,#071d35 0%,#0b2742 100%) !important;
+  border:1px solid #294661 !important;
+  color:#f8fafc !important;
+  box-shadow:0 6px 22px #020b1c30;
+}
+.catalog-showcase .catalog-product-card .product-visual {
+  background:#05182c !important;
+  border-radius:14px;
+  overflow:hidden;
+}
+.catalog-showcase .catalog-product-card .product-visual img { object-fit:contain; }
+.catalog-showcase .catalog-product-card h2 { color:#fff !important; }
+.catalog-showcase .catalog-product-card p,
+.catalog-showcase .catalog-product-card dt { color:#e2eaf4; }
+.catalog-showcase .catalog-product-card .text-muted-foreground { color:#b8c9dd !important; }
+.catalog-showcase .catalog-product-card span.text-\[\#174e9b\],
+.catalog-showcase .catalog-product-card button.text-\[\#174e9b\] { color:#7bc2ff !important; }
+.catalog-showcase .catalog-product-card .border-t { border-color:#36516d !important; }
+.catalog-showcase .catalog-product-card .border-t p { color:#f7faff !important; }
+.catalog-showcase .catalog-product-card .border-t dd { color:#ffe26b !important; font-weight:800; }
+.catalog-showcase .catalog-product-card button[aria-label^="Comprar peça"] {
+  border-color:#2788ff !important;
+  background:#086fdd !important;
+  color:#fff !important;
+}
+.catalog-showcase nav[aria-label="Páginas do catálogo"] button {
+  background:#132e49 !important;
+  color:#f5f8ff !important;
+  border-color:#35546e !important;
+}
