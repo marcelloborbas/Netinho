@@ -1,6 +1,24 @@
 import type { Order, OrderItem } from "./queries";
 import { BRAND, termLabel } from "./brand";
 
+/** Campos de endereço e contato gravados no momento do pedido. */
+type CustomerSnapshot = {
+  company_name?: string | null;
+  trade_name?: string | null;
+  address?: string | null;
+  district?: string | null;
+  city?: string | null;
+  state?: string | null;
+  cep?: string | null;
+  cnpj?: string | null;
+  state_registration?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  carrier?: string | null;
+  carrier_phone?: string | null;
+  buyer?: string | null;
+};
+
 /** Planilha comercial única para pedidos e orçamentos FCO / HD. */
 export async function downloadOrderXlsx(order: Order, items: OrderItem[], sellerName: string) {
   const ExcelJS = (await import("exceljs")).default;
@@ -19,11 +37,11 @@ export async function downloadOrderXlsx(order: Order, items: OrderItem[], seller
       sheet.addImage(imageId, { tl: { col: 0.1, row: 0.1 }, ext: { width: 58, height: 58 } });
     }
   } catch { /* Logo opcional */ }
-  const c = (order.customer_snapshot ?? {}) as Record<string, string | null>;
+  const c = (order.customer_snapshot ?? {}) as CustomerSnapshot;
   const v = (x: unknown) => x == null || x === "" ? "—" : String(x);
   const header = (range: string, value: string, color = "102A52") => {
     sheet.mergeCells(range);
-    const cell = sheet.getCell(range.split(":")[0]);
+    const cell = sheet.getCell(range.split(":")[0] ?? range);
     cell.value = value;
     cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF" + color } };
     cell.font = { name: "Arial", size: 12, bold: true, color: { argb: "FFFFFFFF" } };

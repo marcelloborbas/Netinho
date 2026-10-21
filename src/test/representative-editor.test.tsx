@@ -10,6 +10,7 @@ vi.mock("@tanstack/react-router", () => ({
     useParams: () => ({ slug: state.slug }),
   }),
   Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
+  useNavigate: () => vi.fn(),
 }));
 
 vi.mock("@/lib/queries", () => ({
@@ -18,6 +19,11 @@ vi.mock("@/lib/queries", () => ({
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
+    auth: {
+      getSession: async () => ({ data: { session: null } }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signOut: async () => ({ error: null }),
+    },
     from: () => ({
       select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }),
     }),

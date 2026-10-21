@@ -9,7 +9,7 @@ import { brl } from "@/lib/brand";
 import { readOffers, type Offer } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/vendas")({
-  validateSearch: (s: Record<string, unknown>) => ({ modo: s.modo === "consulta" ? "consulta" as const : "venda" as const, q: typeof s.q === "string" ? s.q : "", promo: typeof s.promo === "string" ? s.promo : "" }),
+  validateSearch: (s: Record<string, unknown>) => ({ modo: s["modo"] === "consulta" ? "consulta" as const : "venda" as const, q: typeof s["q"] === "string" ? s["q"] : "", promo: typeof s["promo"] === "string" ? s["promo"] : "" }),
   head: () => ({ meta: [{ title: "Vendas e Orçamentos | Netinho Auto Parts" }] }),
   component: SalesPage,
 });
