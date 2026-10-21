@@ -2413,3 +2413,21 @@ html, body { max-width: 100%; overflow-x: hidden; }
   min-width: 62px;
   min-height: 62px;
 }
+
+/* Login: ampliar somente o ícone Netinho do botão Baixar Atalho em 1,4x. */
+.welcome-auth-footer .welcome-install-button > img {
+  width: 64.4px !important;
+  height: 64.4px !important;
+}
+@media (max-width: 380px) {
+  .welcome-auth-footer .welcome-install-button > img {
+    width: 61.6px !important;
+    height: 61.6px !important;
+  }
+}
+@media (max-height: 700px) {
+  .welcome-auth-footer .welcome-install-button > img {
+    width: 53.2px !important;
+    height: 53.2px !important;
+  }
+}
