@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { Search, Plus, Minus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -21,6 +21,7 @@ function SalesPage() {
   const { data: products = [], isLoading: loadingProducts } = useQuery(productsQuery);
   const [q, setQ] = useState(search.q || search.promo);
   const [offers, setOffers] = useState<Offer[]>([]);
+  const addedCampaign = useRef<string | null>(null);
   // A campanha abre a tela de vendas pela identificação do cliente.
   // A peça escolhida fica localizada na busca, sem entrar no pedido antes da seleção.
   useEffect(() => {
@@ -30,6 +31,33 @@ function SalesPage() {
     }
   }, [search.promo]);
   useEffect(() => { readOffers().then(setOffers).catch(() => toast.error("Não foi possível carregar os preços da campanha.")); }, []);
+  useEffect(() => {
+    if (!search.promo || !draft.customerId || loadingProducts || !offers.length) return;
+    const key = `${search.promo}:${draft.customerId}`;
+    if (addedCampaign.current === key) return;
+    const offer = offers.find(([code]) => code.toUpperCase() === search.promo.toUpperCase());
+    if (!offer) return;
+    const product = products.find((p) => p.code.toUpperCase() === search.promo.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO");
+    if (!product) {
+      addedCampaign.current = key;
+      toast.error(`A peça ${search.promo} ainda não está cadastrada para pedidos. Consulte a distribuidora.`);
+      return;
+    }
+    const prices = { cash: product.price_cash, "30": product.price_30, "30_45_60": product.price_30_45_60, "30_45_60_75": product.price_30_45_60_75 };
+    if (Object.values(prices).every((v) => v == null)) {
+      addedCampaign.current = key;
+      toast.error("Esta peça está sem preço autorizado para pedidos.");
+      return;
+    }
+    addedCampaign.current = key;
+    if (draftActions.get().items.some((item) => item.productId === product.id)) {
+      toast.info("A peça escolhida já está no pedido.");
+      return;
+    }
+    draftActions.update({ kind: "pedido", paymentTerm: prices["30_45_60"] != null ? "30_45_60" : prices.cash != null ? "cash" : prices["30"] != null ? "30" : "30_45_60_75" });
+    draftActions.addItem({ productId: product.id, code: product.code, category: product.categories?.name ?? "Peça FCO", application: product.application ?? "", prices, quantity: 1 });
+    toast.success(`Peça ${product.code} incluída automaticamente no pedido.`);
+  }, [search.promo, draft.customerId, products, loadingProducts, offers]);
   const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -69,7 +97,7 @@ function SalesPage() {
     </header>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="font-extrabold text-[#102a52]">1. Cliente</h2>
-      {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça da campanha: {search.promo}. Primeiro selecione o cliente; depois adicione a peça ao pedido.</p>}
+      {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça escolhida: {search.promo}. Selecione o cliente para incluí-la automaticamente no pedido.</p>}
       {customersError && (
         <div role="alert" className="space-y-2 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-900">
           <p>Não foi possível carregar os clientes. Verifique sua autorização ou a conexão com o servidor. Nenhum cadastro foi excluído.</p>
