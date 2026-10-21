@@ -10,6 +10,7 @@ vi.mock("@tanstack/react-router", () => ({
     useParams: () => ({ slug: state.slug }),
   }),
   Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
+  useNavigate: () => vi.fn(),
 }));
 
 vi.mock("@/lib/queries", () => ({

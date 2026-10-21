@@ -9,6 +9,7 @@ const state = vi.hoisted(() => ({
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (options: unknown) => ({ options, useSearch: () => state.search }),
   Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
+  useNavigate: () => vi.fn(),
 }));
 vi.mock("@tanstack/react-query", () => ({
   queryOptions: (options: unknown) => options,
