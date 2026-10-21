@@ -7,7 +7,9 @@ const state = vi.hoisted(() => ({
 }));
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (options: unknown) => ({ options, useSearch: () => state.search }),
-  Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
+  Link: ({ children, to }: { children: React.ReactNode; to?: string }) => (
+    <a href={to ?? "#"}>{children}</a>
+  ),
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: "/catalogo" }),
 }));
