@@ -2499,3 +2499,19 @@ html, body { max-width: 100%; overflow-x: hidden; }
   .brand-header .brand-header-representations .partner-logo { width: 32px !important; min-width: 32px; height: 25px !important; min-height: 25px; padding: 2px !important; }
   .brand-header .brand-header-representations .partner-logo img { max-width: 28px; max-height: 21px; }
 }
+
+/* Login: subir discretamente o texto e os botões Google/e-mail,
+   preservando o botão Criar Atalho no rodapé. */
+.welcome-auth-stage .welcome-auth-actions {
+  bottom: max(148px, calc(env(safe-area-inset-bottom) + 142px)) !important;
+}
+@media (max-width: 380px) {
+  .welcome-auth-stage .welcome-auth-actions {
+    bottom: max(132px, calc(env(safe-area-inset-bottom) + 126px)) !important;
+  }
+}
+@media (max-height: 700px) {
+  .welcome-auth-stage .welcome-auth-actions {
+    bottom: max(128px, calc(env(safe-area-inset-bottom) + 122px)) !important;
+  }
+}
