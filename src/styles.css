@@ -2675,3 +2675,33 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .brand-header button[aria-haspopup="menu"] > img,
   .brand-header button[aria-haspopup="menu"] > span { width: 43px !important; height: 43px !important; min-width: 43px !important; min-height: 43px !important; }
 }
+
+
+/* Disposição única do cabeçalho em todas as páginas internas.
+   Referência aprovada: Netinho + WhatsApp | Representante FCO/HD | avatar. */
+.brand-header .brand-header-inner {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  width: min(calc(100% - 12px), 1180px) !important;
+  min-height: 72px !important;
+  column-gap: 6px !important;
+}
+.brand-header .brand-header-inner > :first-child {
+  min-width: 0 !important;
+  justify-self: start !important;
+}
+.brand-header .brand-header-representations {
+  justify-self: end !important;
+  min-width: 0 !important;
+}
+.brand-header .brand-header-representations > div:first-child {
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+}
+.brand-header .brand-header-logo .brand-wordmark-name { white-space: nowrap !important; }
+.brand-header .brand-header-logo .brand-wordmark-tagline { white-space: nowrap !important; }
+@media (max-width: 390px) {
+  .brand-header .brand-header-inner { column-gap: 3px !important; }
+  .brand-header .brand-header-representations > div:first-child { gap: 4px !important; }
+}
