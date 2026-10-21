@@ -1,10 +1,28 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { InstallAppButton } from "@/components/InstallAppButton";
 
-vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
+vi.mock("sonner", () => ({ toast: { success: vi.fn(), info: vi.fn(), error: vi.fn() } }));
+import { toast } from "sonner";
 
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+let appended: HTMLAnchorElement[] = [];
+const appendOriginal = document.body.appendChild.bind(document.body);
+
+beforeEach(() => {
+  appended = [];
+  URL.createObjectURL = vi.fn(() => "blob:atalho");
+  URL.revokeObjectURL = vi.fn();
+  vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+  vi.spyOn(document.body, "appendChild").mockImplementation((node) => {
+    if (node instanceof HTMLAnchorElement) appended.push(node);
+    return appendOriginal(node as Node);
+  });
+});
+
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 function offerInstall(outcome: "accepted" | "dismissed" = "accepted") {
   const prompt = vi.fn().mockResolvedValue(undefined);
@@ -14,24 +32,29 @@ function offerInstall(outcome: "accepted" | "dismissed" = "accepted") {
   return { prompt, event };
 }
 
-describe("Netinho home-screen installation", () => {
-  it("offers the available browser installation without submitting the login form", async () => {
+describe("Netinho home-screen shortcut", () => {
+  it("uses the browser installation prompt when available, without submitting the login form", async () => {
     const submit = vi.fn((event: React.FormEvent) => event.preventDefault());
-    render(<form onSubmit={submit}><InstallAppButton /></form>);
+    render(
+      <form onSubmit={submit}>
+        <InstallAppButton />
+      </form>,
+    );
     const { prompt, event } = offerInstall();
     fireEvent.click(screen.getByRole("button"));
     await waitFor(() => expect(prompt).toHaveBeenCalledTimes(1));
     expect(event.defaultPrevented).toBe(true);
     expect(submit).not.toHaveBeenCalled();
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(appended).toHaveLength(0);
   });
 
-  it("opens manual home-screen instructions when installation is unavailable", () => {
+  it("downloads a home-screen shortcut file when the browser offers no prompt", async () => {
     render(<InstallAppButton />);
     fireEvent.click(screen.getByRole("button"));
-    expect(screen.getByRole("dialog")).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "Entendi" }));
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await waitFor(() => expect(appended).toHaveLength(1));
+    expect(appended[0].download).toBe("Netinho Auto Parts.html");
+    expect(appended[0].href).toBe("blob:atalho");
+    expect(toast.success).toHaveBeenCalledWith(expect.stringContaining("Atalho Netinho baixado"));
   });
 
   it("does not reuse a consumed browser installation event", async () => {
@@ -42,23 +65,25 @@ describe("Netinho home-screen installation", () => {
     await waitFor(() => expect(button).not.toBeDisabled());
     fireEvent.click(button);
     expect(prompt).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole("dialog")).toBeVisible();
+    await waitFor(() => expect(appended).toHaveLength(1));
+    expect(appended[0].download).toBe("Netinho Auto Parts.html");
   });
 
-  it("falls back to manual instructions if the browser refuses the prompt", async () => {
+  it("falls back to the shortcut file if the browser refuses the prompt", async () => {
     render(<InstallAppButton />);
     const { prompt } = offerInstall();
     prompt.mockRejectedValueOnce(new Error("Unavailable"));
     fireEvent.click(screen.getByRole("button"));
-    expect(await screen.findByRole("dialog")).toBeVisible();
+    await waitFor(() => expect(appended).toHaveLength(1));
+    expect(appended[0].download).toBe("Netinho Auto Parts.html");
   });
 
-  it("handles dismissal and then an installation completion event", async () => {
+  it("says the shortcut already exists once the app is installed", async () => {
     render(<InstallAppButton />);
-    offerInstall("dismissed");
-    fireEvent.click(screen.getByRole("button"));
-    expect(await screen.findByRole("dialog")).toBeVisible();
     fireEvent(window, new Event("appinstalled"));
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    const button = await screen.findByRole("button");
+    fireEvent.click(button);
+    expect(toast.info).toHaveBeenCalledWith(expect.stringContaining("já está na tela inicial"));
+    expect(appended).toHaveLength(0);
   });
 });
