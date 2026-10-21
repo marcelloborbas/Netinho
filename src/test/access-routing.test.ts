@@ -58,6 +58,6 @@ describe("commercial route boundaries", () => {
   it("does not reuse a profile belonging to another account", async () => {
     state.access.email = "other@example.com";
     await expect(enter("/catalogo")).resolves.toBeTruthy();
-    await expect(enter("/pedido")).rejects.toEqual({ redirect: { to: "/auth" } });
+    await expect(enter("/pedido")).rejects.toEqual({ redirect: { to: "/catalogo" } });
   });
 });

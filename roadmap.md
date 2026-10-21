@@ -51,4 +51,13 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [x] Aplicar a migração de atribuição de cadastros, que estava no repositório sem efeito no banco.
 - [x] Corrigir erros de compilação da consulta de promoções e da visualização dos catálogos.
 - [x] Atualizar os testes da tela inicial ao layout novo; 26 testes e verificação de tipos sem erro.
-- [ ] Conferir a consulta de promoções dentro da área logada (precisa de uma conta Google real).
+- [x] Conferir a consulta de promoções dentro da área logada (21/10: `/promocao?codigo=FCZA-0001A` carregou a oferta).
+
+## Sincronização com o GitHub em 21/10/2026
+- [x] Conferir o repositório: nada novo a importar; a versão do `main` chegou com 28 erros de verificação de tipos, todos resolvidos.
+- [x] Aplicar a migração de carteira compartilhada de clientes, que estava no repositório sem efeito no banco.
+- [x] Alinhar os testes ao catálogo, à tela inicial e ao atalho de celular novos; 27 testes e verificação de tipos sem erro.
+- [x] Conferir como visitante na prévia: catálogo abre, 24 peças por página, nenhum valor e sem controles de venda.
+- [x] Conferir como conta autorizada: preços visíveis, peça adicionada e tela de pedido com o item e o total.
+- [ ] Decidir se a pasta de catálogos em download (`/downloads/`) continua pública: o PDF FCO é acessível a quem tiver o endereço.
+- [ ] Decidir o destino da tela `/promocao`: ela funciona, mas nenhum botão leva até ela.

@@ -217,7 +217,8 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
       {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="mb-3 text-xs underline"/>}
       <div className="mt-auto border-t border-[#b8cee8] pt-3">
         <p className="mb-2 text-sm font-extrabold text-[#102a52]">Valores</p>
-        {prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm"><dt>{label}</dt><dd className="font-extrabold text-[#102a52]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Valor não cadastrado</p>}
+        {!canSell ? <p className="text-sm text-muted-foreground">Valores disponíveis somente para representantes. Fale com um vendedor.</p>
+         : prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm"><dt>{label}</dt><dd className="font-extrabold text-[#102a52]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Valor não cadastrado</p>}
       </div>
     </div>
   </li>;
