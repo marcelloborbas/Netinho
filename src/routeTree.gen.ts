@@ -24,6 +24,7 @@ import { Route as AuthenticatedPedidoRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedPromocaoRouteImport } from './routes/_authenticated/promocao'
 import { Route as AuthenticatedRepresentantesRouteImport } from './routes/_authenticated/representantes'
 import { Route as AuthenticatedTransportadorasRouteImport } from './routes/_authenticated/transportadoras'
+import { Route as AuthenticatedVendasRouteImport } from './routes/_authenticated/vendas'
 import { Route as AuthenticatedVendedoresRouteImport } from './routes/_authenticated/vendedores'
 import { Route as EditarRepresentanteSlugRouteImport } from './routes/editar-representante.$slug'
 import { Route as AuthenticatedPedidosIndexRouteImport } from './routes/_authenticated/pedidos.index'
@@ -107,6 +108,11 @@ const AuthenticatedTransportadorasRoute =
     path: '/transportadoras',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedVendasRoute = AuthenticatedVendasRouteImport.update({
+  id: '/vendas',
+  path: '/vendas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedVendedoresRoute = AuthenticatedVendedoresRouteImport.update({
   id: '/vendedores',
   path: '/vendedores',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/promocao': typeof AuthenticatedPromocaoRoute
   '/representantes': typeof AuthenticatedRepresentantesRoute
   '/transportadoras': typeof AuthenticatedTransportadorasRoute
+  '/vendas': typeof AuthenticatedVendasRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/promocao': typeof AuthenticatedPromocaoRoute
   '/representantes': typeof AuthenticatedRepresentantesRoute
   '/transportadoras': typeof AuthenticatedTransportadorasRoute
+  '/vendas': typeof AuthenticatedVendasRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/_authenticated/promocao': typeof AuthenticatedPromocaoRoute
   '/_authenticated/representantes': typeof AuthenticatedRepresentantesRoute
   '/_authenticated/transportadoras': typeof AuthenticatedTransportadorasRoute
+  '/_authenticated/vendas': typeof AuthenticatedVendasRoute
   '/_authenticated/vendedores': typeof AuthenticatedVendedoresRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/_authenticated/pedidos/$id': typeof AuthenticatedPedidosIdRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/promocao'
     | '/representantes'
     | '/transportadoras'
+    | '/vendas'
     | '/vendedores'
     | '/editar-representante/$slug'
     | '/pedidos/$id'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/promocao'
     | '/representantes'
     | '/transportadoras'
+    | '/vendas'
     | '/vendedores'
     | '/editar-representante/$slug'
     | '/pedidos/$id'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/promocao'
     | '/_authenticated/representantes'
     | '/_authenticated/transportadoras'
+    | '/_authenticated/vendas'
     | '/_authenticated/vendedores'
     | '/editar-representante/$slug'
     | '/_authenticated/pedidos/$id'
@@ -372,6 +384,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransportadorasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vendas': {
+      id: '/_authenticated/vendas'
+      path: '/vendas'
+      fullPath: '/vendas'
+      preLoaderRoute: typeof AuthenticatedVendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vendedores': {
       id: '/_authenticated/vendedores'
       path: '/vendedores'
@@ -413,6 +432,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPromocaoRoute: typeof AuthenticatedPromocaoRoute
   AuthenticatedRepresentantesRoute: typeof AuthenticatedRepresentantesRoute
   AuthenticatedTransportadorasRoute: typeof AuthenticatedTransportadorasRoute
+  AuthenticatedVendasRoute: typeof AuthenticatedVendasRoute
   AuthenticatedVendedoresRoute: typeof AuthenticatedVendedoresRoute
   AuthenticatedPedidosIdRoute: typeof AuthenticatedPedidosIdRoute
   AuthenticatedPedidosIndexRoute: typeof AuthenticatedPedidosIndexRoute
@@ -428,6 +448,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPromocaoRoute: AuthenticatedPromocaoRoute,
   AuthenticatedRepresentantesRoute: AuthenticatedRepresentantesRoute,
   AuthenticatedTransportadorasRoute: AuthenticatedTransportadorasRoute,
+  AuthenticatedVendasRoute: AuthenticatedVendasRoute,
   AuthenticatedVendedoresRoute: AuthenticatedVendedoresRoute,
   AuthenticatedPedidosIdRoute: AuthenticatedPedidosIdRoute,
   AuthenticatedPedidosIndexRoute: AuthenticatedPedidosIndexRoute,
