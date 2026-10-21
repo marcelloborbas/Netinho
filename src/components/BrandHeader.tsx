@@ -18,9 +18,9 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
       if (!mounted) return;
       const u = session?.user;
       if (!u) { setUser(null); return; }
-      const meta = u.user_metadata ?? {};
-      const picture = meta.avatar_url ?? meta.picture;
-      const name = meta.full_name ?? meta.name ?? u.email ?? "Usuário";
+      const meta: Record<string, unknown> = u.user_metadata ?? {};
+      const picture = meta["avatar_url"] ?? meta["picture"];
+      const name = meta["full_name"] ?? meta["name"] ?? u.email ?? "Usuário";
       setUser({ name: String(name), picture: typeof picture === "string" && picture.startsWith("https://") ? picture : null });
     };
     void supabase.auth.getSession().then(({ data }) => sync(data.session));

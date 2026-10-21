@@ -56,7 +56,8 @@ function Customers() {
     if (!isAdmin || !deleting || deletingBusy) return;
     setDeletingBusy(true);
     const { data: permission, error: permissionError } = await supabase.rpc("access_context");
-    const permissionLevel = Array.isArray(permission) ? permission[0]?.level : (permission as { level?: number } | null)?.level;
+    const permissionRow = Array.isArray(permission) ? permission[0] : permission;
+    const permissionLevel = (permissionRow as { level?: number } | null | undefined)?.level;
     if (permissionError || permissionLevel !== 1) {
       toast.error("Somente o administrador pode excluir clientes.");
       setDeletingBusy(false);
