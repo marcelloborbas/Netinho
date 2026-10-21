@@ -2825,3 +2825,22 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 
 /* Ajuste fino: imagem de boas-vindas ligeiramente mais baixa, sem deslocar os botões de login. */
 .welcome-auth-stage .welcome-auth-art { transform: translateY(14px); }
+
+
+/* Auth 9:16: extensão visual do fundo até as bordas sem esticar ou cortar o personagem. */
+.welcome-auth-stage .welcome-art-frame { background: #041b4b; }
+.welcome-auth-stage .welcome-art-frame::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  z-index: 0;
+  background: url("/images/netinho-auth-nova.webp") center center / cover no-repeat;
+  filter: blur(16px) brightness(.65);
+  transform: scale(1.05);
+  pointer-events: none;
+}
+.welcome-auth-stage .welcome-auth-art {
+  object-fit: contain;
+  object-position: center center;
+  transform: none;
+}
