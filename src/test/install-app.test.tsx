@@ -66,7 +66,7 @@ describe("Netinho home-screen shortcut", () => {
     fireEvent.click(button);
     expect(prompt).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0].download).toBe("Netinho Auto Parts.html");
+    expect(appended[0]?.download).toBe("Netinho Auto Parts.html");
   });
 
   it("falls back to the shortcut file if the browser refuses the prompt", async () => {
@@ -75,7 +75,7 @@ describe("Netinho home-screen shortcut", () => {
     prompt.mockRejectedValueOnce(new Error("Unavailable"));
     fireEvent.click(screen.getByRole("button"));
     await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0].download).toBe("Netinho Auto Parts.html");
+    expect(appended[0]?.download).toBe("Netinho Auto Parts.html");
   });
 
   it("says the shortcut already exists once the app is installed", async () => {
