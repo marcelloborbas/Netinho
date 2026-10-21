@@ -32,16 +32,16 @@ export function NetinhoAssistant() {
   };
   return <aside className="netinho-assistant" aria-label="Assistente de navegação Netinho">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda do Netinho">
-      <div className="netinho-assistant-head"><strong>Netinho Assistente</strong><div>
+      <div className="netinho-assistant-head"><strong>Netinho • Seu guia de peças</strong><div>
         <button type="button" aria-label={sound ? "Desativar voz" : "Ativar voz"} onClick={() => setSound(!sound)}>{sound ? <Volume2 size={17}/> : <VolumeX size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
       </div></div>
-      <p>{greeting}</p>
+      <p>{greeting}</p><p className="netinho-assistant-help">Escolha abaixo para onde deseja ir. Estou aqui para facilitar sua navegação!</p>
       <div className="netinho-assistant-links">{links.map(({to,label,icon:Icon}) => <Link key={to} to={to} onClick={() => setOpen(false)}><Icon size={17}/>{label}</Link>)}</div>
       <button className="netinho-assistant-hide" type="button" onClick={() => {setOpen(false);setHidden(true);}}>Ocultar assistente nesta visita</button>
     </div>}
     <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente Netinho" : "Abrir assistente Netinho"} aria-expanded={open} onClick={() => {setOpen(!open); if (!open) speak();}}>
-      <img src="/icons/netinho-192.png" alt="" width="56" height="56" />
+      <img src="/icons/netinho-192.png" alt="" width="72" height="72" />
       <span aria-hidden="true"><MessageCircle size={13}/></span>
     </button>
   </aside>;
