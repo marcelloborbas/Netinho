@@ -44,15 +44,26 @@ export async function downloadOrderPdf(
 
   doc.setFillColor(28, 29, 32);
   doc.rect(0, 0, 210, 28, "F");
-  doc.setFillColor(220, 38, 38);
-  doc.circle(18, 14, 8, "F");
+  try {
+    const response = await fetch("/favicon.png");
+    if (response.ok) {
+      const blob = await response.blob();
+      const image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("Logo indisponível"));
+        reader.readAsDataURL(blob);
+      });
+      doc.addImage(image, "PNG", 7, 4, 20, 20);
+    }
+  } catch { /* Mantém o documento utilizável se a imagem falhar. */ }
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.text(BRAND.name, 30, 14);
+  doc.text("NETINHO AUTO PARTS", 30, 14);
   doc.setFontSize(8);
-  doc.text(BRAND.tagline.toUpperCase(), 30, 19);
-  doc.text(BRAND.phone, 30, 23.5);
+  doc.text(BRAND.domain, 30, 19);
+  doc.text(BRAND.phone + " | " + BRAND.orderEmail, 30, 23.5);
   doc.setFontSize(14);
   doc.text(`${order.kind === "orcamento" ? "ORÇAMENTO" : "PEDIDO"} Nº ${order.number}`, 200, 14, {
     align: "right",
