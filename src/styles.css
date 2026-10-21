@@ -2841,3 +2841,13 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 .welcome-auth-stage .welcome-auth-footer {
   background: transparent !important;
 }
+
+/* Auth: descer discretamente os botões Google e e-mail, mantendo o rodapé livre. */
+.welcome-auth-stage .welcome-auth-actions {
+  bottom: max(108px, calc(env(safe-area-inset-bottom) + 102px)) !important;
+}
+@media (max-height: 700px) {
+  .welcome-auth-stage .welcome-auth-actions {
+    bottom: max(98px, calc(env(safe-area-inset-bottom) + 92px)) !important;
+  }
+}
