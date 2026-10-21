@@ -118,7 +118,7 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         onClick={() => void install()}
         className={cn("h-auto min-h-16 w-full justify-start gap-3 whitespace-normal rounded-lg border-primary/40 bg-primary/10 px-3 py-3 text-left text-foreground hover:bg-primary/20 shadow-md transition-transform duration-300 hover:scale-[1.03] active:scale-95 motion-reduce:transform-none", className)}
       >
-        <LogoMark className="h-10 w-10 shrink-0" />
+        <LogoMark className="h-14 w-14 shrink-0" />
         <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
         {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : <Smartphone className="shrink-0 text-primary" aria-hidden="true" />}
       </Button>
