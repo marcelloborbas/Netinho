@@ -2827,20 +2827,17 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 .welcome-auth-stage .welcome-auth-art { transform: translateY(14px); }
 
 
-/* Auth 9:16: extensão visual do fundo até as bordas sem esticar ou cortar o personagem. */
-.welcome-auth-stage .welcome-art-frame { background: #041b4b; }
-.welcome-auth-stage .welcome-art-frame::before {
-  content: "";
-  position: absolute;
-  inset: -18px;
-  z-index: 0;
-  background: url("/images/netinho-auth-nova.webp") center center / cover no-repeat;
-  filter: blur(16px) brightness(.65);
-  transform: scale(1.05);
-  pointer-events: none;
-}
+
+/* Auth: uma única imagem contínua, sem duplicação desfocada nas extremidades. */
+.welcome-auth-stage .welcome-art-frame::before { content: none !important; }
+.welcome-auth-stage .welcome-art-frame::after { content: none !important; }
 .welcome-auth-stage .welcome-auth-art {
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   object-position: center center;
-  transform: none;
+  transform: none !important;
+}
+.welcome-auth-stage .welcome-auth-footer {
+  background: transparent !important;
 }
