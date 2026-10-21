@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { InstallAppButton } from "@/components/InstallAppButton";
 import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
-import { PublicFooter } from "@/components/PublicFooter";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -377,7 +376,6 @@ function AuthPage() {
         </div>
       ) : null}
       {!showWelcome && <BrandFooter />}
-      <PublicFooter />
     </main>
   );
 }
