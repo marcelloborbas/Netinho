@@ -2804,3 +2804,21 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
     bottom: max(128px, calc(env(safe-area-inset-bottom) + 122px)) !important;
   }
 }
+
+
+/* Assistente Netinho: destaque de mascote, acessível e sem cobrir o rodapé. */
+.netinho-assistant-avatar {
+  width: 78px;
+  height: 78px;
+  padding: 3px;
+  border: 3px solid #ffd22a;
+  background: radial-gradient(circle at 35% 25%, #1266bb, #03142b 78%);
+  box-shadow: 0 6px 23px #0008, 0 0 0 3px #006aff55;
+}
+.netinho-assistant-avatar img { object-fit: cover; }
+.netinho-assistant-avatar:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+.netinho-assistant-help { color: #bed9f6; font-size: 12px !important; margin-top: -3px !important; }
+@media (max-width: 420px) {
+  .netinho-assistant { bottom: calc(82px + env(safe-area-inset-bottom)); right: 10px; }
+  .netinho-assistant-avatar { width: 70px; height: 70px; }
+}
