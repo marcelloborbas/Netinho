@@ -265,7 +265,7 @@ function AuthPage() {
           <div className="welcome-art-frame">
             <img
               className="welcome-auth-art"
-              src="/images/welcome-screen-clean.webp"
+              src="/images/netinho-auth-nova.webp"
               alt="Seja bem-vindo ao mundo automotivo."
             />
             <section className="welcome-auth-actions" aria-label="Acesso temporário ao site">
