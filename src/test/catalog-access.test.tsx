@@ -64,24 +64,26 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 describe("catalog access presentation", () => {
-  it("offers selling and supplier catalogs after login", () => {
+  it("shows the sales actions to an authorized representative", () => {
     state.seller = true;
     render(<Home />);
-    expect(screen.getByRole("heading", { name: /Marcello/ })).toBeVisible();
-    expect(screen.getAllByRole("img", { name: "FCO Automotive" })[0]).toBeVisible();
-    expect(screen.getAllByRole("img", { name: "HD Embreagens" })[0]).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Editar e revisar" })).toBeVisible();
-    expect(screen.getAllByText("netinhoautoparts@gmail.com")[0]).toBeVisible();
-    expect(screen.getByText("Consultar promoção")).toBeVisible();
+    expect(screen.getByRole("heading", { name: /Marcello.*O que deseja fazer/ })).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Ações comerciais" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Vender" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Orçamento" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Clientes" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Meus Pedidos" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Administração" })).not.toBeInTheDocument();
   });
-  it("routes a visitor to the free catalog consultation instead of sales tools", () => {
+  it("keeps sales actions away from visitors and offers the authorization request instead", () => {
     state.seller = false;
     render(<Home />);
-    expect(screen.getByText("Visitante")).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Vender" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: /Veja o catálogo abaixo/ })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Catálogo" })).toBeVisible();
     expect(
-      screen.queryByRole("heading", { name: "Administração e cadastros" }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("link", { name: /Solicitar acesso para vendas pelo WhatsApp/ }),
+    ).toBeVisible();
+    expect(screen.queryByRole("navigation", { name: "Ações comerciais" })).not.toBeInTheDocument();
   });
   it("keeps commercial values away from visitors and offers a representative instead of an order", async () => {
     state.seller = false;
@@ -92,7 +94,7 @@ describe("catalog access presentation", () => {
     expect(
       screen.queryByRole("complementary", { name: "Resumo do pedido" }),
     ).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Comprar peça FCO-TESTE" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Comprar peça FCO-TESTE" })[0]!);
     expect(await screen.findByRole("group", { name: "Contato para comprar FCO-TESTE" })).toBeVisible();
     expect(toast.success).not.toHaveBeenCalled();
   });
@@ -100,7 +102,7 @@ describe("catalog access presentation", () => {
     state.seller = true;
     render(<Catalog />);
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "Comprar peça FCO-TESTE" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Comprar peça FCO-TESTE" })[0]!);
     await waitFor(() =>
       expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada à venda."),
     );
