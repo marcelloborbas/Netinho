@@ -47,8 +47,10 @@ describe("catalog download", () => {
     render(<CatalogDownload brand="FCO" />);
     fireEvent.click(screen.getByRole("button", { name: "Baixar catálogo PDF FCO" }));
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(fetchMock.mock.calls[0][0]).toBe("/downloads/Catalogo_Completo_FCO.pdf");
-    expect(fetchMock.mock.calls[0][1]).toMatchObject({ cache: "no-store" });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/downloads/Catalogo_Completo_FCO.pdf",
+      expect.objectContaining({ cache: "no-store" }),
+    );
   });
 
   it("asks for the HD file when the brand is HD", async () => {
@@ -57,7 +59,7 @@ describe("catalog download", () => {
     render(<CatalogDownload brand="HD" />);
     fireEvent.click(screen.getByRole("button", { name: "Baixar catálogo PDF HD" }));
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(fetchMock.mock.calls[0][0]).toBe("/downloads/hd-catalogo.pdf");
+    expect(fetchMock).toHaveBeenCalledWith("/downloads/hd-catalogo.pdf", expect.anything());
   });
 
   it("tells the user the catalog is not available when the file is missing", async () => {
