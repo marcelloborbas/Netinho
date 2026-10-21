@@ -2596,3 +2596,82 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   color:#f5f8ff !important;
   border-color:#35546e !important;
 }
+
+
+/* Cabeçalho padrão Netinho — referência visual aprovada em 21/10/2026.
+   Marca e telefone à esquerda, FCO/HD ao centro e usuário à direita. */
+.brand-header {
+  background: #06152c !important;
+  border-bottom: 0 !important;
+}
+.brand-header .brand-header-inner {
+  width: min(calc(100% - 12px), 1180px) !important;
+  min-height: 72px !important;
+  padding-block: 6px !important;
+  gap: 5px !important;
+}
+.brand-header .brand-header-logo { gap: 5px !important; }
+.brand-header .brand-header-logo > img {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+.brand-header .brand-header-logo .brand-wordmark-name {
+  font-size: clamp(18px, 5.1vw, 25px) !important;
+  line-height: 1 !important;
+  color: #fff !important;
+}
+.brand-header .brand-header-logo .brand-wordmark-tagline {
+  margin-top: 1px !important;
+  font-size: clamp(8px, 2.2vw, 12px) !important;
+  letter-spacing: .055em !important;
+  color: #ffcc17 !important;
+  font-weight: 900 !important;
+}
+.brand-header .brand-header-whatsapp {
+  margin-left: 53px !important;
+  font-size: 10px !important;
+  color: #22e86d !important;
+  white-space: nowrap;
+}
+.brand-header .brand-header-whatsapp svg { width: 15px; height: 15px; }
+.brand-header .brand-header-representations > div:first-child { gap: 7px !important; }
+.brand-header .brand-header-representations > div:first-child > div:first-child { gap: 4px !important; }
+.brand-header .brand-header-representations > div:first-child > div:first-child > p {
+  transform: none !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+}
+.brand-header .brand-header-representations .partner-logos { gap: 8px !important; }
+.brand-header .brand-header-representations .partner-logo {
+  width: 39px !important;
+  min-width: 39px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 3px !important;
+}
+.brand-header .brand-header-representations .partner-logo img {
+  max-width: 33px !important;
+  max-height: 24px !important;
+}
+.brand-header .brand-header-representations .partner-logos > div:last-child > span:last-child { display: none !important; }
+.brand-header button[aria-haspopup="menu"] > img,
+.brand-header button[aria-haspopup="menu"] > span {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+@media (max-width: 390px) {
+  .brand-header .brand-header-inner { gap: 3px !important; }
+  .brand-header .brand-header-logo > img { width: 43px !important; height: 43px !important; min-width: 43px !important; min-height: 43px !important; }
+  .brand-header .brand-header-logo .brand-wordmark-name { font-size: 18px !important; }
+  .brand-header .brand-header-logo .brand-wordmark-tagline { font-size: 8px !important; }
+  .brand-header .brand-header-whatsapp { margin-left: 47px !important; font-size: 9px !important; }
+  .brand-header .brand-header-representations .partner-logos { gap: 4px !important; }
+  .brand-header .brand-header-representations .partner-logo { width: 32px !important; min-width: 32px !important; height: 25px !important; min-height: 25px !important; }
+  .brand-header button[aria-haspopup="menu"] > img,
+  .brand-header button[aria-haspopup="menu"] > span { width: 43px !important; height: 43px !important; min-width: 43px !important; min-height: 43px !important; }
+}
