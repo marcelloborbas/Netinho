@@ -35,7 +35,7 @@ function Orders() {
     const kind = order.kind === "orcamento" ? "orçamento" : "pedido";
     const warning = order.status === "invoiced"
       ? "ATENÇÃO: este pedido está FATURADO. Alterar o status no site não cancela a nota fiscal ou a venda na distribuidora. Confirma a alteração do status?"
-      : `Deseja cancelar o ${kind} nº ${order.number}? Ele continuará no histórico como Cancelado.`;
+      : `Deseja cancelar o ${kind} nº ${order.number}? Ele desaparecerá da lista de pedidos, mas permanecerá registrado no histórico do sistema.`;
     if (!window.confirm(warning)) return;
     setDeletingId(id);
     try {
@@ -59,6 +59,7 @@ function Orders() {
   const [q, setQ] = useState("");
   const t = q.toLowerCase().trim();
   const list = (data ?? []).filter((o) => {
+    if (o.status === "cancelled") return false;
     const c = o.customer_snapshot as { company_name?: string; trade_name?: string };
     return !t || String(o.number).includes(t) || c.company_name?.toLowerCase().includes(t) || c.trade_name?.toLowerCase().includes(t);
   });
