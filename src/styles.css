@@ -2735,3 +2735,38 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
     min-height: 43px !important;
   }
 }
+
+
+/* Catálogo Netinho: composição azul-marinho baseada na referência visual.
+   Os dados, valores e fotos continuam vindo dos produtos reais. */
+.catalog-showcase { color: #f5f8ff; background: #03152a; border-radius: 18px; min-height: 80vh; }
+.catalog-showcase .catalog-showcase-heading { background: transparent !important; border: 0 !important; box-shadow: none !important; color: #fff !important; text-align: left !important; padding: 12px 8px !important; }
+.catalog-showcase .catalog-showcase-heading h1 { color: #fff !important; font-size: clamp(26px, 5vw, 36px); }
+.catalog-showcase .catalog-showcase-heading p { color: #c6d3e7 !important; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] { background: #061e37 !important; border-color: #183a5b !important; color: #f7f9ff !important; box-shadow: none !important; }
+.catalog-showcase #catalog-search { background: #102a43 !important; border-color: #35536e !important; color: #fff !important; }
+.catalog-showcase #catalog-search::placeholder { color: #b8c9d9; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] [role="status"] { color: #fff !important; }
+.catalog-category-filters { display: flex; overflow-x: auto; gap: 9px; padding: 2px 0 10px; scrollbar-width: thin; }
+.catalog-category-filters button { flex: 0 0 auto; display: flex; align-items: center; flex-direction: column; justify-content: center; gap: 7px; min-width: 100px; max-width: 170px; min-height: 80px; padding: 10px 13px; border: 1px solid #284360; border-radius: 15px; background: #10253e; color: #fff; font-size: 13px; font-weight: 700; }
+.catalog-category-filters button[aria-pressed="true"] { background: #0677ef; border-color: #2695ff; }
+.catalog-category-filters button span { overflow: hidden; max-width: 150px; text-overflow: ellipsis; white-space: nowrap; }
+.catalog-showcase .catalog-product-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+.catalog-showcase .catalog-product-card { display: grid !important; grid-template-columns: minmax(110px, 29%) minmax(0, 1fr); align-items: stretch; gap: 12px; background: #061e37 !important; border: 1px solid #183a5b !important; color: #fff !important; padding: 12px !important; }
+.catalog-showcase .catalog-product-card > .product-visual { width: 100%; height: 100%; min-height: 150px; align-self: stretch; background: #031326 !important; border-radius: 13px; overflow: hidden; }
+.catalog-showcase .catalog-product-card > .product-visual img { width: 100%; height: 100%; object-fit: contain; }
+.catalog-showcase .catalog-product-card > div.flex.flex-1 { padding: 0 !important; min-width: 0; }
+.catalog-showcase .catalog-product-card h2 { color: #fff !important; font-size: clamp(16px, 2vw, 23px); }
+.catalog-showcase .catalog-product-card .text-muted-foreground { color: #c0cde0 !important; }
+.catalog-showcase .catalog-product-card .text-\[\#174e9b\] { color: #6ab9ff !important; }
+.catalog-showcase .catalog-product-card .catalog-card-stock { margin-top: 8px; font-size: 13px; font-weight: 800; color: #11e76c; }
+.catalog-showcase .catalog-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.catalog-showcase .catalog-card-actions button { display: inline-flex; gap: 6px; align-items: center; justify-content: center; min-height: 42px; padding: 8px 12px; border-radius: 11px; background: #0677ef; color: #fff; font-weight: 800; font-size: 12px; }
+.catalog-showcase .catalog-card-actions button + button { background: #1a344e; }
+.catalog-showcase .catalog-product-card .mt-auto { border-color: #244765 !important; }
+.catalog-showcase .catalog-product-card .mt-auto p, .catalog-showcase .catalog-product-card .mt-auto dd { color: #ffdb24 !important; }
+.catalog-showcase .catalog-product-card .mt-auto dt { color: #c0cde0 !important; }
+@media(max-width: 420px) {
+  .catalog-showcase .catalog-product-card { grid-template-columns: minmax(105px, 37%) minmax(0, 1fr); gap: 9px; }
+  .catalog-showcase .catalog-card-actions button { padding: 7px; font-size: 11px; }
+}
