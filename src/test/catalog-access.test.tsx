@@ -1,6 +1,5 @@
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mkdirSync, writeFileSync } from "node:fs";
 const state = vi.hoisted(() => ({
   seller: false,
   customerEnabled: false,
@@ -12,6 +11,7 @@ vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: "/catalogo" }),
 }));
+vi.mock("sonner", () => ({ toast: { success: vi.fn(), info: vi.fn(), error: vi.fn() } }));
 vi.mock("@tanstack/react-query", () => ({
   queryOptions: (options: unknown) => options,
   useQuery: (options: { queryKey: string[]; enabled?: boolean }) => {
@@ -52,6 +52,7 @@ vi.mock("@tanstack/react-query", () => ({
     return { data: [] };
   },
 }));
+import { toast } from "sonner";
 import { Route } from "@/routes/_authenticated/catalogo";
 import { Route as HomeRoute } from "@/routes/index";
 const Catalog = Route.options.component!;
@@ -59,6 +60,8 @@ const Home = HomeRoute.options.component!;
 afterEach(() => {
   cleanup();
   state.search = {};
+  localStorage.clear();
+  vi.clearAllMocks();
 });
 describe("catalog access presentation", () => {
   it("offers selling and supplier catalogs after login", () => {
@@ -80,52 +83,33 @@ describe("catalog access presentation", () => {
       screen.queryByRole("heading", { name: "Administração e cadastros" }),
     ).not.toBeInTheDocument();
   });
-  it("keeps supplier consultation free of sales controls even for an authorized seller", () => {
-    state.seller = true;
-    state.search = { modo: "consulta", marca: "HD" };
+  it("keeps commercial values away from visitors and offers a representative instead of an order", async () => {
+    state.seller = false;
     render(<Catalog />);
     expect(screen.queryByText(/1\.234,56/)).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("complementary", { name: "Resumo do pedido" }),
-    ).not.toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "FCO-TESTE" })).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "K6246.HD" })).toBeVisible();
-    expect(state.customerEnabled).toBe(false);
-  });
-  it("never renders prices or order controls for visitors, even if a response accidentally contains prices", () => {
-    state.seller = false;
-    const { container } = render(<Catalog />);
-    expect(screen.queryByText(/1\.234,56/)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Adicionar ao pedido" })).not.toBeInTheDocument();
+    expect(screen.getByText(/Valores disponíveis somente para representantes/)).toBeVisible();
     expect(state.customerEnabled).toBe(false);
     expect(
       screen.queryByRole("complementary", { name: "Resumo do pedido" }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText(/Catálogo sem exibição de valores/)).toBeVisible();
-    if (process.env["NETINHO_QA_EXPORT"]) {
-      mkdirSync("tmp/qa", { recursive: true });
-      writeFileSync(
-        "tmp/qa/catalogo-visitante.html",
-        `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><div style="padding:12px;background:#17334d;text-align:center;font:12px sans-serif">Prévia visual de teste · dados fictícios · perfil visitante</div><main style="max-width:1280px;margin:auto;padding:24px">${container.innerHTML}</main></body></html>`,
-      );
-    }
+    fireEvent.click(screen.getByRole("button", { name: "Comprar peça FCO-TESTE" }));
+    expect(await screen.findByRole("group", { name: "Contato para comprar FCO-TESTE" })).toBeVisible();
+    expect(toast.success).not.toHaveBeenCalled();
   });
-  it("shows commercial prices only to authorized sellers and filters manufacturer results", () => {
+  it("shows commercial prices and adds the part to the sale for an authorized seller", async () => {
     state.seller = true;
     render(<Catalog />);
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
-    expect(state.customerEnabled).toBe(true);
-    expect(
-      screen.queryByRole("heading", { name: "Perto de você. Do seu negócio." }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByRole("complementary", { name: "Resumo do pedido" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "FCO Automotive" }));
-    expect(screen.getByRole("heading", { name: "FCO-TESTE" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Comprar peça FCO-TESTE" }));
+    await waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada à venda."),
+    );
+  });
+  it("does not list HD parts while the brand is still marked as coming soon", () => {
+    state.seller = true;
+    render(<Catalog />);
+    expect(screen.getByRole("button", { name: "HD Embreagens — em breve" })).toBeDisabled();
     expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "HD Embreagens" }));
-    expect(screen.queryByRole("heading", { name: "FCO-TESTE" })).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "K6246.HD" })).toBeVisible();
-    fireEvent.change(screen.getByLabelText("Buscar peças"), { target: { value: "K60858.HD" } });
-    expect(screen.getByRole("heading", { name: "K60858.HD" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Injeção eletrônica" })).toBeVisible();
   });
 });
