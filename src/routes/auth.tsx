@@ -9,7 +9,6 @@ import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InstallAppButton } from "@/components/InstallAppButton";
-import { BrandHeader } from "@/components/BrandHeader";
 import { BrandFooter } from "@/components/BrandFooter";
 
 export const Route = createFileRoute("/auth")({
@@ -264,7 +263,6 @@ function AuthPage() {
     <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen px-4 py-6 sm:py-10"}>
       {showWelcome && (
         <>
-          <BrandHeader />
           <div className="welcome-art-frame">
             <img
               className="welcome-auth-art"
