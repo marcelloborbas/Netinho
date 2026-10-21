@@ -2790,3 +2790,17 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 @keyframes netinho-hover { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @media (prefers-reduced-motion: reduce) { .netinho-assistant-avatar { animation: none; } }
 @media (min-width: 900px) { .netinho-assistant { right: 22px; bottom: 24px; } }
+
+
+/* Login: descer ligeiramente o ícone de atalho Netinho, mantendo os botões OAuth livres. */
+.welcome-auth-stage .welcome-auth-footer {
+  bottom: max(2px, env(safe-area-inset-bottom)) !important;
+}
+.welcome-auth-stage .welcome-auth-actions {
+  bottom: max(148px, calc(env(safe-area-inset-bottom) + 142px)) !important;
+}
+@media (max-height: 700px) {
+  .welcome-auth-stage .welcome-auth-actions {
+    bottom: max(128px, calc(env(safe-area-inset-bottom) + 122px)) !important;
+  }
+}
