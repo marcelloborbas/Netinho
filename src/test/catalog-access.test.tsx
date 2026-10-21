@@ -1,4 +1,4 @@
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   seller: false,
@@ -81,7 +81,8 @@ describe("catalog access presentation", () => {
     state.seller = false;
     render(<Home />);
     expect(screen.getByRole("heading", { name: /Veja o catálogo abaixo/ })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Catálogo" })).toBeVisible();
+    const journey = screen.getByRole("region", { name: /Veja o catálogo abaixo/ });
+    expect(within(journey).getByRole("link", { name: "Catálogo" })).toBeVisible();
     expect(
       screen.getByRole("link", { name: /Solicitar acesso para vendas pelo WhatsApp/ }),
     ).toBeVisible();
