@@ -2822,3 +2822,6 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .netinho-assistant { bottom: calc(82px + env(safe-area-inset-bottom)); right: 10px; }
   .netinho-assistant-avatar { width: 70px; height: 70px; }
 }
+
+/* Ajuste fino: imagem de boas-vindas ligeiramente mais baixa, sem deslocar os botões de login. */
+.welcome-auth-stage .welcome-auth-art { transform: translateY(14px); }
