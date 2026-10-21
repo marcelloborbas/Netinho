@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Search, Plus, Minus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -21,31 +21,15 @@ function SalesPage() {
   const { data: products = [], isLoading: loadingProducts } = useQuery(productsQuery);
   const [q, setQ] = useState(search.q || search.promo);
   const [offers, setOffers] = useState<Offer[]>([]);
-  const appliedPromo = useRef<string | null>(null);
-  useEffect(() => { readOffers().then(setOffers).catch(() => toast.error("Não foi possível carregar os preços da campanha.")); }, []);
+  // A campanha abre a tela de vendas pela identificação do cliente.
+  // A peça escolhida fica localizada na busca, sem entrar no pedido antes da seleção.
   useEffect(() => {
-    if (!search.promo || appliedPromo.current === search.promo || !offers.length || loadingProducts) return;
-    appliedPromo.current = search.promo;
-    const offer = offers.find(([code]) => code.toUpperCase() === search.promo.toUpperCase());
-    if (!offer) { toast.error("Produto promocional não encontrado."); return; }
-    const [code] = offer;
-    // Orders must reference a real product UUID. The temporary campaign IDs
-    // are display-only and cannot be accepted by create_order in Supabase.
-    const product = products.find((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO");
-    if (!product) {
-      toast.error(`A peça ${code} ainda não está cadastrada no banco de dados para pedidos.`);
-      return;
+    if (search.promo) {
+      setQ(search.promo);
+      window.scrollTo({ top: 0, behavior: "instant" });
     }
-    const prices = { cash: product.price_cash, "30": product.price_30, "30_45_60": product.price_30_45_60, "30_45_60_75": product.price_30_45_60_75 };
-    if (Object.values(prices).every((price) => price == null)) {
-      toast.error(`A peça ${code} está sem preço autorizado para sua conta.`);
-      return;
-    }
-    const paymentTerm = prices["30_45_60"] != null ? "30_45_60" : prices.cash != null ? "cash" : prices["30"] != null ? "30" : "30_45_60_75";
-    draftActions.update({ kind: "pedido", paymentTerm });
-    draftActions.addItem({ productId: product.id, code: product.code, category: product.categories?.name ?? "Peça FCO", application: product.application ?? "", prices, quantity: 1 });
-    toast.success(`Peça ${code} adicionada ao pedido.`);
-  }, [offers, search.promo, products, loadingProducts]);
+  }, [search.promo]);
+  useEffect(() => { readOffers().then(setOffers).catch(() => toast.error("Não foi possível carregar os preços da campanha.")); }, []);
   const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -85,7 +69,7 @@ function SalesPage() {
     </header>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="font-extrabold text-[#102a52]">1. Cliente</h2>
-      {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça promocional {search.promo} incluída no rascunho. Selecione o cliente para continuar.</p>}
+      {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça da campanha: {search.promo}. Primeiro selecione o cliente; depois adicione a peça ao pedido.</p>}
       {customersError && (
         <div role="alert" className="space-y-2 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-900">
           <p>Não foi possível carregar os clientes. Verifique sua autorização ou a conexão com o servidor. Nenhum cadastro foi excluído.</p>
