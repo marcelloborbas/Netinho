@@ -2473,3 +2473,42 @@ html, body { max-width: 100%; overflow-x: hidden; }
     bottom: auto !important;
   }
 }
+
+/* Cabeçalho compacto: marca, parceiros e usuário na mesma linha superior. */
+.brand-header .brand-header-inner {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  min-height: 64px;
+}
+.brand-header .brand-header-inner > :first-child { flex: 0 1 auto; min-width: 0; }
+.brand-header .brand-header-representations { flex: 0 0 auto; min-width: 0; }
+.brand-header .brand-header-logo > img {
+  width: 49.6px !important;
+  height: 49.6px !important;
+  min-width: 49.6px;
+  min-height: 49.6px;
+}
+.brand-header button[aria-haspopup="menu"] > img,
+.brand-header button[aria-haspopup="menu"] > span,
+.home-page .brand-header button[aria-haspopup="menu"] > img,
+.home-page .brand-header button[aria-haspopup="menu"] > span {
+  width: 49.6px !important;
+  height: 49.6px !important;
+  min-width: 49.6px;
+  min-height: 49.6px;
+}
+.brand-header .brand-header-whatsapp { margin-left: 57px !important; }
+@media (max-width: 430px) {
+  .brand-header .brand-header-inner { width: calc(100% - 12px); gap: 3px !important; }
+  .brand-header .brand-header-logo { gap: 4px !important; }
+  .brand-header .brand-header-logo .brand-wordmark-name { font-size: 19px !important; }
+  .brand-header .brand-header-logo .brand-wordmark-tagline { font-size: 6px !important; letter-spacing: .25em !important; }
+  .brand-header .brand-header-whatsapp { margin-left: 54px !important; font-size: 10px !important; }
+  .brand-header .brand-header-representations .partner-logos { gap: 3px !important; }
+  .brand-header .brand-header-representations .partner-logo { width: 32px !important; min-width: 32px; height: 25px !important; min-height: 25px; padding: 2px !important; }
+  .brand-header .brand-header-representations .partner-logo img { max-width: 28px; max-height: 21px; }
+}
