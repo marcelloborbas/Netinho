@@ -2770,3 +2770,23 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .catalog-showcase .catalog-product-card { grid-template-columns: minmax(105px, 37%) minmax(0, 1fr); gap: 9px; }
   .catalog-showcase .catalog-card-actions button { padding: 7px; font-size: 11px; }
 }
+
+
+/* Netinho Assistente: compacto, acima do menu inferior, sem cobrir conteúdo */
+.netinho-assistant { position: fixed; z-index: 65; right: max(12px, env(safe-area-inset-right)); bottom: calc(90px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: flex-end; gap: 9px; pointer-events: none; }
+.netinho-assistant > * { pointer-events: auto; }
+.netinho-assistant-avatar { position: relative; width: 62px; height: 62px; border: 2px solid #ffd22a; border-radius: 50%; padding: 3px; background: #061d39; box-shadow: 0 5px 19px #0008; animation: netinho-hover 3.5s ease-in-out infinite; }
+.netinho-assistant-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: contain; }
+.netinho-assistant-avatar span { position: absolute; bottom: -3px; right: -4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #087cff; color: white; }
+.netinho-assistant-panel { width: min(315px, calc(100vw - 26px)); max-height: min(420px, 60vh); overflow-y: auto; border: 1px solid #34628d; border-radius: 17px; background: #061c35; color: white; padding: 14px; box-shadow: 0 12px 36px #0009; }
+.netinho-assistant-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #ffdb39; }
+.netinho-assistant-head > div { display: flex; gap: 7px; }
+.netinho-assistant-head button { padding: 5px; border-radius: 7px; background: #153a60; color: white; }
+.netinho-assistant-panel p { margin: 11px 0; font-size: 13px; line-height: 1.55; }
+.netinho-assistant-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.netinho-assistant-links a { display: flex; gap: 6px; align-items: center; min-height: 41px; padding: 8px; border: 1px solid #2a5479; border-radius: 9px; background: #102e4f; color: white; font-size: 12px; font-weight: 700; text-decoration: none; }
+.netinho-assistant-links a:hover { background: #086bdd; }
+.netinho-assistant-hide { margin-top: 12px; color: #b6cce0; font-size: 11px; text-decoration: underline; }
+@keyframes netinho-hover { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@media (prefers-reduced-motion: reduce) { .netinho-assistant-avatar { animation: none; } }
+@media (min-width: 900px) { .netinho-assistant { right: 22px; bottom: 24px; } }
