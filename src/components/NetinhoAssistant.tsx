@@ -41,7 +41,7 @@ export function NetinhoAssistant() {
       <button className="netinho-assistant-hide" type="button" onClick={() => {setOpen(false);setHidden(true);}}>Ocultar assistente nesta visita</button>
     </div>}
     <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente Netinho" : "Abrir assistente Netinho"} aria-expanded={open} onClick={() => {setOpen(!open); if (!open) speak();}}>
-      <img src="/icons/netinho-192.png" alt="" width="72" height="72" />
+      <img src="/images/Mascote%20Netinho%20Auto%20Parts%20com%20Chat.webp" alt="" width="72" height="72" />
       <span aria-hidden="true"><MessageCircle size={13}/></span>
     </button>
   </aside>;
