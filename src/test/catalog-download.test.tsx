@@ -78,8 +78,8 @@ describe("catalog download", () => {
     render(<CatalogDownload brand="FCO" />);
     fireEvent.click(screen.getByRole("button", { name: "Baixar catálogo PDF FCO" }));
     await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0].download).toBe("Catalogo_Completo_FCO.pdf");
-    expect(appended[0].href).toBe("blob:catalogo");
+    expect(appended[0]?.download).toBe("Catalogo_Completo_FCO.pdf");
+    expect(appended[0]?.href).toBe("blob:catalogo");
     expect(toast.success).toHaveBeenCalledWith(
       expect.stringContaining("Catálogo FCO pronto"),
       expect.anything(),

@@ -52,8 +52,8 @@ describe("Netinho home-screen shortcut", () => {
     render(<InstallAppButton />);
     fireEvent.click(screen.getByRole("button"));
     await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0].download).toBe("Netinho Auto Parts.html");
-    expect(appended[0].href).toBe("blob:atalho");
+    expect(appended[0]?.download).toBe("Netinho Auto Parts.html");
+    expect(appended[0]?.href).toBe("blob:atalho");
     expect(toast.success).toHaveBeenCalledWith(expect.stringContaining("Atalho Netinho baixado"));
   });
 
