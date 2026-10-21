@@ -2431,3 +2431,21 @@ html, body { max-width: 100%; overflow-x: hidden; }
     height: 53.2px !important;
   }
 }
+
+/* Cabeçalho: logo Netinho com a mesma dimensão da foto do usuário. */
+.brand-header .brand-header-logo > img {
+  width: 62px !important;
+  height: 62px !important;
+  min-width: 62px;
+  min-height: 62px;
+}
+/* Telefone alinhado diretamente sob a inscrição AUTO PARTS, não sob a logomarca. */
+.brand-header .brand-header-whatsapp {
+  width: auto !important;
+  margin-left: 70px !important;
+  margin-top: 1px;
+  justify-content: flex-start;
+}
+@media (max-width: 390px) {
+  .brand-header .brand-header-whatsapp { margin-left: 70px !important; }
+}
