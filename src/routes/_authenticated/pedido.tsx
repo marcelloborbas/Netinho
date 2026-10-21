@@ -110,22 +110,25 @@ function OrderPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold uppercase">
+      <div className="relative flex items-center justify-center">
+        <h1 className="text-center text-3xl font-bold uppercase">
           {review ? "Revisar pedido" : "Fazer pedido"}
         </h1>
         <button
           onClick={() => {
             if (confirm("Descartar o pedido?")) draftActions.clear();
           }}
-          className="text-sm text-muted-foreground"
+          className="absolute right-0 top-1/2 -translate-y-1/2 rounded-lg p-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+          aria-label="Descartar pedido"
+          title="Descartar pedido"
         >
-          Descartar
+          <Trash2 className="h-5 w-5" />
         </button>
       </div>
 
       <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
+          <div className="grid grid-cols-2 gap-3"><div className="space-y-1.5">
           <Label>Cliente *</Label>
           {selectedCustomer?.order_class && (
             <p className="text-sm text-amber-400">
@@ -161,6 +164,8 @@ function OrderPage() {
               ))}
             </SelectContent>
           </Select>
+          </div>
+          <div className="space-y-1.5"><Field label="Comprador" value={d.buyer} onChange={(v) => draftActions.update({ buyer: v })} /></div></div>
           <Link to="/clientes" className="text-xs font-semibold text-primary">
             + Cadastrar novo cliente
           </Link>
@@ -182,29 +187,6 @@ function OrderPage() {
             </div>
           )}
         </div>
-        <div className="space-y-1.5">
-          <Label>Condição de pagamento</Label>
-          <Select
-            value={d.paymentTerm}
-            onValueChange={(v) => draftActions.update({ paymentTerm: v as PaymentTerm })}
-          >
-            <SelectTrigger className="h-12">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PAYMENT_TERMS.map((p) => (
-                <SelectItem key={p.value} value={p.value}>
-                  {p.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <Field
-          label="Comprador"
-          value={d.buyer}
-          onChange={(v) => draftActions.update({ buyer: v })}
-        />
       </section>
 
       <ul className="space-y-2">
@@ -222,7 +204,7 @@ function OrderPage() {
                   <button
                     aria-label="Remover"
                     onClick={() => draftActions.removeItem(i.productId)}
-                    className="p-1 text-muted-foreground"
+                    className="p-1 text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -298,6 +280,27 @@ function OrderPage() {
           );
         })}
       </ul>
+      <section className="surface-card p-4">
+        <div className="space-y-1.5">
+          <Label>Condição de pagamento</Label>
+          <Select
+            value={d.paymentTerm}
+            onValueChange={(v) => draftActions.update({ paymentTerm: v as PaymentTerm })}
+          >
+            <SelectTrigger className="h-12">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PAYMENT_TERMS.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+      </section>
 
       <div className="space-y-1.5">
         <Label>Observações do pedido</Label>
