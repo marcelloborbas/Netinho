@@ -2449,3 +2449,13 @@ html, body { max-width: 100%; overflow-x: hidden; }
 @media (max-width: 390px) {
   .brand-header .brand-header-whatsapp { margin-left: 70px !important; }
 }
+
+/* Correção: sem cabeçalho, a tela de login possui apenas uma linha no grid.
+   A linha anterior 'auto minmax(0,1fr)' deixava a arte e os botões invisíveis. */
+.welcome-auth-stage {
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+.welcome-auth-stage > .welcome-art-frame {
+  height: 100%;
+  min-height: 0;
+}
