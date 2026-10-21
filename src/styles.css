@@ -2404,3 +2404,12 @@ html, body { max-width: 100%; overflow-x: hidden; }
 @media (max-width: 639px) {
   .home-page > main > .admin-entry-choice { grid-row: 4 !important; align-self: center; width: 100%; }
 }
+
+/* Na página inicial, mantém a foto do usuário no tamanho ampliado (1,4x). */
+.home-page .brand-header button[aria-haspopup="menu"] > img,
+.home-page .brand-header button[aria-haspopup="menu"] > span {
+  width: 62px !important;
+  height: 62px !important;
+  min-width: 62px;
+  min-height: 62px;
+}
