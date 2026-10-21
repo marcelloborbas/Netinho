@@ -1,5 +1,5 @@
 import type { Order, OrderItem } from "./queries";
-import { termLabel } from "./brand";
+import { BRAND, termLabel } from "./brand";
 
 /** Planilha comercial única para pedidos e orçamentos FCO / HD. */
 export async function downloadOrderXlsx(order: Order, items: OrderItem[], sellerName: string) {
@@ -12,6 +12,13 @@ export async function downloadOrderXlsx(order: Order, items: OrderItem[], seller
     { key: "d", width: 18 }, { key: "e", width: 13 }, { key: "f", width: 14 },
     { key: "g", width: 19 }, { key: "h", width: 20 },
   ];
+  try {
+    const response = await fetch("/favicon.png");
+    if (response.ok) {
+      const imageId = workbook.addImage({ buffer: await response.arrayBuffer(), extension: "png" });
+      sheet.addImage(imageId, { tl: { col: 0.1, row: 0.1 }, ext: { width: 58, height: 58 } });
+    }
+  } catch { /* Logo opcional */ }
   const c = (order.customer_snapshot ?? {}) as Record<string, string | null>;
   const v = (x: unknown) => x == null || x === "" ? "—" : String(x);
   const header = (range: string, value: string, color = "102A52") => {
@@ -45,6 +52,7 @@ export async function downloadOrderXlsx(order: Order, items: OrderItem[], seller
   field(10, "Pagamento", termLabel(order.payment_term), "Entrega", order.delivery);
   field(11, "Transportadora", order.carrier || c.carrier, "Telefone transp.", c.carrier_phone);
   field(12, "Vendedor", sellerName, "Comprador", order.buyer || c.buyer);
+  field(13, "Netinho", BRAND.phone, "E-mail", BRAND.orderEmail);
   const headRow = 14;
   const columns = ["MARCA", "CÓDIGO", "FAMÍLIA", "APLICAÇÃO", "QTD.", "DESC. %", "PREÇO LÍQ.", "TOTAL"];
   sheet.getRow(headRow).values = columns;
