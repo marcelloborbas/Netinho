@@ -29,6 +29,13 @@
       "when": 1792589107702,
       "tag": "0003_shared_customers_for_sellers",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792671070186,
+      "tag": "0004_products_read_can_sell",
+      "breakpoints": true
     }
   ]
 }
