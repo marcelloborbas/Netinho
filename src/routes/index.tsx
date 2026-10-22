@@ -1,8 +1,8 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { ShoppingCart, MessageCircle, UserRound, BriefcaseBusiness, UserCog } from "lucide-react";
+import { ShoppingCart, UserRound, BriefcaseBusiness, UserCog } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 
 import { accessQuery } from "@/lib/access";
@@ -26,10 +26,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false, refetchInterval: 60000 });
   const previousLevel = useRef<string | null>(null);
-  const [requestedProfile, setRequestedProfile] = useState<string | null>(null);
-  const [requestName, setRequestName] = useState("");
-  const [requestPhone, setRequestPhone] = useState("");
-  const [requestNotes, setRequestNotes] = useState("");
   useEffect(() => {
     if (!access) return;
     const current = `${access.level}:${access.can_sell}`;
@@ -48,18 +44,6 @@ function Home() {
       : canSell
         ? { label: "Vendedor", icon: ShoppingCart, to: "/vendas" as const }
         : null;
-  const requestUrlFor = (profile: string) => {
-    const message = [
-      "Solicitação de acesso - Netinho Auto Parts",
-      `Perfil solicitado: ${profile}`,
-      `Nome: ${requestName.trim() || access?.name || "Não informado"}`,
-      `E-mail da conta: ${access?.email || "Não informado"}`,
-      `Telefone: ${requestPhone.trim() || "Não informado"}`,
-      `Informações adicionais: ${requestNotes.trim() || "Nenhuma"}`,
-      "Aguardo avaliação e liberação pelo administrador.",
-    ].join("\n");
-    return `https://wa.me/5515992458492?text=${encodeURIComponent(message)}`;
-  };
   return (
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
@@ -92,19 +76,10 @@ function Home() {
                   )}
                   <p className="mt-3 text-sm font-semibold text-[#166534]">{positive}</p>
                   <p className="mt-2 text-xs font-semibold text-[#b91c1c]">{negative}</p>
-                  {label !== "Visitante" && <button type="button" onClick={() => setRequestedProfile(label)} className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-[#17724d] bg-[#e8f6ed] px-2 py-2 text-xs font-bold text-[#14532d]"><MessageCircle size={16}/> Solicitar acesso</button>}
+                  {label !== "Visitante" && <Link to="/solicitar-acesso" search={{ perfil: label }} className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-[#17724d] bg-[#e8f6ed] px-2 py-3 text-xs font-bold text-[#14532d]">Solicitar acesso</Link>}
                 </div>
               ))}
             </div>
-            {requestedProfile && <form className="mx-auto mt-5 max-w-xl space-y-3 rounded-xl border border-blue-200 bg-blue-50 p-4" onSubmit={(event) => { event.preventDefault(); if (!requestName.trim() || !requestPhone.trim()) return; window.open(requestUrlFor(requestedProfile), "_blank", "noopener,noreferrer"); }}>
-              <h3 className="font-extrabold text-[#102a52]">Solicitar acesso: {requestedProfile}</h3>
-              <p className="text-xs text-slate-600">Preencha os dados. O botão abrirá uma mensagem para a administração no WhatsApp; confirme o envio por lá. A liberação depende do administrador.</p>
-              <label className="block text-sm font-bold text-[#102a52]">Nome completo<input required value={requestName} onChange={e => setRequestName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-slate-900" /></label>
-              <label className="block text-sm font-bold text-[#102a52]">Telefone / WhatsApp<input required type="tel" value={requestPhone} onChange={e => setRequestPhone(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-slate-900" /></label>
-              <p className="text-xs text-slate-600">E-mail da conta: {access?.email || "Não informado"}</p>
-              <label className="block text-sm font-bold text-[#102a52]">Observações (opcional)<textarea value={requestNotes} onChange={e => setRequestNotes(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-slate-900" rows={2} /></label>
-              <div className="flex gap-2"><button type="submit" className="rounded-lg bg-green-700 px-4 py-2 font-bold text-white">Enviar solicitação</button><button type="button" onClick={() => setRequestedProfile(null)} className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700">Cancelar</button></div>
-            </form>}
           </section>
         )}
       </main>
