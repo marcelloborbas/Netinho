@@ -77,10 +77,8 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         return;
       }
       // Preserve a sessão: nunca redirecione para um intent:// ao instalar.
-      const ios = /iPad|iPhone|iPod/i.test(navigator.userAgent);
-      toast.info(ios
-        ? "No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início."
-        : "No Chrome, abra o menu e escolha Instalar app ou Adicionar à tela inicial.", { duration: 8000 });
+      // Sem evento nativo, não redirecionar nem exibir instruções do Google.
+      // O navegador controla a disponibilidade da instalação.
     } catch {
       // The browser may block installation in embedded tabs. Do not show a toast.
     } finally {
