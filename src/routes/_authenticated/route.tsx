@@ -21,14 +21,14 @@ export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ context, location }) => {
     const { data } = await supabase.auth.getUser();
-    if (!data.user && location.pathname !== "/catalogo") throw redirect({ to: "/auth" });
+    if (!data.user && !["/catalogo", "/representantes"].includes(location.pathname)) throw redirect({ to: "/auth" });
     if (!data.user) return { user: null, access: null };
     if (data.user) draftActions.switchAccount(data.user.id);
     const access = await context.queryClient.fetchQuery(accessQuery);
     if (location.pathname === "/admin" || location.pathname === "/admin-gestao") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
     }
-    if (!access.can_sell && access.level !== 1 && location.pathname !== "/catalogo") throw redirect({ to: "/catalogo" });
+    if (!access.can_sell && access.level !== 1 && !["/catalogo", "/representantes"].includes(location.pathname)) throw redirect({ to: "/catalogo" });
     return { user: data.user, access };
   },
   component: AppShell,
@@ -52,7 +52,7 @@ function AppShell() {
     : ([
         { to: "/", label: "Início", icon: Home },
         { to: "/catalogo", label: "Catálogo", icon: Search },
-        { to: "/representante", label: "Representante", icon: Contact },
+        { to: "/representantes", label: "Representante", icon: Contact },
       ] as const);
   async function logout() {
     const { error } = await supabase.auth.signOut();
