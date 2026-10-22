@@ -5,7 +5,7 @@ import { InstallAppButton } from "@/components/InstallAppButton";
 
 const hints = [
   { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Entre pelo G do Google ou pelo envelope para receber um link no seu e-mail." },
-  { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para usar perfis avançados, solicite autorização pelo botão da página inicial." },
+  { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
   { match: /catalogo|catálogo/, title: "Catálogo", message: "Pesquise pelo código, peça ou veículo. Abra o item para conferir os detalhes. Preços e pedidos exigem perfil autorizado." },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
   { match: /pedidos/, title: "Pedidos", message: "Consulte seus pedidos e acompanhe o andamento. A edição depende do seu perfil e das permissões concedidas." },
@@ -38,6 +38,10 @@ export function NetinhoAssistant() {
     const utterance = new SpeechSynthesisUtterance(greeting);
     utterance.lang = "pt-BR";
     utterance.rate = 0.94;
+    utterance.pitch = 0.8;
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find(v => /^pt/i.test(v.lang) && /male|masculin|daniel|ricardo|antonio|felipe|paulo|carlos/i.test(v.name)) ?? voices.find(v => /^pt/i.test(v.lang));
+    if (voice) utterance.voice = voice;
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
     setSpeaking(true);
