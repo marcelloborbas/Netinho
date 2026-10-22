@@ -3143,3 +3143,14 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .catalog-showcase .catalog-category-filters button,
   .catalog-showcase .catalog-product-card { transition: none; }
 }
+
+/* Cabeçalho: marca proporcional ao avatar do usuário e nome mais legível. */
+.brand-header .brand-header-logo > img { width: 66px !important; height: 66px !important; flex-shrink: 0; }
+.brand-header .brand-header-logo > .brand-wordmark > .brand-wordmark-name { font-size: clamp(24px, 3.6vw, 34px) !important; line-height: 1 !important; }
+.brand-header .brand-header-logo > .brand-wordmark .brand-wordmark-tagline { font-size: 10px !important; letter-spacing: .12em !important; }
+@media (max-width: 420px) {
+  .brand-header .brand-header-logo { gap: 5px !important; }
+  .brand-header .brand-header-logo > img { width: 66px !important; height: 66px !important; }
+  .brand-header .brand-header-logo > .brand-wordmark > .brand-wordmark-name { font-size: 25px !important; letter-spacing: -.03em !important; }
+  .brand-header .brand-header-logo > .brand-wordmark .brand-wordmark-tagline { font-size: 9px !important; }
+}
