@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { MessageCircle, X, Search, ShoppingCart, Users, ClipboardList, Home, Volume2, VolumeX } from "lucide-react";
+import { X, Search, Users, ClipboardList, Home, Volume2, VolumeX } from "lucide-react";
+import { InstallAppButton } from "@/components/InstallAppButton";
 
 const hints = [
-  { match: /^\/(auth|login)(\/|$)/, title: "Como entrar", message: "Bem-vindo! Se você tem uma conta Google (Gmail), toque no G colorido e escolha sua conta. Se prefere outro e-mail, toque no envelope, digite seu endereço e solicite o link de acesso. Depois, confira sua caixa de entrada e o spam.", tips: ["G colorido: entrar com sua conta Google.", "Envelope: receber um link de acesso no seu e-mail.", "Se não receber o link, confira o spam e verifique o endereço digitado."] },
+  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Para entrar, toque no G do Google ou no envelope para receber um link por e-mail.", tips: [] },
   { match: /catalogo|catálogo/, title: "Catálogo de peças", message: "Digite o código, nome da peça ou veículo na busca. Selecione a categoria, abra os detalhes para conferir a aplicação e use Fazer pedido para escolher a peça.", tips: ["Use a busca para localizar uma peça.", "Confira aplicação, estoque e preço antes de pedir."] },
   { match: /clientes/, title: "Clientes", message: "Procure o cliente pelo nome ou cadastro. Se não encontrar, use a opção de cadastrar novo cliente. Confira os dados antes de salvar.", tips: ["Pesquise antes de cadastrar para evitar duplicidade.", "Confira nome, documento e contato."] },
   { match: /pedido|vendas/, title: "Fazer pedido", message: "Primeiro escolha o cliente. Depois selecione as peças e quantidades, confira as condições de pagamento e revise o pedido antes de enviar.", tips: ["Selecione o cliente para começar.", "Revise produtos, quantidades e valores antes de finalizar."] },
@@ -40,12 +41,13 @@ export function NetinhoAssistant() {
   };
   return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}`} aria-label="Assistente de navegação Netinho">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda do Netinho">
-      <div className="netinho-assistant-head"><strong>Netinho • {hint?.title ?? "Seu guia"}</strong><div>
+      <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : `Netinho • ${hint?.title ?? "Seu guia"}`}</strong><div>
         <button type="button" aria-label={sound ? "Desativar voz" : "Ativar voz"} onClick={() => setSound(!sound)}>{sound ? <Volume2 size={17}/> : <VolumeX size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
       </div></div>
       <p>{greeting}</p>
-      {hint?.tips && <ul className="netinho-assistant-tips">{hint.tips.map(tip => <li key={tip}>{tip}</li>)}</ul>}
+      {hint?.tips && hint.tips.length > 0 && <ul className="netinho-assistant-tips">{hint.tips.map(tip => <li key={tip}>{tip}</li>)}</ul>}
+      {isAuth && <div className="mt-3 space-y-2"><p className="text-xs text-blue-100">Quer um acesso mais rápido? Crie um atalho para abrir o Netinho pelo celular.</p><InstallAppButton label="Baixar atalho" className="min-h-12 !bg-[#eaf2ff] !text-[#102a52] !px-2 !py-1" /></div>}
       {!isAuth && <><p className="netinho-assistant-help">Escolha uma página para continuar:</p>
       <div className="netinho-assistant-links">{links.map(({to,label,icon:Icon}) => <Link key={to} to={to} onClick={() => setOpen(false)}><Icon size={17}/>{label}</Link>)}</div></>}
       <button className="netinho-assistant-hide" type="button" onClick={() => {setOpen(false);setHidden(true);}}>Ocultar assistente nesta visita</button>
