@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OfertasRouteImport } from './routes/ofertas'
 import { Route as RepresentanteRouteImport } from './routes/representante'
 import { Route as RepresentanteLivaldoRouteImport } from './routes/representante-livaldo'
+import { Route as SolicitarAcessoRouteImport } from './routes/solicitar-acesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminGestaoRouteImport } from './routes/_authenticated/admin-gestao'
 import { Route as AuthenticatedCatalogoRouteImport } from './routes/_authenticated/catalogo'
@@ -57,6 +58,11 @@ const RepresentanteRoute = RepresentanteRouteImport.update({
 const RepresentanteLivaldoRoute = RepresentanteLivaldoRouteImport.update({
   id: '/representante-livaldo',
   path: '/representante-livaldo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolicitarAcessoRoute = SolicitarAcessoRouteImport.update({
+  id: '/solicitar-acesso',
+  path: '/solicitar-acesso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
+  '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
   '/catalogo': typeof AuthenticatedCatalogoRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
+  '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
   '/catalogo': typeof AuthenticatedCatalogoRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
+  '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin-gestao': typeof AuthenticatedAdminGestaoRoute
   '/_authenticated/catalogo': typeof AuthenticatedCatalogoRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
+    | '/solicitar-acesso'
     | '/admin'
     | '/admin-gestao'
     | '/catalogo'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
+    | '/solicitar-acesso'
     | '/admin'
     | '/admin-gestao'
     | '/catalogo'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
+    | '/solicitar-acesso'
     | '/_authenticated/admin'
     | '/_authenticated/admin-gestao'
     | '/_authenticated/catalogo'
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   OfertasRoute: typeof OfertasRoute
   RepresentanteRoute: typeof RepresentanteRoute
   RepresentanteLivaldoRoute: typeof RepresentanteLivaldoRoute
+  SolicitarAcessoRoute: typeof SolicitarAcessoRoute
   EditarRepresentanteSlugRoute: typeof EditarRepresentanteSlugRoute
 }
 
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/representante-livaldo'
       fullPath: '/representante-livaldo'
       preLoaderRoute: typeof RepresentanteLivaldoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solicitar-acesso': {
+      id: '/solicitar-acesso'
+      path: '/solicitar-acesso'
+      fullPath: '/solicitar-acesso'
+      preLoaderRoute: typeof SolicitarAcessoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -464,6 +484,7 @@ const rootRouteChildren: RootRouteChildren = {
   OfertasRoute: OfertasRoute,
   RepresentanteRoute: RepresentanteRoute,
   RepresentanteLivaldoRoute: RepresentanteLivaldoRoute,
+  SolicitarAcessoRoute: SolicitarAcessoRoute,
   EditarRepresentanteSlugRoute: EditarRepresentanteSlugRoute,
 }
 export const routeTree = rootRouteImport
