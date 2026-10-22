@@ -77,6 +77,7 @@ function EditRepresentativePage() {
         qc.invalidateQueries({ queryKey: ["edit-commercial-representative", slug] }),
         qc.invalidateQueries({ queryKey: ["representative-profile", slug] }),
         qc.invalidateQueries({ queryKey: ["representative-private", slug] }),
+        qc.invalidateQueries({ queryKey: ["representative-service-areas"] }),
       ]);
       toast.success("Dados do representante atualizados.");
     } catch (err) {
@@ -107,7 +108,8 @@ function EditRepresentativePage() {
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-phone">Telefone</Label><Input id="rep-phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
             <h2 className="text-lg font-bold">Dados cadastrais (somente administrador)</h2>
-            {([["cpf","CPF"],["rg","RG"],["street_address","Endereço (rua e número)"],["neighborhood","Bairro"],["postal_code","CEP"],["city","Cidade"],["state","Estado (UF)"],["service_cities","Municípios atendidos"]] as const).map(([key,label]) => <div key={key} className="space-y-2"><Label htmlFor={`rep-${key}`}>{label}</Label><Input id={`rep-${key}`} value={details[key]} onChange={e => setDetail(key,e.target.value)} /></div>)}
+            {([["cpf","CPF"],["rg","RG"],["street_address","Endereço (rua e número)"],["neighborhood","Bairro"],["postal_code","CEP"],["city","Cidade"],["state","Estado (UF)"],] as const).map(([key,label]) => <div key={key} className="space-y-2"><Label htmlFor={`rep-${key}`}>{label}</Label><Input id={`rep-${key}`} value={details[key]} onChange={e => setDetail(key,e.target.value)} /></div>)}
+            <div className="space-y-2 rounded-xl border border-amber-400/50 bg-[#102a52] p-4"><Label htmlFor="rep-service-cities" className="text-base font-bold text-white">Cidades de atuação do representante</Label><p className="text-sm text-white">Informe cada cidade atendida, separada por vírgula ou em uma linha. Exemplo: Sorocaba, Votorantim, Itu, Salto.</p><textarea id="rep-service-cities" rows={5} value={details.service_cities} onChange={e => setDetail("service_cities",e.target.value)} placeholder="Sorocaba, Votorantim, Itu..." className="w-full rounded-lg border border-amber-300/60 bg-[#071d34] p-3 text-base text-white placeholder:text-slate-300" /></div>
             <p className="text-xs text-muted-foreground">CPF, RG e endereço são dados privados e não aparecem na página pública. A autorização comercial é gerenciada separadamente.</p>
             <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar alterações"}</Button>
           </form>
