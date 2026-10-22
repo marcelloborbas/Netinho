@@ -64,13 +64,6 @@ function Home() {
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6">
-        <section className="flex items-center justify-between gap-3 rounded-2xl border-2 border-amber-400 bg-[#102a52] px-4 py-3 text-white shadow-lg" aria-label="Identificação do seu perfil">
-          <div className="min-w-0"><p className="truncate text-base font-bold sm:text-xl">{greeting}, {userName || "usuário"}!</p><p className="text-xs text-blue-100">Seu perfil de acesso</p></div>
-          <div className="flex shrink-0 items-center gap-2 rounded-xl border border-amber-300 bg-[#1a3760] px-3 py-2 text-amber-300">
-            {authorizedProfile ? <authorizedProfile.icon size={32} aria-hidden="true"/> : <UserRound size={32} aria-hidden="true"/>}
-            <strong className="text-lg font-black sm:text-xl">{authorizedProfile?.label ?? "Visitante"}</strong>
-          </div>
-        </section>
         <PromotionBanner />
         {authorizedProfile ? (
           <section className="mx-auto w-full max-w-md rounded-2xl border border-amber-400 bg-[#102a52] p-6 text-center text-white shadow-lg" aria-label="Seu perfil autorizado">
