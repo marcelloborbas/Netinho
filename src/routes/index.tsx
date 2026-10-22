@@ -43,11 +43,11 @@ function Home() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
   const authorizedProfile = isAdmin
-    ? { label: "Administrador", icon: UserCog, to: "/admin" }
+    ? { label: "Administrador", icon: UserCog, to: "/admin" as const }
     : canSell && access?.attribution === "Representante"
-      ? { label: "Representante", icon: BriefcaseBusiness, to: "/representante" }
+      ? { label: "Representante", icon: BriefcaseBusiness, to: "/representante" as const }
       : canSell
-        ? { label: "Vendedor", icon: ShoppingCart, to: "/vendas" }
+        ? { label: "Vendedor", icon: ShoppingCart, to: "/vendas" as const }
         : null;
   useEffect(() => {
     if (!authorizedProfile) return;
@@ -63,7 +63,7 @@ function Home() {
       `Telefone: ${requestPhone.trim() || "Não informado"}`,
       `Informações adicionais: ${requestNotes.trim() || "Nenhuma"}`,
       "Aguardo avaliação e liberação pelo administrador.",
-    ].join("\\n");
+    ].join("\n");
     return `https://wa.me/5515992458492?text=${encodeURIComponent(message)}`;
   };
   return (
