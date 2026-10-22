@@ -23,7 +23,7 @@ function Page() {
       return (data ?? []) as Representative[];
     },
   });
-  const { data: serviceAreas = [], isLoading: loadingAreas } = useQuery({ queryKey: ["representative-service-areas"], queryFn: async () => { const { data, error } = await supabase.from("representative_service_areas_public" as never).select("slug,service_cities"); if (error) throw error; return (data ?? []) as ServiceArea[]; } });
+  const { data: serviceAreas = [], isLoading: loadingAreas, error: areasError } = useQuery({ queryKey: ["representative-service-areas"], queryFn: async () => { const { data, error } = await supabase.from("representative_service_areas_public" as never).select("slug,service_cities"); if (error) throw error; return (data ?? []) as ServiceArea[]; } });
   const matches = useMemo(() => {
     const searchedCity = normalize(city);
     const searchedState = normalize(state);
@@ -55,11 +55,11 @@ function Page() {
       <button type="submit" className="flex min-h-12 items-center justify-center gap-2 self-end rounded-lg bg-[#0677ef] px-5 font-bold text-white"><Search size={18}/> Buscar</button>
     </form>
     {(isLoading || loadingAreas) && <p className="font-semibold text-[#102a52]">Consultando representantes e regiões...</p>}
-    {error && <p role="alert">Não foi possível consultar os representantes. Tente novamente.</p>}
-    {searched && !error && !isLoading && !loadingAreas && <div className="space-y-3">
+    {(error || areasError) && <p role="alert" className="rounded-lg border border-red-300 bg-white p-3 font-semibold text-red-800">Não foi possível consultar todas as regiões. Tente novamente para evitar resultados incompletos.</p>}
+    {searched && !error && !areasError && !isLoading && !loadingAreas && <div className="space-y-3">
       <h2 className="text-lg font-bold text-[#102a52]">{matches.length || isNetinhoLocal ? "Atendimento disponível para sua região" : "Nenhum representante identificado para essa localidade"}</h2>
       {isNetinhoLocal && <article className="rounded-xl border border-blue-900 bg-[#102a52] p-4 text-white"><h3 className="text-xl font-extrabold">Netinho Auto Parts</h3><p>Atendimento direto em Sorocaba / SP</p><a className="mt-3 inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href="https://wa.me/5515992458492" target="_blank" rel="noreferrer">Falar com a Netinho</a></article>}
-      {matches.map(rep => <article key={rep.slug} className="rounded-xl border border-[#35536e] bg-[#102a52] p-4 text-white">
+      {matches.filter(rep => !(isNetinhoLocal && /netinho/i.test(rep.full_name))).map(rep => <article key={rep.slug} className="rounded-xl border border-[#35536e] bg-[#102a52] p-4 text-white">
         <p className="text-xl font-extrabold text-white">{rep.full_name}</p>
         <p className="mt-1 flex items-center gap-2 text-sm"><MapPin size={15}/>{rep.region}</p>
         <a href={`https://wa.me/${(rep.phone?.replace(/\D/g,"") || "5515992458492").replace(/^(?!55)(?=\d{10,11}$)/,"55")}?text=${encodeURIComponent(`Olá, sou de ${city}/${state} e gostaria de falar com ${rep.full_name}.`)}`} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 font-bold"><MessageCircle size={18}/> Solicitar atendimento</a>
