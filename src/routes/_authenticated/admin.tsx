@@ -17,7 +17,8 @@ const options = [
 const permissions = [
   ["Visualizar catálogo", "✓", "✓", "✓", "✓"],
   ["Pesquisar peças", "✓", "✓", "✓", "✓"],
-  ["Ver preços", "—", "✓", "✓", "✓"],
+  ["Ver preços à vista", "✓", "✓", "✓", "✓"],
+  ["Ver preços a prazo", "—", "✓", "✓", "✓"],
   ["Consultar estoque", "—", "✓", "✓", "✓"],
   ["Cadastrar clientes", "—", "✓", "✓", "✓"],
   ["Criar pedidos", "—", "✓", "✓", "✓"],
@@ -46,11 +47,11 @@ function AdminDashboard() {
         <div className="flex items-center gap-2"><AlertCircle size={23} className="text-[#102a52]"/><h2 className="text-xl font-black">O que você deseja fazer?</h2></div>
         <p className="text-sm text-slate-700">Acesse diretamente as tarefas mais importantes. Nenhuma autorização é concedida automaticamente.</p>
         <div className="grid gap-2 sm:grid-cols-2">
-          <Link to="/admin-gestao" hash="usuarios" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
-            <UserCheck size={28} className="shrink-0"/><span><strong className="block text-base">Gerenciar usuários</strong><small className="block text-sm text-slate-700">Conferir perfis e permissões</small></span>
+          <Link to="/pessoas" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
+            <UserCheck size={28} className="shrink-0"/><span><strong className="block text-base">Gerenciar pessoas</strong><small className="block text-sm text-slate-700">Conferir perfis e permissões</small></span>
           </Link>
-          <Link to="/admin-gestao" hash="representantes" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
-            <UserPlus size={28} className="shrink-0"/><span><strong className="block text-base">Liberar representante</strong><small className="block text-sm text-slate-700">Vincular conta, ativar ou desativar</small></span>
+          <Link to="/pessoas" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
+            <UserPlus size={28} className="shrink-0"/><span><strong className="block text-base">Definir perfis e regiões</strong><small className="block text-sm text-slate-700">Acesso, atuação e responsáveis</small></span>
           </Link>
           <Link to="/pedidos" className="flex min-h-16 items-center gap-3 rounded-xl border border-[#cbd5e1] bg-[#f8fafc] p-3 text-[#102a52] hover:bg-[#e8f0fb]">
             <ClipboardList size={28} className="shrink-0"/><span><strong className="block text-base">Consultar pedidos</strong><small className="block text-sm text-slate-700">Acompanhar solicitações</small></span>
