@@ -56,7 +56,7 @@ function Admin() {
         <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
         <Link to="/pedidos" className="action-card">Pedidos</Link>
         <a href="#representantes" className="action-card">Cadastrar representantes</a>
-        <a href="#representantes" className="action-card">Acesso dos representantes</a>
+        <Link to="/pessoas" className="action-card">Pessoas e permissões</Link>
         <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
       </nav>
       <details className="rounded-xl border border-slate-300 bg-white p-3 text-slate-900"><summary className="cursor-pointer font-bold text-[#102a52]">Comissões de fornecedores</summary><div className="mt-3"><SupplierCommissions /></div></details>
