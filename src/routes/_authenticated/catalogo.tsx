@@ -147,24 +147,24 @@ function Catalog() {
 
       </header>
 
-      <section className="space-y-3 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Buscar por veículo">
+      <section className="space-y-3 rounded-2xl border-2 border-[#416b92] bg-[#102e51] p-4 shadow-lg" aria-label="Buscar por veículo">
         <button type="button" aria-expanded={vehicleOpen} onClick={() => setVehicleOpen(!vehicleOpen)} className="flex w-full items-center justify-between gap-3 text-left font-extrabold text-[#39ff79]"><span className="inline-flex items-center gap-2"><Car size={21}/> Buscar por veículo</span><span className="text-xs text-white">{vehicleOpen ? "Fechar −" : "Abrir +"}</span></button>
         {vehicleOpen && <div className="space-y-3">
-          <p className="text-xs text-blue-100">Pesquisa os dados de aplicação cadastrados pelo fabricante. Confirme a compatibilidade na ficha técnica antes de comprar.</p>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {([["Montadora", vehicleMake, setVehicleMake], ["Modelo", vehicleModel, setVehicleModel], ["Ano", vehicleYear, setVehicleYear], ["Motorização", vehicleEngine, setVehicleEngine]] as const).map(([label, value, setter]) => <label key={label} className="space-y-1 text-xs font-bold text-white">{label}<input type="text" value={value} onChange={(e) => { setter(e.target.value); setPage(1); }} placeholder={label} className="min-h-11 w-full rounded-lg border border-[#40698e] bg-[#071b31] px-3 text-sm text-white placeholder:text-slate-300" /></label>)}
+          <p className="rounded-lg bg-[#eaf2ff] p-3 text-sm font-medium leading-relaxed text-[#102a52]">Preencha somente os dados que desejar. A pesquisa utiliza as aplicações informadas pelos fabricantes; confirme a compatibilidade na ficha técnica.</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {([["Montadora", vehicleMake, setVehicleMake], ["Modelo", vehicleModel, setVehicleModel], ["Ano", vehicleYear, setVehicleYear], ["Motorização", vehicleEngine, setVehicleEngine]] as const).map(([label, value, setter]) => <label key={label} className="flex min-w-0 flex-col gap-1.5 text-sm font-extrabold text-[#facc15]"><span>{label}</span><input type="text" value={value} onChange={(e) => { setter(e.target.value); setPage(1); }} placeholder={`Digite ${label.toLowerCase()}`} style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full min-w-0 rounded-lg border-2 border-[#8bc8ff] px-3 py-2 text-base font-semibold shadow-sm placeholder:font-normal placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc15]" /></label>)}
           </div>
           <button type="button" onClick={() => { setVehicleMake(""); setVehicleModel(""); setVehicleYear(""); setVehicleEngine(""); setPage(1); }} className="inline-flex items-center gap-2 text-xs font-bold text-[#facc15]"><RotateCcw size={15}/> Limpar veículo</button>
         </div>}
       </section>
       <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
         <div className="relative">
-          <Search className="absolute left-4 top-4 text-[#8bc8ff]" size={20} aria-hidden="true" />
+          <Search className="absolute left-4 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
           <input id="catalog-search" aria-label="Buscar peças" value={q}
             onChange={(e) => { setQ(e.target.value); setPage(1); }}
             placeholder="Busque por código, peça, veículo ou aplicação"
-            className="h-13 min-h-12 w-full rounded-xl border border-[#40698e] bg-[#071b31] pl-12 pr-12 text-sm text-white placeholder:text-slate-300 focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
-          {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-white"><X size={20}/></button>}
+            style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#8bc8ff] pl-12 pr-12 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+          {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-[#102a52]"><X size={20}/></button>}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -181,6 +181,7 @@ function Catalog() {
               </div>}
             </div>
           </div>
+          {(vehicleActive && list.length === 0) && <p role="status" className="w-full rounded-lg border border-[#facc15] bg-[#fff7db] p-3 text-sm font-semibold leading-relaxed text-[#102a52]">Nenhuma aplicação cadastrada corresponde a todos os dados informados. Experimente pesquisar apenas pela montadora e modelo, ou consulte a ficha técnica.</p>}
           {(q || vehicleActive || manufacturer !== "all" || category !== "all" || filterMode !== "relevantes") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
         </div>
       </section>
