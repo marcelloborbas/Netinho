@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ComponentProps } from "react";
-import { Smartphone, SmartphoneCharging, LoaderCircle } from "lucide-react";
+import { Smartphone, SmartphoneCharging, LoaderCircle, SmartphoneNfc } from "lucide-react";
 import { toast } from "sonner";
 import { LogoMark } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -117,10 +117,10 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         variant="outline"
         disabled={disabled || installing}
         onClick={() => void install()}
-        className={cn("h-auto min-h-16 w-full justify-start gap-3 whitespace-normal rounded-lg border-primary/40 bg-primary/10 px-3 py-3 text-left text-foreground hover:bg-primary/20 shadow-md transition-transform duration-300 hover:scale-[1.03] active:scale-95 motion-reduce:transform-none", assistantStyle && "!min-h-14 !border-2 !border-[#1e9cff] !bg-[#061c35] !text-white hover:!bg-[#103657] !shadow-[0_0_10px_#148cff66] !px-3 !py-2", className)}
+        className={cn("h-auto min-h-16 w-full justify-start gap-3 whitespace-normal rounded-lg border-primary/40 bg-primary/10 px-3 py-3 text-left text-foreground hover:bg-primary/20 shadow-md transition-transform duration-300 hover:scale-[1.03] active:scale-95 motion-reduce:transform-none", assistantStyle && "!min-h-24 !flex-col !items-center !justify-center !gap-1.5 !border !border-[#4c9fff] !bg-[#0b294c] !text-white hover:!bg-[#103657] !shadow-[0_0_10px_#148cff55] !px-3 !py-3 !text-center", className)}
       >
-        {assistantStyle ? <SmartphoneCharging className="h-8 w-8 shrink-0 text-[#54c5ff]" strokeWidth={1.8} aria-hidden="true" /> : <LogoMark className="h-14 w-14 shrink-0" />}
-        <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>
+        {assistantStyle ? <SmartphoneNfc className="h-9 w-9 shrink-0 text-[#54c5ff]" strokeWidth={1.8} aria-hidden="true" /> : <LogoMark className="h-14 w-14 shrink-0" />}
+        {assistantStyle ? <span className="text-center text-xs leading-5"><span className="block">Quer um acesso mais rápido?</span><strong className="block text-sm text-white">Baixe este atalho em seu celular.</strong></span> : <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{label}</span>}
         {installing ? <LoaderCircle className="shrink-0 motion-safe:animate-spin" aria-hidden="true" /> : assistantStyle ? null : <Smartphone className="shrink-0 text-primary" aria-hidden="true" />}
       </Button>
 
