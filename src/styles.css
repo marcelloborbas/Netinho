@@ -2931,3 +2931,29 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
     padding: 12px;
   }
 }
+
+/* LIVA: identificação curta sob o mascote, sem interferir nos botões. */
+.netinho-assistant-caption {
+  display: block;
+  max-width: 135px;
+  margin-top: -5px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  background: #061c35ed;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: 0 2px 8px #0004;
+}
+.netinho-assistant:not(.netinho-assistant-auth) {
+  bottom: calc(94px + env(safe-area-inset-bottom));
+}
+.netinho-assistant-auth {
+  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+}
+.netinho-assistant-head strong {
+  color: #facc15;
+  font-size: 13px;
+}
