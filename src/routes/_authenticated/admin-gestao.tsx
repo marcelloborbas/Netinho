@@ -56,12 +56,12 @@ function Admin() {
         <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
         <Link to="/pedidos" className="action-card">Pedidos</Link>
         <a href="#representantes" className="action-card">Cadastrar representantes</a>
-        <a href="#usuarios" className="action-card">Usuários e permissões</a>
+        <a href="#representantes" className="action-card">Acesso dos representantes</a>
         <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
       </nav>
       <details className="rounded-xl border border-slate-300 bg-white p-3 text-slate-900"><summary className="cursor-pointer font-bold text-[#102a52]">Comissões de fornecedores</summary><div className="mt-3"><SupplierCommissions /></div></details>
       <RepresentativesAdmin />
-      <div id="usuarios"><UserAttributionAdmin /></div>
+
       <details id="produtos" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900"><summary className="cursor-pointer text-xl font-bold text-[#102a52]">Produtos, estoque e preços</summary><div className="mt-4 space-y-3">
       <Input
         aria-label="Pesquisar produtos por código, nome ou aplicação"
@@ -88,7 +88,7 @@ type ProfileAccessRow = {
   attribution: ProfileAttribution;
 };
 
-function UserAttributionAdmin() {
+function UserAttributionAdmin({ representativeEmail }: { representativeEmail?: string }) {
   const qc = useQueryClient();
   const [savingUser, setSavingUser] = useState<string | null>(null);
   const { data: profiles = [], isLoading, error } = useQuery({
@@ -123,9 +123,9 @@ function UserAttributionAdmin() {
   return (
     <section className="surface-card space-y-4 p-4">
       <div>
-        <h2 className="text-xl font-bold">Cadastro e atribuição de usuários</h2>
+        <h2 className="text-lg font-bold text-[#102a52]">Conta Google e atribuição</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Defina como a conta será identificada na tela inicial. Esta atribuição não concede acesso a vendas.
+          A atribuição identifica a conta na página inicial e não libera vendas automaticamente.
         </p>
       </div>
       {isLoading && <p className="text-sm text-muted-foreground">Carregando cadastros…</p>}
@@ -138,7 +138,7 @@ function UserAttributionAdmin() {
         <p className="text-sm text-muted-foreground">Nenhum usuário cadastrado ainda.</p>
       )}
       <ul className="space-y-2">
-        {profiles.map((user) => (
+        {profiles.filter((user) => representativeEmail ? user.email?.trim().toLowerCase() === representativeEmail.trim().toLowerCase() : true).map((user) => (
           <li key={user.id} className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0 w-full flex-1">
               <p className="break-words font-semibold text-slate-900">{user.full_name || "Sem nome"}</p>
@@ -449,13 +449,14 @@ function RepresentativesAdmin() {
               {linked?.email && <p className="break-all text-sm text-slate-700">{linked.email}</p>}
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="inline-flex min-h-11 items-center rounded-lg border-2 border-[#102a52] px-4 py-2 text-sm font-bold text-[#102a52]">Editar ficha e localidades</Link>
+              <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="inline-flex min-h-11 items-center rounded-lg border-2 border-[#102a52] px-4 py-2 text-sm font-bold text-[#102a52]">Editar ficha</Link>
               <Link to={rep.slug === "livaldo-souza-silva" ? "/representante-livaldo" : "/representante"} className="inline-flex min-h-11 items-center rounded-lg border-2 border-[#102a52] px-4 py-2 text-sm font-bold text-[#102a52]">Ver mapa</Link>
               {linked ? <label className="flex min-h-11 items-center gap-2 text-sm font-bold text-slate-900">
                 {linked.active ? "Ativado" : "Desativado"}
                 <Switch checked={linked.active} onCheckedChange={() => toggle(linked)} aria-label={`Ativar ou desativar ${rep.full_name}`} />
               </label> : <span className="text-sm font-semibold text-slate-700">Acesso não vinculado</span>}
             </div>
+            {linked?.email && <UserAttributionAdmin representativeEmail={linked.email} />}
             {!linked && <div className="flex flex-col gap-2 sm:flex-row">
               <Input type="email" aria-label={`E-mail de acesso de ${rep.full_name}`} placeholder="E-mail da conta Google" className="min-h-11 min-w-0 flex-1 bg-white text-slate-900" value={googleEmails[rep.slug] ?? ""} onChange={e => setGoogleEmails(prev => ({ ...prev, [rep.slug]: e.target.value }))} />
               <Button type="button" disabled={savingAccess === rep.slug} onClick={() => authorizeGoogle(rep)}>Vincular e ativar</Button>
@@ -464,6 +465,7 @@ function RepresentativesAdmin() {
         })}
         {representatives.filter(item => !visibleProfiles.some(rep => rep.full_name.toLocaleLowerCase("pt-BR").trim() === item.full_name.toLocaleLowerCase("pt-BR").trim())).map(rep => <article key={rep.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white p-4 text-slate-900">
           <div><h4 className="font-bold">{rep.full_name}</h4><p className="break-all text-sm text-slate-700">{rep.email}</p></div>
+          <UserAttributionAdmin representativeEmail={rep.email} />
           <div className="flex items-center gap-3"><Button variant="outline" size="sm" onClick={() => editRepresentative(rep)}>Editar</Button><label className="flex items-center gap-2 text-sm font-bold">{rep.active ? "Ativado" : "Desativado"}<Switch checked={rep.active} onCheckedChange={() => toggle(rep)} /></label></div>
         </article>)}
       </div>
