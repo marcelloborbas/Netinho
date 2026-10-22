@@ -221,7 +221,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
       <div className="mt-auto border-t border-[#35536e] pt-3">
         <p className="mb-2 text-sm font-extrabold text-white">{canSell ? "Valores" : "Preço à vista"}</p>
         {(canSell ? prices : prices.filter(([label]) => label === "À vista")).some(([, price]) => price != null) ? <dl className="space-y-1">{(canSell ? prices : prices.filter(([label]) => label === "À vista")).filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#ffdc43]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-slate-200">Preço à vista sob consulta</p>}
-      </div>}
+      </div>
     </div>
   </li>;
 }
