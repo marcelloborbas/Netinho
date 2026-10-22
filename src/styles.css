@@ -2975,3 +2975,7 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .brand-header-logo > div > div:last-child { font-size:8px !important; letter-spacing:.1em !important; }
   .brand-header-logo .brand-wordmark [aria-label^="WhatsApp Netinho"] { font-size:9px; }
 }
+
+/* LIA: ícone 1,4x maior, sem legenda externa */
+.netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-large { width: 115px !important; height: 115px !important; }
+@media (max-width: 420px) { .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-large { width: 101px !important; height: 101px !important; } }
