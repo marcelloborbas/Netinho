@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { Smartphone, X, Volume2, VolumeX } from "lucide-react";
+import { X, Volume2, VolumeX } from "lucide-react";
 import { InstallAppButton } from "@/components/InstallAppButton";
 
 const hints = [
@@ -22,8 +22,10 @@ export function NetinhoAssistant() {
   const isAuth = /^\/(auth|login)(\/|$)/.test(pathname);
   const [open, setOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
   useEffect(() => {
     window.speechSynthesis?.cancel();
+    speechRef.current = null;
     setSpeaking(false);
     setOpen(false);
     return () => window.speechSynthesis?.cancel();
@@ -34,7 +36,7 @@ export function NetinhoAssistant() {
   const speak = () => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    if (speaking) { setSpeaking(false); return; }
+    if (speechRef.current) { speechRef.current = null; setSpeaking(false); return; }
     const pageText = isAuth ? "" : document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
     const textToRead = `${greeting}${pageText ? ". Conteúdo desta página: " + pageText : ""}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
@@ -42,12 +44,14 @@ export function NetinhoAssistant() {
     utterance.rate = 0.94;
     utterance.pitch = 0.8;
     const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find(v => /^pt/i.test(v.lang) && /male|masculin|daniel|ricardo|antonio|felipe|paulo|carlos/i.test(v.name)) ?? voices.find(v => /^pt/i.test(v.lang));
+    const voice = voices.find(v => /^pt/i.test(v.lang) && /male|masculin|daniel|ricardo|antonio|antônio|felipe|paulo|carlos|francisco/i.test(v.name)) ?? voices.find(v => /^pt/i.test(v.lang));
     if (voice) utterance.voice = voice;
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
+    utterance.onend = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
+    utterance.onerror = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
+    speechRef.current = utterance;
     setSpeaking(true);
     window.speechSynthesis.speak(utterance);
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
   };
   return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}`} aria-label="Assistente de navegação Netinho">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda do Netinho">
@@ -55,9 +59,8 @@ export function NetinhoAssistant() {
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
       </div></div>
-      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><div className="flex items-start gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 p-2.5"><Smartphone size={25} className="mt-0.5 shrink-0 text-sky-300" aria-hidden="true" /><p>Quer um acesso mais rápido?<span className="mt-1 block font-semibold text-white">Baixe este atalho em seu celular.</span></p></div></div> : <p>{greeting}</p>}
+      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
       {hint?.tips && hint.tips.length > 0 && <ul className="netinho-assistant-tips">{hint.tips.map(tip => <li key={tip}>{tip}</li>)}</ul>}
-      {isAuth && <div className="mt-3"><InstallAppButton label="Baixar atalho" assistantStyle /></div>}
     </div>}
     <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente Netinho" : "Abrir ajuda do Netinho"} aria-expanded={open} onClick={() => setOpen(!open)}>
       <img src="/images/Mascote%20Netinho%20Auto%20Parts%20com%20Chat.webp" alt="Mascote Netinho" width="84" height="84" />
