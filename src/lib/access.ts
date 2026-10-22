@@ -6,7 +6,7 @@ export interface AccessContext {
   can_sell: boolean;
   name: string;
   email: string;
-  attribution?: "Representante" | "Visitante" | "Cliente";
+  attribution?: "Representante" | "Visitante" | "Cliente" | "Vendedor" | "Administrador";
 }
 export const accessQuery = queryOptions({
   queryKey: ["access"],
