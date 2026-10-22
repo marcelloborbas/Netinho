@@ -2,7 +2,7 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, Heart, GitCompareArrows, Car, History, Tag, RotateCcw } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, Heart, GitCompareArrows, History, Tag } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -45,11 +45,6 @@ function Catalog() {
   const [category, setCategory] = useState("all");
   const dq = useDeferredValue(q);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [vehicleMake, setVehicleMake] = useState("");
-  const [vehicleModel, setVehicleModel] = useState("");
-  const [vehicleYear, setVehicleYear] = useState("");
-  const [vehicleEngine, setVehicleEngine] = useState("");
-  const [vehicleOpen, setVehicleOpen] = useState(false);
   const [compared, setCompared] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const [recentCodes, setRecentCodes] = useState<string[]>(() => {
@@ -109,11 +104,9 @@ function Catalog() {
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
   const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD").map((p) => p.categories?.name).filter((n): n is string => !!n))).sort(), [combined]);
-  const vehicleTerms = [vehicleMake, vehicleModel, vehicleYear, vehicleEngine].map((term) => term.trim()).filter(Boolean);
-  const vehicleActive = vehicleTerms.length > 0;
   const list = useMemo(() => {
     const matching = combined.filter((p) =>
-      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq) && (!vehicleActive || vehicleTerms.every((term) => productMatches(p, term))));
+      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
     const selected = matching.filter((p) => {
       if (filterMode === "recentes") return recentCodes.includes(p.code);
       if (filterMode === "disponiveis") return p.stock > 0;
@@ -133,10 +126,10 @@ function Catalog() {
     }
     if (filterMode === "recentes") return [...selected].sort((a, b) => recentCodes.indexOf(a.code) - recentCodes.indexOf(b.code));
     return selected;
-  }, [combined, manufacturer, category, dq, filterMode, favorites, draft.items, recentCodes, vehicleMake, vehicleModel, vehicleYear, vehicleEngine]);
+  }, [combined, manufacturer, category, dq, filterMode, favorites, draft.items, recentCodes]);
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setVehicleMake(""); setVehicleModel(""); setVehicleYear(""); setVehicleEngine(""); setFilterMode("relevantes"); setQ(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -147,16 +140,6 @@ function Catalog() {
 
       </header>
 
-      <section className="space-y-3 rounded-2xl border-2 border-[#416b92] bg-[#102e51] p-4 shadow-lg" aria-label="Buscar por veículo">
-        <button type="button" aria-expanded={vehicleOpen} onClick={() => setVehicleOpen(!vehicleOpen)} className="flex w-full items-center justify-between gap-3 text-left font-extrabold text-[#39ff79]"><span className="inline-flex items-center gap-2"><Car size={21}/> Buscar por veículo</span><span className="text-xs text-white">{vehicleOpen ? "Fechar −" : "Abrir +"}</span></button>
-        {vehicleOpen && <div className="space-y-3">
-          <p className="rounded-lg bg-[#eaf2ff] p-3 text-sm font-medium leading-relaxed text-[#102a52]">Preencha somente os dados que desejar. A pesquisa utiliza as aplicações informadas pelos fabricantes; confirme a compatibilidade na ficha técnica.</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {([["Montadora", vehicleMake, setVehicleMake], ["Modelo", vehicleModel, setVehicleModel], ["Ano", vehicleYear, setVehicleYear], ["Motorização", vehicleEngine, setVehicleEngine]] as const).map(([label, value, setter]) => <label key={label} className="flex min-w-0 flex-col gap-1.5 text-sm font-extrabold text-[#facc15]"><span>{label}</span><input type="text" value={value} onChange={(e) => { setter(e.target.value); setPage(1); }} placeholder={`Digite ${label.toLowerCase()}`} style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full min-w-0 rounded-lg border-2 border-[#8bc8ff] px-3 py-2 text-base font-semibold shadow-sm placeholder:font-normal placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc15]" /></label>)}
-          </div>
-          <button type="button" onClick={() => { setVehicleMake(""); setVehicleModel(""); setVehicleYear(""); setVehicleEngine(""); setPage(1); }} className="inline-flex items-center gap-2 text-xs font-bold text-[#facc15]"><RotateCcw size={15}/> Limpar veículo</button>
-        </div>}
-      </section>
       <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
         <div className="relative">
           <Search className="absolute left-4 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
@@ -182,7 +165,7 @@ function Catalog() {
             </div>
           </div>
           {(vehicleActive && list.length === 0) && <p role="status" className="w-full rounded-lg border border-[#facc15] bg-[#fff7db] p-3 text-sm font-semibold leading-relaxed text-[#102a52]">Nenhuma aplicação cadastrada corresponde a todos os dados informados. Experimente pesquisar apenas pela montadora e modelo, ou consulte a ficha técnica.</p>}
-          {(q || vehicleActive || manufacturer !== "all" || category !== "all" || filterMode !== "relevantes") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
+          {(q || manufacturer !== "all" || category !== "all" || filterMode !== "relevantes") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
         </div>
       </section>
 
