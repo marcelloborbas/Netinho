@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ClipboardList, Contact, Package, Settings2, UserRoundCog, Truck, ShieldCheck, ArrowLeft, UserCheck, UserPlus, ChevronDown } from "lucide-react";
+import { ClipboardList, Contact, Package, Settings2, UserRoundCog, Truck, ShieldCheck, ArrowLeft, UserCheck, UserPlus, Search, MapPinned, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Administração – NETINHO" }] }),
@@ -7,7 +7,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 const options = [
-  { to: "/representantes", label: "Representantes / Vendedores", icon: Contact },
+  { to: "/representantes", label: "Buscar representante", icon: MapPinned },
+  { to: "/vendedores", label: "Vendedores", icon: Contact },
   { to: "/clientes", label: "Clientes", icon: UserRoundCog },
   { to: "/transportadoras", label: "Transportadoras", icon: Truck },
   { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
@@ -41,20 +42,26 @@ function AdminDashboard() {
         <ShieldCheck size={30} className="shrink-0 text-amber-300 drop-shadow-md sm:h-9 sm:w-9" aria-hidden="true"/>
         <h1 className="text-[clamp(1.1rem,4.5vw,2.3rem)] font-black uppercase tracking-wide text-amber-300 drop-shadow-md">Administração</h1>
       </header>
-      <section className="rounded-2xl border-2 border-green-400/70 bg-gradient-to-r from-[#103b34] to-[#0d2c46] p-4 text-white shadow-lg sm:p-5" aria-label="Acesso rápido à autorização de usuários">
-        <div className="mb-3 flex items-center gap-3">
-          <UserCheck className="h-9 w-9 shrink-0 text-green-300" />
-          <div>
-            <h2 className="text-lg font-extrabold sm:text-xl">Liberar acesso de usuários</h2>
-            <p className="text-sm text-green-100">Consulte usuários cadastrados, autorize representantes e vendedores ou cadastre um novo acesso.</p>
-          </div>
-        </div>
+      <section className="space-y-3 rounded-2xl border border-[#cbd5e1] bg-white p-4 text-[#102a52] shadow-sm sm:p-5" aria-label="Ações prioritárias">
+        <div className="flex items-center gap-2"><AlertCircle size={23} className="text-[#102a52]"/><h2 className="text-xl font-black">O que você deseja fazer?</h2></div>
+        <p className="text-sm text-slate-700">Acesse diretamente as tarefas mais importantes. Nenhuma autorização é concedida automaticamente.</p>
         <div className="grid gap-2 sm:grid-cols-2">
-          <Link to="/admin-gestao" hash="usuarios" className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-green-600 px-3 py-3 text-center font-extrabold text-white hover:bg-green-700"><UserCheck size={22}/> Usuários e permissões</Link>
-          <Link to="/admin-gestao" hash="representantes" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border border-amber-300/70 bg-[#173d70] px-3 py-3 text-center font-extrabold text-white hover:bg-[#204c87]"><UserPlus size={22}/> Autorizar / cadastrar</Link>
+          <Link to="/admin-gestao" hash="usuarios" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
+            <UserCheck size={28} className="shrink-0"/><span><strong className="block text-base">Gerenciar usuários</strong><small className="block text-sm text-slate-700">Conferir perfis e permissões</small></span>
+          </Link>
+          <Link to="/admin-gestao" hash="representantes" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
+            <UserPlus size={28} className="shrink-0"/><span><strong className="block text-base">Liberar representante</strong><small className="block text-sm text-slate-700">Vincular conta, ativar ou desativar</small></span>
+          </Link>
+          <Link to="/pedidos" className="flex min-h-16 items-center gap-3 rounded-xl border border-[#cbd5e1] bg-[#f8fafc] p-3 text-[#102a52] hover:bg-[#e8f0fb]">
+            <ClipboardList size={28} className="shrink-0"/><span><strong className="block text-base">Consultar pedidos</strong><small className="block text-sm text-slate-700">Acompanhar solicitações</small></span>
+          </Link>
+          <Link to="/admin-gestao" hash="produtos" className="flex min-h-16 items-center gap-3 rounded-xl border border-[#cbd5e1] bg-[#f8fafc] p-3 text-[#102a52] hover:bg-[#e8f0fb]">
+            <Package size={28} className="shrink-0"/><span><strong className="block text-base">Atualizar produtos</strong><small className="block text-sm text-slate-700">Estoque e preços</small></span>
+          </Link>
         </div>
-        <p className="mt-3 text-xs text-green-100">Solicitações enviadas pelo WhatsApp ainda precisam ser conferidas antes da liberação. A atribuição visual de perfil não substitui a autorização comercial.</p>
+        <p className="text-xs text-slate-700">Pedidos de acesso recebidos por WhatsApp ainda são conferidos manualmente. Atribuir um perfil visual não substitui a autorização de vendas.</p>
       </section>
+      <h2 className="text-lg font-extrabold text-[#102a52]">Outras áreas</h2>
       <nav aria-label="Acessos da administração" className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
         {options.map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className="group flex min-h-[clamp(100px,17vh,160px)] flex-col items-center justify-center gap-2 rounded-2xl border border-amber-400/35 bg-gradient-to-b from-[#173d70] to-[#0c2346] p-3 text-center shadow-lg transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-amber-400/20">
