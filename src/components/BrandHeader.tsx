@@ -40,7 +40,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
       <div className="brand-header-inner">
         <div className="flex min-w-0 shrink-0 flex-col items-start gap-0.5">
           <Link to="/" aria-label="Início Netinho" className="brand-header-home">
-            <Logo className="brand-header-logo" />
+            <Logo className="brand-header-logo" showPhone />
           </Link>
 
 
