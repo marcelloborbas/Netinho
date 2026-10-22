@@ -220,7 +220,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
       </div>}
       <div className="mt-auto border-t border-[#35536e] pt-3">
         <p className="mb-2 text-sm font-extrabold text-white">{canSell ? "Valores" : "Preço à vista"}</p>
-        {(canSell ? prices : prices.filter(([label]) => label === "À vista")).some(([, price]) => price != null) ? <dl className="space-y-1">{(canSell ? prices : prices.filter(([label]) => label === "À vista")).filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#ffdc43]">{brl(price!)}</dd></div>)}</dl> : null}
+        {(canSell ? prices : prices.filter(([label]) => label === "À vista")).some(([, price]) => price != null) ? <dl className="space-y-1">{(canSell ? prices : prices.filter(([label]) => label === "À vista")).filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{brl(price!)}</dd></div>)}</dl> : null}
       </div>
     </div>
   </li>;
