@@ -11,26 +11,17 @@ interface InstallPromptEvent extends Event {
 }
 
 
-function downloadShortcutFile() {
-  const siteUrl = window.location.origin + "/";
-  const logoUrl = window.location.origin + "/favicon.png";
-  const html = `<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><title>Netinho Auto Parts</title>
-<link rel="icon" href="${logoUrl}" type="image/png">
-<meta http-equiv="refresh" content="0; url=${siteUrl}">
-<style>html,body{margin:0;min-height:100%;background:#102a52;color:white;font-family:system-ui,sans-serif}
-main{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-img{width:150px;height:150px;object-fit:contain}a{color:white;text-decoration:none}</style>
-</head><body><main><a href="${siteUrl}"><img src="${logoUrl}" alt="Netinho Auto Parts"><h1>Netinho Auto Parts</h1><p>Abrindo o site… toque aqui se necessário.</p></a></main></body></html>`;
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Netinho Auto Parts.html";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+function showInstallInstructions() {
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(ua);
+  if (isIOS) {
+    toast.info("No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início.", { duration: 9000 });
+  } else if (isAndroid) {
+    toast.info("No Chrome, abra o menu ⋮ e escolha Instalar aplicativo ou Adicionar à tela inicial.", { duration: 9000 });
+  } else {
+    toast.info("No menu do navegador, escolha Instalar aplicativo ou Criar atalho. No celular, adicione à tela inicial.", { duration: 9000 });
+  }
 }
 
 export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
@@ -98,12 +89,10 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         if (choice.outcome === "accepted") return;
         return;
       }
-      // Same fallback as Lemos a Palavra: download a simple HTML link to the site.
-      downloadShortcutFile();
-      toast.success("Atalho Netinho baixado. Abra o arquivo em Downloads para acessar o site.");
+      // A downloaded HTML file cannot create a home-screen icon.
+      showInstallInstructions();
     } catch {
-      downloadShortcutFile();
-      toast.success("Atalho Netinho baixado. Abra o arquivo em Downloads.");
+      showInstallInstructions();
     } finally {
       setInstalling(false);
     }
