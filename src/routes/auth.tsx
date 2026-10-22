@@ -8,7 +8,6 @@ import { accessQuery, saveProfile } from "@/lib/access";
 import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { InstallAppButton } from "@/components/InstallAppButton";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -294,9 +293,7 @@ function AuthPage() {
                 </form>
               )}
             </section>
-            <footer className="welcome-auth-footer" aria-label="Criar atalho do Netinho">
-              <InstallAppButton className="welcome-install-button" label="Criar atalho no celular" />
-            </footer>
+
           </div>
         </>
       )}
