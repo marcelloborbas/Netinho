@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { X, Volume2, VolumeX } from "lucide-react";
+import { Smartphone, X, Volume2, VolumeX } from "lucide-react";
 import { InstallAppButton } from "@/components/InstallAppButton";
 
 const hints = [
-  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Entre pelo G do Google ou pelo envelope para receber um link no seu e-mail." },
+  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Clique no ícone do Google e selecione sua conta, ou clique no envelope e você receberá um link em seu e-mail. Quer um acesso mais rápido? Baixe este atalho em seu celular." },
   { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
   { match: /catalogo|catálogo/, title: "Catálogo", message: "Pesquise pelo código, peça ou veículo. Abra o item para conferir os detalhes. Preços e pedidos exigem perfil autorizado." },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
@@ -35,7 +35,7 @@ export function NetinhoAssistant() {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     if (speaking) { setSpeaking(false); return; }
-    const pageText = document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
+    const pageText = isAuth ? "" : document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
     const textToRead = `${greeting}${pageText ? ". Conteúdo desta página: " + pageText : ""}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = "pt-BR";
@@ -55,9 +55,9 @@ export function NetinhoAssistant() {
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
       </div></div>
-      <p>{greeting}</p>
+      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><div className="flex items-start gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 p-2.5"><Smartphone size={25} className="mt-0.5 shrink-0 text-sky-300" aria-hidden="true" /><p>Quer um acesso mais rápido?<span className="mt-1 block font-semibold text-white">Baixe este atalho em seu celular.</span></p></div></div> : <p>{greeting}</p>}
       {hint?.tips && hint.tips.length > 0 && <ul className="netinho-assistant-tips">{hint.tips.map(tip => <li key={tip}>{tip}</li>)}</ul>}
-      {isAuth && <div className="mt-3 space-y-2"><p className="text-xs text-blue-100">Quer um acesso mais rápido? Crie um atalho para abrir o Netinho pelo celular.</p><InstallAppButton label="Baixar atalho" assistantStyle /></div>}
+      {isAuth && <div className="mt-3"><InstallAppButton label="Baixar atalho" assistantStyle /></div>}
     </div>}
     <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente Netinho" : "Abrir ajuda do Netinho"} aria-expanded={open} onClick={() => setOpen(!open)}>
       <img src="/images/Mascote%20Netinho%20Auto%20Parts%20com%20Chat.webp" alt="Mascote Netinho" width="84" height="84" />
