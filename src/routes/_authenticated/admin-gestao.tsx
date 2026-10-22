@@ -1,7 +1,7 @@
 import { SupplierCommissions } from "@/components/SupplierCommissions";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -25,6 +25,18 @@ function Admin() {
   const { data: me, isLoading } = useQuery(meQuery);
   const { data: products } = useQuery(productsQuery);
   const [q, setQ] = useState("");
+  useEffect(() => {
+    const openRequestedSection = () => {
+      const section = window.location.hash.slice(1);
+      if (!section) return;
+      const target = document.getElementById(section);
+      if (target instanceof HTMLDetailsElement) target.open = true;
+      if (target) window.requestAnimationFrame(() => target.scrollIntoView({ behavior: "smooth", block: "start" }));
+    };
+    openRequestedSection();
+    window.addEventListener("hashchange", openRequestedSection);
+    return () => window.removeEventListener("hashchange", openRequestedSection);
+  }, []);
   const list = useMemo(
     () => (products ?? []).filter((p) => !q || productMatches(p, q)).slice(0, 60),
     [products, q],
@@ -52,11 +64,13 @@ function Admin() {
       <div id="usuarios"><UserAttributionAdmin /></div>
       <details id="produtos" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900"><summary className="cursor-pointer text-xl font-bold text-[#102a52]">Produtos, estoque e preços</summary><div className="mt-4 space-y-3">
       <Input
+        aria-label="Pesquisar produtos por código, nome ou aplicação"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Buscar produto"
+        placeholder="Buscar por código, nome ou aplicação"
         className="h-12"
       />
+      <p className="text-sm font-semibold text-slate-700">{list.length} produto(s) exibido(s) — máximo de 60 por consulta.</p>
       <ul className="space-y-2">
         {list.map((p) => (
           <ProductEditor key={p.id} p={p} />
