@@ -2957,3 +2957,21 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   color: #facc15;
   font-size: 13px;
 }
+
+/* Identidade do LIVA e cabeçalho mobile atualizado */
+.netinho-assistant-caption { display:flex; flex-direction:column; align-items:center; gap:2px; max-width:145px; }
+.netinho-assistant-caption strong { color:#ffdb4d; font-size:12px; font-weight:900; text-shadow:0 0 7px #ffd700b3,0 0 13px #ffb30080; }
+.netinho-assistant-caption small { color:#fff; font-size:10px; font-weight:700; }
+.brand-header-logo > img { width:58px !important; height:58px !important; }
+.brand-header-logo > div > div:first-child { font-size:clamp(23px, 3vw, 31px) !important; }
+.brand-header-logo > div > div:last-child { font-size:9px !important; letter-spacing:.22em !important; color:#facc15 !important; }
+.brand-header-logo .brand-wordmark [aria-label^="WhatsApp Netinho"] { display:flex; margin-top:4px; gap:4px; font-size:clamp(9px, 1.5vw, 12px); white-space:nowrap; }
+.brand-header-logo .brand-wordmark [aria-label^="WhatsApp Netinho"] svg { width:13px; height:13px; }
+@media(max-width:420px) {
+  .brand-header-inner { width:calc(100% - 12px); gap:4px; }
+  .brand-header-logo { gap:3px !important; }
+  .brand-header-logo > img { width:48px !important; height:48px !important; }
+  .brand-header-logo > div > div:first-child { font-size:21px !important; }
+  .brand-header-logo > div > div:last-child { font-size:8px !important; letter-spacing:.1em !important; }
+  .brand-header-logo .brand-wordmark [aria-label^="WhatsApp Netinho"] { font-size:9px; }
+}
