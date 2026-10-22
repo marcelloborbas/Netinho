@@ -60,7 +60,6 @@ export function NetinhoAssistant() {
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
       </div></div>
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
-      {hint?.tips && hint.tips.length > 0 && <ul className="netinho-assistant-tips">{hint.tips.map(tip => <li key={tip}>{tip}</li>)}</ul>}
     </div>}
     <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onClick={() => setOpen(!open)}>
       <img src="/images/Mascote%20LIA%20ajuda.png" alt="Mascote LIA" width="118" height="118" />
