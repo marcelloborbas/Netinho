@@ -35,7 +35,9 @@ export function NetinhoAssistant() {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     if (speaking) { setSpeaking(false); return; }
-    const utterance = new SpeechSynthesisUtterance(greeting);
+    const pageText = document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
+    const textToRead = `${greeting}${pageText ? ". Conteúdo desta página: " + pageText : ""}`;
+    const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = "pt-BR";
     utterance.rate = 0.94;
     utterance.pitch = 0.8;
