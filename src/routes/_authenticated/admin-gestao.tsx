@@ -47,10 +47,10 @@ function Admin() {
         <a href="#usuarios" className="action-card">Usuários e permissões</a>
         <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
       </nav>
-      <SupplierCommissions />
+      <details className="rounded-xl border border-slate-300 bg-white p-3 text-slate-900"><summary className="cursor-pointer font-bold text-[#102a52]">Comissões de fornecedores</summary><div className="mt-3"><SupplierCommissions /></div></details>
       <RepresentativesAdmin />
       <div id="usuarios"><UserAttributionAdmin /></div>
-      <h2 id="produtos" className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
+      <details id="produtos" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900"><summary className="cursor-pointer text-xl font-bold text-[#102a52]">Produtos, estoque e preços</summary><div className="mt-4 space-y-3">
       <Input
         value={q}
         onChange={(e) => setQ(e.target.value)}
@@ -61,7 +61,7 @@ function Admin() {
         {list.map((p) => (
           <ProductEditor key={p.id} p={p} />
         ))}
-      </ul>
+      </ul></div></details>
     </div>
   );
 }
@@ -116,7 +116,7 @@ function UserAttributionAdmin() {
       </div>
       {isLoading && <p className="text-sm text-muted-foreground">Carregando cadastros…</p>}
       {error && (
-        <p className="text-sm text-amber-300" role="alert">
+        <p className="text-sm font-semibold text-red-700" role="alert">
           Não foi possível carregar os cadastros. Verifique se a migração de atribuições foi aplicada.
         </p>
       )}
