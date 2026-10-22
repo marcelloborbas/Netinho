@@ -8,13 +8,13 @@ import { InstallAppButton } from "@/components/InstallAppButton";
 const hints = [
   { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Clique no ícone do Google e selecione sua conta, ou clique no envelope e você receberá um link em seu e-mail. Quer um acesso mais rápido? Baixe este atalho em seu celular." },
   { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
-  { match: /catalogo|catálogo/, title: "Catálogo", message: "Pesquise pelo código, peça ou veículo. Abra o item para conferir os detalhes. Preços e pedidos exigem perfil autorizado." },
+  { match: /catalogo|catálogo/, title: "Catálogo", message: "Abra o item para conferir detalhes. Valores e pedidos exigem perfil autorizado." },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
   { match: /pedidos/, title: "Pedidos", message: "Consulte seus pedidos e acompanhe o andamento. A edição depende do seu perfil e das permissões concedidas." },
   { match: /pedido|vendas/, title: "Vendas", message: "Selecione o cliente, confira as peças e quantidades e revise antes de enviar. É necessário ter acesso comercial autorizado." },
   { match: /ofertas|promoc/, title: "Promoções", message: "Confira o código e a aplicação da peça. Toque em Comprar para continuar, caso tenha autorização para vendas." },
   { match: /admin/, title: "Administração", message: "Gerencie usuários, permissões e operações conforme seu acesso de administrador." },
-  { match: /representante|vendedores/, title: "Representantes", message: "Consulte os vendedores vinculados à sua equipe e acompanhe seus resultados, conforme suas permissões." },
+  { match: /representante|vendedores/, title: "Representantes", message: "Informe sua cidade e estado para localizar o representante que atende sua região." },
   { match: /distribuidoras/, title: "Distribuidoras", message: "Consulte as distribuidoras disponíveis e suas informações autorizadas." },
   { match: /transportadoras/, title: "Transportadoras", message: "Consulte as transportadoras cadastradas e os dados disponíveis para seu perfil." },
 ];
@@ -40,8 +40,7 @@ export function NetinhoAssistant() {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     if (speechRef.current) { speechRef.current = null; setSpeaking(false); return; }
-    const pageText = isAuth || pathname === "/" ? "" : document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
-    const textToRead = `${greeting}${pageText ? ". Conteúdo desta página: " + pageText : ""}`;
+    const textToRead = greeting;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = "pt-BR";
     utterance.rate = 0.94;
