@@ -71,7 +71,8 @@ function EditRepresentativePage() {
       const result = await supabase.from("representative_profiles" as never)
         .upsert({ slug, full_name: name.trim(), region: region.trim(), email: email.trim().toLowerCase() || null, phone: phone.trim() || null } as never, { onConflict: "slug" });
       if (result.error) throw result.error;
-      const privateResult = await supabase.from("representative_private_details" as never).upsert({ slug, ...details } as never, { onConflict: "slug" });
+      const { service_cities: _existingServiceCities, ...editableDetails } = details;
+      const privateResult = await supabase.from("representative_private_details" as never).upsert({ slug, ...editableDetails } as never, { onConflict: "slug" });
       if (privateResult.error) throw privateResult.error;
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["edit-commercial-representative", slug] }),
@@ -93,7 +94,7 @@ function EditRepresentativePage() {
 
   return (
     <BrandPageLayout><main className="mx-auto max-w-2xl space-y-5 px-4 py-8">
-      <Link to={profile.back} className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar ao representante</Link>
+      <Link to="/admin-gestao" hash="representantes" className="inline-flex items-center gap-2 font-bold text-[#173b67]"><ArrowLeft size={18} /> Voltar à gestão</Link>
       <section className="surface-card space-y-5 p-5">
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
         <div className="flex flex-wrap items-center gap-4">
@@ -104,12 +105,16 @@ function EditRepresentativePage() {
         {isLoading ? <p>Carregando cadastro...</p> : error ? <p className="text-destructive">Não foi possível carregar o cadastro no banco de dados.</p> : (
           <form onSubmit={save} className="space-y-4">
             <div className="space-y-2"><Label htmlFor="rep-name">Nome completo</Label><Input id="rep-name" required value={name} onChange={e => setName(e.target.value)} /></div>
-            <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /></div>
+            <div className="space-y-2"><Label htmlFor="rep-region">Região de atuação (resumo)</Label><Input id="rep-region" required value={region} onChange={e => setRegion(e.target.value)} /><p className="text-xs text-slate-700">Descrição resumida da região. O mapa e as localidades existentes são mantidos.</p></div>
             <div className="space-y-2"><Label htmlFor="rep-email">E-mail (opcional)</Label><Input id="rep-email" type="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="rep-phone">Telefone</Label><Input id="rep-phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} /></div>
             <h2 className="text-lg font-bold">Dados cadastrais (somente administrador)</h2>
             {([["cpf","CPF"],["rg","RG"],["street_address","Endereço (rua e número)"],["neighborhood","Bairro"],["postal_code","CEP"],["city","Cidade"],["state","Estado (UF)"],] as const).map(([key,label]) => <div key={key} className="space-y-2"><Label htmlFor={`rep-${key}`}>{label}</Label><Input id={`rep-${key}`} value={details[key]} onChange={e => setDetail(key,e.target.value)} /></div>)}
-            <div className="space-y-2 rounded-xl border border-amber-400/50 bg-[#102a52] p-4"><Label htmlFor="rep-service-cities" className="text-base font-bold text-white">Cidades de atuação do representante</Label><p className="text-sm text-white">Informe cada cidade atendida, separada por vírgula ou em uma linha. Exemplo: Sorocaba, Votorantim, Itu, Salto.</p><textarea id="rep-service-cities" rows={5} value={details.service_cities} onChange={e => setDetail("service_cities",e.target.value)} placeholder="Sorocaba, Votorantim, Itu..." className="w-full rounded-lg border border-amber-300/60 bg-[#071d34] p-3 text-base text-white placeholder:text-slate-300" /></div>
+            <div className="rounded-xl border border-[#274766] bg-[#102a52] p-4 text-white">
+              <p className="font-bold">Localidades e mapa já cadastrados</p>
+              <p className="mt-1 text-sm text-white">As cidades e o mapa de atuação permanecem no cadastro original. Não é necessário informá-los novamente nesta ficha.</p>
+              <Link to={profile.back} className="mt-3 inline-flex rounded-lg border border-amber-400 px-3 py-2 text-sm font-bold text-white">Consultar mapa e localidades</Link>
+            </div>
             <p className="text-xs text-muted-foreground">CPF, RG e endereço são dados privados e não aparecem na página pública. A autorização comercial é gerenciada separadamente.</p>
             <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar alterações"}</Button>
           </form>
