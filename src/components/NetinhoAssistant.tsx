@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { accessQuery } from "@/lib/access";
 import { useRouterState } from "@tanstack/react-router";
 import { X, Volume2, VolumeX } from "lucide-react";
 import { InstallAppButton } from "@/components/InstallAppButton";
@@ -19,6 +21,7 @@ const hints = [
 
 export function NetinhoAssistant() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { data: access } = useQuery({ ...accessQuery, enabled: pathname === "/" });
   const isAuth = /^\/(auth|login)(\/|$)/.test(pathname);
   const [open, setOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
@@ -32,12 +35,12 @@ export function NetinhoAssistant() {
   }, [pathname, isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
   const hint = hints.find((item) => item.match.test(pathname));
-  const greeting = hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
+  const greeting = pathname === "/" ? `${new Date().getHours() < 12 ? "Bom dia" : new Date().getHours() < 18 ? "Boa tarde" : "Boa noite"}, ${access?.name?.trim().split(/\s+/)[0] || "usuário"}. Para acessar um perfil avançado, clique em solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador.` : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speak = () => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     if (speechRef.current) { speechRef.current = null; setSpeaking(false); return; }
-    const pageText = isAuth ? "" : document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
+    const pageText = isAuth || pathname === "/" ? "" : document.querySelector("main")?.textContent?.replace(/\s+/g, " ").trim();
     const textToRead = `${greeting}${pageText ? ". Conteúdo desta página: " + pageText : ""}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = "pt-BR";
