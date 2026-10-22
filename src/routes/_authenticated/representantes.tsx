@@ -7,6 +7,7 @@ import { accessQuery } from "@/lib/access";
 
 export const Route = createFileRoute("/_authenticated/representantes")({ component: Page });
 type Representative = { slug: string; full_name: string; region: string; phone: string | null };
+type ServiceArea = { slug: string; service_cities: string | null };
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
 const stateAliases: Record<string,string> = {SP:"sao paulo",RJ:"rio de janeiro",MG:"minas gerais",PR:"parana",SC:"santa catarina",RS:"rio grande do sul",ES:"espirito santo",BA:"bahia",GO:"goias",DF:"distrito federal",MT:"mato grosso",MS:"mato grosso do sul",PE:"pernambuco",CE:"ceara",PA:"para",AM:"amazonas",MA:"maranhao",PB:"paraiba",RN:"rio grande do norte",AL:"alagoas",SE:"sergipe",PI:"piaui",TO:"tocantins",RO:"rondonia",AC:"acre",AP:"amapa",RR:"roraima"};
 function Page() {
@@ -22,13 +23,16 @@ function Page() {
       return (data ?? []) as Representative[];
     },
   });
+  const { data: serviceAreas = [] } = useQuery({ queryKey: ["representative-service-areas"], queryFn: async () => { const { data, error } = await supabase.from("representative_service_areas_public" as never).select("slug,service_cities"); if (error) throw error; return (data ?? []) as ServiceArea[]; } });
   const matches = useMemo(() => reps.filter(rep => {
     const region = normalize(rep.region ?? "");
-    const cityMatch = region.includes(normalize(city)) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
+    const serviceCities = normalize(serviceAreas.find(area => area.slug === rep.slug)?.service_cities ?? "");
+    const cities = serviceCities.split(/[,;\n]+/).map(value => value.trim()).filter(Boolean);
+    const cityMatch = cities.some(item => item === normalize(city) || item === `${normalize(city)}/${normalize(state)}` || item === `${normalize(city)} - ${normalize(state)}`) || (!cities.length && region.includes(normalize(city))) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
     const st = normalize(state);
     const stateMatch = region.includes(st) || (!!stateAliases[state.toUpperCase()] && region.includes(normalize(stateAliases[state.toUpperCase()]))) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
     return cityMatch && stateMatch && !region.includes("teste");
-  }),[reps,city,state]);
+  }),[reps,serviceAreas,city,state]);
   return <section className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
     <header className="rounded-2xl border border-amber-400/40 bg-[#102a52] p-5 text-center text-white">
       <MapPin className="mx-auto mb-2 text-amber-300" size={34}/>
@@ -36,8 +40,8 @@ function Page() {
       <p className="mt-2 text-sm text-blue-100">Informe sua cidade e estado para localizar o atendimento de sua região.</p>
     </header>
     <form onSubmit={event => { event.preventDefault(); setSearched(true); }} className="grid gap-3 rounded-2xl border border-[#35536e] bg-[#061e37] p-4 sm:grid-cols-[1fr_160px_auto]">
-      <label className="text-sm font-bold text-white">Cidade<input required value={city} onChange={e => {setCity(e.target.value);setSearched(false);}} placeholder="Ex.: Sorocaba" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white"/></label>
-      <label className="text-sm font-bold text-white">Estado (UF)<input required maxLength={2} value={state} onChange={e => {setState(e.target.value.toUpperCase());setSearched(false);}} placeholder="SP" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white"/></label>
+      <label className="text-sm font-bold text-white">Cidade<input required value={city} onChange={e => {setCity(e.target.value);setSearched(false);}} placeholder="Ex.: Sorocaba" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white placeholder:text-white/75" style={{ color: "#fff", WebkitTextFillColor: "#fff", caretColor: "#fff" }}/></label>
+      <label className="text-sm font-bold text-white">Estado (UF)<input required maxLength={2} value={state} onChange={e => {setState(e.target.value.toUpperCase());setSearched(false);}} placeholder="SP" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white placeholder:text-white/75" style={{ color: "#fff", WebkitTextFillColor: "#fff", caretColor: "#fff" }}/></label>
       <button type="submit" className="flex min-h-12 items-center justify-center gap-2 self-end rounded-lg bg-[#0677ef] px-5 font-bold text-white"><Search size={18}/> Buscar</button>
     </form>
     {isLoading && <p>Carregando representantes...</p>}
