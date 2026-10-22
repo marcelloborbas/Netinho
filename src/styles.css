@@ -3071,3 +3071,75 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   border-radius: 12px;
   mix-blend-mode: normal !important;
 }
+
+/* Refinamento visual do catálogo de peças - azul profundo e dourado. */
+.catalog-showcase {
+  color: #eaf3ff;
+}
+.catalog-showcase .catalog-category-filters {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 8px 2px 14px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+.catalog-showcase .catalog-category-filters button {
+  position: relative;
+  flex: 0 0 118px;
+  min-height: 106px;
+  border-radius: 16px;
+  padding: 12px 8px;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 6px 16px #0003;
+  scroll-snap-align: start;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.catalog-showcase .catalog-category-filters button:hover {
+  transform: translateY(-3px);
+  border-color: #facc15;
+}
+.catalog-showcase .catalog-category-filters button[aria-pressed="true"] {
+  border: 2px solid #facc15;
+  box-shadow: 0 0 0 2px #facc1530, 0 6px 20px #0005;
+}
+.catalog-showcase .catalog-category-filters button img {
+  max-height: 56px;
+  filter: drop-shadow(0 3px 8px #0008);
+}
+.catalog-showcase .catalog-category-filters button span {
+  font-size: 12px;
+  line-height: 1.25;
+  text-shadow: 0 1px 5px #000;
+}
+.catalog-showcase .catalog-product-card {
+  border: 1px solid #335777 !important;
+  background: linear-gradient(145deg,#0d2945,#06182d) !important;
+  color: #e8f1ff !important;
+  box-shadow: 0 10px 26px #0003;
+  gap: 9px;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.catalog-showcase .catalog-product-card:hover {
+  transform: translateY(-2px);
+  border-color: #cfae4b !important;
+}
+.catalog-showcase .catalog-product-card h2 {
+  color: #ffe16a !important;
+  text-shadow: 0 0 10px #ffca2a40;
+  line-height: 1.2;
+}
+.catalog-showcase .catalog-product-card > .product-visual {
+  border-radius: 14px;
+  overflow: hidden;
+}
+.catalog-showcase .catalog-product-card button[aria-expanded] {
+  border-color: #56769b;
+  background: #183956;
+  color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-showcase .catalog-category-filters button,
+  .catalog-showcase .catalog-product-card { transition: none; }
+}
