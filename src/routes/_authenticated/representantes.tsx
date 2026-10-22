@@ -1,14 +1,56 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { MapPin, MessageCircle, Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
+
 export const Route = createFileRoute("/_authenticated/representantes")({ component: Page });
+type Representative = { slug: string; full_name: string; region: string; phone: string | null };
+const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
+const stateAliases: Record<string,string> = {SP:"sao paulo",RJ:"rio de janeiro",MG:"minas gerais",PR:"parana",SC:"santa catarina",RS:"rio grande do sul",ES:"espirito santo",BA:"bahia",GO:"goias",DF:"distrito federal",MT:"mato grosso",MS:"mato grosso do sul",PE:"pernambuco",CE:"ceara",PA:"para",AM:"amazonas",MA:"maranhao",PB:"paraiba",RN:"rio grande do norte",AL:"alagoas",SE:"sergipe",PI:"piaui",TO:"tocantins",RO:"rondonia",AC:"acre",AP:"amapa",RR:"roraima"};
 function Page() {
- const { data: access } = useQuery(accessQuery);
- return <section className="surface-card mx-auto max-w-4xl space-y-4 p-6">
- <h1 className="text-2xl font-bold">Representantes</h1><p className="text-muted-foreground">Fichas e mapas das regiões de atuação.</p>
- {access?.level === 1 ? <div className="grid gap-3 sm:grid-cols-2">
- <Link to="/representante" className="action-card flex min-h-20 items-center justify-center rounded-xl bg-[#102a52] px-4 py-4 text-center text-base font-bold !text-white shadow-md transition-colors hover:bg-[#17457d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400">Abdenego Eugênio — ficha e mapa</Link><Link to="/representante-livaldo" className="action-card flex min-h-20 items-center justify-center rounded-xl bg-[#102a52] px-4 py-4 text-center text-base font-bold !text-white shadow-md transition-colors hover:bg-[#17457d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400">Livaldo Souza Silva — ficha e mapa</Link>
- <Link to="/admin-gestao" hash="representantes" className="action-card flex min-h-20 items-center justify-center rounded-xl bg-[#102a52] px-4 py-4 text-center text-base font-bold !text-white shadow-md transition-colors hover:bg-[#17457d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400">Autorizar acesso, editar e ativar/bloquear representantes</Link>
- </div> : <p>Área reservada à administração.</p>}
- </section>;
+  const { data: access } = useQuery(accessQuery);
+  const [city,setCity] = useState("");
+  const [state,setState] = useState("");
+  const [searched,setSearched] = useState(false);
+  const { data: reps = [], isLoading, error } = useQuery({
+    queryKey: ["representative-directory"],
+    queryFn: async () => {
+      const { data,error } = await supabase.from("representative_profiles").select("slug,full_name,region,phone").order("full_name");
+      if (error) throw error;
+      return (data ?? []) as Representative[];
+    },
+  });
+  const matches = useMemo(() => reps.filter(rep => {
+    const region = normalize(rep.region ?? "");
+    const cityMatch = region.includes(normalize(city)) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
+    const st = normalize(state);
+    const stateMatch = region.includes(st) || region.includes(normalize(stateAliases[state.toUpperCase()] ?? "")) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
+    return cityMatch && stateMatch && !region.includes("teste");
+  }),[reps,city,state]);
+  return <section className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
+    <header className="rounded-2xl border border-amber-400/40 bg-[#102a52] p-5 text-center text-white">
+      <MapPin className="mx-auto mb-2 text-amber-300" size={34}/>
+      <h1 className="text-2xl font-black">Encontre seu representante</h1>
+      <p className="mt-2 text-sm text-blue-100">Informe sua cidade e estado para localizar o atendimento de sua região.</p>
+    </header>
+    <form onSubmit={event => { event.preventDefault(); setSearched(true); }} className="grid gap-3 rounded-2xl border border-[#35536e] bg-[#061e37] p-4 sm:grid-cols-[1fr_160px_auto]">
+      <label className="text-sm font-bold text-white">Cidade<input required value={city} onChange={e => {setCity(e.target.value);setSearched(false);}} placeholder="Ex.: Sorocaba" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white"/></label>
+      <label className="text-sm font-bold text-white">Estado (UF)<input required maxLength={2} value={state} onChange={e => {setState(e.target.value.toUpperCase());setSearched(false);}} placeholder="SP" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white"/></label>
+      <button type="submit" className="flex min-h-12 items-center justify-center gap-2 self-end rounded-lg bg-[#0677ef] px-5 font-bold text-white"><Search size={18}/> Buscar</button>
+    </form>
+    {isLoading && <p>Carregando representantes...</p>}
+    {error && <p role="alert">Não foi possível consultar os representantes. Tente novamente.</p>}
+    {searched && !error && <div className="space-y-3">
+      <h2 className="text-lg font-bold text-amber-300">{matches.length ? "Representantes encontrados" : "Nenhum representante identificado para essa localidade"}</h2>
+      {matches.map(rep => <article key={rep.slug} className="rounded-xl border border-[#35536e] bg-[#102a52] p-4 text-white">
+        <p className="text-xl font-extrabold text-amber-300">{rep.full_name}</p>
+        <p className="mt-1 flex items-center gap-2 text-sm"><MapPin size={15}/>{rep.region}</p>
+        <a href={`https://wa.me/${(rep.phone?.replace(/\D/g,"") || "5515992458492").replace(/^(?!55)(?=\d{10,11}$)/,"55")}?text=${encodeURIComponent(`Olá, sou de ${city}/${state} e gostaria de falar com ${rep.full_name}.`)}`} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 font-bold"><MessageCircle size={18}/> Solicitar atendimento</a>
+      </article>)}
+      {!matches.length && <a className="inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href={`https://wa.me/5515992458492?text=${encodeURIComponent(`Olá! Preciso de representante para ${city}/${state}.`)}`} target="_blank" rel="noreferrer">Solicitar indicação à Netinho</a>}
+    </div>}
+    {access?.level === 1 && <Link to="/admin-gestao" hash="representantes" className="inline-flex rounded-lg border border-amber-400 px-4 py-3 text-sm font-bold text-amber-300">Administrar representantes e regiões</Link>}
+  </section>;
 }
