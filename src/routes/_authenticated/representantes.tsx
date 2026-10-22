@@ -26,7 +26,7 @@ function Page() {
     const region = normalize(rep.region ?? "");
     const cityMatch = region.includes(normalize(city)) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
     const st = normalize(state);
-    const stateMatch = region.includes(st) || region.includes(normalize(stateAliases[state.toUpperCase()] ?? "")) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
+    const stateMatch = region.includes(st) || (!!stateAliases[state.toUpperCase()] && region.includes(normalize(stateAliases[state.toUpperCase()]))) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
     return cityMatch && stateMatch && !region.includes("teste");
   }),[reps,city,state]);
   return <section className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
