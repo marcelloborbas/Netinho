@@ -3,13 +3,13 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { MessageCircle, X, Search, ShoppingCart, Users, ClipboardList, Home, Volume2, VolumeX } from "lucide-react";
 
 const hints = [
-  { match: /^\\/(auth|login)(\\/|$)/, title: "Como entrar", message: "Bem-vindo! Se você tem uma conta Google (Gmail), toque no G colorido e escolha sua conta. Se prefere outro e-mail, toque no envelope, digite seu endereço e solicite o link de acesso. Depois, confira sua caixa de entrada e o spam.", tips: ["G colorido: entrar com sua conta Google.", "Envelope: receber um link de acesso no seu e-mail.", "Se não receber o link, confira o spam e verifique o endereço digitado."] },
+  { match: /^\/(auth|login)(\/|$)/, title: "Como entrar", message: "Bem-vindo! Se você tem uma conta Google (Gmail), toque no G colorido e escolha sua conta. Se prefere outro e-mail, toque no envelope, digite seu endereço e solicite o link de acesso. Depois, confira sua caixa de entrada e o spam.", tips: ["G colorido: entrar com sua conta Google.", "Envelope: receber um link de acesso no seu e-mail.", "Se não receber o link, confira o spam e verifique o endereço digitado."] },
   { match: /catalogo|catálogo/, title: "Catálogo de peças", message: "Digite o código, nome da peça ou veículo na busca. Selecione a categoria, abra os detalhes para conferir a aplicação e use Fazer pedido para escolher a peça.", tips: ["Use a busca para localizar uma peça.", "Confira aplicação, estoque e preço antes de pedir."] },
   { match: /clientes/, title: "Clientes", message: "Procure o cliente pelo nome ou cadastro. Se não encontrar, use a opção de cadastrar novo cliente. Confira os dados antes de salvar.", tips: ["Pesquise antes de cadastrar para evitar duplicidade.", "Confira nome, documento e contato."] },
   { match: /pedido|vendas/, title: "Fazer pedido", message: "Primeiro escolha o cliente. Depois selecione as peças e quantidades, confira as condições de pagamento e revise o pedido antes de enviar.", tips: ["Selecione o cliente para começar.", "Revise produtos, quantidades e valores antes de finalizar."] },
   { match: /ofertas|promoc/, title: "Promoções", message: "Encontre a peça da campanha, confira a aplicação e toque em Comprar. Na página de vendas, selecione o cliente e revise seu pedido.", tips: ["Confira o código e a aplicação da peça.", "Toque em Comprar para continuar o pedido."] },
   { match: /admin|representante/, title: "Administração", message: "Nesta área você pode consultar suas opções de administração ou representação, conforme suas permissões. Escolha uma função para continuar.", tips: ["Use os menus disponíveis para sua conta.", "Se faltar uma opção, confira suas permissões com o administrador."] },
-  { match: /^\\/$|inicio|home/, title: "Página inicial", message: "Bem-vindo à Netinho Auto Parts! Escolha Catálogo para encontrar peças, Clientes para consultar cadastros ou Pedidos para acompanhar compras.", tips: ["Catálogo: encontre peças e preços disponíveis.", "Pedidos: acompanhe e revise seus pedidos."] },
+  { match: /^\/$|inicio|home/, title: "Página inicial", message: "Bem-vindo à Netinho Auto Parts! Escolha Catálogo para encontrar peças, Clientes para consultar cadastros ou Pedidos para acompanhar compras.", tips: ["Catálogo: encontre peças e preços disponíveis.", "Pedidos: acompanhe e revise seus pedidos."] },
 ];
 const links = [
   { to: "/" as const, label: "Início", icon: Home },
@@ -19,7 +19,7 @@ const links = [
 ];
 export function NetinhoAssistant() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isAuth = /^\\/(auth|login)(\\/|$)/.test(pathname);
+  const isAuth = /^\/(auth|login)(\/|$)/.test(pathname);
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [sound, setSound] = useState(false);
@@ -27,7 +27,7 @@ export function NetinhoAssistant() {
     if (isAuth) setOpen(true);
     else setOpen(false);
   }, [isAuth]);
-  if (/^\\/callback(\\/|$)/.test(pathname) || hidden) return null;
+  if (/^\/callback(\/|$)/.test(pathname) || hidden) return null;
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = hint?.message ?? "Olá! Sou o Netinho. Posso ajudar você a navegar? Use o menu inferior para escolher uma página.";
   const speak = () => {
