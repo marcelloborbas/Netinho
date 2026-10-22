@@ -25,7 +25,7 @@ export function NetinhoAssistant() {
   useEffect(() => {
     window.speechSynthesis?.cancel();
     setSpeaking(false);
-    setOpen(isAuth);
+    setOpen(false);
     return () => window.speechSynthesis?.cancel();
   }, [pathname, isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
@@ -56,6 +56,6 @@ export function NetinhoAssistant() {
     <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente Netinho" : "Abrir ajuda do Netinho"} aria-expanded={open} onClick={() => setOpen(!open)}>
       <img src="/images/Mascote%20Netinho%20Auto%20Parts%20com%20Chat.webp" alt="Mascote Netinho" width="84" height="84" />
     </button>
-    <span className="netinho-assistant-caption">Sou o LIVA, vou te ajudar!</span>
+    <span className="netinho-assistant-caption"><strong>Oi, sou o LIVA</strong><small>Vou te ajudar!</small></span>
   </aside>;
 }
