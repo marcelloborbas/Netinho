@@ -2,7 +2,7 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Wrench, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2 } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2 } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -220,8 +220,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
       </div>}
       {canSell && <div className="mt-auto border-t border-[#b8cee8] pt-3">
         <p className="mb-2 text-sm font-extrabold text-[#102a52]">Valores</p>
-        {!canSell ? <p className="text-sm text-muted-foreground">Valores disponíveis somente para representantes. Fale com um vendedor.</p>
-         : prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm"><dt>{label}</dt><dd className="font-extrabold text-[#102a52]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Valor não cadastrado</p>}
+        {prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm"><dt>{label}</dt><dd className="font-extrabold text-[#102a52]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Valor não cadastrado</p>}
       </div>}
     </div>
   </li>;
