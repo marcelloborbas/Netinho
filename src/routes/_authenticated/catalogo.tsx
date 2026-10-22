@@ -77,27 +77,27 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
-      <header className="catalog-showcase-heading rounded-2xl border border-[#b8cee8] bg-[#edf4ff] px-4 py-5 text-center text-[#102a52] shadow-sm">
-        <h1 className="text-[28px] font-extrabold leading-tight sm:text-[34px]">Catálogo de Peças</h1>
+      <header className="catalog-showcase-heading rounded-2xl border border-[#33577b] bg-gradient-to-br from-[#06172c] via-[#102e51] to-[#081b33] px-4 py-5 text-center text-white shadow-lg">
+        <h1 className="text-[28px] font-black leading-tight tracking-tight text-white sm:text-[34px]">Catálogo de <span className="text-[#ffd54f]">Peças</span></h1><p className="mt-1 text-xs font-medium text-blue-100">Encontre a peça certa para seu veículo</p>
 
       </header>
 
-      <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Pesquisar catálogo">
+      <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
         <div className="relative">
-          <Search className="absolute left-4 top-4 text-[#174e9b]" size={20} aria-hidden="true" />
+          <Search className="absolute left-4 top-4 text-[#8bc8ff]" size={20} aria-hidden="true" />
           <input id="catalog-search" aria-label="Buscar peças" value={q}
             onChange={(e) => { setQ(e.target.value); setPage(1); }}
             placeholder="Busque por código, peça, veículo ou aplicação"
-            className="h-13 min-h-12 w-full rounded-xl border border-[#a7c1e5] bg-[#f7faff] pl-12 pr-12 text-sm text-[#102a52]" />
-          {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-[#174e9b]"><X size={20}/></button>}
+            className="h-13 min-h-12 w-full rounded-xl border border-[#40698e] bg-[#071b31] pl-12 pr-12 text-sm text-white placeholder:text-slate-300 focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+          {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-white"><X size={20}/></button>}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p role="status" className="text-sm font-semibold text-[#102a52]">{list.length} peças encontradas</p>
-          {(q || manufacturer !== "all" || category !== "all") && <button type="button" onClick={reset} className="text-sm font-bold text-[#174e9b] underline">Limpar filtros</button>}
+          <p role="status" className="text-sm font-semibold text-[#dbeafe]">{list.length} peças encontradas</p>
+          {(q || manufacturer !== "all" || category !== "all") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
         </div>
       </section>
 
-      <nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-[-10px] text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/> Todas</button>
         {categories.map((name) => { const Icon = categoryIcon(name); const photo = /caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(name) ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(name); return <button key={name} type="button" className={photo ? "category-with-photo" : ""} style={photo ? { backgroundImage: `linear-gradient(#07192b55,#07192b55),url("${photo}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name}</span></button>; })}
       </nav>
