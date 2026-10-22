@@ -48,13 +48,11 @@ describe("Netinho home-screen shortcut", () => {
     expect(appended).toHaveLength(0);
   });
 
-  it("downloads a home-screen shortcut file when the browser offers no prompt", async () => {
+  it("shows installation instructions when no browser prompt is available", async () => {
     render(<InstallAppButton />);
     fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0]?.download).toBe("Netinho Auto Parts.html");
-    expect(appended[0]?.href).toBe("blob:atalho");
-    expect(toast.success).toHaveBeenCalledWith(expect.stringContaining("Atalho Netinho baixado"));
+    await waitFor(() => expect(toast.info).toHaveBeenCalledWith(expect.stringContaining("Instalar aplicativo"), expect.any(Object)));
+    expect(appended).toHaveLength(0);
   });
 
   it("does not reuse a consumed browser installation event", async () => {
@@ -65,17 +63,17 @@ describe("Netinho home-screen shortcut", () => {
     await waitFor(() => expect(button).not.toBeDisabled());
     fireEvent.click(button);
     expect(prompt).toHaveBeenCalledTimes(1);
-    await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0]?.download).toBe("Netinho Auto Parts.html");
+    await waitFor(() => expect(toast.info).toHaveBeenCalled());
+    expect(appended).toHaveLength(0);
   });
 
-  it("falls back to the shortcut file if the browser refuses the prompt", async () => {
+  it("shows instructions if the browser refuses the prompt", async () => {
     render(<InstallAppButton />);
     const { prompt } = offerInstall();
     prompt.mockRejectedValueOnce(new Error("Unavailable"));
     fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => expect(appended).toHaveLength(1));
-    expect(appended[0]?.download).toBe("Netinho Auto Parts.html");
+    await waitFor(() => expect(toast.info).toHaveBeenCalled());
+    expect(appended).toHaveLength(0);
   });
 
   it("says the shortcut already exists once the app is installed", async () => {
