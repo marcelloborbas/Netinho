@@ -67,16 +67,16 @@ function Home() {
         <PromotionBanner />
         {authorizedProfile ? (
           <section className="mx-auto w-full max-w-md rounded-2xl border border-amber-400 bg-[#102a52] p-6 text-center text-white shadow-lg" aria-label="Seu perfil autorizado">
-            <h2 className="mb-5 text-xl font-bold">{greeting}, {userName || "usuário"}!</h2>
+            <h2 className="mb-5 text-xl font-bold">{greeting}, {userName || "usuário"} - {authorizedProfile?.label ?? "Visitante"}</h2>
             <authorizedProfile.icon className="mx-auto mb-3 h-16 w-16 text-amber-300" aria-hidden="true" />
-            <p className="text-2xl font-black text-amber-300">{authorizedProfile.label}</p>
+
             <p className="mt-2 text-sm">Seu perfil está liberado. Clique abaixo para acessar quando desejar.</p>
             <Link to={authorizedProfile.to} search={authorizedProfile.to === "/vendas" ? { modo: "venda", q: "", promo: "" } : {}} className="mt-5 inline-block rounded-xl bg-blue-600 px-6 py-3 font-bold text-white">Entrar no meu painel</Link>
           </section>
         ) : (
           <section className="rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm sm:p-6" aria-label="Selecionar perfil">
             <h2 className="mb-2 text-center text-xl font-extrabold text-[#102a52]">{greeting}, {userName || "usuário"}!</h2>
-            <p className="mb-5 text-center text-sm text-slate-600">Seu acesso atual é Visitante. Solicite autorização para os demais perfis.</p>
+            <p className="mb-5 text-center text-sm text-slate-600">Para acessar um perfil avançado, solicite autorização abaixo do perfil desejado.</p>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {([
                 { label: "Visitante", icon: UserRound, positive: "Acessa informações públicas e solicita atendimento.", negative: "Sem acesso a dados comerciais internos." },
