@@ -1,6 +1,6 @@
 import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, Heart, GitCompareArrows, Car, History, Tag, RotateCcw } from "lucide-react";
 import { accessQuery } from "@/lib/access";
@@ -85,6 +85,8 @@ function Catalog() {
     ["compras", "Compras"], ["favoritos", "Favoritos"], ["disponiveis", "Disponíveis"], ["recentes", "Vistos recentemente"],
   ] as const;
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
+  const { data: access } = useQuery(accessQuery);
+  const canSell = access?.can_sell === true || access?.level === 1;
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
@@ -184,8 +186,8 @@ function Catalog() {
       </section>
 
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <Link to="/pedidos" className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#102e51] px-3 font-bold text-white"><History size={17}/> Histórico de pedidos</Link>
-        <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#102e51] px-3 font-bold text-white"><ShoppingCart size={17}/> Pedido rápido</Link>
+        {canSell && <Link to="/pedidos" className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#102e51] px-3 font-bold text-white"><History size={17}/> Histórico de pedidos</Link>}
+        {canSell && <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#102e51] px-3 font-bold text-white"><ShoppingCart size={17}/> Pedido rápido</Link>}
         {compared.length > 0 && <button type="button" onClick={() => setCompareOpen(!compareOpen)} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#39ff79] bg-[#102e51] px-3 font-bold text-[#39ff79]"><GitCompareArrows size={17}/> Comparar ({compared.length})</button>}
       </div>
       {compareOpen && comparedProducts.length > 0 && <section aria-label="Comparação de peças" className="overflow-x-auto rounded-xl border border-[#42678b] bg-[#0b2745] p-3 text-white">
@@ -216,9 +218,23 @@ function Catalog() {
 
 function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleCompare, onView }: { p: CatalogProduct; isFavorite: boolean; onToggleFavorite: () => void; isCompared: boolean; onToggleCompare: () => void; onView: () => void }) {
   const [details, setDetails] = useState(false);
+  const [promotionBusy, setPromotionBusy] = useState(false);
+  const qc = useQueryClient();
   const navigate = useNavigate();
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true || access?.level === 1;
+  const isAdmin = access?.level === 1;
+  const promotionType = /sald[aã]o|liquida[cç][aã]o|queima de estoque/i.test(p.price_note ?? "") ? "saldao" : /oferta|promo[cç][aã]o|campanha/i.test(p.price_note ?? "") ? "oferta" : "normal";
+  async function setPromotion(type: "normal" | "oferta" | "saldao") {
+    if (!isAdmin || p.localOnly || promotionBusy) return;
+    setPromotionBusy(true);
+    const note = type === "normal" ? null : type === "oferta" ? "Oferta" : "Saldão";
+    const { error } = await supabase.from("products").update({ price_note: note }).eq("id", p.id);
+    setPromotionBusy(false);
+    if (error) { toast.error("Não foi possível atualizar a campanha: " + error.message); return; }
+    await qc.invalidateQueries({ queryKey: ["products"] });
+    toast.success(type === "normal" ? "Campanha removida." : "Produto marcado como " + (type === "oferta" ? "Oferta" : "Saldão") + ".");
+  }
   const [showContact, setShowContact] = useState(false);
   const [city, setCity] = useState("");
   const { data: representatives = [], isError: representativesError } = useQuery({
@@ -304,6 +320,12 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         <h2 className="min-w-0 flex-1 text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
         {canSell && <button type="button" onClick={buy} title={`Adicionar peça ${p.code} ao pedido`} aria-label={`Comprar peça ${p.code}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0677ef] text-white"><ShoppingCart size={23}/></button>}
       </div>
+      {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
+      {isAdmin && !p.localOnly && <label className="mb-2 text-xs font-bold text-white">Campanha
+        <select value={promotionType} disabled={promotionBusy} onChange={(event) => void setPromotion(event.target.value as "normal" | "oferta" | "saldao")} className="ml-2 min-h-9 rounded-lg border border-[#42678b] bg-[#102e51] px-2 text-white">
+          <option value="normal">Normal</option><option value="oferta">Oferta</option><option value="saldao">Saldão</option>
+        </select>
+      </label>}
       <div className="flex flex-wrap gap-2"><button type="button" aria-pressed={isCompared} onClick={onToggleCompare} className={`inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 text-sm font-bold ${isCompared ? "border-[#39ff79] bg-[#163d52] text-[#39ff79]" : "border-[#42678b] bg-[#142f4c] text-white"}`}><GitCompareArrows size={17}/>{isCompared ? "Selecionada" : "Comparar"}</button></div>
       <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="my-3 inline-flex min-h-10 items-center gap-2 self-start rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
