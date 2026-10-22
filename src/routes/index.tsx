@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -26,7 +26,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: access } = useQuery({ ...accessQuery, retry: false, refetchInterval: 60000 });
   const previousLevel = useRef<string | null>(null);
-  const navigate = useNavigate();
   const [requestedProfile, setRequestedProfile] = useState<string | null>(null);
   const [requestName, setRequestName] = useState("");
   const [requestPhone, setRequestPhone] = useState("");
@@ -49,11 +48,6 @@ function Home() {
       : canSell
         ? { label: "Vendedor", icon: ShoppingCart, to: "/vendas" as const }
         : null;
-  useEffect(() => {
-    if (!authorizedProfile) return;
-    // A autorização vem do banco (access_context), nunca do e-mail digitado.
-    void navigate({ to: authorizedProfile.to, replace: true, search: authorizedProfile.to === "/vendas" ? { modo: "venda", q: "", promo: "" } : {} });
-  }, [authorizedProfile?.to, navigate]);
   const requestUrlFor = (profile: string) => {
     const message = [
       "Solicitação de acesso - Netinho Auto Parts",
@@ -76,7 +70,7 @@ function Home() {
             <h2 className="mb-5 text-xl font-bold">{greeting}, {userName || "usuário"}!</h2>
             <authorizedProfile.icon className="mx-auto mb-3 h-16 w-16 text-amber-300" aria-hidden="true" />
             <p className="text-2xl font-black text-amber-300">{authorizedProfile.label}</p>
-            <p className="mt-2 text-sm">Acesso autorizado. Abrindo seu painel...</p>
+            <p className="mt-2 text-sm">Seu perfil está liberado. Clique abaixo para acessar quando desejar.</p>
             <Link to={authorizedProfile.to} search={authorizedProfile.to === "/vendas" ? { modo: "venda", q: "", promo: "" } : {}} className="mt-5 inline-block rounded-xl bg-blue-600 px-6 py-3 font-bold text-white">Entrar no meu painel</Link>
           </section>
         ) : (
