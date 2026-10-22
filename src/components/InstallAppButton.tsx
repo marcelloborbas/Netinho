@@ -81,7 +81,12 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         if (choice.outcome === "accepted") return;
         return;
       }
-      // A downloaded HTML file cannot create a home-screen icon.
+      // Abrir o Chrome completo quando o navegador interno não oferece instalação.
+      if (/Android/i.test(navigator.userAgent)) {
+        const url = window.location.href.replace(/^https?:\/\//, "");
+        window.location.href = `intent://${url}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end`;
+        return;
+      }
       showInstallInstructions();
     } catch {
       showInstallInstructions();
