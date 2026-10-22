@@ -1,13 +1,19 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ClipboardList, UserRound, LogOut } from "lucide-react";
+import { UserRound, LogOut, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { accessQuery } from "@/lib/access";
+// from "@tanstack/react-router";
 
 import { Logo } from "@/components/Logo";
 import { PartnerLogos } from "@/components/PartnerLogos";
 
 export function BrandHeader({ actions }: { actions?: ReactNode }) {
   const navigate = useNavigate();
+  const { data: access } = useQuery({ ...accessQuery, retry: false });
+  const profile = access?.level === 1 ? "Administrador" : access?.can_sell && access?.attribution === "Representante" ? "Representante" : access?.can_sell ? "Vendedor" : "Visitante";
+  const profilePath = profile === "Administrador" ? "/admin" : profile === "Representante" ? "/representantes" : profile === "Vendedor" ? "/vendas" : "/catalogo";
   const [menuOpen, setMenuOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [user, setUser] = useState<{ name: string; picture: string | null } | null>(null);
@@ -58,7 +64,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
               </button>
               {menuOpen && (
                 <div role="menu" aria-label="Opções do usuário" className="absolute right-0 top-full z-50 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl">
-                  <Link role="menuitem" to="/pedidos" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-100"><ClipboardList size={18} /> Meus Pedidos</Link>
+                  <Link role="menuitem" to={profilePath} search={profilePath === "/vendas" ? { modo: "venda", q: "", promo: "" } : {}} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> {profile}</Link>
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
                 </div>
               )}
