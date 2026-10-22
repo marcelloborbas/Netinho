@@ -61,7 +61,7 @@ function Catalog() {
   const filterOptions = [
     ["menor", "Menor R$"], ["maior", "Maior R$"], ["saldao", "Saldão"],
     ["relevantes", "Relevantes"], ["ofertas", "Ofertas"],
-    ["compras", "Compras"], ["favoritos", "Favoritos"],
+    ["compras", "Compras"], ["favoritos", "Favoritos"], ["disponiveis", "Disponíveis"],
   ] as const;
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
@@ -90,6 +90,7 @@ function Catalog() {
     const matching = combined.filter((p) =>
       p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
     const selected = matching.filter((p) => {
+      if (filterMode === "disponiveis") return p.stock > 0;
       if (filterMode === "favoritos") return favorites.includes(p.id);
       if (filterMode === "compras") return draft.items.some((item) => item.productId === p.id);
       if (filterMode === "ofertas") return /oferta|promo[cç][aã]o|campanha/i.test(p.price_note ?? "");
@@ -146,7 +147,7 @@ function Catalog() {
         </div>
       </section>
 
-      <p className="mb-[-10px] text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/><span>Todas<br />as peças</span></button>
         {categories.map((name) => { const Icon = categoryIcon(name); const photo = /caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(name) ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(name); return <button key={name} type="button" className={photo ? "category-with-photo" : ""} style={photo ? { backgroundImage: `linear-gradient(#07192b55,#07192b55),url("${photo}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name.trim().split(/\s+/).length > 1 ? <>{name.trim().split(/\s+/)[0]}<br />{name.trim().split(/\s+/).slice(1).join(" ")}</> : <>{name}<br />&nbsp;</>}</span></button>; })}
       </nav>
