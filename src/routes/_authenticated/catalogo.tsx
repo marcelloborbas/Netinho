@@ -218,9 +218,9 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
         <div className="catalog-card-stock">{p.stock > 0 ? `● Em estoque · ${p.stock} un.` : "Estoque sob consulta"}</div>
         <button type="button" onClick={buy} className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0677ef] px-4 py-2 font-bold text-white"><ShoppingCart size={19}/> Fazer pedido</button>
       </div>}
-      {canSell && <div className="mt-auto border-t border-[#b8cee8] pt-3">
-        <p className="mb-2 text-sm font-extrabold text-[#102a52]">Valores</p>
-        {prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm"><dt>{label}</dt><dd className="font-extrabold text-[#102a52]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Valor não cadastrado</p>}
+      <div className="mt-auto border-t border-[#35536e] pt-3">
+        <p className="mb-2 text-sm font-extrabold text-white">{canSell ? "Valores" : "Preço à vista"}</p>
+        {(canSell ? prices : prices.filter(([label]) => label === "À vista")).some(([, price]) => price != null) ? <dl className="space-y-1">{(canSell ? prices : prices.filter(([label]) => label === "À vista")).filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#ffdc43]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-slate-200">Preço à vista sob consulta</p>}
       </div>}
     </div>
   </li>;
