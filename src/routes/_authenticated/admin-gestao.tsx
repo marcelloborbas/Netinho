@@ -61,6 +61,7 @@ function Admin() {
             <span className="block text-sm text-muted-foreground">Sorocaba e região · Ver mapa e cadastro de teste</span>
           </Link>
         </div>
+        <div className="grid gap-2 sm:grid-cols-2"><Link to="/editar-representante/$slug" params={{slug:"abdenego-eugenio"}} className="rounded-xl border border-amber-400 bg-[#102a52] p-3 text-center font-bold text-white">Editar cidades de atuação · Abdenego</Link><Link to="/editar-representante/$slug" params={{slug:"livaldo-souza-silva"}} className="rounded-xl border border-amber-400 bg-[#102a52] p-3 text-center font-bold text-white">Editar cidades de atuação · Livaldo</Link></div>
       </nav>
       <RepresentativesAdmin />
       <div id="usuarios"><UserAttributionAdmin /></div>
