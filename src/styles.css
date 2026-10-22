@@ -2884,3 +2884,50 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .netinho-assistant .netinho-assistant-avatar { width: 72px; height: 72px; }
   .netinho-assistant-auth { bottom: max(12px, env(safe-area-inset-bottom)); right: 8px; }
 }
+
+
+/* Correção 2026-10-22: a grade antiga reservava faixas vazias na home
+   mesmo após a substituição de journey-choice pelos cartões de perfil. */
+@media (max-width: 639px) {
+  .home-page > main {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+    gap: 12px !important;
+    padding-top: 12px !important;
+  }
+  .home-page > main::before,
+  .home-page > main::after {
+    display: none !important;
+    content: none !important;
+  }
+  .home-page > main > .promotion-banner,
+  .home-page > main > section[aria-label="Selecionar perfil"] {
+    flex: 0 0 auto !important;
+    grid-row: auto !important;
+    margin: 0 !important;
+    align-self: stretch !important;
+  }
+  .home-page > main > .promotion-banner {
+    height: auto !important;
+    min-height: 290px !important;
+  }
+  .home-page > main > section[aria-label="Selecionar perfil"] {
+    padding: 12px !important;
+  }
+  .home-page > main > section[aria-label="Selecionar perfil"] h2 {
+    font-size: 18px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 12px !important;
+  }
+}
+.netinho-assistant-panel {
+  max-height: min(320px, 48dvh);
+}
+@media (max-width: 639px) {
+  .netinho-assistant-panel {
+    width: min(300px, calc(100vw - 26px));
+    padding: 12px;
+  }
+}
