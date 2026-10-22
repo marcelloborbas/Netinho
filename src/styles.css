@@ -3039,3 +3039,35 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 .catalog-showcase .catalog-category-filters button img {
   mix-blend-mode: lighten;
 }
+
+/* Auth: LIA na base da imagem, centralizada horizontalmente e afastada das logos. */
+.netinho-assistant.netinho-assistant-auth {
+  top: auto !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+.netinho-assistant.netinho-assistant-auth .netinho-assistant-panel {
+  bottom: calc(100% + 8px);
+}
+/* Catálogo: recipiente da foto sem margens adicionais e fundo harmonizado. */
+.catalog-showcase .catalog-product-card > .product-visual {
+  width: fit-content !important;
+  max-width: 100%;
+  height: fit-content !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.catalog-showcase .catalog-product-card > .product-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 190px;
+  object-fit: contain;
+  border-radius: 12px;
+  mix-blend-mode: normal !important;
+}
