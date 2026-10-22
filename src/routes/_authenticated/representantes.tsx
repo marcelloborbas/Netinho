@@ -23,16 +23,25 @@ function Page() {
       return (data ?? []) as Representative[];
     },
   });
-  const { data: serviceAreas = [] } = useQuery({ queryKey: ["representative-service-areas"], queryFn: async () => { const { data, error } = await supabase.from("representative_service_areas_public" as never).select("slug,service_cities"); if (error) throw error; return (data ?? []) as ServiceArea[]; } });
-  const matches = useMemo(() => reps.filter(rep => {
-    const region = normalize(rep.region ?? "");
-    const serviceCities = normalize(serviceAreas.find(area => area.slug === rep.slug)?.service_cities ?? "");
-    const cities = serviceCities.split(/[,;\n]+/).map(value => value.trim()).filter(Boolean);
-    const cityMatch = cities.some(item => item === normalize(city) || item === `${normalize(city)}/${normalize(state)}` || item === `${normalize(city)} - ${normalize(state)}`) || (!cities.length && region.includes(normalize(city))) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
-    const st = normalize(state);
-    const stateMatch = region.includes(st) || (!!stateAliases[state.toUpperCase()] && region.includes(normalize(stateAliases[state.toUpperCase()]))) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
-    return cityMatch && stateMatch && !region.includes("teste");
-  }),[reps,serviceAreas,city,state]);
+  const { data: serviceAreas = [], isLoading: loadingAreas } = useQuery({ queryKey: ["representative-service-areas"], queryFn: async () => { const { data, error } = await supabase.from("representative_service_areas_public" as never).select("slug,service_cities"); if (error) throw error; return (data ?? []) as ServiceArea[]; } });
+  const matches = useMemo(() => {
+    const searchedCity = normalize(city);
+    const searchedState = normalize(state);
+    if (!searchedCity || !/^[a-z]{2}$/.test(searchedState)) return [];
+    return reps.filter(rep => {
+      const region = normalize(rep.region ?? "");
+      if (region.includes("teste")) return false;
+      const allBrazil = /todo o brasil|territorio nacional|brasil inteiro/.test(region);
+      const serviceCities = normalize(serviceAreas.find(area => area.slug === rep.slug)?.service_cities ?? "");
+      const cities = serviceCities.split(/[,;\n]+/).map(value => value.trim()).filter(Boolean);
+      const cityWithState = cities.some(item => item === `${searchedCity}/${searchedState}` || item === `${searchedCity} - ${searchedState}`);
+      const cityOnly = cities.some(item => item === searchedCity);
+      const stateName = normalize(stateAliases[state.toUpperCase()] ?? "");
+      const regionState = region.includes(`/${searchedState}`) || region.includes(` - ${searchedState}`) || (!!stateName && region.includes(stateName));
+      const regionCity = region.includes(searchedCity);
+      return allBrazil || cityWithState || (cityOnly && (regionState || !cities.some(item => item.includes("/")))) || (regionCity && regionState);
+    });
+  }, [reps, serviceAreas, city, state]);
   const isNetinhoLocal = normalize(city) === "sorocaba" && state.trim().toUpperCase() === "SP";
   return <section className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
     <header className="rounded-2xl border border-amber-400/40 bg-[#102a52] p-5 text-center text-white">
@@ -45,9 +54,9 @@ function Page() {
       <label className="text-sm font-bold text-white">Estado (UF)<input required maxLength={2} value={state} onChange={e => {setState(e.target.value.toUpperCase());setSearched(false);}} placeholder="SP" className="mt-2 min-h-12 w-full rounded-lg border border-[#42678b] bg-[#102a43] px-3 text-white placeholder:text-white/75" style={{ color: "#fff", WebkitTextFillColor: "#fff", caretColor: "#fff" }}/></label>
       <button type="submit" className="flex min-h-12 items-center justify-center gap-2 self-end rounded-lg bg-[#0677ef] px-5 font-bold text-white"><Search size={18}/> Buscar</button>
     </form>
-    {isLoading && <p>Carregando representantes...</p>}
+    {(isLoading || loadingAreas) && <p className="font-semibold text-[#102a52]">Consultando representantes e regiões...</p>}
     {error && <p role="alert">Não foi possível consultar os representantes. Tente novamente.</p>}
-    {searched && !error && <div className="space-y-3">
+    {searched && !error && !isLoading && !loadingAreas && <div className="space-y-3">
       <h2 className="text-lg font-bold text-[#102a52]">{matches.length || isNetinhoLocal ? "Atendimento disponível para sua região" : "Nenhum representante identificado para essa localidade"}</h2>
       {isNetinhoLocal && <article className="rounded-xl border border-blue-900 bg-[#102a52] p-4 text-white"><h3 className="text-xl font-extrabold">Netinho Auto Parts</h3><p>Atendimento direto em Sorocaba / SP</p><a className="mt-3 inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href="https://wa.me/5515992458492" target="_blank" rel="noreferrer">Falar com a Netinho</a></article>}
       {matches.map(rep => <article key={rep.slug} className="rounded-xl border border-[#35536e] bg-[#102a52] p-4 text-white">
