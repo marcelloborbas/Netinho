@@ -99,7 +99,7 @@ function Catalog() {
 
       <nav className="catalog-category-filters" aria-label="Categorias de peças">
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/> Todas</button>
-        {categories.map((name) => { const Icon = categoryIcon(name); const photo = partImage(name); return <button key={name} type="button" aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name}</span></button>; })}
+        {categories.map((name) => { const Icon = categoryIcon(name); const photo = /caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(name) ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(name); return <button key={name} type="button" aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name}</span></button>; })}
       </nav>
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
@@ -184,7 +184,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
     void navigate({ to: "/vendas", search: { modo: "venda", q: "", promo: "" } });
   }
   const brand = p.manufacturer ?? "FCO";
-  const img = p.image_url || partImage(p.categories?.name);
+  const img = p.image_url || (/caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(p.categories?.name ?? "") ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(p.categories?.name));
   const prices = [
     ["À vista", p.price_cash], ["30 dias", p.price_30],
     ["30/45/60 dias", p.price_30_45_60], ["30/45/60/75 dias", p.price_30_45_60_75],
