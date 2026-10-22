@@ -12,19 +12,8 @@ interface InstallPromptEvent extends Event {
 
 
 function showInstallInstructions() {
-  const ua = navigator.userAgent;
-  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const isAndroid = /Android/i.test(ua);
-  const inAppBrowser = /; wv\)|\bwv\b|Instagram|FBAN|FBAV|WhatsApp/i.test(ua) || (isAndroid && !!document.referrer && /google|android-app:/i.test(document.referrer));
-  if (inAppBrowser && isAndroid) {
-    toast.info("Abra o site no Chrome para instalar o ícone do Netinho na tela inicial.", { duration: 6500 });
-  } else if (isIOS) {
-    toast.info("No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início.", { duration: 9000 });
-  } else if (isAndroid) {
-    toast.info("No Chrome, abra o menu ⋮ e escolha Instalar aplicativo ou Adicionar à tela inicial.", { duration: 9000 });
-  } else {
-    toast.info("No menu do navegador, escolha Instalar aplicativo ou Criar atalho. No celular, adicione à tela inicial.", { duration: 9000 });
-  }
+  // Installation is controlled by the browser. Avoid showing a misleading download notification.
+  toast.info("Abra no Chrome e toque em Instalar aplicativo no menu ⋮.", { duration: 4500 });
 }
 
 export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
