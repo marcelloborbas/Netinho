@@ -64,8 +64,7 @@ export function NetinhoAssistant() {
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
     </div>}
     <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onClick={() => setOpen(!open)}>
-      <img src="/images/Mascote%20LIA%20ajuda.png" alt="Mascote LIA" width="118" height="118" />
+      <img src="/images/Mascote%20LIA%20ajuda.webp" alt="Mascote LIA" width="118" height="118" />
     </button>
-    <span className="block max-w-[150px] text-center text-[12px] font-extrabold leading-tight text-[#39ff14] drop-shadow-[0_0_7px_rgba(57,255,20,0.9)]">Estou aqui para te Ajudar</span>
   </aside>;
 }
