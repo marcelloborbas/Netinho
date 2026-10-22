@@ -53,8 +53,8 @@ export function NetinhoAssistant() {
     window.speechSynthesis.speak(utterance);
     if (window.speechSynthesis.paused) window.speechSynthesis.resume();
   };
-  return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}`} aria-label="Assistente de navegação Netinho">
-    {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda do Netinho">
+  return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}`} aria-label="Assistente de navegação LIA">
+    {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
       <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : (hint?.title ?? "Ajuda")}</strong><div>
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
@@ -62,9 +62,9 @@ export function NetinhoAssistant() {
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
       {hint?.tips && hint.tips.length > 0 && <ul className="netinho-assistant-tips">{hint.tips.map(tip => <li key={tip}>{tip}</li>)}</ul>}
     </div>}
-    <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente Netinho" : "Abrir ajuda do Netinho"} aria-expanded={open} onClick={() => setOpen(!open)}>
-      <img src="/images/Mascote%20Netinho%20Auto%20Parts%20com%20Chat.webp" alt="Mascote Netinho" width="84" height="84" />
+    <button type="button" className="netinho-assistant-avatar" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda do Netinho"} aria-expanded={open} onClick={() => setOpen(!open)}>
+      <img src="/images/Mascote%20LIA%20ajuda.png" alt="Mascote LIA" width="84" height="84" />
     </button>
-    <span className="netinho-assistant-caption"><strong>Oi, sou o LIVA</strong><small>Vou te ajudar!</small></span>
+    <span className="netinho-assistant-caption"><strong>Oi, sou a LIA</strong><small>Vou te ajudar!</small></span>
   </aside>;
 }
