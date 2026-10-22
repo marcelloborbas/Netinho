@@ -2,12 +2,12 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2 } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, Heart } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
 import { brl } from "@/lib/brand";
-import { draftActions } from "@/lib/order-store";
+import { draftActions, useDraft } from "@/lib/order-store";
 import { toast } from "sonner";
 import { partImage } from "@/lib/part-images";
 import hdCatalog from "@/data/hd-catalog.json";
@@ -44,6 +44,25 @@ function Catalog() {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
   const dq = useDeferredValue(q);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterMode, setFilterMode] = useState("relevantes");
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("netinho-catalog-favorites") || "[]") as string[]; }
+    catch { return []; }
+  });
+  const draft = useDraft();
+  const toggleFavorite = (id: string) => {
+    setFavorites((previous) => {
+      const next = previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id];
+      try { localStorage.setItem("netinho-catalog-favorites", JSON.stringify(next)); } catch { /* storage unavailable */ }
+      return next;
+    });
+  };
+  const filterOptions = [
+    ["menor", "Menor R$"], ["maior", "Maior R$"], ["saldao", "Saldão"],
+    ["relevantes", "Relevantes"], ["ofertas", "Ofertas"],
+    ["compras", "Compras"], ["favoritos", "Favoritos"],
+  ] as const;
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
@@ -67,12 +86,29 @@ function Catalog() {
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
   const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD").map((p) => p.categories?.name).filter((n): n is string => !!n))).sort(), [combined]);
-  const list = useMemo(() => combined.filter((p) =>
-    p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq),
-  ), [combined, manufacturer, category, dq]);
+  const list = useMemo(() => {
+    const matching = combined.filter((p) =>
+      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
+    const selected = matching.filter((p) => {
+      if (filterMode === "favoritos") return favorites.includes(p.id);
+      if (filterMode === "compras") return draft.items.some((item) => item.productId === p.id);
+      if (filterMode === "ofertas") return /oferta|promo[cç][aã]o|campanha/i.test(p.price_note ?? "");
+      if (filterMode === "saldao") return /sald[aã]o|liquida[cç][aã]o|queima de estoque/i.test(p.price_note ?? "");
+      return true;
+    });
+    if (filterMode === "menor" || filterMode === "maior") {
+      return [...selected].sort((a, b) => {
+        const aPrice = a.price_cash, bPrice = b.price_cash;
+        if (aPrice == null) return 1;
+        if (bPrice == null) return -1;
+        return filterMode === "menor" ? aPrice - bPrice : bPrice - aPrice;
+      });
+    }
+    return selected;
+  }, [combined, manufacturer, category, dq, filterMode, favorites, draft.items]);
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setQ(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
@@ -92,8 +128,21 @@ function Catalog() {
           {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-white"><X size={20}/></button>}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p role="status" className="text-sm font-semibold text-[#dbeafe]">{list.length} peças encontradas</p>
-          {(q || manufacturer !== "all" || category !== "all") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
+          <div className="flex items-center gap-2">
+            <p role="status" className="text-sm font-semibold text-[#dbeafe]">{list.length} peças encontradas</p>
+            <div className="relative">
+              <button type="button" aria-label="Filtros do catálogo" aria-expanded={filterOpen} onClick={() => setFilterOpen((open) => !open)}
+                className="flex items-center gap-1 rounded-lg border border-[#4b779f] bg-[#123b63] px-2.5 py-2 text-[#39ff79] hover:bg-[#1c4d78]">
+                <Filter size={19} /><span className="text-xs font-bold">Filtros</span>
+              </button>
+              {filterOpen && <div className="absolute left-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-[#416c93] bg-[#09213c] p-1 shadow-xl" role="group" aria-label="Ordenar e filtrar peças">
+                {filterOptions.map(([value, label]) => <button key={value} type="button" aria-pressed={filterMode === value}
+                  onClick={() => { setFilterMode(value); setPage(1); setFilterOpen(false); }}
+                  className={`block w-full rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-[#24517b] ${filterMode === value ? "bg-[#21496c] text-[#39ff79]" : "text-white"}`}>{label}</button>)}
+              </div>}
+            </div>
+          </div>
+          {(q || manufacturer !== "all" || category !== "all" || filterMode !== "relevantes") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
         </div>
       </section>
 
@@ -105,7 +154,7 @@ function Catalog() {
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
       {list.length ? (
         <ul className="catalog-product-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => <CatalogCard key={p.id} p={p}/>)}
+          {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => <CatalogCard key={p.id} p={p} isFavorite={favorites.includes(p.id)} onToggleFavorite={() => toggleFavorite(p.id)}/>)}
         </ul>
       ) : !isLoading && <div className="surface-card p-10 text-center"><PackageSearch className="mx-auto text-primary" size={36}/><p className="mt-3 font-bold">Nenhuma peça encontrada.</p><button type="button" className="mt-3 underline" onClick={reset}>Mostrar todas</button></div>}
       {pageCount > 1 && <nav aria-label="Páginas do catálogo" className="flex items-center justify-center gap-4 pb-5">
@@ -117,7 +166,7 @@ function Catalog() {
   );
 }
 
-function CatalogCard({ p }: { p: CatalogProduct }) {
+function CatalogCard({ p, isFavorite, onToggleFavorite }: { p: CatalogProduct; isFavorite: boolean; onToggleFavorite: () => void }) {
   const [details, setDetails] = useState(false);
   const navigate = useNavigate();
   const { data: access } = useQuery(accessQuery);
@@ -190,7 +239,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
     ["30/45/60 dias", p.price_30_45_60], ["30/45/60/75 dias", p.price_30_45_60_75],
   ] as const;
   return <li className="catalog-product-card surface-card flex min-w-0 flex-col overflow-hidden rounded-2xl p-3">
-    <div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div>
+    <div className="relative"><button type="button" onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} className="absolute right-2 top-2 z-10 rounded-full bg-[#09213c] p-2 text-[#39ff79] shadow-lg"><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
       <div className="mb-2 flex items-start justify-between gap-2"><p className="font-extrabold">Deseja comprar a peça {p.code}?</p><button type="button" aria-label="Fechar opções de contato" onClick={() => setShowContact(false)}><X size={20}/></button></div>
