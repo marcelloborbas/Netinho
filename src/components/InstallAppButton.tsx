@@ -76,13 +76,11 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         if (choice.outcome === "accepted") return;
         return;
       }
-      // Abrir o Chrome completo quando o navegador interno não oferece instalação.
-      if (/Android/i.test(navigator.userAgent)) {
-        const url = window.location.href.replace(/^https?:\/\//, "");
-        window.location.href = `intent://${url}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end`;
-        return;
-      }
-      // No browser installation event: never show a misleading notification.
+      // Preserve a sessão: nunca redirecione para um intent:// ao instalar.
+      const ios = /iPad|iPhone|iPod/i.test(navigator.userAgent);
+      toast.info(ios
+        ? "No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início."
+        : "No Chrome, abra o menu e escolha Instalar app ou Adicionar à tela inicial.", { duration: 8000 });
     } catch {
       // The browser may block installation in embedded tabs. Do not show a toast.
     } finally {
