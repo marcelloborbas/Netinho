@@ -10,19 +10,19 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/icons/netinho-logo.svg?v=7",
+      "src": "/icons/netinho-logo.svg?v=8",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/icons/%C3%8Dcone%20192%20%C3%97%20192.webp?v=7",
+      "src": "/icons/%C3%8Dcone%20192%20%C3%97%20192.webp?v=8",
       "sizes": "635x625",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/icons/%C3%8Dcone%20512%20%C3%97%20512.webp?v=7",
+      "src": "/icons/%C3%8Dcone%20512%20%C3%97%20512.webp?v=8",
       "sizes": "897x845",
       "type": "image/webp",
       "purpose": "any"
