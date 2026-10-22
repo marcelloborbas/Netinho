@@ -1,6 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, Users, ClipboardList, FilePenLine, Search, MessageCircle, ShieldCheck } from "lucide-react";
+import { ShoppingCart, Users, ClipboardList, FilePenLine, Search, MessageCircle, ShieldCheck, UserRound, BriefcaseBusiness, UserCog } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 
 import { accessQuery } from "@/lib/access";
@@ -41,36 +41,26 @@ function Home() {
       <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6">
         <PromotionBanner />
-        {isAdmin && <section className="admin-entry-choice rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Escolher área de acesso">
-          <h2 className="mb-3 text-center text-xl font-extrabold text-[#102a52]">{greeting}, {userName || "administrador"}! Como deseja entrar?</h2>
-          <nav className="grid grid-cols-2 gap-3" aria-label="Administração ou vendas">
-            <Link to="/admin" className="admin-entry-action flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] p-3 text-center font-extrabold text-[#102a52] hover:bg-[#dbeafe]"><ShieldCheck size={30}/> Administração</Link>
-            <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] p-3 text-center font-extrabold text-[#102a52] hover:bg-[#dbeafe]"><ShoppingCart size={30}/> Vender</Link>
-          </nav>
-        </section>}
-        {!isAdmin && <section className="journey-choice rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5" aria-labelledby="vender-orcar-title">
-          <h2 id="vender-orcar-title" className="mb-3 text-center text-xl font-bold text-[#102a52] sm:text-2xl">{greeting}, {userName || "usuário"}! {canSell ? "O que deseja fazer?" : "Veja o catálogo abaixo."}</h2>
-          {!canSell ? (
-            <div className="space-y-3">
-              <Link to="/catalogo" className="flex min-h-20 items-center justify-center gap-3 rounded-xl border border-[#a7c1e5] bg-[#eaf2ff] p-4 text-center text-lg font-extrabold text-[#102a52] shadow-sm hover:bg-[#dbeafe]">
-                <Search size={27} aria-hidden="true"/> Catálogo
-              </Link>
-              <p className="text-center text-sm text-[#102a52]">Deseja vender ou fazer orçamentos? Solicite sua autorização como representante ou vendedor.</p>
-              <a href={requestUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-[#137c45] p-3 text-center text-sm font-bold text-white shadow-sm hover:bg-[#0d6336]">
-                <MessageCircle size={21} aria-hidden="true"/> Solicitar acesso para vendas pelo WhatsApp
-              </a>
-            </div>
-          ) : (
-            <nav aria-label="Ações comerciais" className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
-              {actions.map(({ label, icon: Icon, to, search }) => (
-                <Link key={label} to={to} search={search} className="action-card home-action-card flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-[#a7c1e5] bg-[#eaf2ff] p-3 text-center font-bold !text-[#102a52] shadow-sm transition-transform hover:scale-[1.03] hover:bg-[#dbeafe]">
-                  <Icon className="h-7 w-7 text-[#174e9b]" aria-hidden="true"/>
-                  <span className="text-sm font-bold sm:text-base">{label}</span>
-                </Link>
-              ))}
-            </nav>
-          )}
-        </section>}
+        <section className="rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm sm:p-6" aria-label="Selecionar perfil">
+          <h2 className="mb-4 text-center text-xl font-extrabold text-[#102a52] sm:text-2xl">{greeting}, {userName || "usuário"}, selecione seu Perfil</h2>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {([
+              { label: "Visitante", icon: UserRound, to: "/catalogo", allowed: true, positive: "Acessa informações públicas e solicita atendimento.", negative: "Sem acesso a dados comerciais internos." },
+              { label: "Vendedor", icon: ShoppingCart, to: "/vendas", allowed: canSell, positive: "Possui carteira de clientes e seus pedidos.", negative: "Não pode consultar nem alterar informações administrativas." },
+              { label: "Representante", icon: BriefcaseBusiness, to: "/representante", allowed: canSell, positive: "Acompanha e consulta vendedores vinculados à sua equipe.", negative: "" },
+              { label: "Administrador", icon: UserCog, to: "/admin", allowed: isAdmin, positive: "Gerencia, consulta e edita toda a operação.", negative: "" },
+            ] as const).map(({label,icon:Icon,to,allowed,positive,negative}) => (
+              <div key={label} className="flex flex-col rounded-xl border border-[#b8cee8] bg-[#f8fbff] p-3 text-center shadow-sm">
+                {allowed ? <Link to={to} search={to === "/vendas" ? { modo: "venda", q: "", promo: "" } : {}} className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] p-3 font-extrabold text-[#102a52] hover:bg-[#dbeafe]"><Icon size={29}/>{label}</Link>
+                : <div className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border-2 border-slate-300 bg-slate-100 p-3 font-extrabold text-slate-500" aria-label={`${label}: acesso não autorizado`}><Icon size={29}/>{label}</div>}
+                <p className="mt-3 text-sm font-semibold leading-snug text-[#166534]">{positive}</p>
+                {negative && <p className="mt-2 text-sm font-semibold leading-snug text-[#b91c1c]">{negative}</p>}
+                {!allowed && <p className="mt-auto pt-3 text-xs font-bold text-[#9a3412]">Acesso sujeito à autorização</p>}
+              </div>
+            ))}
+          </div>
+          {!canSell && <a href={requestUrl} target="_blank" rel="noopener noreferrer" className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#137c45] p-3 text-center text-sm font-bold text-white hover:bg-[#0d6336]"><MessageCircle size={19}/> Solicitar autorização pelo WhatsApp</a>}
+        </section>
       </main>
       <PublicFooter />   </div>
   );
