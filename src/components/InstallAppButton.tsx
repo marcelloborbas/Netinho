@@ -11,11 +11,6 @@ interface InstallPromptEvent extends Event {
 }
 
 
-function showInstallInstructions() {
-  // Installation is controlled by the browser. Avoid showing a misleading download notification.
-  toast.info("Abra no Chrome e toque em Instalar aplicativo no menu ⋮.", { duration: 4500 });
-}
-
 export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
   label?: string;
   assistantStyle?: boolean;
@@ -87,9 +82,9 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
         window.location.href = `intent://${url}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end`;
         return;
       }
-      showInstallInstructions();
+      // No browser installation event: never show a misleading notification.
     } catch {
-      showInstallInstructions();
+      // The browser may block installation in embedded tabs. Do not show a toast.
     } finally {
       setInstalling(false);
     }
