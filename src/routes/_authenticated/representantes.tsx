@@ -33,6 +33,7 @@ function Page() {
     const stateMatch = region.includes(st) || (!!stateAliases[state.toUpperCase()] && region.includes(normalize(stateAliases[state.toUpperCase()]))) || /todo o brasil|territorio nacional|brasil inteiro/.test(region);
     return cityMatch && stateMatch && !region.includes("teste");
   }),[reps,serviceAreas,city,state]);
+  const isNetinhoLocal = normalize(city) === "sorocaba" && state.trim().toUpperCase() === "SP";
   return <section className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
     <header className="rounded-2xl border border-amber-400/40 bg-[#102a52] p-5 text-center text-white">
       <MapPin className="mx-auto mb-2 text-amber-300" size={34}/>
@@ -47,14 +48,15 @@ function Page() {
     {isLoading && <p>Carregando representantes...</p>}
     {error && <p role="alert">Não foi possível consultar os representantes. Tente novamente.</p>}
     {searched && !error && <div className="space-y-3">
-      <h2 className="text-lg font-bold text-amber-300">{matches.length ? "Representantes encontrados" : "Nenhum representante identificado para essa localidade"}</h2>
+      <h2 className="text-lg font-bold text-[#102a52]">{matches.length || isNetinhoLocal ? "Atendimento disponível para sua região" : "Nenhum representante identificado para essa localidade"}</h2>
+      {isNetinhoLocal && <article className="rounded-xl border border-blue-900 bg-[#102a52] p-4 text-white"><h3 className="text-xl font-extrabold">Netinho Auto Parts</h3><p>Atendimento direto em Sorocaba / SP</p><a className="mt-3 inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href="https://wa.me/5515992458492" target="_blank" rel="noreferrer">Falar com a Netinho</a></article>}
       {matches.map(rep => <article key={rep.slug} className="rounded-xl border border-[#35536e] bg-[#102a52] p-4 text-white">
-        <p className="text-xl font-extrabold text-amber-300">{rep.full_name}</p>
+        <p className="text-xl font-extrabold text-white">{rep.full_name}</p>
         <p className="mt-1 flex items-center gap-2 text-sm"><MapPin size={15}/>{rep.region}</p>
         <a href={`https://wa.me/${(rep.phone?.replace(/\D/g,"") || "5515992458492").replace(/^(?!55)(?=\d{10,11}$)/,"55")}?text=${encodeURIComponent(`Olá, sou de ${city}/${state} e gostaria de falar com ${rep.full_name}.`)}`} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 font-bold"><MessageCircle size={18}/> Solicitar atendimento</a>
       </article>)}
-      {!matches.length && <a className="inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href={`https://wa.me/5515992458492?text=${encodeURIComponent(`Olá! Preciso de representante para ${city}/${state}.`)}`} target="_blank" rel="noreferrer">Solicitar indicação à Netinho</a>}
+      {!matches.length && !isNetinhoLocal && <a className="inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href={`https://wa.me/5515992458492?text=${encodeURIComponent(`Olá! Preciso de representante para ${city}/${state}.`)}`} target="_blank" rel="noreferrer">Solicitar indicação à Netinho</a>}
     </div>}
-    {access?.level === 1 && <Link to="/admin-gestao" hash="representantes" className="inline-flex rounded-lg border border-amber-400 px-4 py-3 text-sm font-bold text-amber-300">Administrar representantes e regiões</Link>}
+    {access?.level === 1 && <Link to="/admin-gestao" hash="representantes" className="inline-flex rounded-lg border border-amber-400 px-4 py-3 text-sm font-bold text-[#102a52]">Administrar representantes e regiões</Link>}
   </section>;
 }
