@@ -2,7 +2,7 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Wrench } from "lucide-react";
+import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Wrench, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2 } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, productMatches, type Product } from "@/lib/queries";
@@ -72,23 +72,17 @@ function Catalog() {
   ), [combined, manufacturer, category, dq]);
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setQ(""); setManufacturer("all"); setCategory("all"); setPage(1); };
+  const reset = () => { setQ(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
+  const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
       <header className="catalog-showcase-heading rounded-2xl border border-[#b8cee8] bg-[#edf4ff] px-4 py-5 text-center text-[#102a52] shadow-sm">
         <h1 className="text-[28px] font-extrabold leading-tight sm:text-[34px]">Catálogo de Peças</h1>
-        <p className="mt-2 text-sm">Todas as peças FCO e HD, com aplicações, referências e valores disponíveis.</p>
+
       </header>
 
       <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Pesquisar catálogo">
-        <nav aria-label="Selecionar fabricante" className="grid grid-cols-3 gap-2">
-          {([["all", "Geral"], ["FCO", "FCO"], ["HD", "HD"]] as const).map(([value, label]) => (
-            <button key={value} type="button" disabled={value === "HD"} aria-label={value === "HD" ? "HD Embreagens — em breve" : label} aria-pressed={manufacturer === value}
-              className={`relative min-h-12 rounded-xl border px-2 ${value === "HD" ? "cursor-not-allowed bg-zinc-200 grayscale opacity-65" : ""} text-base font-extrabold shadow-sm transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${manufacturer === value ? (value === "all" ? "border-[#174e9b] bg-[#174e9b] text-white" : "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset") : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52] hover:bg-[#dbeafe]"}`}
-              onClick={() => { if (value === "HD") return; setManufacturer(value); setPage(1); }}>{value === "all" ? label : <img src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"} alt={`Logomarca ${label}`} className="mx-auto h-9 w-full max-w-28 object-contain" />}{value === "HD" && <span className="block text-xs font-extrabold text-zinc-700">Em breve</span>}</button>
-          ))}
-        </nav>
         <div className="relative">
           <Search className="absolute left-4 top-4 text-[#174e9b]" size={20} aria-hidden="true" />
           <input id="catalog-search" aria-label="Buscar peças" value={q}
@@ -105,7 +99,7 @@ function Catalog() {
 
       <nav className="catalog-category-filters" aria-label="Categorias de peças">
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/> Todas</button>
-        {categories.map((name) => <button key={name} type="button" aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}><Wrench size={19}/><span>{name}</span></button>)}
+        {categories.map((name) => { const Icon = categoryIcon(name); const photo = partImage(name); return <button key={name} type="button" aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name}</span></button>; })}
       </nav>
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
@@ -196,7 +190,7 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
     ["30/45/60 dias", p.price_30_45_60], ["30/45/60/75 dias", p.price_30_45_60_75],
   ] as const;
   return <li className="catalog-product-card surface-card flex min-w-0 flex-col overflow-hidden rounded-2xl p-3">
-    <button type="button" onClick={buy} aria-label={`Comprar peça ${p.code}`} title={`Comprar peça ${p.code}`} className="product-visual cursor-pointer focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]">{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</button>
+    <div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div>
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
       <div className="mb-2 flex items-start justify-between gap-2"><p className="font-extrabold">Deseja comprar a peça {p.code}?</p><button type="button" aria-label="Fechar opções de contato" onClick={() => setShowContact(false)}><X size={20}/></button></div>
@@ -209,28 +203,26 @@ function CatalogCard({ p }: { p: CatalogProduct }) {
       {representativesError && <p className="mt-2 text-xs">A lista de representantes não está disponível. Utilize o atendimento Netinho.</p>}
     </div>}
     <div className="flex flex-1 flex-col px-1 pb-2 pt-4">
-      <span className="text-xs font-extrabold uppercase tracking-wider text-[#174e9b]">{brand === "HD" ? "HD Embreagens" : "FCO Automotive"}</span>
-      <div className="mt-2 flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-extrabold">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
-          <p className="mt-1 break-words text-base font-bold text-muted-foreground">Código: {p.code}</p>
-        </div>
-        <button type="button" onClick={buy} title={`Comprar peça ${p.code}`} aria-label={`Comprar peça ${p.code}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#174e9b] bg-[#eaf2ff] text-[#174e9b] shadow-sm hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#174e9b]"><ShoppingCart size={23} /></button>
+      <div className="flex items-start justify-between gap-2">
+        <h2 className="min-w-0 flex-1 text-xl font-black text-[#ffdc43]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
+        {canSell && <button type="button" onClick={buy} title={`Adicionar peça ${p.code} ao pedido`} aria-label={`Comprar peça ${p.code}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0677ef] text-white"><ShoppingCart size={23}/></button>}
       </div>
-      <p className={`mt-3 text-sm leading-6 ${details ? "" : "line-clamp-3"}`}>{p.application}</p>
-      {details && p.refs && <p className="mt-2 text-sm text-muted-foreground">Referências: {p.refs}</p>}
-      <button type="button" aria-expanded={details} onClick={() => setDetails(!details)} className="my-3 self-start text-sm font-bold text-[#174e9b] underline">{details ? "Ocultar detalhes" : "Ver aplicações e referências"}</button>
-      {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="mb-3 text-xs underline"/>}
-      <div className="catalog-card-stock">{p.stock > 0 ? `● Em estoque · ${p.stock} un.` : "Estoque sob consulta"}</div>
-      <div className="catalog-card-actions">
-        <button type="button" onClick={buy}><ShoppingCart size={19}/> Fazer pedido</button>
-        <button type="button" aria-expanded={details} onClick={() => setDetails(!details)}><PackageSearch size={19}/> {details ? "Ocultar detalhes" : "Ver detalhes"}</button>
-      </div>
-      <div className="mt-auto border-t border-[#b8cee8] pt-3">
+      <button type="button" aria-expanded={details} onClick={() => setDetails(!details)} className="my-3 inline-flex min-h-10 items-center gap-2 self-start rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Ocultar aplicações" : "Ver aplicações"}</button>
+      {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
+        <p><strong>Código:</strong> {p.code}</p>
+        {p.application && <p><strong>Aplicações:</strong> {p.application}</p>}
+        {p.refs && <p><strong>Referências:</strong> {p.refs}</p>}
+        {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="text-xs underline"/>}
+      </div>}
+      {canSell && <div className="mt-2 space-y-2">
+        <div className="catalog-card-stock">{p.stock > 0 ? `● Em estoque · ${p.stock} un.` : "Estoque sob consulta"}</div>
+        <button type="button" onClick={buy} className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0677ef] px-4 py-2 font-bold text-white"><ShoppingCart size={19}/> Fazer pedido</button>
+      </div>}
+      {canSell && <div className="mt-auto border-t border-[#b8cee8] pt-3">
         <p className="mb-2 text-sm font-extrabold text-[#102a52]">Valores</p>
         {!canSell ? <p className="text-sm text-muted-foreground">Valores disponíveis somente para representantes. Fale com um vendedor.</p>
          : prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm"><dt>{label}</dt><dd className="font-extrabold text-[#102a52]">{brl(price!)}</dd></div>)}</dl> : <p className="text-sm text-muted-foreground">Valor não cadastrado</p>}
-      </div>
+      </div>}
     </div>
   </li>;
 }
