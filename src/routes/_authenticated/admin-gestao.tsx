@@ -48,22 +48,6 @@ function Admin() {
         <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
       </nav>
       <SupplierCommissions />
-      <nav aria-label="Fichas e mapas dos representantes" className="surface-card space-y-3 p-4">
-        <h2 className="text-xl font-bold">Representantes e regiões de atuação</h2>
-        <p className="text-sm text-muted-foreground">Acesse os cadastros originais e seus mapas, sem perder as informações já registradas.</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Link to="/representante" className="action-card min-h-24">
-            <span className="font-bold text-amber-400">Abdenego Eugênio</span>
-            <span className="block text-sm text-muted-foreground">Vale do Paraíba e Litoral Norte · Ver mapa e cadastro</span>
-          </Link>
-          <Link to="/representante-livaldo" className="action-card min-h-24">
-            <span className="font-bold text-amber-400">Livaldo Souza Silva</span>
-            <span className="block text-sm text-muted-foreground">Sorocaba e região · Ver mapa e cadastro de teste</span>
-          </Link>
-        </div>
-        <p className="text-sm font-semibold text-slate-800">As localidades e os mapas existentes continuam vinculados a cada representante. Edite apenas os dados que precisam ser atualizados.</p>
-        <div className="grid gap-2 sm:grid-cols-2"><Link to="/editar-representante/$slug" params={{slug:"abdenego-eugenio"}} className="rounded-xl border border-amber-400 bg-[#102a52] p-3 text-center font-bold text-white">Editar cadastro · Abdenego</Link><Link to="/editar-representante/$slug" params={{slug:"livaldo-souza-silva"}} className="rounded-xl border border-amber-400 bg-[#102a52] p-3 text-center font-bold text-white">Editar cadastro · Livaldo</Link></div>
-      </nav>
       <RepresentativesAdmin />
       <div id="usuarios"><UserAttributionAdmin /></div>
       <h2 id="produtos" className="text-xl font-bold uppercase">Produtos, estoque e preços</h2>
@@ -437,103 +421,38 @@ function RepresentativesAdmin() {
         </Button>
       </form>
       <div className="space-y-3 border-t pt-4">
-        <h3 className="text-lg font-bold">Fichas de representantes</h3>
-        {profilesError && (
-          <p className="text-xs text-amber-400">
-            Falha ao consultar cadastros; exibindo representantes conhecidos.
-          </p>
-        )}
-        {visibleProfiles.map((rep) => (
-          <div
-            key={rep.slug}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
-          >
+        <h3 className="text-lg font-bold text-slate-900">Fichas de representantes</h3>
+        <p className="text-sm text-slate-700">Uma ficha por representante. Consulte o mapa, edite os dados e ative ou desative o acesso no mesmo lugar.</p>
+        {profilesError && <p role="alert" className="text-sm font-semibold text-red-700">Não foi possível consultar todas as fichas.</p>}
+        {error && <p role="alert" className="text-sm font-semibold text-red-700">Não foi possível carregar as autorizações.</p>}
+        {isLoading && <p className="text-sm text-slate-700">Carregando representantes...</p>}
+        {visibleProfiles.map((rep) => {
+          const linked = representatives.find(item => item.full_name.toLocaleLowerCase("pt-BR").trim() === rep.full_name.toLocaleLowerCase("pt-BR").trim());
+          return <article key={rep.slug} className="space-y-3 rounded-xl border border-slate-300 bg-white p-4 text-slate-900 shadow-sm">
             <div>
-              <p className="font-semibold">{rep.full_name}</p>
-              <p className="text-xs text-muted-foreground">{rep.region}</p>
+              <h4 className="text-lg font-bold text-slate-900">{rep.full_name}</h4>
+              <p className="text-sm text-slate-700">{rep.region}</p>
+              {linked?.email && <p className="break-all text-sm text-slate-700">{linked.email}</p>}
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Input
-                type="email"
-                aria-label={`E-mail de acesso de ${rep.full_name}`}
-                placeholder="E-mail do representante"
-                className="w-full min-w-0 sm:w-64"
-                value={
-                  googleEmails[rep.slug] ??
-                  representatives.find(
-                    (r) =>
-                      r.full_name.toLocaleLowerCase("pt-BR") ===
-                      rep.full_name.toLocaleLowerCase("pt-BR"),
-                  )?.email ??
-                  ""
-                }
-                onChange={(e) =>
-                  setGoogleEmails((prev) => ({ ...prev, [rep.slug]: e.target.value }))
-                }
-              />
-              <Button
-                type="button"
-                size="sm"
-                disabled={savingAccess === rep.slug}
-                className={representatives.some(
-                  (item) =>
-                    item.active &&
-                    item.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR") &&
-                    item.email.toLowerCase() === (googleEmails[rep.slug] ?? item.email).trim().toLowerCase(),
-                ) ? "bg-green-600 text-white hover:bg-green-700" : undefined}
-                onClick={() => authorizeGoogle(rep)}
-              >
-                {savingAccess === rep.slug ? "Autorizando..." : representatives.some(
-                  (item) =>
-                    item.active &&
-                    item.full_name.toLocaleLowerCase("pt-BR") === rep.full_name.toLocaleLowerCase("pt-BR") &&
-                    item.email.toLowerCase() === (googleEmails[rep.slug] ?? item.email).trim().toLowerCase(),
-                ) ? "Acesso liberado ✓" : "Autorizar acesso"}
-              </Button>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link to="/editar-representante/$slug" params={{ slug: rep.slug }} className="inline-flex min-h-11 items-center rounded-lg border-2 border-[#102a52] px-4 py-2 text-sm font-bold text-[#102a52]">Editar ficha e localidades</Link>
+              <Link to={rep.slug === "livaldo-souza-silva" ? "/representante-livaldo" : "/representante"} className="inline-flex min-h-11 items-center rounded-lg border-2 border-[#102a52] px-4 py-2 text-sm font-bold text-[#102a52]">Ver mapa</Link>
+              {linked ? <label className="flex min-h-11 items-center gap-2 text-sm font-bold text-slate-900">
+                {linked.active ? "Ativado" : "Desativado"}
+                <Switch checked={linked.active} onCheckedChange={() => toggle(linked)} aria-label={`Ativar ou desativar ${rep.full_name}`} />
+              </label> : <span className="text-sm font-semibold text-slate-700">Acesso não vinculado</span>}
             </div>
-            <Link
-              to="/editar-representante/$slug"
-              params={{ slug: rep.slug }}
-              className="rounded-lg border px-3 py-2 text-sm font-bold text-primary hover:bg-secondary"
-            >
-              Editar cadastro
-            </Link>
-          </div>
-        ))}
+            {!linked && <div className="flex flex-col gap-2 sm:flex-row">
+              <Input type="email" aria-label={`E-mail de acesso de ${rep.full_name}`} placeholder="E-mail da conta Google" className="min-h-11 min-w-0 flex-1 bg-white text-slate-900" value={googleEmails[rep.slug] ?? ""} onChange={e => setGoogleEmails(prev => ({ ...prev, [rep.slug]: e.target.value }))} />
+              <Button type="button" disabled={savingAccess === rep.slug} onClick={() => authorizeGoogle(rep)}>Vincular e ativar</Button>
+            </div>}
+          </article>;
+        })}
+        {representatives.filter(item => !visibleProfiles.some(rep => rep.full_name.toLocaleLowerCase("pt-BR").trim() === item.full_name.toLocaleLowerCase("pt-BR").trim())).map(rep => <article key={rep.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white p-4 text-slate-900">
+          <div><h4 className="font-bold">{rep.full_name}</h4><p className="break-all text-sm text-slate-700">{rep.email}</p></div>
+          <div className="flex items-center gap-3"><Button variant="outline" size="sm" onClick={() => editRepresentative(rep)}>Editar</Button><label className="flex items-center gap-2 text-sm font-bold">{rep.active ? "Ativado" : "Desativado"}<Switch checked={rep.active} onCheckedChange={() => toggle(rep)} /></label></div>
+        </article>)}
       </div>
-      {error && (
-        <p className="text-sm text-destructive">
-          Não foi possível carregar representantes. Verifique se a migração do banco foi aplicada.
-        </p>
-      )}
-      {isLoading && <p className="text-sm">Carregando representantes...</p>}
-      <ul className="space-y-2">
-        {representatives.map((rep) => (
-          <li
-            key={rep.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
-          >
-            <div>
-              <p className="font-semibold">{rep.full_name}</p>
-              <p className="text-xs text-muted-foreground">
-                {rep.email} · {rep.phone || "Sem telefone"}
-              </p>
-              <p className="text-xs">
-                {rep.user_id ? "Conta vinculada" : "Aguardando vínculo de conta"}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button size="sm" variant="outline" onClick={() => editRepresentative(rep)}>
-                Editar
-              </Button>
-              <label className="flex items-center gap-2 text-sm">
-                Ativo
-                <Switch checked={rep.active} onCheckedChange={() => toggle(rep)} />
-              </label>
-            </div>
-          </li>
-        ))}
-      </ul>
     </section>
   );
 }
