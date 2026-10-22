@@ -13,6 +13,26 @@ const options = [
   { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
 ] as const;
 
+const permissions = [
+  ["Visualizar catálogo", "✓", "✓", "✓", "✓"],
+  ["Pesquisar peças", "✓", "✓", "✓", "✓"],
+  ["Ver preços", "—", "✓", "✓", "✓"],
+  ["Consultar estoque", "—", "✓", "✓", "✓"],
+  ["Cadastrar clientes", "—", "✓", "✓", "✓"],
+  ["Criar pedidos", "—", "✓", "✓", "✓"],
+  ["Editar pedidos em aberto", "—", "✓", "S", "✓"],
+  ["Enviar pedidos", "—", "✓", "S", "✓"],
+  ["Consultar histórico de vendas", "—", "Próprio", "S", "✓"],
+  ["Visualizar carteira de clientes", "—", "Própria", "S", "✓"],
+  ["Supervisionar vendedores", "—", "—", "S", "✓"],
+  ["Consultar desempenho da equipe", "—", "—", "S", "✓"],
+  ["Vincular vendedores", "—", "—", "—", "✓"],
+  ["Alterar preços", "—", "—", "—", "✓"],
+  ["Gerenciar catálogo", "—", "—", "—", "✓"],
+  ["Administrar usuários", "—", "—", "—", "✓"],
+  ["Configurar sistema", "—", "—", "—", "✓"],
+] as const;
+
 function AdminDashboard() {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 sm:gap-5">
@@ -41,6 +61,22 @@ function AdminDashboard() {
           <span className="text-[clamp(.75rem,2.6vw,1rem)] font-bold leading-tight text-white">Produtos, estoque e preços</span>
         </Link>
       </nav>
+      <section className="rounded-2xl border border-[#b8cee8] bg-white p-4 text-[#102a52] shadow-sm sm:p-6" aria-labelledby="permissions-heading">
+        <h2 id="permissions-heading" className="text-xl font-extrabold">Matriz de permissões</h2>
+        <p className="mt-2 text-xs text-slate-600">✓ Permitido · — Bloqueado · S = Somente sua equipe/carteira</p>
+        <p className="mt-1 text-xs text-slate-600">Matriz de referência dos perfis. As autorizações efetivas são verificadas pelo sistema e pelo banco de dados.</p>
+        <div className="mt-4 w-full overflow-x-auto">
+          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+            <thead><tr className="bg-[#eaf2ff] text-[#102a52]">
+              {["Funcionalidade", "Visitante", "Vendedor", "Representante", "Admin"].map(name => <th key={name} scope="col" className="border-b border-slate-200 px-3 py-3 font-extrabold">{name}</th>)}
+            </tr></thead>
+            <tbody>{permissions.map(([name,...roles],index) => <tr key={name} className={index % 2 ? "bg-[#f8fbff]" : "bg-white"}>
+              <th scope="row" className="border-b border-slate-100 px-3 py-3 font-medium">{name}</th>
+              {roles.map((value,column) => <td key={column} className={`border-b border-slate-100 px-3 py-3 text-center font-semibold ${value === "—" ? "text-red-600" : "text-green-800"}`}>{value}</td>)}
+            </tr>)}</tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }
