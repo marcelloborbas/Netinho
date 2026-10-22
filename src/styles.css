@@ -3167,3 +3167,11 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   .brand-header .brand-header-logo > .brand-wordmark .brand-wordmark-tagline { font-size: 10px !important; letter-spacing: .09em !important; }
   .brand-header .brand-header-logo .brand-wordmark [aria-label^="WhatsApp Netinho"] { font-size: 12px !important; }
 }
+
+/* Catálogo: "Todas as peças" usa o mesmo recipiente azul das demais categorias,
+   inclusive quando selecionada; a borda dourada continua indicando seleção. */
+.catalog-showcase .catalog-category-filters button:first-child,
+.catalog-showcase .catalog-category-filters button:first-child[aria-pressed="true"] {
+  background: #10253e !important;
+  color: #fff !important;
+}
