@@ -37,12 +37,13 @@ function Home() {
   return (
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6">
-        <PromotionBanner />
-        <section className="mx-auto w-full max-w-md rounded-2xl border border-[#d5e0ee] bg-white px-5 py-7 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-3 px-3 py-3 sm:gap-4 sm:px-6 sm:py-5">
+        <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-5 py-5 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
           <h2 className="text-2xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-3xl">{greeting}, Sr. {userName || "Usuário"}!</h2>
           <p className="mt-4 text-sm font-semibold text-[#102a52]">Permissão de vender segue o perfil autorizado.</p>
         </section>
+        <PromotionBanner />
+
       </main>
       <PublicFooter />   </div>
   );
