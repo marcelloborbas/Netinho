@@ -48,10 +48,10 @@ describe("Netinho home-screen shortcut", () => {
     expect(appended).toHaveLength(0);
   });
 
-  it("shows installation instructions when no browser prompt is available", async () => {
+  it("warns that installation is not yet available when no browser prompt exists", async () => {
     render(<InstallAppButton />);
     fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => expect(toast.info).toHaveBeenCalledWith(expect.stringContaining("Instalar aplicativo"), expect.any(Object)));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("ainda não está disponível"), expect.any(Object)));
     expect(appended).toHaveLength(0);
   });
 
@@ -63,16 +63,16 @@ describe("Netinho home-screen shortcut", () => {
     await waitFor(() => expect(button).not.toBeDisabled());
     fireEvent.click(button);
     expect(prompt).toHaveBeenCalledTimes(1);
-    await waitFor(() => expect(toast.info).toHaveBeenCalled());
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("ainda não está disponível"), expect.any(Object)));
     expect(appended).toHaveLength(0);
   });
 
-  it("shows instructions if the browser refuses the prompt", async () => {
+  it("warns if the browser refuses the prompt", async () => {
     render(<InstallAppButton />);
     const { prompt } = offerInstall();
     prompt.mockRejectedValueOnce(new Error("Unavailable"));
     fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => expect(toast.info).toHaveBeenCalled());
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("não conseguiu abrir a instalação"), expect.any(Object)));
     expect(appended).toHaveLength(0);
   });
 
