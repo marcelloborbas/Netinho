@@ -36,6 +36,13 @@
       "when": 1792671070186,
       "tag": "0004_products_read_can_sell",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792757723344,
+      "tag": "0005_unified_people_roles_and_cash_prices",
+      "breakpoints": true
     }
   ]
 }

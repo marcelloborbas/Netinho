@@ -359,33 +359,56 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_active: boolean
           attribution: string
           created_at: string
           email: string
           full_name: string
           id: string
           phone: string | null
+          site_role: string
+          supervisor_id: string | null
+          territory_cities: string | null
+          territory_uf: string | null
           updated_at: string
         }
         Insert: {
+          access_active?: boolean
           attribution?: string
           created_at?: string
           email?: string
           full_name?: string
           id: string
           phone?: string | null
+          site_role?: string
+          supervisor_id?: string | null
+          territory_cities?: string | null
+          territory_uf?: string | null
           updated_at?: string
         }
         Update: {
+          access_active?: boolean
           attribution?: string
           created_at?: string
           email?: string
           full_name?: string
           id?: string
           phone?: string | null
+          site_role?: string
+          supervisor_id?: string | null
+          territory_cities?: string | null
+          territory_uf?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       representative_private_details: {
         Row: {
@@ -517,6 +540,17 @@ export type Database = {
     }
     Functions: {
       access_context: { Args: never; Returns: Json }
+      admin_set_person: {
+        Args: {
+          p_active: boolean
+          p_cities: string
+          p_role: string
+          p_supervisor: string
+          p_uf: string
+          p_user: string
+        }
+        Returns: undefined
+      }
       admin_set_profile_attribution: {
         Args: { p_attribution: string; p_target_user: string }
         Returns: undefined
