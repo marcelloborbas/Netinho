@@ -6,7 +6,7 @@ import { X, Volume2, VolumeX } from "lucide-react";
 import { InstallAppButton } from "@/components/InstallAppButton";
 
 const hints = [
-  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Clique no ícone do Google e selecione sua conta, ou clique no envelope e você receberá um link em seu e-mail. Quer um acesso mais rápido? Baixe este atalho em seu celular." },
+  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Clique no ícone do Google e selecione sua conta, ou clique no envelope e você receberá um link em seu e-mail. Quer um acesso mais rápido? Instale o atalho e abra o Netinho pelo ícone. Seu login ficará salvo." },
   { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
   { match: /catalogo|catálogo/, title: "Catálogo", message: "Abra o item para conferir detalhes. Valores e pedidos exigem perfil autorizado." },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
@@ -61,7 +61,7 @@ export function NetinhoAssistant() {
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => setOpen(false)}><X size={18}/></button>
       </div></div>
-      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
+      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p>Clique no ícone do Google e selecione sua conta, ou</p><p>Clique no envelope e você receberá um link em seu e-mail.</p><p>Toque em Baixar atalho e aguarde a rápida instalação. Depois, abra pelo ícone com seu login salvo.</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
     </div>}
     <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onClick={() => setOpen(!open)}>
       <img src={isAuth ? "/images/Mascote%20LIA%20ajuda.webp" : "/images/Mascote%20LIA%20ajuda.png"} alt="Mascote LIA" width="118" height="118" />
