@@ -3175,3 +3175,12 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
   background: #10253e !important;
   color: #fff !important;
 }
+
+/* Campanha: manter a mãozinha em primeiro plano, inclusive sobre o cabeçalho. */
+.home-page .promotion-banner {
+  z-index: 45 !important;
+}
+.home-page .promotion-banner .promotion-campaign-link,
+.home-page .promotion-banner .campaign-pointing-hand {
+  z-index: 50 !important;
+}
