@@ -5,7 +5,7 @@ import { ordersQuery } from "@/lib/queries";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Ban } from "lucide-react";
+import { Ban, ArrowLeft, ArrowRight } from "lucide-react";
 import { ORDER_STATUS, brl, termLabel } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +68,7 @@ function Orders() {
   }
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold uppercase">Pedidos</h1>
+      <nav className="flex justify-between gap-2 text-sm"><Link to="/admin" className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-2 font-bold"><ArrowLeft size={16}/> Voltar</Link><Link to="/admin-gestao" className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-2 font-bold">Avançar <ArrowRight size={16}/></Link></nav><h1 className="text-3xl font-bold uppercase">Pedidos</h1>
       {isAdmin && <p className="text-sm">Todos os pedidos disponíveis, com status de acompanhamento.</p>}
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
