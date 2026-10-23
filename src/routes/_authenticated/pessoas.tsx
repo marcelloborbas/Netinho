@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil, ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated/pessoas")({
   component: Pessoas,
-  head: () => ({ meta: [{ title: "Pessoas e acessos | Netinho" }] }),
+  head: () => ({ meta: [{ title: "RH - Pessoas | Netinho" }] }),
 });
 type Role = "Visitante" | "Vendedor" | "Representante" | "Administrador";
 type Person = { id:string; full_name:string; email:string; site_role:Role; access_active:boolean; territory_uf:string|null; territory_cities:string|null; supervisor_id:string|null; phone:string|null };
@@ -24,8 +24,8 @@ function Pessoas() {
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
-  <header className="rounded-2xl bg-[#102a52] p-5 text-white"><Link to="/admin" className="text-sm text-amber-300">← Administração</Link><h1 className="mt-2 text-3xl font-black">Pessoas</h1><p className="mt-1 text-sm">Um único lugar para definir perfil, acesso e região de atuação.</p></header>
-  <p className="rounded-xl bg-white p-3 text-sm">Todas as pessoas cadastradas aparecem abaixo. Escolha a atribuição na coluna Status e salve a ficha.</p>
+  <header className="rounded-2xl bg-[#102a52] p-5 text-white"><Link to="/admin" className="text-sm text-amber-300">← Administração</Link><h1 className="mt-2 text-3xl font-black">RH - Pessoas</h1></header>
+  <nav aria-label="Navegação administrativa" className="flex justify-between gap-2"><Link to="/admin" className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-bold"><ArrowLeft size={18}/> Voltar</Link><Link to="/pedidos" className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-bold">Avançar <ArrowRight size={18}/></Link></nav>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
   <p className="rounded-xl bg-blue-50 p-3 text-sm"><strong>Cadastros:</strong> {people.length} pessoas com perfil de acesso e {representatives.length} representantes comerciais cadastrados. Nomes genéricos como "Vendedor" vêm do cadastro original; confira o e-mail antes de editar.</p>
   {[...people.map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
@@ -55,7 +55,7 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
   else{toast.success("Pessoa atualizada.");onSaved();setOpen(false);}
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>setOpen(!open)} aria-expanded={open} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
+  <button type="button" onClick={()=>setOpen(true)} aria-expanded={open} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
    <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span></span>
    <span className="shrink-0 text-right text-sm font-bold">{person.access_active?"Ativo":"Inativo"}</span>
   </button>
@@ -65,8 +65,8 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
    <button type="button" disabled={busy} onClick={async()=>{
     const identity=person.full_name||person.email;
     if(!window.confirm(`Excluir DEFINITIVAMENTE ${identity}? A conta de login e o cadastro serão apagados. Esta ação não pode ser desfeita.`))return;
-    const confirmation=window.prompt(`Para confirmar a exclusão permanente de ${identity}, digite EXCLUIR:`);
-    if(confirmation!=="EXCLUIR"){if(confirmation!==null)toast.error("Exclusão cancelada: confirmação incorreta.");return;}
+    const confirmation=window.prompt(`Para confirmar a exclusão permanente de ${identity}, digite EXCLUIR (sem aspas):`);
+    if(confirmation?.trim().toUpperCase()!=="EXCLUIR"){if(confirmation!==null)toast.error("Exclusão cancelada: confirmação incorreta.");return;}
     setBusy(true);
     const {data,error}=await supabase.functions.invoke("delete-person",{body:{userId:person.id}});
     setBusy(false);
@@ -113,7 +113,7 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
  }
  async function remove(){
   if(!window.confirm(`Excluir DEFINITIVAMENTE o cadastro comercial de ${representative.full_name}? Esta ação não pode ser desfeita.`))return;
-  if(window.prompt("Digite EXCLUIR para confirmar:")!=="EXCLUIR")return;
+  if(window.prompt("Digite EXCLUIR para confirmar:")?.trim().toUpperCase()!=="EXCLUIR")return;
   setBusy(true);
   const {error}=await supabase.from("commercial_representatives").delete().eq("id",representative.id);
   setBusy(false);
@@ -121,7 +121,7 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}</strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
+  <button type="button" onClick={()=>setOpen(true)} aria-expanded={open} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}</strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>setOpen(true)} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
