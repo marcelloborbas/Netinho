@@ -106,12 +106,11 @@ describe("catalog access presentation", () => {
       expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada à venda."),
     );
   });
-  it("does not sell HD parts while the brand is still marked as coming soon", () => {
+  it("does not list HD parts while the brand is still marked as coming soon", () => {
     state.seller = true;
     render(<Catalog />);
-    const hdButton = screen.getByRole("button", { name: "Comprar peça K6246.HD" });
-    fireEvent.click(hdButton);
-    expect(toast.info).toHaveBeenCalledWith("HD Embreagens: em breve.");
-    expect(toast.success).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "Comprar peça K6246.HD" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Injeção eletrônica" })).toBeVisible();
   });
 });
