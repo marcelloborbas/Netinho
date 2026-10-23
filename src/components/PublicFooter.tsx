@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Home, Search, ShoppingCart, ClipboardList, LogOut } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -37,6 +37,7 @@ export function PublicFooter() {
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
     { to: "/vendas" as const, label: "Vender", icon: ShoppingCart },
     { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
+    { to: "/admin" as const, label: "Adm", icon: Shield },
   ] : [
     { to: "/" as const, label: "Início", icon: Home },
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
@@ -47,12 +48,12 @@ export function PublicFooter() {
     localStorage.removeItem("netinho-vendedor");
     void navigate({ to: "/auth" });
   }
-  return <nav aria-label="Menu inferior" className="mobile-nav" style={{ gridTemplateColumns: `repeat(${links.length + (canSell ? 1 : 0)}, 1fr)` }}>
+  return <nav aria-label="Menu inferior" className="mobile-nav" style={{ gridTemplateColumns: `repeat(${links.length}, 1fr)` }}>
     {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} onClick={clickSound}
       aria-current={pathname === to ? "page" : undefined}
       className={`flex flex-col items-center gap-1 py-3 text-[11px] transition-colors duration-150 hover:bg-[#174e9b] hover:text-amber-300 ${pathname === to ? "text-amber-300" : "text-white"}`}>
       <Icon size={21}/>{label}
     </Link>)}
-    {canSell && <button type="button" onClick={() => { clickSound(); void logout(); }} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><LogOut size={21}/>Sair</button>}
+
   </nav>;
 }
