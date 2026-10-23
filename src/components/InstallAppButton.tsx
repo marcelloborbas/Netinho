@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 import { Smartphone, LoaderCircle, MousePointerClick, Download } from "lucide-react";
 import { toast } from "sonner";
 import { LogoMark } from "@/components/Logo";
@@ -11,26 +11,15 @@ interface InstallPromptEvent extends Event {
 }
 
 
-function downloadShortcutFile() {
-  const siteUrl = window.location.origin + "/";
-  const logoUrl = window.location.origin + "/favicon.png";
-  const html = `<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><title>Netinho Auto Parts</title>
-<link rel="icon" href="${logoUrl}" type="image/png">
-<meta http-equiv="refresh" content="0; url=${siteUrl}">
-<style>html,body{margin:0;min-height:100%;background:#102a52;color:white;font-family:system-ui,sans-serif}
-main{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-img{width:150px;height:150px;object-fit:contain}a{color:white;text-decoration:none}</style>
-</head><body><main><a href="${siteUrl}"><img src="${logoUrl}" alt="Netinho Auto Parts"><h1>Netinho Auto Parts</h1><p>Abrindo o site… toque aqui se necessário.</p></a></main></body></html>`;
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Netinho Auto Parts.html";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+// Capture o convite do Android antes mesmo de a LIA ser aberta na página Auth.
+let pendingInstallPrompt: InstallPromptEvent | null = null;
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (event: Event) => {
+    if (!("prompt" in event) || typeof event.prompt !== "function") return;
+    event.preventDefault();
+    pendingInstallPrompt = event as InstallPromptEvent;
+  });
+  window.addEventListener("appinstalled", () => { pendingInstallPrompt = null; });
 }
 
 export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
@@ -39,7 +28,7 @@ export interface InstallAppButtonProps extends ComponentProps<typeof Button> {
 }
 
 export function InstallAppButton({ className, disabled, label = "Crie um atalho no celular", assistantStyle = false, ...props }: InstallAppButtonProps) {
-  const promptRef = useRef<InstallPromptEvent | null>(null);
+
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
 
@@ -52,10 +41,10 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
       // The browser owns eligibility; retain its one-use event, never emulate installation.
       if (!("prompt" in event) || typeof event.prompt !== "function" || !("userChoice" in event)) return;
       event.preventDefault();
-      promptRef.current = event as InstallPromptEvent;
+      pendingInstallPrompt = event as InstallPromptEvent;
     };
     const finishInstall = () => {
-      promptRef.current = null;
+      pendingInstallPrompt = null;
       setInstalled(true);
       toast.success("Atalho do Netinho adicionado à tela inicial.");
     };
@@ -66,7 +55,7 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
       window.removeEventListener("beforeinstallprompt", capturePrompt);
       window.removeEventListener("appinstalled", finishInstall);
       standalone.removeEventListener("change", syncInstalled);
-      promptRef.current = null;
+      pendingInstallPrompt = null;
     };
   }, []);
 
@@ -90,18 +79,17 @@ export function InstallAppButton({ className, disabled, label = "Crie um atalho 
     if (installed) { toast.info("O atalho do Netinho já está na tela inicial."); return; }
     setInstalling(true);
     try {
-      if (promptRef.current) {
-        const pending = promptRef.current;
-        promptRef.current = null;
+      if (pendingInstallPrompt) {
+        const pending = pendingInstallPrompt;
+        pendingInstallPrompt = null;
         await pending.prompt();
         const choice = await pending.userChoice;
         if (choice.outcome === "accepted") return;
         return;
       }
-      // Restaurar o download direto do atalho usado anteriormente.
-      downloadShortcutFile();
+      toast.error("A instalação ainda não está disponível neste navegador. Aguarde alguns segundos e tente novamente.", { duration: 6000 });
     } catch {
-      downloadShortcutFile();
+      toast.error("O Android não conseguiu abrir a instalação. Tente novamente.", { duration: 6000 });
     } finally {
       setInstalling(false);
     }
