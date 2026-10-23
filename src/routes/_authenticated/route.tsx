@@ -41,18 +41,17 @@ function AppShell() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: access } = useQuery({ ...accessQuery, enabled: !!Route.useRouteContext().user, retry: false });
-  const canSell = access?.can_sell === true;
+  const canSell = access?.can_sell === true || access?.level === 1;
   const nav = canSell
     ? ([
-        { to: "/", label: "Início", icon: Home },
-        { to: "/catalogo", label: "Catálogo", icon: Search },
-        { to: "/clientes", label: "Clientes", icon: Users },
-        { to: "/pedidos", label: "Pedidos", icon: ClipboardList },
+        { to: "/" as const, label: "Início", icon: Home },
+        { to: "/catalogo" as const, label: "Catálogo", icon: Search },
+        { to: "/vendas" as const, label: "Vender", icon: ShoppingCart },
+        { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
       ] as const)
     : ([
-        { to: "/", label: "Início", icon: Home },
-        { to: "/catalogo", label: "Catálogo", icon: Search },
-        { to: "/representantes", label: "Representante", icon: Contact },
+        { to: "/" as const, label: "Início", icon: Home },
+        { to: "/catalogo" as const, label: "Catálogo", icon: Search },
       ] as const);
   async function logout() {
     const { error } = await supabase.auth.signOut();
@@ -107,7 +106,7 @@ function AppShell() {
           <b className="text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length}, 1fr)` }}>
+      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length + (canSell ? 1 : 0)}, 1fr)` }}>
         {nav.map((n) => (
           <Link
             key={n.to}
@@ -120,7 +119,7 @@ function AppShell() {
             {n.label}
           </Link>
         ))}
-
+        {canSell && <button type="button" onClick={() => void logout()} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><LogOut size={21}/>Sair</button>}
       </nav>
     </div>
   );
