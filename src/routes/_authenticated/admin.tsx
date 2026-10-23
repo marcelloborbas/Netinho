@@ -48,20 +48,15 @@ function AdminDashboard() {
         <p className="text-sm text-slate-700">Acesse diretamente as tarefas mais importantes. Nenhuma autorização é concedida automaticamente.</p>
         <div className="grid gap-2 sm:grid-cols-2">
           <Link to="/pessoas" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
-            <UserCheck size={28} className="shrink-0"/><span><strong className="block text-base">Gerenciar pessoas</strong><small className="block text-sm text-slate-700">Conferir perfis e permissões</small></span>
-          </Link>
-          <Link to="/pessoas" className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-[#174e9b] bg-[#e8f0fb] p-3 text-[#102a52] transition-colors hover:bg-[#d5e5f9]">
-            <UserPlus size={28} className="shrink-0"/><span><strong className="block text-base">Definir perfis e regiões</strong><small className="block text-sm text-slate-700">Acesso, atuação e responsáveis</small></span>
+            <UserCheck size={28} className="shrink-0"/><span><strong className="block text-base">Pessoal</strong><small className="block text-sm text-slate-700">Conferir perfis e permissões</small></span>
           </Link>
           <Link to="/pedidos" className="flex min-h-16 items-center gap-3 rounded-xl border border-[#cbd5e1] bg-[#f8fafc] p-3 text-[#102a52] hover:bg-[#e8f0fb]">
-            <ClipboardList size={28} className="shrink-0"/><span><strong className="block text-base">Consultar pedidos</strong><small className="block text-sm text-slate-700">Acompanhar solicitações</small></span>
-          </Link>
-          <Link to="/admin-gestao" hash="produtos" className="flex min-h-16 items-center gap-3 rounded-xl border border-[#cbd5e1] bg-[#f8fafc] p-3 text-[#102a52] hover:bg-[#e8f0fb]">
-            <Package size={28} className="shrink-0"/><span><strong className="block text-base">Atualizar produtos</strong><small className="block text-sm text-slate-700">Estoque e preços</small></span>
+            <ClipboardList size={28} className="shrink-0"/><span><strong className="block text-base">Pedidos</strong><small className="block text-sm text-slate-700">Acompanhar solicitações</small></span>
           </Link>
         </div>
         <p className="text-xs text-slate-700">Pedidos de acesso recebidos por WhatsApp ainda são conferidos manualmente. Atribuir um perfil visual não substitui a autorização de vendas.</p>
       </section>
+      <nav aria-label="Avançar na administração" className="flex justify-end"><Link to="/pessoas" className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-bold text-[#102a52]">Avançar →</Link></nav>
       <h2 className="text-lg font-extrabold text-[#102a52]">Outras áreas</h2>
       <nav aria-label="Acessos da administração" className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
         {options.map(({ to, label, icon: Icon }) => (
