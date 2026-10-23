@@ -10,13 +10,13 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/icons/%C3%8Dcone%20192%20%C3%97%20192.webp?v=11",
+      "src": "/%C3%8Dcone%20192%20%C3%97%20192.webp?v=12",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/icons/%C3%8Dcone%20512%20%C3%97%20512.webp?v=11",
+      "src": "/%C3%8Dcone%20512%20%C3%97%20512.webp?v=12",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any"
