@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Megaphone, ShoppingCart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { accessQuery } from "@/lib/access";
 
 type Promotion = { code: string; title: string; application: string; price: string; note: string; image?: string; searchTerm: string };
 
@@ -71,6 +73,8 @@ export const PROMOTIONS: readonly Promotion[] = [
 ];
 
 export function PromotionBanner() {
+  const { data: access } = useQuery({ ...accessQuery, retry: false });
+  const canSell = access?.can_sell === true || access?.level === 1;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const promotion = (PROMOTIONS[active] ?? PROMOTIONS[0]) as Promotion;
@@ -110,7 +114,7 @@ export function PromotionBanner() {
           </strong>
           <span style={{ display: "block", width: "100%", fontSize: "clamp(12px, 1.7vw, 16px)", fontWeight: 800, letterSpacing: "0.025em", textAlign: "center", whiteSpace: "nowrap" }}>{promotion.note}<span style={{ display: "block", marginTop: 4, color: "#64748b", fontWeight: 700 }}>30/45/60 dias</span></span>
         </div>
-
+        {canSell && <Link to="/vendas" search={{ modo: "venda", q: promotion.code, promo: promotion.code }} aria-label={`Comprar peça ${promotion.code}`} className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#1262e8] px-4 py-2 text-sm font-extrabold text-white shadow-lg hover:bg-[#0845b4]"><ShoppingCart size={19} /> Comprar</Link>}
       </div>
 
       <div className="promotion-banner-art" key={promotion.code} >
