@@ -164,7 +164,6 @@ function Catalog() {
               </div>}
             </div>
           </div>
-          {(vehicleActive && list.length === 0) && <p role="status" className="w-full rounded-lg border border-[#facc15] bg-[#fff7db] p-3 text-sm font-semibold leading-relaxed text-[#102a52]">Nenhuma aplicação cadastrada corresponde a todos os dados informados. Experimente pesquisar apenas pela montadora e modelo, ou consulte a ficha técnica.</p>}
           {(q || manufacturer !== "all" || category !== "all" || filterMode !== "relevantes") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
         </div>
       </section>
