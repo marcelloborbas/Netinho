@@ -48,7 +48,7 @@ function Admin() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold uppercase">Gestão do site</h1>
+      <div className="flex justify-between gap-3"><Link to="/admin" className="rounded-lg border bg-white px-3 py-2 font-bold">← Voltar</Link><Link to="/pessoas" className="rounded-lg border bg-white px-3 py-2 font-bold">Avançar →</Link></div><h1 className="text-3xl font-bold uppercase">Gestão do site</h1>
       <nav aria-label="Gestão do site" className="surface-card grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
         <Link to="/representantes" className="action-card">Representantes e mapas</Link>
         <Link to="/vendedores" className="action-card">Vendedores</Link>
