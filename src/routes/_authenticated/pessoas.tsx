@@ -28,14 +28,12 @@ function Pessoas() {
   <p className="rounded-xl bg-white p-3 text-sm">Todas as pessoas cadastradas aparecem abaixo. Escolha a atribuição na coluna Status e salve a ficha.</p>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
   <p className="rounded-xl bg-blue-50 p-3 text-sm"><strong>Cadastros:</strong> {people.length} pessoas com perfil de acesso e {representatives.length} representantes comerciais cadastrados. Nomes genéricos como "Vendedor" vêm do cadastro original; confira o e-mail antes de editar.</p>
-  {people.map(p=><PersonCard key={p.id} person={p} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["access"]});}} />)}
-  <section className="space-y-2" aria-label="Representantes comerciais cadastrados">
-   <h2 className="text-lg font-extrabold">Representantes comerciais</h2>
-   {loadingRepresentatives&&<p>Carregando representantes…</p>}
-   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
-   {representatives.filter(rep=>!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=><article key={rep.id} className="rounded-xl border border-amber-200 bg-white p-4"><strong className="block">{rep.full_name}</strong><span className="block break-all text-xs">{rep.email}</span><span className="mt-2 inline-block rounded bg-amber-50 px-2 py-1 text-xs font-bold">Representante · {rep.active?"Ativo":"Inativo"} · Sem perfil vinculado</span><p className="mt-2 text-xs text-slate-600">Cadastro comercial preservado. A ficha de acesso será editável após vincular a conta Google deste representante.</p></article>)}
-  </section>
-  {!isLoading&&!error&&people.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
+  {[...people.map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
+   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});}}/>
+   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});}}/>)}
+  {loadingRepresentatives&&<p>Carregando representantes…</p>}
+  {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
+  {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
 function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSaved:()=>void}) {
@@ -93,6 +91,48 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
     <p className="text-xs text-slate-600">As localidades antigas e os mapas existentes não serão apagados. Estes campos registram a área na ficha da pessoa.</p>
    </div>}
    <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-12 w-full rounded-lg bg-[#102a52] px-4 py-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar ficha e permissões"}</button>
+  </div>}
+ </article>;
+}
+
+type CommercialRepresentative = {id:string;full_name:string;email:string;active:boolean};
+function RepresentativeCard({representative,onSaved}:{representative:CommercialRepresentative;onSaved:()=>void}) {
+ const [open,setOpen]=useState(false);
+ const [busy,setBusy]=useState(false);
+ const [name,setName]=useState(representative.full_name);
+ const [email,setEmail]=useState(representative.email);
+ const [active,setActive]=useState(representative.active);
+ async function save(){
+  if(!name.trim()||!/^\\S+@\\S+\\.\\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
+  setBusy(true);
+  const {error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id);
+  setBusy(false);
+  if(error){toast.error("Não foi possível salvar: "+error.message);return;}
+  toast.success("Representante atualizado.");onSaved();setOpen(false);
+ }
+ async function remove(){
+  if(!window.confirm(`Excluir DEFINITIVAMENTE o cadastro comercial de ${representative.full_name}? Esta ação não pode ser desfeita.`))return;
+  if(window.prompt("Digite EXCLUIR para confirmar:")!=="EXCLUIR")return;
+  setBusy(true);
+  const {error}=await supabase.from("commercial_representatives").delete().eq("id",representative.id);
+  setBusy(false);
+  if(error){toast.error("Não foi possível excluir: "+error.message);return;}
+  toast.success("Cadastro comercial excluído.");onSaved();
+ }
+ return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
+  <button type="button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}</strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
+  <div className="mt-2 flex items-center justify-between gap-2">
+   <button type="button" onClick={()=>setOpen(true)} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar</button>
+   <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
+   <button type="button" disabled={busy} onClick={()=>void remove()} title="Excluir cadastro comercial" aria-label={`Excluir cadastro comercial de ${representative.full_name}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
+  </div>
+  <p className="mt-2 text-xs font-bold text-amber-800">Atribuição: Representante (cadastro comercial)</p>
+  {open&&<div className="mt-3 space-y-3 border-t border-slate-200 pt-3">
+   <label className="block text-sm font-bold">Nome<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+   <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+   <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Status ativo</label>
+   <p className="text-xs text-slate-600">Este é um cadastro comercial ainda não vinculado à ficha de usuário. Sua exclusão não apaga uma conta Google ou outros registros.</p>
+   <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white disabled:opacity-50">Salvar representante</button>
   </div>}
  </article>;
 }
