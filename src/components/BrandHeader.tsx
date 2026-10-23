@@ -67,7 +67,8 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
                   <button role="menuitem" type="button" onClick={() => setProfileDetailsOpen((open) => !open)} aria-expanded={profileDetailsOpen} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> Perfil: {profile}</button>
                   {profileDetailsOpen && <div className="mx-1 mb-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800" role="region" aria-label="Permissões do perfil">
                     <strong>Permissões:</strong> {access?.level === 1 ? "Gerenciar usuários, permissões, catálogo e pedidos." : access?.can_sell && access?.attribution === "Representante" ? "Vender, consultar pedidos e supervisionar vendedores vinculados." : access?.can_sell ? "Vender, consultar clientes e acompanhar seus pedidos." : "Visualizar o catálogo e consultar peças, sem comprar ou enviar pedidos."}
-                  </div>
+                  </div>}
+
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
                 </div>
               )}
