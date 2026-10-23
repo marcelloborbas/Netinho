@@ -82,6 +82,7 @@ function Catalog() {
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true || access?.level === 1;
+  const visibleFilterOptions = canSell ? filterOptions : filterOptions.filter(([value]) => ["menor", "maior", "ofertas", "recentes"].includes(value));
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
@@ -154,11 +155,11 @@ function Catalog() {
             <p role="status" className="text-sm font-semibold text-[#dbeafe]">{list.length} peças encontradas</p>
             <div className="relative">
               <button type="button" aria-label="Filtros do catálogo" aria-expanded={filterOpen} onClick={() => setFilterOpen((open) => !open)}
-                className="flex items-center gap-1 rounded-lg border border-[#4b779f] bg-[#123b63] px-2.5 py-2 text-[#39ff79] hover:bg-[#1c4d78]">
+                className="flex items-center gap-1 rounded-lg border border-[#8bc8ff] bg-white px-2.5 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
                 <Filter size={19} /><span className="text-xs font-bold">Filtros</span>
               </button>
               {filterOpen && <div className="absolute left-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-[#416c93] bg-[#09213c] p-1 shadow-xl" role="group" aria-label="Ordenar e filtrar peças">
-                {filterOptions.map(([value, label]) => <button key={value} type="button" aria-pressed={filterMode === value}
+                {visibleFilterOptions.map(([value, label]) => <button key={value} type="button" aria-pressed={filterMode === value}
                   onClick={() => { setFilterMode(value); setPage(1); setFilterOpen(false); }}
                   className={`block w-full rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-[#24517b] ${filterMode === value ? "bg-[#21496c] text-[#39ff79]" : "text-white"}`}>{label}</button>)}
               </div>}
