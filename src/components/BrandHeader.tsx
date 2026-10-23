@@ -65,12 +65,9 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
               {menuOpen && (
                 <div role="menu" aria-label="Opções do usuário" className="absolute right-0 top-full z-50 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl">
                   <button role="menuitem" type="button" onClick={() => setProfileDetailsOpen((open) => !open)} aria-expanded={profileDetailsOpen} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> Perfil: {profile}</button>
-                  {profileDetailsOpen && <div className="mx-1 mb-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800" role="region" aria-label="Informações do seu perfil">
-                    <p className="font-bold break-words">{access?.name || user.name}</p>
-                    {access?.email && <p className="flex items-start gap-2 break-all"><Mail size={14} className="mt-0.5 shrink-0" />{access.email}</p>}
-                    <p className="flex items-start gap-2"><BriefcaseBusiness size={14} className="mt-0.5 shrink-0" /><span><strong>Atribuição:</strong> {access?.attribution || profile}</span></p>
-                    <p><strong>Permissões:</strong> {access?.level === 1 ? "Administração e gerenciamento do site" : access?.can_sell ? "Consulta ao catálogo e realização de pedidos" : "Consulta ao catálogo, sem realizar pedidos"}</p>
-                  </div>}
+                  {profileDetailsOpen && <div className="mx-1 mb-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800" role="region" aria-label="Permissões do perfil">
+                    <strong>Permissões:</strong> {access?.level === 1 ? "Gerenciar usuários, permissões, catálogo e pedidos." : access?.can_sell && access?.attribution === "Representante" ? "Vender, consultar pedidos e supervisionar vendedores vinculados." : access?.can_sell ? "Vender, consultar clientes e acompanhar seus pedidos." : "Visualizar o catálogo e consultar peças, sem comprar ou enviar pedidos."}
+                  </div>
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
                 </div>
               )}
