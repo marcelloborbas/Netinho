@@ -3184,3 +3184,11 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 .home-page .promotion-banner .campaign-pointing-hand {
   z-index: 50 !important;
 }
+
+/* O menu do usuário deve ficar acima da mãozinha da campanha. */
+.brand-header.app-header { z-index: 100 !important; overflow: visible !important; }
+.brand-header .brand-header-inner,
+.brand-header .brand-header-representations { overflow: visible !important; }
+.brand-header [role="menu"] { z-index: 110 !important; }
+/* Mantém a mãozinha à frente do banner sem cobrir o menu do usuário. */
+.home-page .promotion-banner { z-index: 45 !important; }
