@@ -78,6 +78,7 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
   <label className="mt-2 block text-sm font-bold">Status · Atribuição<select value={role} onChange={e=>{setRole(e.target.value as Role);setOpen(true);}} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(v=><option key={v}>{v}</option>)}</select></label>
   {open&&<div className="mt-4 space-y-4 border-t border-slate-200 pt-4">
    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm"><strong>Ficha de dados</strong><p>Nome: {person.full_name||"Não informado"}</p><p>E-mail: {person.email}</p><p>Telefone: {person.phone||"Não informado"}</p><p>Atribuição: {person.site_role}</p><p>Estado(s): {uf||"Não informado"}</p><p>Cidades: {cities||"Não informadas"}</p></div>
+   <RepresentativeDetails name={person.full_name} email={person.email} />
    <label className="block text-sm font-bold">Tipo de acesso<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
    <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)} className="h-5 w-5"/> Acesso ativo</label>
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
@@ -128,6 +129,9 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
   </div>
   <p className="mt-2 text-xs font-bold text-amber-800">Atribuição: Representante (cadastro comercial)</p>
   {open&&<div className="mt-3 space-y-3 border-t border-slate-200 pt-3">
+   <h3 className="text-lg font-extrabold">Ficha completa do representante</h3>
+   <p className="text-sm"><strong>Atribuição:</strong> Representante comercial</p>
+   <RepresentativeDetails name={representative.full_name} email={representative.email} />
    <label className="block text-sm font-bold">Nome<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
    <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
    <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Status ativo</label>
@@ -135,4 +139,38 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
    <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white disabled:opacity-50">Salvar representante</button>
   </div>}
  </article>;
+}
+
+function RepresentativeDetails({name,email}:{name:string;email:string}) {
+ const {data:record,isLoading,error}=useQuery({
+  queryKey:["admin-representative-detail",name,email],
+  queryFn:async()=>{
+   const {data:profiles,error:profileError}=await supabase.from("representative_profiles").select("slug,full_name,email,phone,region");
+   if(profileError)throw profileError;
+   const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").trim().toLowerCase();
+   const profile=profiles?.find(p=>!!email&&norm(p.email)===norm(email))??profiles?.find(p=>norm(p.full_name)===norm(name));
+   if(!profile)return null;
+   const {data:details,error:detailsError}=await supabase.from("representative_private_details").select("city,state,service_cities,street_address,neighborhood,postal_code,cpf,rg").eq("slug",profile.slug).maybeSingle();
+   if(detailsError)throw detailsError;
+   return {profile,details};
+  },
+  retry:false
+ });
+ const map=/abdenego|abdnego/i.test(name) ? "/images/territories/abdenego.webp" : /livaldo/i.test(name) ? "/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" : null;
+ return <section className="space-y-2 rounded-xl border border-blue-200 bg-[#f8fbff] p-3 text-sm">
+  <h4 className="flex items-center gap-2 font-extrabold"><span>Região, cidades e mapa de atuação</span></h4>
+  {isLoading&&<p>Carregando informações de atuação…</p>}
+  {error&&<p role="alert" className="text-red-700">Não foi possível consultar a ficha regional.</p>}
+  {!isLoading&&!error&&<div className="space-y-1">
+   <p><strong>Região:</strong> {record?.profile.region||"Não cadastrada"}</p>
+   <p><strong>Estado (UF):</strong> {record?.details?.state||"Não cadastrado"}</p>
+   <p><strong>Cidade:</strong> {record?.details?.city||"Não cadastrada"}</p>
+   <p><strong>Cidades atendidas:</strong> {record?.details?.service_cities||"Não cadastradas"}</p>
+   <p><strong>Telefone:</strong> {record?.profile.phone||"Não cadastrado"}</p>
+   <p><strong>Endereço:</strong> {[record?.details?.street_address,record?.details?.neighborhood,record?.details?.postal_code].filter(Boolean).join(" · ")||"Não cadastrado"}</p>
+   <p><strong>CPF:</strong> {record?.details?.cpf||"Não cadastrado"}</p>
+   <p><strong>RG:</strong> {record?.details?.rg||"Não cadastrado"}</p>
+  </div>}
+  {map?<a href={map} target="_blank" rel="noreferrer" className="block rounded-lg border border-blue-200 bg-white p-2"><img src={map} alt={`Mapa de atuação de ${name}`} className="max-h-80 w-full object-contain"/><span className="mt-1 block text-center text-xs font-bold">Ampliar mapa de atuação</span></a>:<p className="rounded-lg bg-white p-3 text-xs text-slate-600">Não há imagem de mapa vinculada a este representante.</p>}
+ </section>;
 }
