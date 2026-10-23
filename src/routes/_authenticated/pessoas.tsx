@@ -64,7 +64,18 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>setOpen(true)} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
-   <button type="button" disabled={busy || !active} onClick={async()=>{if(!window.confirm(`Desativar acesso de ${person.full_name||person.email}? A conta não será apagada e os pedidos serão preservados.`))return;setBusy(true);const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:person.site_role,p_active:false,p_uf:person.territory_uf??"",p_cities:person.territory_cities??"",p_supervisor:person.supervisor_id} as never);setBusy(false);if(error)toast.error("Não foi possível desativar: "+error.message);else{setActive(false);toast.success("Acesso desativado. Cadastro preservado.");onSaved();}}} title="Desativar acesso com segurança" aria-label={`Desativar acesso de ${person.full_name||person.email}`} className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
+   <button type="button" disabled={busy} onClick={async()=>{
+    const identity=person.full_name||person.email;
+    if(!window.confirm(`Excluir DEFINITIVAMENTE ${identity}? A conta de login e o cadastro serão apagados. Esta ação não pode ser desfeita.`))return;
+    const confirmation=window.prompt(`Para confirmar a exclusão permanente de ${identity}, digite EXCLUIR:`);
+    if(confirmation!=="EXCLUIR"){if(confirmation!==null)toast.error("Exclusão cancelada: confirmação incorreta.");return;}
+    setBusy(true);
+    const {data,error}=await supabase.functions.invoke("delete-person",{body:{userId:person.id}});
+    setBusy(false);
+    if(error||!data||typeof data.message!=="string"||!data.message.includes("excluída permanentemente")){toast.error("Não foi possível excluir: "+(data?.message||error?.message||"Erro desconhecido"));return;}
+    toast.success("Usuário excluído permanentemente.");
+    onSaved();
+   }} title="Excluir usuário permanentemente" aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
   </div>
   <label className="mt-2 block text-sm font-bold">Status · Atribuição<select value={role} onChange={e=>{setRole(e.target.value as Role);setOpen(true);}} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(v=><option key={v}>{v}</option>)}</select></label>
   {open&&<div className="mt-4 space-y-4 border-t border-slate-200 pt-4">
