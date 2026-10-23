@@ -8,7 +8,7 @@ import { InstallAppButton } from "@/components/InstallAppButton";
 const hints = [
   { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Clique no ícone do Google e selecione sua conta, ou clique no envelope e você receberá um link em seu e-mail. Quer um acesso mais rápido? Instale o atalho e abra o Netinho pelo ícone. Seu login ficará salvo." },
   { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
-  { match: /catalogo|catálogo/, title: "Catálogo", message: "Abra o item para conferir detalhes. Valores e pedidos exigem perfil autorizado." },
+  { match: /catalogo|catálogo/, title: "Catálogo", message: "Selecione a peça para ver. Pedidos exigem perfis autorizados." },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
   { match: /pedidos/, title: "Pedidos", message: "Consulte seus pedidos e acompanhe o andamento. A edição depende do seu perfil e das permissões concedidas." },
   { match: /pedido|vendas/, title: "Vendas", message: "Selecione o cliente, confira as peças e quantidades e revise antes de enviar. É necessário ter acesso comercial autorizado." },
