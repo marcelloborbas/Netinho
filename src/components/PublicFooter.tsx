@@ -1,6 +1,9 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Users, FilePenLine, ClipboardList, Settings } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { accessQuery } from "@/lib/access";
 
 function clickSound() {
@@ -26,19 +29,30 @@ function clickSound() {
 export function PublicFooter() {
   const { data: access } = useQuery({ ...accessQuery, retry: false });
   const pathname = useLocation().pathname;
+  const navigate = useNavigate();
   const isAdmin = access?.level === 1;
   const canSell = access?.can_sell === true || isAdmin;
-  const links = [
-    { to: "/" as const, label: "Início", icon: Users, search: {} },
-    { to: "/catalogo" as const, label: "Catálogo", icon: FilePenLine, search: { modo: "consulta" as const } },
-    { to: (canSell ? "/pedidos" : "/auth") as "/pedidos" | "/auth", label: "Pedidos", icon: ClipboardList, search: {} },
-    { to: (isAdmin ? "/admin" : "/auth") as "/admin" | "/auth", label: isAdmin ? "Admin" : "Entrar", icon: Settings, search: {} },
+  const links = canSell ? [
+    { to: "/" as const, label: "Início", icon: Home },
+    { to: "/catalogo" as const, label: "Catálogo", icon: Search },
+    { to: "/vendas" as const, label: "Vender", icon: ShoppingCart },
+    { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
+  ] : [
+    { to: "/" as const, label: "Início", icon: Home },
+    { to: "/catalogo" as const, label: "Catálogo", icon: Search },
   ];
-  return <nav aria-label="Menu inferior" className="mobile-nav" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
-    {links.map(({to,label,icon:Icon,search}) => <Link key={label} to={to} search={search} onClick={clickSound}
-      aria-current={(pathname === to || (pathname === "/ofertas" && label === "Início")) ? "page" : undefined}
-      className={`flex flex-col items-center gap-1 py-3 text-[11px] transition-colors duration-150 hover:bg-[#174e9b] hover:text-amber-300 active:bg-[#174e9b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300 ${pathname === to || (pathname === "/ofertas" && label === "Início") ? "text-amber-300" : "text-white"}`}>
+  async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) { toast.error("Não foi possível sair."); return; }
+    localStorage.removeItem("netinho-vendedor");
+    void navigate({ to: "/auth" });
+  }
+  return <nav aria-label="Menu inferior" className="mobile-nav" style={{ gridTemplateColumns: `repeat(${links.length + (canSell ? 1 : 0)}, 1fr)` }}>
+    {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} onClick={clickSound}
+      aria-current={pathname === to ? "page" : undefined}
+      className={`flex flex-col items-center gap-1 py-3 text-[11px] transition-colors duration-150 hover:bg-[#174e9b] hover:text-amber-300 ${pathname === to ? "text-amber-300" : "text-white"}`}>
       <Icon size={21}/>{label}
     </Link>)}
+    {canSell && <button type="button" onClick={() => { clickSound(); void logout(); }} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><LogOut size={21}/>Sair</button>}
   </nav>;
 }
