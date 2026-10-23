@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { UserRound, LogOut, ShieldCheck, Mail, BriefcaseBusiness } from "lucide-react";
+import { UserRound, LogOut, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import { accessQuery } from "@/lib/access";
 // from "@tanstack/react-router";
 
 import { Logo } from "@/components/Logo";
+import { createPortal } from "react-dom";
 import { PartnerLogos } from "@/components/PartnerLogos";
 
 export function BrandHeader({ actions }: { actions?: ReactNode }) {
@@ -15,6 +16,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
   const profile = access?.level === 1 ? "Administrador" : access?.can_sell && access?.attribution === "Representante" ? "Representante" : access?.can_sell ? "Vendedor" : "Visitante";
   const [profileDetailsOpen, setProfileDetailsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 100, right: 12 });
   const [signingOut, setSigningOut] = useState(false);
   const [user, setUser] = useState<{ name: string; picture: string | null } | null>(null);
   useEffect(() => {
@@ -59,18 +61,18 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
             </div>
           {user && (
             <div className="relative flex shrink-0 items-center justify-end">
-              <button type="button" onClick={() => { setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
+              <button type="button" onClick={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
                 {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[62px] w-[62px] rounded-full object-cover" /> : <span className="flex h-[62px] w-[62px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={35} /></span>}
               </button>
-              {menuOpen && (
-                <div role="menu" aria-label="Opções do usuário" className="absolute right-0 top-full z-50 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl">
+              {menuOpen && typeof document !== "undefined" && createPortal(
+                <div role="menu" aria-label="Opções do usuário" style={{ top: menuPosition.top, right: menuPosition.right }} className="fixed z-[9999] min-w-52 max-w-[calc(100vw-16px)] rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-2xl">
                   <button role="menuitem" type="button" onClick={() => setProfileDetailsOpen((open) => !open)} aria-expanded={profileDetailsOpen} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> Perfil: {profile}</button>
                   {profileDetailsOpen && <div className="mx-1 mb-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800" role="region" aria-label="Permissões do perfil">
                     <strong>Permissões:</strong> {access?.level === 1 ? "Gerenciar usuários, permissões, catálogo e pedidos." : access?.can_sell && access?.attribution === "Representante" ? "Vender, consultar pedidos e supervisionar vendedores vinculados." : access?.can_sell ? "Vender, consultar clientes e acompanhar seus pedidos." : "Visualizar o catálogo e consultar peças, sem comprar ou enviar pedidos."}
                   </div>}
 
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
-                </div>
+                </div>, document.body
               )}
             </div>
           )}
