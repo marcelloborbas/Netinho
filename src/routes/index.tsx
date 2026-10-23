@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { ShoppingCart, UserRound, BriefcaseBusiness, UserCog } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 
 import { accessQuery } from "@/lib/access";
@@ -32,13 +31,6 @@ function Home() {
   const canSell = access?.can_sell === true || isAdmin;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
-  const authorizedProfile = isAdmin
-    ? { label: "Administrador", icon: UserCog, to: "/admin" as const }
-    : canSell && access?.attribution === "Representante"
-      ? { label: "Representante", icon: BriefcaseBusiness, to: "/representante" as const }
-      : canSell
-        ? { label: "Vendedor", icon: ShoppingCart, to: "/vendas" as const }
-        : null;
   return (
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
