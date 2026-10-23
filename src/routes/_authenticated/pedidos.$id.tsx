@@ -243,7 +243,7 @@ function OrderDetail() {
           <span className="text-muted-foreground">Comprador:</span> {order.buyer ?? "—"}
         </p>
         <p>
-          <span className="text-muted-foreground">Transportadora:</span> {order.carrier ?? "—"}
+          <span className="text-muted-foreground">Transportadora:</span> FOB
         </p>
         {order.notes && (
           <p className="sm:col-span-2">
