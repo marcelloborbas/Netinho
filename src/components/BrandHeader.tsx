@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { UserRound, LogOut, ShieldCheck } from "lucide-react";
+import { UserRound, LogOut, ShieldCheck, Mail, BriefcaseBusiness } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
   const navigate = useNavigate();
   const { data: access } = useQuery({ ...accessQuery, retry: false });
   const profile = access?.level === 1 ? "Administrador" : access?.can_sell && access?.attribution === "Representante" ? "Representante" : access?.can_sell ? "Vendedor" : "Visitante";
-  const profilePath = profile === "Administrador" ? "/admin" : profile === "Representante" ? "/representantes" : profile === "Vendedor" ? "/vendas" : "/catalogo";
+  const [profileDetailsOpen, setProfileDetailsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [user, setUser] = useState<{ name: string; picture: string | null } | null>(null);
@@ -59,12 +59,18 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
             </div>
           {user && (
             <div className="relative flex shrink-0 items-center justify-end">
-              <button type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
+              <button type="button" onClick={() => { setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
                 {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[62px] w-[62px] rounded-full object-cover" /> : <span className="flex h-[62px] w-[62px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={35} /></span>}
               </button>
               {menuOpen && (
                 <div role="menu" aria-label="Opções do usuário" className="absolute right-0 top-full z-50 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-xl">
-                  <Link role="menuitem" to={profilePath} search={profilePath === "/vendas" ? { modo: "venda", q: "", promo: "" } : {}} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> {profile}</Link>
+                  <button role="menuitem" type="button" onClick={() => setProfileDetailsOpen((open) => !open)} aria-expanded={profileDetailsOpen} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> Perfil: {profile}</button>
+                  {profileDetailsOpen && <div className="mx-1 mb-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800" role="region" aria-label="Informações do seu perfil">
+                    <p className="font-bold break-words">{access?.name || user.name}</p>
+                    {access?.email && <p className="flex items-start gap-2 break-all"><Mail size={14} className="mt-0.5 shrink-0" />{access.email}</p>}
+                    <p className="flex items-start gap-2"><BriefcaseBusiness size={14} className="mt-0.5 shrink-0" /><span><strong>Atribuição:</strong> {access?.attribution || profile}</span></p>
+                    <p><strong>Permissões:</strong> {access?.level === 1 ? "Administração e gerenciamento do site" : access?.can_sell ? "Consulta ao catálogo e realização de pedidos" : "Consulta ao catálogo, sem realizar pedidos"}</p>
+                  </div>}
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
                 </div>
               )}
