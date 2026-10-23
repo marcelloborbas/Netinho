@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -15,23 +15,18 @@ const roles:Role[] = ["Visitante","Vendedor","Representante","Administrador"];
 function Pessoas() {
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const qc=useQueryClient();
- const [search,setSearch]=useState("");
  const {data:people=[],isLoading,error}=useQuery({queryKey:["admin-people"],enabled:!!me?.isAdmin,queryFn:async()=>{
   const {data,error}=await supabase.from("profiles").select("id,full_name,email,site_role,access_active,territory_uf,territory_cities,supervisor_id").order("full_name");
   if(error)throw error;return (data??[]) as Person[];
  }});
- const filtered=useMemo(()=>people.filter(p=>(p.full_name+" "+p.email).toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR"))),[people,search]);
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
   <header className="rounded-2xl bg-[#102a52] p-5 text-white"><Link to="/admin" className="text-sm text-amber-300">← Administração</Link><h1 className="mt-2 text-3xl font-black">Pessoas</h1><p className="mt-1 text-sm">Um único lugar para definir perfil, acesso e região de atuação.</p></header>
-  <section className="rounded-xl border border-slate-300 bg-white p-4">
-   <label className="block text-sm font-bold">Localizar pessoa<input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nome ou e-mail Google" className="mt-2 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900"/></label>
-   <p className="mt-2 text-xs text-slate-600">As contas aparecem aqui após o primeiro login pelo Google. Para cadastrar uma nova pessoa, peça que ela entre no site com sua conta Google; depois atribua o perfil nesta página.</p>
-  </section>
+  <p className="rounded-xl bg-white p-3 text-sm">Todas as pessoas cadastradas aparecem abaixo. Escolha a atribuição na coluna Status e salve a ficha.</p>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
-  {filtered.map(p=><PersonCard key={p.id} person={p} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["access"]});}} />)}
-  {!isLoading&&!error&&filtered.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa encontrada.</p>}
+  {people.map(p=><PersonCard key={p.id} person={p} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["access"]});}} />)}
+  {!isLoading&&!error&&people.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
 function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSaved:()=>void}) {
@@ -54,8 +49,9 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <button type="button" onClick={()=>setOpen(!open)} aria-expanded={open} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
    <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span></span>
-   <span className="shrink-0 text-right text-sm font-bold">{person.site_role}<span className="block text-xs font-normal">{person.access_active?"Ativo":"Inativo"}</span></span>
+   <span className="shrink-0 text-right text-sm font-bold">{person.access_active?"Ativo":"Inativo"}</span>
   </button>
+  <label className="mt-2 block text-sm font-bold">Status · Atribuição<select value={role} onChange={e=>{setRole(e.target.value as Role);setOpen(true);}} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(v=><option key={v}>{v}</option>)}</select></label>
   {open&&<div className="mt-4 space-y-4 border-t border-slate-200 pt-4">
    <label className="block text-sm font-bold">Tipo de acesso<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
    <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)} className="h-5 w-5"/> Acesso ativo</label>
