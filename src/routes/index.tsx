@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -32,8 +32,6 @@ function Home() {
     previousLevel.current = current;
   }, [access]);
   const userName = access?.name?.trim().split(/\s+/)[0];
-  const isAdmin = access?.level === 1;
-  const canSell = access?.can_sell === true || isAdmin;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
   return (
@@ -41,13 +39,9 @@ function Home() {
       <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-3 py-4 sm:gap-5 sm:px-6 sm:py-6">
         <PromotionBanner />
-        <section className="mx-auto w-full max-w-md rounded-2xl border border-amber-400/70 bg-[#102a52] p-5 text-center text-white shadow-lg" aria-label="Acesso ao Netinho">
-          <h2 className="mb-4 text-xl font-bold">{greeting}, {userName || "seja bem-vindo"}!</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {canSell ? <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className="rounded-xl bg-blue-600 px-3 py-4 font-extrabold text-white">Vender</Link> : <span className="rounded-xl border border-white/20 bg-white/10 px-3 py-4 font-semibold text-white/70" title="Disponível apenas para vendedores, representantes e administradores">Vender · restrito</span>}
-            <Link to="/catalogo" className="rounded-xl bg-amber-400 px-3 py-4 font-extrabold text-[#102a52]">Ver Catálogo</Link>
-          </div>
-          <p className="mt-3 text-xs text-blue-100">{canSell ? "As permissões de venda seguem seu perfil autorizado." : "A consulta ao catálogo é livre. Para vender, é necessária autorização."}</p>
+        <section className="mx-auto w-full max-w-md rounded-2xl border border-[#d5e0ee] bg-white px-5 py-7 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
+          <h2 className="text-2xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-3xl">{greeting}, Sr. {userName || "Usuário"}!</h2>
+          <p className="mt-4 text-sm font-semibold text-[#102a52]">Permissão de vender segue o perfil autorizado.</p>
         </section>
       </main>
       <PublicFooter />   </div>
