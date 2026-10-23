@@ -9,6 +9,7 @@ import {
   LogOut,
   Shield,
   Contact,
+  Settings,
 } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 
@@ -48,6 +49,7 @@ function AppShell() {
         { to: "/catalogo" as const, label: "Catálogo", icon: Search },
         { to: "/vendas" as const, label: "Vender", icon: ShoppingCart },
         { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
+        { to: "/admin" as const, label: "Adm", icon: Settings },
       ] as const)
     : ([
         { to: "/" as const, label: "Início", icon: Home },
@@ -106,7 +108,7 @@ function AppShell() {
           <b className="text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length + (canSell ? 1 : 0)}, 1fr)` }}>
+      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length}, 1fr)` }}>
         {nav.map((n) => (
           <Link
             key={n.to}
@@ -119,7 +121,6 @@ function AppShell() {
             {n.label}
           </Link>
         ))}
-        {canSell && <button type="button" onClick={() => void logout()} className="flex flex-col items-center gap-1 py-3 text-[11px] text-white"><LogOut size={21}/>Sair</button>}
       </nav>
     </div>
   );
