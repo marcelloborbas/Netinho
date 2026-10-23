@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Search, Star, Plus, Pencil, Trash2, FileSpreadsheet } from "lucide-react";
+import { useState } from "react";
+import { Star, Plus, Pencil, Trash2, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { customersQuery, type Customer } from "@/lib/queries";
@@ -9,7 +9,6 @@ import { draftActions } from "@/lib/order-store";
 import { accessQuery } from "@/lib/access";
 import { CustomerForm } from "@/components/CustomerForm";
 import { downloadCustomerXlsx } from "@/lib/customer-xlsx";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -38,14 +37,9 @@ function Customers() {
   const [deleting, setDeleting] = useState<Customer | null>(null);
   const [deletingBusy, setDeletingBusy] = useState(false);
   const { data, isLoading } = useQuery(customersQuery);
-  const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Customer | null | "new">(null);
 
-  const list = useMemo(() => {
-    const t = q.toLowerCase().trim();
-    return (data ?? []).filter((c) => !t || [c.company_name, c.trade_name, c.cnpj, c.city]
-      .some((x) => x?.toLowerCase().includes(t)));
-  }, [data, q]);
+  const list = data ?? [];
 
   async function toggleFav(c: Customer) {
     const { error } = await supabase.from("customers").update({ favorite: !c.favorite }).eq("id", c.id);
@@ -80,13 +74,9 @@ function Customers() {
         <h1 className="text-[28px] font-extrabold leading-tight sm:text-[34px]">Clientes</h1>
         <p className="mt-2 text-sm">Consulte, cadastre e organize seus clientes.</p>
       </header>
-      <section className="space-y-3 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Pesquisa e cadastro de clientes">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nome, CNPJ ou cidade" aria-label="Pesquisar clientes" className="h-12 rounded-xl border-[#a7c1e5] bg-[#f7faff] pl-10 text-[#102a52]" />
-      </div>
+      <section className="space-y-3 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Cadastro e lista de clientes">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p role="status" className="text-sm font-bold text-[#102a52]">{list.length} {list.length === 1 ? "cliente encontrado" : "clientes encontrados"}</p>
+        <p role="status" className="text-sm font-bold text-[#102a52]">{list.length} {list.length === 1 ? "cliente cadastrado" : "clientes cadastrados"}</p>
         <Button onClick={() => setEditing("new")} className="min-h-11 rounded-xl border border-[#a7c1e5] bg-[#eaf2ff] px-4 font-extrabold text-[#102a52] shadow-sm hover:bg-[#dbeafe]"><Plus className="h-4 w-4" /> Novo cliente</Button>
       </div>
       </section>
@@ -107,6 +97,7 @@ function Customers() {
               </button>
               <button type="button" onClick={() => void downloadCustomerXlsx(c).catch(() => toast.error("Não foi possível gerar a ficha Excel."))} title="Baixar ficha cadastral Excel" aria-label={`Baixar ficha cadastral de ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:border-[#174e9b] hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><FileSpreadsheet className="h-4 w-4" /></button>
               <button onClick={() => setEditing(c)} aria-label={`Editar ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:bg-[#dbeafe]"><Pencil className="h-4 w-4" /></button>
+              {isAdmin && <span className="shrink-0 rounded-lg bg-green-100 px-2 py-1 text-xs font-extrabold text-green-800" title="Cadastro disponível">Ativo</span>}
               {isAdmin && <button onClick={() => setDeleting(c)} aria-label={`Excluir ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 hover:bg-red-100"><Trash2 className="h-4 w-4" /></button>}
             </li>
           ))}
