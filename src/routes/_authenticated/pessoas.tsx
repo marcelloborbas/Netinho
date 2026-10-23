@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trash2, MapPin } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -16,6 +16,7 @@ const roles:Role[] = ["Visitante","Vendedor","Representante","Administrador"];
 function Pessoas() {
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const qc=useQueryClient();
+ const {data:representatives=[],isLoading:loadingRepresentatives,error:representativesError}=useQuery({queryKey:["admin-commercial-representatives"],enabled:!!me?.isAdmin,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representatives").select("id,full_name,email,active").order("full_name");if(error)throw error;return data??[];}});
  const {data:people=[],isLoading,error}=useQuery({queryKey:["admin-people"],enabled:!!me?.isAdmin,queryFn:async()=>{
   const {data,error}=await supabase.from("profiles").select("id,full_name,email,site_role,access_active,territory_uf,territory_cities,supervisor_id,phone").order("full_name");
   if(error)throw error;return (data??[]) as Person[];
@@ -26,7 +27,14 @@ function Pessoas() {
   <header className="rounded-2xl bg-[#102a52] p-5 text-white"><Link to="/admin" className="text-sm text-amber-300">← Administração</Link><h1 className="mt-2 text-3xl font-black">Pessoas</h1><p className="mt-1 text-sm">Um único lugar para definir perfil, acesso e região de atuação.</p></header>
   <p className="rounded-xl bg-white p-3 text-sm">Todas as pessoas cadastradas aparecem abaixo. Escolha a atribuição na coluna Status e salve a ficha.</p>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
+  <p className="rounded-xl bg-blue-50 p-3 text-sm"><strong>Cadastros:</strong> {people.length} pessoas com perfil de acesso e {representatives.length} representantes comerciais cadastrados. Nomes genéricos como "Vendedor" vêm do cadastro original; confira o e-mail antes de editar.</p>
   {people.map(p=><PersonCard key={p.id} person={p} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["access"]});}} />)}
+  <section className="space-y-2" aria-label="Representantes comerciais cadastrados">
+   <h2 className="text-lg font-extrabold">Representantes comerciais</h2>
+   {loadingRepresentatives&&<p>Carregando representantes…</p>}
+   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
+   {representatives.filter(rep=>!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=><article key={rep.id} className="rounded-xl border border-amber-200 bg-white p-4"><strong className="block">{rep.full_name}</strong><span className="block break-all text-xs">{rep.email}</span><span className="mt-2 inline-block rounded bg-amber-50 px-2 py-1 text-xs font-bold">Representante · {rep.active?"Ativo":"Inativo"} · Sem perfil vinculado</span><p className="mt-2 text-xs text-slate-600">Cadastro comercial preservado. A ficha de acesso será editável após vincular a conta Google deste representante.</p></article>)}
+  </section>
   {!isLoading&&!error&&people.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
@@ -54,6 +62,7 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
    <span className="shrink-0 text-right text-sm font-bold">{person.access_active?"Ativo":"Inativo"}</span>
   </button>
   <div className="mt-2 flex items-center justify-between gap-2">
+   <button type="button" onClick={()=>setOpen(true)} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
    <button type="button" disabled={busy || !active} onClick={async()=>{if(!window.confirm(`Desativar acesso de ${person.full_name||person.email}? A conta não será apagada e os pedidos serão preservados.`))return;setBusy(true);const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:person.site_role,p_active:false,p_uf:person.territory_uf??"",p_cities:person.territory_cities??"",p_supervisor:person.supervisor_id} as never);setBusy(false);if(error)toast.error("Não foi possível desativar: "+error.message);else{setActive(false);toast.success("Acesso desativado. Cadastro preservado.");onSaved();}}} title="Desativar acesso com segurança" aria-label={`Desativar acesso de ${person.full_name||person.email}`} className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
   </div>
