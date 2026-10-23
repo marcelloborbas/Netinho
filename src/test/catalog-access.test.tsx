@@ -53,6 +53,7 @@ vi.mock("@tanstack/react-query", () => ({
       };
     return { data: [] };
   },
+  useQueryClient: () => ({ invalidateQueries: vi.fn() }),
 }));
 import { toast } from "sonner";
 import { Route } from "@/routes/_authenticated/catalogo";
@@ -66,55 +67,51 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 describe("catalog access presentation", () => {
-  it("shows the sales actions to an authorized representative", () => {
+  it("shows the sales entry to an authorized representative", () => {
     state.seller = true;
     render(<Home />);
-    expect(screen.getByRole("heading", { name: /Marcello.*O que deseja fazer/ })).toBeVisible();
-    expect(screen.getByRole("navigation", { name: "Ações comerciais" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: /Marcello/ })).toBeVisible();
     expect(screen.getByRole("link", { name: "Vender" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Orçamento" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Clientes" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Meus Pedidos" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Ver Catálogo" })).toBeVisible();
+    expect(screen.queryByText("Vender · restrito")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Administração" })).not.toBeInTheDocument();
   });
-  it("keeps sales actions away from visitors and offers the authorization request instead", () => {
+  it("keeps selling away from visitors but keeps the catalog open", () => {
     state.seller = false;
     render(<Home />);
-    expect(screen.getByRole("heading", { name: /Veja o catálogo abaixo/ })).toBeVisible();
-    const journey = screen.getByRole("region", { name: /Veja o catálogo abaixo/ });
-    expect(within(journey).getByRole("link", { name: "Catálogo" })).toBeVisible();
-    expect(
-      screen.getByRole("link", { name: /Solicitar acesso para vendas pelo WhatsApp/ }),
-    ).toBeVisible();
-    expect(screen.queryByRole("navigation", { name: "Ações comerciais" })).not.toBeInTheDocument();
+    expect(screen.getByText("Vender · restrito")).toBeVisible();
+    expect(screen.getByText(/A consulta ao catálogo é livre/)).toBeVisible();
+    expect(screen.getByRole("link", { name: "Ver Catálogo" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Vender" })).not.toBeInTheDocument();
   });
-  it("keeps commercial values away from visitors and offers a representative instead of an order", async () => {
+  it("shows only the cash price to visitors and offers a representative instead of an order", () => {
     state.seller = false;
     render(<Catalog />);
-    expect(screen.queryByText(/1\.234,56/)).not.toBeInTheDocument();
-    expect(screen.getByText(/Valores disponíveis somente para representantes/)).toBeVisible();
+    expect(screen.getByText("Preço à vista")).toBeVisible();
+    expect(screen.getByText(/1\.234,56/)).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Comprar peça FCO-TESTE" })).not.toBeInTheDocument();
     expect(state.customerEnabled).toBe(false);
     expect(
       screen.queryByRole("complementary", { name: "Resumo do pedido" }),
     ).not.toBeInTheDocument();
-    fireEvent.click(screen.getAllByRole("button", { name: "Comprar peça FCO-TESTE" })[0]!);
-    expect(await screen.findByRole("group", { name: "Contato para comprar FCO-TESTE" })).toBeVisible();
     expect(toast.success).not.toHaveBeenCalled();
   });
   it("shows commercial prices and adds the part to the sale for an authorized seller", async () => {
     state.seller = true;
     render(<Catalog />);
+    expect(screen.getByText("Valores")).toBeVisible();
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
     fireEvent.click(screen.getAllByRole("button", { name: "Comprar peça FCO-TESTE" })[0]!);
     await waitFor(() =>
       expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada à venda."),
     );
   });
-  it("does not list HD parts while the brand is still marked as coming soon", () => {
+  it("does not sell HD parts while the brand is still marked as coming soon", () => {
     state.seller = true;
     render(<Catalog />);
-    expect(screen.getByRole("button", { name: "HD Embreagens — em breve" })).toBeDisabled();
-    expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Injeção eletrônica" })).toBeVisible();
+    const hdButton = screen.getByRole("button", { name: "Comprar peça K6246.HD" });
+    fireEvent.click(hdButton);
+    expect(toast.info).toHaveBeenCalledWith("HD Embreagens: em breve.");
+    expect(toast.success).not.toHaveBeenCalled();
   });
 });
