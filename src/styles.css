@@ -3195,3 +3195,14 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 
 .home-page .brand-header .brand-header-representations { position: relative; z-index: 120; }
 .home-page .brand-header [role="menu"] { z-index: 150 !important; }
+
+/* Campo de busca e botão de filtros em branco, com contraste legível. */
+.catalog-showcase #catalog-search { background: #fff !important; color: #102a52 !important; -webkit-text-fill-color: #102a52 !important; border-color: #8bc8ff !important; }
+.catalog-showcase #catalog-search::placeholder { color: #50657d !important; -webkit-text-fill-color: #50657d !important; opacity: 1 !important; }
+.catalog-showcase button[aria-label="Filtros do catálogo"] { background: #fff !important; color: #102a52 !important; border-color: #8bc8ff !important; }
+/* Sobreposição: mãozinha à frente do cabeçalho, menu de perfil acima de ambos. */
+.home-page .brand-header.app-header { z-index: auto !important; }
+.home-page .brand-header [aria-haspopup="menu"] { position: relative; z-index: 101 !important; }
+.home-page .brand-header [role="menu"] { z-index: 102 !important; }
+.home-page .promotion-banner { z-index: 80 !important; }
+.home-page .promotion-banner .campaign-pointing-hand { z-index: 90 !important; }
