@@ -3546,3 +3546,20 @@ main:has(> .catalog-showcase) { background: #06172b !important; color: #f5f8ff !
   text-shadow: 0 0 6px rgba(57,255,121,.35) !important;
   white-space: nowrap !important;
 }
+
+/* Fundo institucional unificado com a pagina inicial. Preserva cards escuros e o cabecalho. */
+:root { --netinho-page-bg: #f1f1f1; }
+html, body, #root { background-color: var(--netinho-page-bg) !important; }
+.home-page, .home-page > main,
+body:has(.catalog-showcase) main,
+body:has(.catalog-showcase) .catalog-showcase,
+body:has(.app-navigation-bar) main,
+body:has(.app-navigation-bar) main > div:not(.catalog-product-card) {
+  background-color: var(--netinho-page-bg);
+}
+.catalog-showcase { background: var(--netinho-page-bg) !important; }
+.catalog-showcase > p, .catalog-showcase > nav, .catalog-showcase > div:not(.catalog-product-grid) { color: #102a52; }
+.catalog-showcase > p:not([role="status"]) { color: #102a52 !important; }
+.catalog-showcase .catalog-showcase-heading { background: #071a30 !important; }
+.catalog-showcase .catalog-showcase-heading h1 { color: #fff !important; }
+.catalog-showcase .catalog-category-filters .catalog-category-item > .catalog-category-count { color: #16783d !important; text-shadow: none !important; }
