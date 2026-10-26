@@ -352,8 +352,8 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       {canSell && <div className="mt-2 space-y-2">
         <div className="catalog-card-stock">{p.stock > 0 ? `● Estoque = ${p.stock} un.` : "Estoque não informado"}</div>
       </div>}
-      <div className="mt-auto border-t border-[#35536e] pt-3">
-        <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-base font-extrabold text-[#102a52]">Preço à vista:</span>{p.price_cash != null && <strong className="text-xl font-black text-[#102a52]">{brl(p.price_cash)}</strong>}</div>
+      <div className="mt-auto pt-3">
+        <div className="catalog-price-highlight flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 shadow-md"><span className="text-base font-extrabold text-[#f4cf60]">Preço à vista:</span>{p.price_cash != null ? <strong className="text-2xl font-black text-[#f4cf60]">{brl(p.price_cash)}</strong> : <span className="text-sm font-semibold text-[#f4cf60]">Sob consulta</span>}</div>
       </div>
     </div>
   </li>;
