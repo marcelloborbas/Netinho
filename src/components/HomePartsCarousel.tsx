@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
 
 const parts = [
   { title: "Bomba de direção hidráulica", image: "/images/carrossel/carrossel-1.webp", search: "bomba direção hidráulica" },
@@ -21,13 +20,13 @@ export function HomePartsCarousel() {
   }, [paused]);
   const part = parts[index];
   return (
-    <section className="mx-auto w-full max-w-3xl overflow-hidden rounded-2xl border border-[#d5e0ee] bg-white shadow-md" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+    <section className="mx-auto w-full max-w-3xl" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
-      <div className="flex items-center">
-        <Link to="/catalogo" search={{ q: part.search }} className="flex min-w-0 flex-1 items-center justify-center">
-          <img key={part.image} src={part.image} alt={part.title} className="aspect-square h-auto w-full object-contain" loading="lazy"/>
+      <div className="w-full">
+        <div className="w-full">
+          <img key={part.image} src={part.image} alt={part.title} className="block aspect-square h-auto w-full object-contain" loading="eager"/>
 
-        </Link>
+        </div>
       </div>
     </section>
   );
