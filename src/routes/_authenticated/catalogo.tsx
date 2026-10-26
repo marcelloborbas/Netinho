@@ -299,7 +299,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     void navigate({ to: "/vendas", search: { modo: "venda", q: "", promo: "" } });
   }
   const brand = p.manufacturer ?? "FCO";
-  const img = p.image_url || (/caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(p.categories?.name ?? "") ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(p.categories?.name));
+  const img = p.image_url || categoryPhoto(p.categories?.name ?? "") || partImage(p.categories?.name);
   const prices = [
     ["À vista", p.price_cash],
   ] as const;
