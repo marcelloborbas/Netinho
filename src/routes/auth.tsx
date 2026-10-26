@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, LogOut, Monitor, Smartphone, Tablet, Volume2, VolumeX, X } from "lucide-react";
@@ -319,6 +319,11 @@ function AuthPage() {
 
           </div>
         </>
+      )}
+      {showWelcome && !previewMode && (
+        <Link to="/" className="fixed left-3 top-[max(12px,env(safe-area-inset-top))] z-[110] rounded-full border border-white/40 bg-[#071c3d]/85 px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur-sm sm:text-sm" aria-label="Ir para a página inicial">
+          Ir para Início
+        </Link>
       )}
       {recovery && (
         <form onSubmit={adminLogin} className="surface-card mx-auto mt-10 w-full max-w-md space-y-4 p-5">
