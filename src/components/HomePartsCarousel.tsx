@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const parts = [
   { title: "Bomba de direção hidráulica", image: "/images/carrossel/carrossel-1.webp", search: "bomba direção hidráulica" },
@@ -21,20 +20,14 @@ export function HomePartsCarousel() {
     return () => window.clearInterval(id);
   }, [paused]);
   const part = parts[index];
-  const move = (direction: number) => setIndex(i => (i + direction + parts.length) % parts.length);
   return (
     <section className="mx-auto w-full max-w-3xl overflow-hidden rounded-2xl border border-[#d5e0ee] bg-white shadow-md" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
-      <div className="flex items-center gap-2">
-        <button type="button" onClick={() => move(-1)} aria-label="Peça anterior" className="shrink-0 rounded-full bg-[#102a52] p-2 text-white"><ChevronLeft size={20}/></button>
+      <div className="flex items-center">
         <Link to="/catalogo" search={{ q: part.search }} className="flex min-w-0 flex-1 items-center justify-center">
           <img key={part.image} src={part.image} alt={part.title} className="aspect-square h-auto w-full object-contain" loading="lazy"/>
 
         </Link>
-        <button type="button" onClick={() => move(1)} aria-label="Próxima peça" className="shrink-0 rounded-full bg-[#102a52] p-2 text-white"><ChevronRight size={20}/></button>
-      </div>
-      <div className="mt-3 flex justify-center gap-2" aria-label="Escolher peça">
-        {parts.map((p,i) => <button key={p.image} type="button" onClick={() => setIndex(i)} aria-label={`Mostrar peça ${i+1}`} aria-current={i===index ? "true" : undefined} className={`h-2.5 rounded-full transition-all ${i===index ? "w-7 bg-[#1262e8]" : "w-2.5 bg-slate-300"}`}/>)}
       </div>
     </section>
   );
