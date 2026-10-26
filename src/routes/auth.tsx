@@ -63,7 +63,7 @@ function AuthPage() {
   useEffect(() => {
     if (signedIn && access && !recovery && !previewMode) {
       saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
-      void navigate({ to: "/" });
+      // A entrada é confirmada pelo botão Continuar para minha área.
     }
   }, [signedIn, access, recovery, navigate, previewMode]);
   useEffect(() => {
@@ -206,6 +206,7 @@ function AuthPage() {
       return;
     }
     localStorage.removeItem("netinho-vendedor");
+    window.sessionStorage.removeItem("netinho-entry-approved");
     qc.clear();
   }
   if (previewMode) {
@@ -357,7 +358,7 @@ function AuthPage() {
                 </button>
               </div>
               <Button
-                onClick={() => navigate({ to: "/" })}
+                onClick={() => { window.sessionStorage.setItem("netinho-entry-approved", "1"); void navigate({ to: "/" }); }}
                 className="mt-6 h-14 w-full bg-gradient-red"
               >
                 Continuar para minha área <ArrowRight size={18} />
