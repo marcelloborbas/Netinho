@@ -13,12 +13,12 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Bem-vindo | Netinho Auto Parts" },
+      { title: "Login | Netinho Auto Parts" },
       {
         name: "description",
         content: "Conheça FCO Automotive e HD Embreagens na Netinho Auto Parts.",
       },
-      { property: "og:title", content: "Bem-vindo | Netinho Auto Parts" },
+      { property: "og:title", content: "Login | Netinho Auto Parts" },
       { property: "og:description", content: "Conheça FCO Automotive e HD Embreagens na Netinho Auto Parts." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -308,17 +308,6 @@ function AuthPage() {
                   <img src="/images/email-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
                 </button>
               </div>
-              <style>{`
-                @keyframes liaNetinhoGlow { 0%,100% { filter:drop-shadow(0 0 6px rgba(255,215,50,.6)); } 50% { filter:drop-shadow(0 0 22px rgba(255,220,60,1)); } }
-                .lia-netinho-icon { animation:liaNetinhoGlow 2.4s ease-in-out infinite; transition:transform .2s ease; }
-                .lia-netinho-icon:hover,.lia-netinho-icon:focus-visible { transform:scale(1.08); filter:drop-shadow(0 0 25px #ffd700); outline:2px solid #ffd700; outline-offset:4px; border-radius:999px; }
-                @media(prefers-reduced-motion:reduce) { .lia-netinho-icon { animation:none; } }
-              `}</style>
-              <button type="button" onClick={() => { playLoginTap(); setLiaOpen(value => !value); }} aria-label="LIA — Posso ajudar?" title="Ajuda da LIA" className="absolute bottom-[4%] left-[25%] z-20 h-[23%] w-[55%] border-0 bg-transparent p-0 lia-netinho-icon"><span className="sr-only">Abrir ajuda da LIA</span></button>
-              {liaOpen && <div role="dialog" aria-label="Ajuda da LIA" className="fixed bottom-5 left-1/2 z-50 w-[min(360px,92vw)] -translate-x-1/2 rounded-2xl border-[3px] border-amber-400 bg-white p-4 text-slate-900 shadow-[0_0_20px_rgba(255,215,0,.8)]">
-                <div className="flex items-start justify-between gap-2"><div><strong>LIA — Posso ajudar?</strong><p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{liaText}</p></div><button type="button" aria-label="Fechar LIA" onClick={() => { liaAudioRef.current?.pause(); setLiaSpeaking(false); setLiaOpen(false); }}><X size={20} /></button></div>
-                <button type="button" onClick={toggleLiaSpeech} aria-label={liaSpeaking ? "Parar fala da LIA" : "Ouvir fala da LIA"} className="mt-3 rounded-full bg-green-700 p-2 text-white">{liaSpeaking ? <VolumeX size={20} /> : <Volume2 size={20} />}</button>
-              </div>}
               {emailLoginOpen && (
                 <form onSubmit={(event) => void emailLogin(event)} className="mx-auto mt-3 flex w-full max-w-xs flex-col gap-2 rounded-xl bg-slate-950/85 p-3">
                   <label htmlFor="netinho-email-login" className="text-center text-xs font-semibold text-white">Receber link de acesso no e-mail</label>
