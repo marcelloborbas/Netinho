@@ -3258,49 +3258,18 @@ main, section, article { min-width: 0; }
 .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large { width: 220px !important; height: 220px !important; }
 @media(max-width:639px){.netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {width:clamp(180px,52vw,215px) !important;height:clamp(180px,52vw,215px) !important;}}
 
-/* Login mobile: Google e e-mail nas laterais, LIA central sem sobreposicao. */
+/* Login: restaura a disposição anterior e mantém LIA discretamente menor. */
 @media (max-width: 639px) {
+  .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: clamp(136px, 39vw, 154px) !important;
+    height: clamp(136px, 39vw, 154px) !important;
+  }
   .welcome-auth-stage .welcome-auth-actions {
-    position: absolute !important;
-    bottom: max(45px, env(safe-area-inset-bottom)) !important;
-    left: 0 !important;
-    right: 0 !important;
-    transform: none !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    padding-inline: 8px !important;
-    z-index: 85 !important;
-    pointer-events: none;
+    bottom: max(108px, calc(env(safe-area-inset-bottom) + 102px)) !important;
   }
   .welcome-auth-stage .welcome-auth-actions > div:first-of-type {
-    width: 100% !important;
-    max-width: 100% !important;
-    justify-content: space-between !important;
-    padding-inline: 0 !important;
-  }
-  .welcome-auth-stage .welcome-auth-actions button {
-    pointer-events: auto;
-  }
-  .welcome-auth-stage .welcome-auth-actions > div:first-of-type > button {
-    width: clamp(50px, 17vw, 64px) !important;
-    height: clamp(50px, 17vw, 64px) !important;
-    flex-shrink: 0;
-  }
-  .netinho-assistant.netinho-assistant-auth {
-    bottom: max(5px, env(safe-area-inset-bottom)) !important;
-    z-index: 80 !important;
-  }
-  .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {
-    width: clamp(148px, 51vw, 174px) !important;
-    height: clamp(148px, 51vw, 174px) !important;
-  }
-  .welcome-auth-stage .welcome-auth-actions form {
-    pointer-events: auto;
-    position: fixed;
-    left: 50%;
-    bottom: 130px;
-    transform: translateX(-50%);
-    width: min(320px, calc(100vw - 24px));
-    z-index: 100;
+    max-width: 320px;
+    margin-inline: auto;
+    justify-content: space-between;
   }
 }
