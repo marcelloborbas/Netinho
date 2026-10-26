@@ -306,7 +306,7 @@ function AuthPage() {
                 @media(prefers-reduced-motion:reduce) { .lia-netinho-icon { animation:none; } }
               `}</style>
               <button type="button" onClick={() => { playLoginTap(); setLiaOpen(value => !value); }} aria-label="LIA — Posso ajudar?" className="lia-netinho-icon mx-auto mt-4 block w-[min(48vw,185px)] border-0 bg-transparent p-0">
-                <img src="https://raw.githubusercontent.com/lemosapalavra/lemosapalavra/main/src/assets/login-lia-icon.webp" alt="LIA — Posso ajudar?" className="h-auto w-full object-contain" />
+                <img src="/images/Mascote%20LIA%20ajuda.webp" alt="LIA — Posso ajudar?" className="h-auto w-full object-contain" />
               </button>
               {liaOpen && <div role="dialog" aria-label="Ajuda da LIA" className="fixed bottom-5 left-1/2 z-50 w-[min(360px,92vw)] -translate-x-1/2 rounded-2xl border-[3px] border-amber-400 bg-white p-4 text-slate-900 shadow-[0_0_20px_rgba(255,215,0,.8)]">
                 <div className="flex items-start justify-between gap-2"><div><strong>LIA — Posso ajudar?</strong><p className="mt-2 text-sm leading-relaxed">{liaText}</p></div><button type="button" aria-label="Fechar LIA" onClick={() => { window.speechSynthesis?.cancel(); setLiaSpeaking(false); setLiaOpen(false); }}><X size={20} /></button></div>
