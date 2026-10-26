@@ -28,9 +28,8 @@ export function HomePartsCarousel() {
             {parts.map((part, i) => (
               <img key={part.image} src={part.image} alt={part.title}
                 aria-hidden={i !== index}
-                className={`absolute inset-0 block h-full w-full object-contain [backface-visibility:hidden] transition-[transform,opacity] duration-700 ease-in-out ${i === index ? "z-10 rotate-y-0 opacity-100" : "z-0 opacity-0"}`}
-                style={{ transformOrigin: "left center", transform: i === index ? "perspective(1100px) rotateY(0deg)" : "perspective(1100px) rotateY(-88deg)", transition: "transform 700ms ease-in-out, opacity 700ms ease-in-out" }}
-                loading="eager" decoding="async" />
+                className={`absolute inset-0 block h-full w-full object-contain transition-opacity duration-300 ease-linear ${i === index ? "opacity-100" : "opacity-0"}`}
+                loading={i < 2 ? "eager" : "lazy"} decoding="async" />
             ))}
           </div>
 
