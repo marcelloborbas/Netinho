@@ -3507,3 +3507,9 @@ main:has(> .catalog-showcase) { background: #06172b !important; color: #f5f8ff !
     height: 149.5px !important;
   }
 }
+
+/* Catalogo: titulo centralizado e contagem legivel sobre cada imagem. */
+.catalog-showcase .catalog-showcase-heading { display: flex !important; justify-content: center !important; align-items: center !important; text-align: center !important; border: 2px solid #d4af37 !important; }
+.catalog-showcase .catalog-showcase-heading h1 { width: 100% !important; text-align: center !important; }
+.catalog-showcase .catalog-category-filters button { position: relative; }
+.catalog-showcase .catalog-category-filters button > span.absolute { position: absolute !important; min-height: 0 !important; max-width: none !important; width: 100% !important; color: #fff !important; font-size: 11px !important; line-height: 1.2 !important; white-space: nowrap !important; }
