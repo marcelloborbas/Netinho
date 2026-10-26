@@ -3566,3 +3566,6 @@ body:has(.app-navigation-bar) main > div:not(.catalog-product-card) {
 
 .netinho-assistant .netinho-assistant-avatar { touch-action: none; cursor: grab; user-select: none; }
 .netinho-assistant.netinho-assistant-moved { left: var(--lia-x) !important; top: var(--lia-y) !important; bottom: auto !important; transform: translate(-50%, -50%) !important; z-index: 1200 !important; }
+
+/* Contagem de itens abaixo de cada categoria: azul escuro e alto contraste. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > .catalog-category-count { color: #102a52 !important; text-shadow: none !important; }
