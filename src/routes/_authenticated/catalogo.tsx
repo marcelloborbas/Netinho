@@ -124,7 +124,7 @@ function Catalog() {
     ...localFco,
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
-  const categories = useMemo(() => Array.from(new Set([...registeredCategories.map((item) => item.name), ...combined.filter((p) => p.manufacturer !== "HD").map((p) => p.categories?.name)].filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [registeredCategories, combined]);
+  const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD" && p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
   const list = useMemo(() => {
     const matching = combined.filter((p) =>
       p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
