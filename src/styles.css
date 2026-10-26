@@ -3569,3 +3569,19 @@ body:has(.app-navigation-bar) main > div:not(.catalog-product-card) {
 
 /* Contagem de itens abaixo de cada categoria: azul escuro e alto contraste. */
 .catalog-showcase .catalog-category-filters .catalog-category-item > .catalog-category-count { color: #102a52 !important; text-shadow: none !important; }
+
+/* Mascote LIA: dimensoes uniformes em todas as rotas, iguais a pagina inicial. */
+.netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-large,
+.netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large,
+.netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  width: 150.8px !important;
+  height: 150.8px !important;
+}
+@media (min-width: 640px) {
+  .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-large,
+  .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large,
+  .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: 149.5px !important;
+    height: 149.5px !important;
+  }
+}
