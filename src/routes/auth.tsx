@@ -281,7 +281,7 @@ function AuthPage() {
     );
   }
   return (
-    <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen px-4 py-6 sm:py-10"}>
+    <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen bg-[#0b1f3f] px-4 py-6 text-white sm:py-10"}>
       {showWelcome && (
         <>
           <div className="welcome-art-frame">
@@ -357,7 +357,7 @@ function AuthPage() {
           <LoaderCircle className="animate-spin" aria-label="Verificando sessão" />
         </div>
       ) : !showWelcome && signedIn && !recovery ? (
-        <div className="mx-auto mt-10 max-w-2xl">
+        <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-white/20 bg-[#102a52] p-5 shadow-2xl sm:p-8">
           {error ? (
             <div className="surface-card space-y-4 p-6">
               <h1 className="text-2xl font-bold">Não foi possível verificar seu acesso</h1>
@@ -370,9 +370,12 @@ function AuthPage() {
               </button>
             </div>
           ) : !access ? (
-            <div className="flex flex-col items-center gap-3 p-10 text-center" role="status">
+            <div className="flex flex-col items-center gap-4 p-6 text-center" role="status">
               {isPending && <LoaderCircle className="animate-spin" aria-hidden="true" />}
-              <p>{isPending ? "Verificando seu acesso…" : "Não foi possível carregar sua área."}</p>
+              <h1 className="text-xl font-bold">Login do Google recebido</h1>
+              <p>{isPending ? "Estamos verificando seu perfil. Aguarde um instante…" : "Não foi possível carregar seu perfil agora."}</p>
+              <Button type="button" onClick={() => void refetch()}>Tentar novamente</Button>
+              <button type="button" className="text-sm underline" onClick={logout}>Trocar conta</button>
             </div>
           ) : (
             <>
