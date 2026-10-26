@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, LoaderCircle, LogOut, Monitor, Smartphone, Tablet } from "lucide-react";
+import { ArrowRight, LoaderCircle, LogOut, Monitor, Smartphone, Tablet, Volume2, VolumeX, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery, saveProfile } from "@/lib/access";
@@ -53,6 +53,19 @@ function AuthPage() {
 
   const [password, setPassword] = useState("");
   const [emailLoginOpen, setEmailLoginOpen] = useState(false);
+  const [liaOpen, setLiaOpen] = useState(false);
+  const [liaSpeaking, setLiaSpeaking] = useState(false);
+  const liaText = "Olá! Seja muito bem-vindo à Netinho Auto Parts! Entre com sua conta Google ou clique no envelope para receber um link de acesso por e-mail. Para acessar mais rápido no celular, adicione nosso atalho à tela inicial. Estou aqui para ajudar você!";
+  function toggleLiaSpeech() {
+    if (!("speechSynthesis" in window)) return;
+    if (liaSpeaking) { window.speechSynthesis.cancel(); setLiaSpeaking(false); return; }
+    const utterance = new SpeechSynthesisUtterance(liaText);
+    utterance.lang = "pt-BR";
+    utterance.onend = () => setLiaSpeaking(false);
+    utterance.onerror = () => setLiaSpeaking(false);
+    setLiaSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  }
   const [emailAddress, setEmailAddress] = useState("");
   const [recovery, setRecovery] = useState(false);
   const showWelcome = !signedIn && !recovery;
@@ -286,6 +299,19 @@ function AuthPage() {
                   <img src="/images/email-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
                 </button>
               </div>
+              <style>{`
+                @keyframes liaNetinhoGlow { 0%,100% { filter:drop-shadow(0 0 6px rgba(255,215,50,.6)); } 50% { filter:drop-shadow(0 0 22px rgba(255,220,60,1)); } }
+                .lia-netinho-icon { animation:liaNetinhoGlow 2.4s ease-in-out infinite; transition:transform .2s ease; }
+                .lia-netinho-icon:hover,.lia-netinho-icon:focus-visible { transform:scale(1.08); filter:drop-shadow(0 0 25px #ffd700); outline:2px solid #ffd700; outline-offset:4px; border-radius:999px; }
+                @media(prefers-reduced-motion:reduce) { .lia-netinho-icon { animation:none; } }
+              `}</style>
+              <button type="button" onClick={() => { playLoginTap(); setLiaOpen(value => !value); }} aria-label="LIA — Posso ajudar?" className="lia-netinho-icon mx-auto mt-4 block w-[min(48vw,185px)] border-0 bg-transparent p-0">
+                <img src="https://raw.githubusercontent.com/lemosapalavra/lemosapalavra/main/src/assets/login-lia-icon.webp" alt="LIA — Posso ajudar?" className="h-auto w-full object-contain" />
+              </button>
+              {liaOpen && <div role="dialog" aria-label="Ajuda da LIA" className="fixed bottom-5 left-1/2 z-50 w-[min(360px,92vw)] -translate-x-1/2 rounded-2xl border-[3px] border-amber-400 bg-white p-4 text-slate-900 shadow-[0_0_20px_rgba(255,215,0,.8)]">
+                <div className="flex items-start justify-between gap-2"><div><strong>LIA — Posso ajudar?</strong><p className="mt-2 text-sm leading-relaxed">{liaText}</p></div><button type="button" aria-label="Fechar LIA" onClick={() => { window.speechSynthesis?.cancel(); setLiaSpeaking(false); setLiaOpen(false); }}><X size={20} /></button></div>
+                <button type="button" onClick={toggleLiaSpeech} aria-label={liaSpeaking ? "Parar fala da LIA" : "Ouvir fala da LIA"} className="mt-3 rounded-full bg-green-700 p-2 text-white">{liaSpeaking ? <VolumeX size={20} /> : <Volume2 size={20} />}</button>
+              </div>}
               {emailLoginOpen && (
                 <form onSubmit={(event) => void emailLogin(event)} className="mx-auto mt-3 flex w-full max-w-xs flex-col gap-2 rounded-xl bg-slate-950/85 p-3">
                   <label htmlFor="netinho-email-login" className="text-center text-xs font-semibold text-white">Receber link de acesso no e-mail</label>
