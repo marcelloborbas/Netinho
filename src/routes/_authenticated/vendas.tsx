@@ -95,7 +95,7 @@ function SalesPage() {
       <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>{search.modo === "consulta" ? "ORÇAMENTOS" : "FAZER PEDIDO"}</h1>
     </header>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
-      <h2 className="font-extrabold text-[#102a52]">1. Primeiro selecione seu Cliente:</h2>
+      <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">1. Primeiro selecione seu Cliente:</h2>
       {search.promo && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peça escolhida: {search.promo}. Selecione o cliente para incluí-la automaticamente no pedido.</p>}
       {customersError && (
         <div role="alert" className="space-y-2 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-semibold text-red-900">
@@ -119,7 +119,7 @@ function SalesPage() {
         <p className="min-w-0 truncate text-sm font-semibold text-[#174e9b]">{selected ? `Cliente: ${selected.trade_name || selected.company_name}` : "Nenhum cliente selecionado"}</p>
         <Link to="/clientes" className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] px-3 py-2 text-sm font-bold text-[#102a52]">+ Novo cliente</Link>
       </div>
-      <h2 className="font-extrabold text-[#102a52]">2. Qual é a Forma de atendimento:</h2>
+      <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">2. Qual é a Forma de atendimento:</h2>
       <div className="grid grid-cols-2 gap-3">
         {([{ value: "pedido", label: "Venda", icon: ShoppingCart }, { value: "orcamento", label: "Orçamento", icon: FilePenLine }] as const).map(({value,label,icon:Icon}) =>
           <button type="button" key={value} aria-pressed={kind === value} onClick={() => setKind(value)}
@@ -129,7 +129,7 @@ function SalesPage() {
       </div>
     </section>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
-      <h2 className="font-extrabold text-[#102a52]">3. Adicionar outras peças</h2>
+      <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">3. Adicione suas Peças</h2>
       {draft.items.length > 0 && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peças já selecionadas: {draft.items.map((item) => `${item.code} (qtd. ${item.quantity})`).join(", ")}. Você pode acrescentar outras peças abaixo.</p>}
       <div className="grid grid-cols-3 gap-2">
         {(["all", "FCO", "HD"] as const).map((value) => <button key={value} type="button" disabled={value === "HD"} aria-label={value === "HD" ? "HD Embreagens — em breve" : value} aria-pressed={brand === value}
