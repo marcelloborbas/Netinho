@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, LogOut, Monitor, Smartphone, Tablet, Volume2, VolumeX, X } from "lucide-react";
 import { toast } from "sonner";
@@ -56,15 +56,24 @@ function AuthPage() {
   const [liaOpen, setLiaOpen] = useState(false);
   const [liaSpeaking, setLiaSpeaking] = useState(false);
   const liaText = "Olá! Seja muito bem-vindo!\n\nÉ uma imensa alegria em ter você conosco!\n\nEntre com sua conta do Google ou clique no envelope para receber seu link por e-mail.\n\nQuer praticidade? Baixe o atalho, aguarde a instalação e acesse pelo ícone na tela do seu celular.\n\nConte comigo para ajudar você em cada etapa!\n\nE não se esqueça:\n\nJesus te ama! Que Deus o abençoe em sua caminhada!";
+  const liaAudioRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    const audio = new Audio("/audio/lia/lia-login.mp3");
+    audio.preload = "none";
+    audio.onended = () => setLiaSpeaking(false);
+    audio.onerror = () => { setLiaSpeaking(false); toast.error("Não foi possível reproduzir a fala da LIA."); };
+    liaAudioRef.current = audio;
+    return () => { audio.pause(); audio.onended = null; audio.onerror = null; liaAudioRef.current = null; };
+  }, []);
   function toggleLiaSpeech() {
-    if (!("speechSynthesis" in window)) return;
-    if (liaSpeaking) { window.speechSynthesis.cancel(); setLiaSpeaking(false); return; }
-    const utterance = new SpeechSynthesisUtterance(liaText);
-    utterance.lang = "pt-BR";
-    utterance.onend = () => setLiaSpeaking(false);
-    utterance.onerror = () => setLiaSpeaking(false);
-    setLiaSpeaking(true);
-    window.speechSynthesis.speak(utterance);
+    const audio = liaAudioRef.current;
+    if (!audio) return;
+    if (liaSpeaking) { audio.pause(); audio.currentTime = 0; setLiaSpeaking(false); return; }
+    audio.currentTime = 0;
+    void audio.play().then(() => setLiaSpeaking(true)).catch(() => {
+      setLiaSpeaking(false);
+      toast.error("Toque novamente para ouvir a LIA.");
+    });
   }
   const [emailAddress, setEmailAddress] = useState("");
   const [recovery, setRecovery] = useState(false);
@@ -307,7 +316,7 @@ function AuthPage() {
               `}</style>
               <button type="button" onClick={() => { playLoginTap(); setLiaOpen(value => !value); }} aria-label="LIA — Posso ajudar?" title="Ajuda da LIA" className="absolute bottom-[4%] left-[25%] z-20 h-[23%] w-[55%] border-0 bg-transparent p-0 lia-netinho-icon"><span className="sr-only">Abrir ajuda da LIA</span></button>
               {liaOpen && <div role="dialog" aria-label="Ajuda da LIA" className="fixed bottom-5 left-1/2 z-50 w-[min(360px,92vw)] -translate-x-1/2 rounded-2xl border-[3px] border-amber-400 bg-white p-4 text-slate-900 shadow-[0_0_20px_rgba(255,215,0,.8)]">
-                <div className="flex items-start justify-between gap-2"><div><strong>LIA — Posso ajudar?</strong><p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{liaText}</p></div><button type="button" aria-label="Fechar LIA" onClick={() => { window.speechSynthesis?.cancel(); setLiaSpeaking(false); setLiaOpen(false); }}><X size={20} /></button></div>
+                <div className="flex items-start justify-between gap-2"><div><strong>LIA — Posso ajudar?</strong><p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{liaText}</p></div><button type="button" aria-label="Fechar LIA" onClick={() => { liaAudioRef.current?.pause(); setLiaSpeaking(false); setLiaOpen(false); }}><X size={20} /></button></div>
                 <button type="button" onClick={toggleLiaSpeech} aria-label={liaSpeaking ? "Parar fala da LIA" : "Ouvir fala da LIA"} className="mt-3 rounded-full bg-green-700 p-2 text-white">{liaSpeaking ? <VolumeX size={20} /> : <Volume2 size={20} />}</button>
               </div>}
               {emailLoginOpen && (
