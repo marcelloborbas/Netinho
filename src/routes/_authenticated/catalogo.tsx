@@ -299,8 +299,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
   const brand = p.manufacturer ?? "FCO";
   const img = p.image_url || (/caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(p.categories?.name ?? "") ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(p.categories?.name));
   const prices = [
-    ["À vista", p.price_cash], ["30 dias", p.price_30],
-    ["30/45/60 dias", p.price_30_45_60], ["30/45/60/75 dias", p.price_30_45_60_75],
+    ["À vista", p.price_cash],
   ] as const;
   return <li className="catalog-product-card surface-card grid min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden rounded-2xl p-3 sm:grid-cols-[minmax(150px,28%)_minmax(0,1fr)]">
     <div className="relative catalog-card-image-col"><button type="button" onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} className="absolute right-2 top-2 z-10 rounded-full bg-[#09213c] p-2 text-[#39ff79] shadow-lg"><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
@@ -341,8 +340,8 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         <button type="button" onClick={buy} className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0677ef] px-4 py-2 font-bold text-white"><ShoppingCart size={19}/> Fazer pedido</button>
       </div>}
       <div className="mt-auto border-t border-[#35536e] pt-3">
-        <p className="mb-2 text-sm font-extrabold text-white">{canSell ? "Valores" : "Preço à vista"}</p>
-        {(canSell ? prices : prices.filter(([label]) => label === "À vista")).some(([, price]) => price != null) ? <dl className="space-y-1">{(canSell ? prices : prices.filter(([label]) => label === "À vista")).filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{brl(price!)}</dd></div>)}</dl> : null}
+        <p className="mb-2 text-sm font-extrabold text-white">Preço à vista</p>
+        {prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{brl(price!)}</dd></div>)}</dl> : null}
       </div>
     </div>
   </li>;
