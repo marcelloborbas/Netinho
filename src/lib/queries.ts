@@ -31,8 +31,22 @@ export const productsQuery = queryOptions({
   staleTime: 5 * 60_000,
   queryFn: async () => {
     const { data, error } = await supabase.rpc("catalog_products");
-    if (error) throw error;
-    return (data ?? []) as unknown as Product[];
+    if (!error) return (data ?? []) as unknown as Product[];
+
+    // Recuperação segura caso a função RPC falhe: consultar somente peças
+    // ativas já permitidas pelas políticas de leitura do Supabase.
+    console.warn("catalog_products indisponível; tentando leitura alternativa", error.message);
+    const { data: fallback, error: fallbackError } = await supabase
+      .from("products")
+      .select("*, categories(name)")
+      .eq("active", true)
+      .order("code")
+      .limit(1000);
+    if (fallbackError) {
+      console.error("Falha também na leitura alternativa do catálogo", fallbackError);
+      throw error;
+    }
+    return (fallback ?? []) as unknown as Product[];
   },
 });
 
