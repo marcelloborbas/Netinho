@@ -3513,3 +3513,36 @@ main:has(> .catalog-showcase) { background: #06172b !important; color: #f5f8ff !
 .catalog-showcase .catalog-showcase-heading h1 { width: 100% !important; text-align: center !important; }
 .catalog-showcase .catalog-category-filters button { position: relative; }
 .catalog-showcase .catalog-category-filters button > span.absolute { position: absolute !important; min-height: 0 !important; max-width: none !important; width: 100% !important; color: #fff !important; font-size: 11px !important; line-height: 1.2 !important; white-space: nowrap !important; }
+
+/* Contadores das categorias: abaixo das imagens, sem sobreposicao. */
+.catalog-showcase .catalog-category-filters .catalog-category-item {
+  flex: 0 0 118px;
+  width: 118px;
+  min-width: 118px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  scroll-snap-align: start;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button {
+  flex: none !important;
+  width: 100% !important;
+  height: 116px !important;
+  min-height: 116px !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > .catalog-category-count {
+  display: block !important;
+  position: static !important;
+  width: 100%;
+  min-height: 0 !important;
+  padding: 0 2px;
+  background: transparent !important;
+  color: #39ff79 !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1.4 !important;
+  text-align: center !important;
+  text-shadow: 0 0 6px rgba(57,255,121,.35) !important;
+  white-space: nowrap !important;
+}
