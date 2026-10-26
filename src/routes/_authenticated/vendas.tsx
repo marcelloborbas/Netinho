@@ -92,7 +92,7 @@ function SalesPage() {
   }
   return <div className="mx-auto w-full max-w-6xl space-y-4 pb-8">
     <header className="rounded-2xl border border-[#b8cee8] bg-[#edf4ff] px-4 py-5 text-center text-[#102a52] shadow-sm">
-      <h1 className="text-[28px] font-extrabold sm:text-[34px]">Vendas e Orçamentos</h1>
+      <h1 className="text-[28px] font-extrabold sm:text-[34px]">{search.modo === "consulta" ? "ORÇAMENTOS" : "FAZER PEDIDO"}</h1>
       <p className="mt-2 text-sm">Identifique o cliente, escolha as peças e revise antes de finalizar.</p>
     </header>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
