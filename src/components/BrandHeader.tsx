@@ -47,7 +47,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
     <header className="app-header brand-header">
       <div className="brand-header-inner">
         <div className="flex min-w-0 shrink-0 flex-col items-start gap-0.5">
-          <Link to="/" onClick={() => { window.sessionStorage.setItem("netinho-entry-approved", "1"); setMenuOpen(false); }} aria-label="Ir para a página inicial da Netinho" title="Página inicial" className="brand-header-home">
+          <Link to="/" onClick={() => setMenuOpen(false)} aria-label="Ir para a página inicial da Netinho" title="Página inicial" className="brand-header-home">
             <Logo className="brand-header-logo" showPhone />
           </Link>
 
