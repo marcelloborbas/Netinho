@@ -3253,3 +3253,7 @@ main, section, article { min-width: 0; }
     max-height: 68dvh !important;
   }
 }
+
+/* LIA login: dimensao final, superior aos limites antigos. */
+.netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large { width: 220px !important; height: 220px !important; }
+@media(max-width:639px){.netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {width:clamp(180px,52vw,215px) !important;height:clamp(180px,52vw,215px) !important;}}
