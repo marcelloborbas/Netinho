@@ -3649,3 +3649,18 @@ html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-
 .catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-stock {
   color: #16783d !important;
 }
+
+/* Contraste definitivo dos textos em recipientes claros do Catalogo. */
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info h2,
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info strong:not(.catalog-card-stock),
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info > div:last-child span {
+  color: #102a52 !important;
+  text-shadow: none !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info > div[aria-expanded],
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .rounded-xl.bg-\\[\\#ffffff\\] {
+  color: #102a52;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-card-stock {
+  color: #16783d !important;
+}
