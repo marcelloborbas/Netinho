@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Home, Search, ShoppingCart, ClipboardList, Shield, LogIn } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, LogOut, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ export function PublicFooter() {
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
     { to: "/vendas" as const, label: "Vender", icon: ShoppingCart },
     { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
-    { to: "/admin" as const, label: "Adm", icon: Shield },
+    { to: "/auth" as const, label: "Sair", icon: LogOut, logout: true },
   ] : [
     { to: "/" as const, label: "Início", icon: Home },
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
@@ -50,7 +50,7 @@ export function PublicFooter() {
     void navigate({ to: "/auth" });
   }
   return <nav aria-label="Menu inferior" className="mobile-nav" style={{ gridTemplateColumns: `repeat(${links.length}, 1fr)` }}>
-    {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} onClick={clickSound}
+    {links.map(({to,label,icon:Icon}) => label === "Sair" ? <button key={label} type="button" onClick={() => { clickSound(); void logout(); }} aria-label="Sair da conta" className="flex flex-col items-center gap-1 py-3 text-[11px] text-white transition-colors duration-150 hover:bg-[#174e9b] hover:text-amber-300"><Icon size={21}/>{label}</button> : <Link key={label} to={to} onClick={clickSound}
       aria-current={pathname === to ? "page" : undefined}
       className={`flex flex-col items-center gap-1 py-3 text-[11px] transition-colors duration-150 hover:bg-[#174e9b] hover:text-amber-300 ${pathname === to ? "text-amber-300" : "text-white"}`}>
       <Icon size={21}/>{label}
