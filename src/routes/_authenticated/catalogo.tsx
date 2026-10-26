@@ -172,7 +172,7 @@ function Catalog() {
           <Search className="absolute left-4 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
           <input id="catalog-search" aria-label="Buscar peças" value={q}
             onChange={(e) => { setQ(e.target.value); setPage(1); }}
-            placeholder="Busque por código, peça, veículo ou aplicação"
+            placeholder="Busque pelo código, pela peça ou pelo veículo..."
             style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#8bc8ff] pl-12 pr-12 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
           {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-[#102a52]"><X size={20}/></button>}
         </div>
