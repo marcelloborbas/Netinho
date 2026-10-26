@@ -59,6 +59,7 @@ const categoryPhoto = (name: string) => {
 function Catalog() {
   const search = Route.useSearch();
   const [q, setQ] = useState(search.q ?? "");
+  const [searchInput, setSearchInput] = useState(search.q ?? "");
   const [manufacturer, setManufacturer] = useState(search.marca === "HD" ? "all" : (search.marca ?? "all"));
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
@@ -106,6 +107,7 @@ function Catalog() {
   useEffect(() => {
     setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all"));
     setQ(search.q ?? "");
+    setSearchInput(search.q ?? "");
     setPage(1);
   }, [search.marca, search.q]);
 
@@ -157,7 +159,7 @@ function Catalog() {
   }, [combined, manufacturer, category, dq, filterMode, favorites, draft.items, recentCodes]);
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setFilterMode("relevantes"); setQ(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -168,14 +170,17 @@ function Catalog() {
       </header>
 
       <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
-        <div className="relative">
-          <Search className="absolute left-4 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
-          <input id="catalog-search" aria-label="Buscar peças" value={q}
-            onChange={(e) => { setQ(e.target.value); setPage(1); }}
-            placeholder="Busque pelo código, pela peça ou pelo veículo..."
-            style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#8bc8ff] pl-12 pr-12 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
-          {q && <button type="button" aria-label="Limpar busca" onClick={() => { setQ(""); setPage(1); }} className="absolute right-4 top-3.5 text-[#102a52]"><X size={20}/></button>}
-        </div>
+        <form className="flex items-center gap-2" role="search" onSubmit={(event) => { event.preventDefault(); setQ(searchInput.trim()); setPage(1); }}>
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute left-3 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
+            <input id="catalog-search" aria-label="Buscar peças" value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Busque pelo código, pela peça ou pelo veículo..."
+              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#8bc8ff] pl-10 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+            {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-3.5 text-[#102a52]"><X size={20}/></button>}
+          </div>
+          <button type="submit" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#0878ed] px-3 text-sm font-extrabold text-white shadow-md hover:bg-[#0062c9]" aria-label="Buscar no catálogo"><Search size={18} aria-hidden="true" />Buscar</button>
+        </form>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
                         <div className="relative">
