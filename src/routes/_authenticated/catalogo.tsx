@@ -309,10 +309,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
   }
   const brand = p.manufacturer ?? "FCO";
   const img = p.image_url || categoryPhoto(p.categories?.name ?? "") || partImage(p.categories?.name);
-  const prices = [
-    ["À vista", p.price_cash],
-  ] as const;
-  return <li className="catalog-product-card surface-card grid min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden rounded-2xl p-3 sm:grid-cols-[minmax(150px,28%)_minmax(0,1fr)]">
+    return <li className="catalog-product-card surface-card grid min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden rounded-2xl p-3 sm:grid-cols-[minmax(150px,28%)_minmax(0,1fr)]">
     <div className="relative catalog-card-image-col"><button type="button" onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} className="absolute right-2 top-2 z-10 rounded-full bg-[#09213c] p-2 text-[#39ff79] shadow-lg"><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
@@ -327,12 +324,12 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     </div>}
     <div className="catalog-card-info flex min-w-0 flex-1 flex-col px-1 pb-2 pt-4">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="min-w-0 flex-1 text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
+        <h2 className="min-w-0 flex-1 text-2xl sm:text-3xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
       </div>
       {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
       <div className="my-3 flex flex-wrap items-center gap-2">
         <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
-        <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#2588f9] bg-[#0878ed] px-3 py-2 text-sm font-bold text-white shadow-sm"><ShoppingCart size={20} aria-hidden="true" /><span className="sr-only">Comprar</span></button>
+        <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="ml-auto inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#2588f9] bg-[#0878ed] px-3 py-2 text-sm font-bold text-white shadow-sm"><ShoppingCart size={20} aria-hidden="true" /><span className="sr-only">Comprar</span></button>
       </div>
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
         <p><strong>Código:</strong> {p.code}</p>
@@ -347,8 +344,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         <div className="catalog-card-stock">{p.stock > 0 ? `● Estoque = ${p.stock} un.` : "Estoque não informado"}</div>
       </div>}
       <div className="mt-auto border-t border-[#35536e] pt-3">
-        <p className="mb-2 text-sm font-extrabold text-white">Preço à vista</p>
-        {prices.some(([, price]) => price != null) ? <dl className="space-y-1">{prices.filter(([, price]) => price != null).map(([label, price]) => <div key={label} className="flex justify-between gap-3 text-sm text-white"><dt>{label}</dt><dd className="font-extrabold text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{brl(price!)}</dd></div>)}</dl> : null}
+        <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-base font-extrabold text-white">Preço à vista:</span>{p.price_cash != null && <strong className="text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{brl(p.price_cash)}</strong>}</div>
       </div>
     </div>
   </li>;
