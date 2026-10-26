@@ -3369,3 +3369,36 @@ main:not(.welcome-art-frame), .app-shell { background-color: #f1f1f1; }
   font-size: 12px;
   min-height: 0;
 }
+
+/* Correcao de contraste do catalogo no tema claro Netinho. */
+.catalog-showcase { background: #f1f1f1 !important; color: #102a52 !important; }
+.catalog-showcase .catalog-showcase-heading {
+  background: #f1f1f1 !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #102a52 !important;
+}
+.catalog-showcase .catalog-showcase-heading h1,
+.catalog-showcase .catalog-showcase-heading h1 span { color: #102a52 !important; text-shadow: none !important; }
+.catalog-showcase .catalog-showcase-heading p { color: #475569 !important; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] {
+  background: #fff !important; border-color: #d4deea !important; color: #102a52 !important;
+}
+.catalog-showcase section[aria-label="Pesquisar catálogo"] [role="status"] { color: #102a52 !important; }
+.catalog-showcase #catalog-search {
+  background: #fff !important; border-color: #b8c8dc !important; color: #102a52 !important;
+  -webkit-text-fill-color: #102a52 !important;
+}
+.catalog-showcase #catalog-search::placeholder { color: #64748b !important; -webkit-text-fill-color: #64748b !important; }
+.catalog-showcase .catalog-category-filters button,
+.catalog-showcase .catalog-category-filters button[aria-pressed="true"] {
+  background: #fff !important; background-image: none !important; color: #102a52 !important;
+}
+.catalog-showcase .catalog-category-filters button[aria-pressed="true"] { border: 2px solid #1262e8 !important; }
+.catalog-showcase .catalog-category-filters button span { color: #102a52 !important; text-shadow: none !important; }
+.catalog-showcase .catalog-product-card { background: #fff !important; color: #102a52 !important; border-color: #d4deea !important; }
+.catalog-showcase .catalog-product-card h2,
+.catalog-showcase .catalog-product-card h3 { color: #102a52 !important; }
+.catalog-showcase .catalog-product-card img { background: #f1f1f1 !important; object-fit: contain !important; }
+.catalog-showcase .catalog-product-grid img { object-fit: contain !important; }
