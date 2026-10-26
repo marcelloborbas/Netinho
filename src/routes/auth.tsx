@@ -85,7 +85,9 @@ function AuthPage() {
   useEffect(() => {
     if (signedIn && access && !recovery && !previewMode) {
       saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
-      // A entrada é confirmada pelo botão Continuar para minha área.
+      // Login confirmado: encaminhar automaticamente à página inicial.
+      window.sessionStorage.setItem("netinho-entry-approved", "1");
+      void navigate({ to: "/", replace: true });
     }
   }, [signedIn, access, recovery, navigate, previewMode]);
   useEffect(() => {
@@ -366,7 +368,7 @@ function AuthPage() {
           ) : !access ? (
             <div className="flex flex-col items-center gap-4 p-6 text-center" role="status">
               {isPending && <LoaderCircle className="animate-spin" aria-hidden="true" />}
-              <h1 className="text-xl font-bold">Login do Google recebido</h1>
+              <h1 className="text-xl font-bold text-white">Login do Google recebido</h1>
               <p>{isPending ? "Estamos verificando seu perfil. Aguarde um instante…" : "Não foi possível carregar seu perfil agora."}</p>
               <Button type="button" onClick={() => void refetch()}>Tentar novamente</Button>
               <button type="button" className="text-sm underline" onClick={logout}>Trocar conta</button>
@@ -375,11 +377,11 @@ function AuthPage() {
             <>
               <div className="mb-7 flex items-start justify-between gap-3">
                 <div>
-                  <span className="eyebrow">QUE BOM TER VOCÊ AQUI</span>
-                  <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+                  <span className="eyebrow !text-blue-100">QUE BOM TER VOCÊ AQUI</span>
+                  <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
                     {greeting(`sr. ${access.name.split(" ")[0]}`)}
                   </h1>
-                  <p className="mt-2 text-muted-foreground">
+                  <p className="mt-2 text-blue-100">
                     Preparando suas opções de vendas e catálogos.
                   </p>
                 </div>
@@ -389,11 +391,11 @@ function AuthPage() {
               </div>
               <Button
                 onClick={() => { window.sessionStorage.setItem("netinho-entry-approved", "1"); void navigate({ to: "/" }); }}
-                className="mt-6 h-14 w-full bg-gradient-red"
+                className="mt-6 h-14 w-full bg-gradient-red text-white"
               >
                 Continuar para minha área <ArrowRight size={18} />
               </Button>
-              <p className="mt-4 text-center text-xs text-muted-foreground">
+              <p className="mt-4 text-center text-xs text-blue-100">
                 Conectado como {access.email}
               </p>
             </>
