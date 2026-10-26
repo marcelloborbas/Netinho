@@ -3683,3 +3683,19 @@ html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-
     line-height: 1.18 !important;
   }
 }
+
+/* Preco em caixa azul: prevalece sobre antigas regras de texto azul-marinho. */
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-price-highlight {
+  background: #102a52 !important;
+  border: 2px solid #d4af37 !important;
+  color: #f4cf60 !important;
+  min-height: 64px;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-price-highlight span,
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-price-highlight strong {
+  color: #f4cf60 !important;
+  -webkit-text-fill-color: #f4cf60 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: none !important;
+}
