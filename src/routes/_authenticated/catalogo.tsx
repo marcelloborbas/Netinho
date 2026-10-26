@@ -199,7 +199,7 @@ function Catalog() {
               </div>}
             </div>
           </div>
-          {(q || manufacturer !== "all" || category !== "all" || filterMode !== "relevantes") && <button type="button" onClick={reset} className="text-sm font-bold text-[#facc15] underline">Limpar filtros</button>}
+          <button type="button" onClick={() => { reset(); setFilterOpen(false); }} className="inline-flex items-center gap-1.5 rounded-lg border border-[#8bc8ff] bg-white px-3 py-2 text-xs font-bold text-[#102a52] hover:bg-[#eaf2ff]" aria-label="Limpar filtros do catálogo"><X size={17} aria-hidden="true" />Limpar filtros</button>
         </div>
       </section>
 
