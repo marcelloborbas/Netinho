@@ -3699,3 +3699,32 @@ html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-
   visibility: visible !important;
   text-shadow: none !important;
 }
+
+
+/* Preco compacto: uma linha, legenda branca a esquerda e valor amarelo a direita. */
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-price-highlight {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+  min-height: 46px !important;
+  padding: 7px 9px !important;
+  white-space: nowrap !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-price-highlight span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: clamp(10px, 2.5vw, 15px) !important;
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-price-highlight strong {
+  color: #ffeb00 !important;
+  -webkit-text-fill-color: #ffeb00 !important;
+  font-size: clamp(14px, 3.7vw, 24px) !important;
+  line-height: 1.1 !important;
+  flex: 0 0 auto !important;
+  letter-spacing: -0.04em !important;
+}
