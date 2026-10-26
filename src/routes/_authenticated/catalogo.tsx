@@ -344,7 +344,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="text-xs underline"/>}
       </div>}
       {canSell && <div className="mt-2 space-y-2">
-        <div className="catalog-card-stock">{p.stock > 0 ? `● Em estoque · ${p.stock} un.` : "Estoque não informado"}</div>
+        <div className="catalog-card-stock">{p.stock > 0 ? `● Estoque = ${p.stock} un.` : "Estoque não informado"}</div>
       </div>}
       <div className="mt-auto border-t border-[#35536e] pt-3">
         <p className="mb-2 text-sm font-extrabold text-white">Preço à vista</p>
