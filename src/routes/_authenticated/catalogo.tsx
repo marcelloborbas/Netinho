@@ -51,6 +51,7 @@ const categoryPhotos: Array<[RegExp, string]> = [
   [/\btbi\b|corpo.*borboleta/i, "TBI.webp"],
   [/turbina|turbo/i, "Turbina.webp"],
 ];
+const displayCategoryName = (name: string) => /^atuador hidr[aá]ulico$/i.test(name.trim()) ? "Atuador e Embreagem" : name;
 const categoryPhoto = (name: string) => {
   const filename = categoryPhotos.find(([pattern]) => pattern.test(name))?.[1];
   return filename ? `/images/categorias/${encodeURIComponent(filename)}` : null;
@@ -212,8 +213,8 @@ function Catalog() {
           const Icon = categoryIcon(name);
           const photo = categoryPhoto(name);
           return <div key={name} className="catalog-category-item">
-            <button type="button" aria-label={name} title={name} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setHasSelectedCategory(true); setPage(1); }}>
-              {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={name} loading="lazy" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
+            <button type="button" aria-label={displayCategoryName(name)} title={displayCategoryName(name)} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setHasSelectedCategory(true); setPage(1); }}>
+              {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={displayCategoryName(name)} loading="lazy" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
             </button>
             <span className="catalog-category-count">{categoryCounts.counts.get(name) ?? 0} Itens</span>
           </div>;
@@ -333,7 +334,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     </div>}
     <div className="catalog-card-info flex min-w-0 flex-1 flex-col px-1 pb-2 pt-4">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="min-w-0 flex-1 text-2xl sm:text-3xl font-black text-[#102a52]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
+        <h2 className="min-w-0 flex-1 text-2xl sm:text-3xl font-black text-[#102a52]">{displayCategoryName(p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva")}</h2>
       </div>
       {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
       <div className="my-3 flex flex-wrap items-center gap-2">
@@ -343,7 +344,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#102a52] bg-[#f1f1f1] p-3 text-sm leading-6 text-[#102a52]" style={{ backgroundColor: "var(--netinho-page-bg, #f1f1f1)", color: "#102a52" }}>
         <p><strong>Código:</strong> {p.code}</p>
         <p><strong>Fabricante:</strong> {p.manufacturer || "Não informado"}</p>
-        <p><strong>Categoria:</strong> {p.categories?.name || "Não informada"}</p>
+        <p><strong>Categoria:</strong> {displayCategoryName(p.categories?.name || "Não informada")}</p>
         {p.application && <p><strong>Aplicações:</strong> {p.application}</p>}
         {p.refs && <p><strong>Referências:</strong> {p.refs}</p>}
         <p className="text-xs text-[#102a52]">Confira a aplicação e as referências com o fabricante antes de confirmar a compra.</p>
