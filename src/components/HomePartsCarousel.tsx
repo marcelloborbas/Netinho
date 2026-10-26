@@ -20,11 +20,11 @@ export function HomePartsCarousel() {
   }, [paused]);
   const part = parts[index];
   return (
-    <section className="mx-auto w-full max-w-3xl" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+    <section className="relative mx-auto w-full max-w-3xl" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
       <div className="w-full">
         <div className="w-full">
-          <img key={part.image} src={part.image} alt={part.title} className="block aspect-square h-auto w-full object-contain" loading="eager"/>
+          <img key={part.image} src={part.image} alt={part.title} className="block h-auto w-full object-contain sm:max-h-[78dvh]" loading="eager"/>
 
         </div>
       </div>
