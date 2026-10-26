@@ -190,7 +190,7 @@ function Catalog() {
       </section>
 
       <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
-        <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/><span>Todas<br />as peças</span></button>
+        <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
         {categories.map((name) => {
           const Icon = categoryIcon(name);
           const photo = categoryPhoto(name);
