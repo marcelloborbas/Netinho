@@ -94,15 +94,13 @@ function Catalog() {
     });
   };
   const filterOptions = [
-    ["menor", "Menor R$"], ["maior", "Maior R$"], ["saldao", "Saldão"],
-    ["relevantes", "Relevantes"], ["ofertas", "Ofertas"],
-    ["compras", "Compras"], ["favoritos", "Favoritos"], ["disponiveis", "Disponíveis"], ["recentes", "Vistos recentemente"],
+    ["menor", "Preço menor"], ["maior", "Preço maior"], ["relevantes", "Relevantes"],
   ] as const;
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
   const { data: registeredCategories = [], error: categoriesError, refetch: refetchCategories } = useQuery(categoriesQuery);
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true || access?.level === 1;
-  const visibleFilterOptions = canSell ? filterOptions : filterOptions.filter(([value]) => ["menor", "maior", "ofertas", "recentes"].includes(value));
+  const visibleFilterOptions = filterOptions;
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
