@@ -333,27 +333,27 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     </div>}
     <div className="catalog-card-info flex min-w-0 flex-1 flex-col px-1 pb-2 pt-4">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="min-w-0 flex-1 text-2xl sm:text-3xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
+        <h2 className="min-w-0 flex-1 text-2xl sm:text-3xl font-black text-[#102a52]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
       </div>
       {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
       <div className="my-3 flex flex-wrap items-center gap-2">
         <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
         <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="ml-auto inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#2588f9] bg-[#0878ed] px-3 py-2 text-sm font-bold text-white shadow-sm"><ShoppingCart size={20} aria-hidden="true" /><span className="sr-only">Comprar</span></button>
       </div>
-      {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
+      {details && <div className="mb-3 space-y-2 rounded-xl border border-[#a7bfd8] bg-[#ffffff] p-3 text-sm leading-6 text-[#102a52]">
         <p><strong>Código:</strong> {p.code}</p>
         <p><strong>Fabricante:</strong> {p.manufacturer || "Não informado"}</p>
         <p><strong>Categoria:</strong> {p.categories?.name || "Não informada"}</p>
         {p.application && <p><strong>Aplicações:</strong> {p.application}</p>}
         {p.refs && <p><strong>Referências:</strong> {p.refs}</p>}
-        <p className="text-xs text-blue-100">Confira a aplicação e as referências com o fabricante antes de confirmar a compra.</p>
+        <p className="text-xs text-[#425b76]">Confira a aplicação e as referências com o fabricante antes de confirmar a compra.</p>
         {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="text-xs underline"/>}
       </div>}
       {canSell && <div className="mt-2 space-y-2">
         <div className="catalog-card-stock">{p.stock > 0 ? `● Estoque = ${p.stock} un.` : "Estoque não informado"}</div>
       </div>}
       <div className="mt-auto border-t border-[#35536e] pt-3">
-        <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-base font-extrabold text-white">Preço à vista:</span>{p.price_cash != null && <strong className="text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{brl(p.price_cash)}</strong>}</div>
+        <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-base font-extrabold text-[#102a52]">Preço à vista:</span>{p.price_cash != null && <strong className="text-xl font-black text-[#102a52]">{brl(p.price_cash)}</strong>}</div>
       </div>
     </div>
   </li>;
