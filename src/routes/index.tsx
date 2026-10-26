@@ -29,17 +29,33 @@ function Home() {
   }, [access]);
   const [accountName, setAccountName] = useState("");
   useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => {
-      const user = data.user;
-      const meta = user?.user_metadata;
-      const candidate = meta?.full_name || meta?.name || meta?.given_name || "";
-      const emailName = user?.email?.split("@")[0]?.replace(/[._-]+/g, " ") || "";
+    let active = true;
+    const readName = (user: { user_metadata?: Record<string, unknown>; email?: string } | null | undefined) => {
+      if (!active) return;
+      const meta = user?.user_metadata ?? {};
+      const candidate = [meta.full_name, meta.name, meta.given_name, meta.display_name]
+        .find((value) => typeof value === "string" && value.trim());
+      const emailName = user?.email?.split("@")[0]?.replace(/[._-]+/g, " ") ?? "";
       setAccountName(String(candidate || emailName).trim());
-    }).catch(() => {});
+    };
+    void supabase.auth.getUser().then(({ data }) => readName(data.user)).catch(() => {});
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      readName(session?.user);
+    });
+    return () => { active = false; subscription.unsubscribe(); };
   }, []);
-  const rawName = accountName || access?.name?.trim() || "";
-  const firstName = rawName.split(/\s+/)[0]?.trim();
-  const userName = firstName && !["usuário", "usuario", "visitante"].includes(firstName.toLowerCase()) ? firstName : "";
+  const savedName = (() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const profile = JSON.parse(localStorage.getItem("netinho-vendedor") || "null");
+      return typeof profile?.name === "string" ? profile.name.trim() : "";
+    } catch { return ""; }
+  })();
+  const validName = (value: string) => {
+    const first = value.split(/\s+/)[0]?.trim() || "";
+    return first && !["usuário", "usuario", "visitante", "sr.", "sr"].includes(first.toLowerCase()) ? first : "";
+  };
+  const userName = validName(accountName) || validName(access?.name || "") || validName(savedName);
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
   return (
