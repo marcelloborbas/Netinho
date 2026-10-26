@@ -197,7 +197,7 @@ function Catalog() {
       <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
-          <span className="catalog-category-count">{categoryCounts.total} peças</span>
+          <span className="catalog-category-count">{categoryCounts.total} Itens</span>
         </div>
         {categories.map((name) => {
           const Icon = categoryIcon(name);
@@ -206,7 +206,7 @@ function Catalog() {
             <button type="button" aria-label={name} title={name} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>
               {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={name} loading="lazy" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
             </button>
-            <span className="catalog-category-count">{categoryCounts.counts.get(name) ?? 0} peças</span>
+            <span className="catalog-category-count">{categoryCounts.counts.get(name) ?? 0} Itens</span>
           </div>;
         })}
       </nav>
