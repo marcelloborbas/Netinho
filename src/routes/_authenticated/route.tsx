@@ -12,6 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
+import { PublicFooter } from "@/components/PublicFooter";
 
 import { brl } from "@/lib/brand";
 import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
@@ -108,20 +109,7 @@ function AppShell() {
           <b className="text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-      <nav className="mobile-nav" style={{ gridTemplateColumns: `repeat(${nav.length}, 1fr)` }}>
-        {nav.map((n) => (
-          <Link
-            key={n.to}
-            to={n.to}
-            activeOptions={{ exact: true }}
-            className="flex flex-col items-center gap-1 py-3 text-[11px] text-muted-foreground"
-            activeProps={{ className: "text-primary" }}
-          >
-            <n.icon size={21} />
-            {n.label}
-          </Link>
-        ))}
-      </nav>
+      <PublicFooter />
     </div>
   );
 }
