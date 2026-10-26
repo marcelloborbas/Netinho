@@ -77,7 +77,7 @@ export function NetinhoAssistant() {
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{greeting}</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
     </div>}
     <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onClick={() => setOpen(!open)}>
-      <img src={pathname === "/" ? "/images/LIA%20pagina%20inicial.webp" : isAuth ? "/images/Mascote%20LIA%20ajuda.webp" : "/images/Mascote%20LIA%20ajuda.png"} alt="Mascote LIA" width="118" height="118" />
+      <img src={pathname === "/" ? "/images/LIA%20pagina%20inicial.webp" : isAuth ? "/images/Mascote%20LIA%20ajuda.webp" : pathname === "/catalogo" ? "/images/lia-catalogo.webp" : "/images/Mascote%20LIA%20ajuda.png"} alt="Mascote LIA" width="118" height="118" />
     </button>
   </aside>;
 }
