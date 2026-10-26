@@ -317,14 +317,8 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     <div className="catalog-card-info flex min-w-0 flex-1 flex-col px-1 pb-2 pt-4">
       <div className="flex items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
-        {canSell && <button type="button" onClick={buy} title={`Adicionar peça ${p.code} ao pedido`} aria-label={`Comprar peça ${p.code}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0677ef] text-white"><ShoppingCart size={23}/></button>}
       </div>
       {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
-      {isAdmin && !p.localOnly && <label className="mb-2 text-xs font-bold text-white">Campanha
-        <select value={promotionType} disabled={promotionBusy} onChange={(event) => void setPromotion(event.target.value as "normal" | "oferta" | "saldao")} className="ml-2 min-h-9 rounded-lg border border-[#42678b] bg-[#102e51] px-2 text-white">
-          <option value="normal">Normal</option><option value="oferta">Oferta</option><option value="saldao">Saldão</option>
-        </select>
-      </label>}
       <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="my-3 inline-flex min-h-10 items-center gap-2 self-start rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
         <p><strong>Código:</strong> {p.code}</p>
@@ -337,7 +331,6 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       </div>}
       {canSell && <div className="mt-2 space-y-2">
         <div className="catalog-card-stock">{p.stock > 0 ? `● Em estoque · ${p.stock} un.` : "Estoque não informado"}</div>
-        <button type="button" onClick={buy} className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0677ef] px-4 py-2 font-bold text-white"><ShoppingCart size={19}/> Fazer pedido</button>
       </div>}
       <div className="mt-auto border-t border-[#35536e] pt-3">
         <p className="mb-2 text-sm font-extrabold text-white">Preço à vista</p>
