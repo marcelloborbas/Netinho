@@ -3563,3 +3563,6 @@ body:has(.app-navigation-bar) main > div:not(.catalog-product-card) {
 .catalog-showcase .catalog-showcase-heading { background: #071a30 !important; }
 .catalog-showcase .catalog-showcase-heading h1 { color: #fff !important; }
 .catalog-showcase .catalog-category-filters .catalog-category-item > .catalog-category-count { color: #16783d !important; text-shadow: none !important; }
+
+.netinho-assistant .netinho-assistant-avatar { touch-action: none; cursor: grab; user-select: none; }
+.netinho-assistant.netinho-assistant-moved { left: var(--lia-x) !important; top: var(--lia-y) !important; bottom: auto !important; transform: translate(-50%, -50%) !important; z-index: 1200 !important; }
