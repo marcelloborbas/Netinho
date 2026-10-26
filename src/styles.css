@@ -40,8 +40,8 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #ffffff;
-  --surface: #ffffff;
+  --background: #f1f1f1;
+  --surface: #f1f1f1;
   --foreground: #102a52;
   --card: #ffffff;
   --card-foreground: #102a52;
@@ -3330,3 +3330,9 @@ main:not(.welcome-art-frame), .app-shell { background-color: #fff; }
 .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-panel { color: #fff; }
 input, select, textarea { color: #102a52; }
 input::placeholder, textarea::placeholder { color: #64748b; opacity: 1; }
+
+/* Cor de fundo oficial solicitada: RGB(241,241,241) = #F1F1F1. */
+html, body, #root { background-color: #f1f1f1; }
+.home-page, .auth-stage, .welcome-auth-stage, .auth-stage > main,
+main:not(.welcome-art-frame), .app-shell { background-color: #f1f1f1; }
+/* Cartões, formulários e painéis permanecem brancos para contraste. */
