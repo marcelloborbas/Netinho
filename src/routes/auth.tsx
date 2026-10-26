@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, LogOut, Monitor, Smartphone, Tablet, Volume2, VolumeX, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { BrandHeader } from "@/components/BrandHeader";
 import { accessQuery, saveProfile } from "@/lib/access";
 import { greeting } from "@/components/ProfileAvatar";
 import { Button } from "@/components/ui/button";
@@ -283,6 +284,8 @@ function AuthPage() {
     );
   }
   return (
+    <div className="flex min-h-screen flex-col">
+      <BrandHeader />
     <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen bg-white px-4 py-6 text-[#102a52] sm:py-10"}>
       {showWelcome && (
         <>
@@ -398,5 +401,6 @@ function AuthPage() {
         </div>
       ) : null}
     </main>
+    </div>
   );
 }
