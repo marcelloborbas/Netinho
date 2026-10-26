@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Home, Search, ShoppingCart, ClipboardList, Shield } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, Shield, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -41,6 +41,7 @@ export function PublicFooter() {
   ] : [
     { to: "/" as const, label: "Início", icon: Home },
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
+    { to: "/auth" as const, label: "Login", icon: LogIn },
   ];
   async function logout() {
     const { error } = await supabase.auth.signOut();
