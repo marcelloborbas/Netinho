@@ -203,6 +203,7 @@ function Catalog() {
           const photo = categoryPhoto(name);
           return <button key={name} type="button" aria-label={name} title={name} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>
             {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={name} loading="lazy" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
+            <span className="absolute bottom-0 left-0 right-0 z-20 !min-h-0 bg-[#071a30]/90 px-1 py-1 text-center !text-xs font-bold !text-white">{categoryCounts.counts.get(name) ?? 0} peças</span>
           </button>;
         })}
       </nav>
