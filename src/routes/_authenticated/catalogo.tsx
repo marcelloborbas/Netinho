@@ -164,7 +164,7 @@ function Catalog() {
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
       <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
-        <h1 className="w-full text-center text-[22px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[30px]" style={{ textAlign: "center" }}>CATÁLOGO DE PEÇAS</h1>
+        <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>CATÁLOGO DE PEÇAS</h1>
       </header>
 
       <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
@@ -330,7 +330,10 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         <h2 className="min-w-0 flex-1 text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
       </div>
       {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
-      <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="my-3 inline-flex min-h-10 items-center gap-2 self-start rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
+      <div className="my-3 flex flex-wrap items-center gap-2">
+        <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
+        <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#2588f9] bg-[#0878ed] px-3 py-2 text-sm font-bold text-white shadow-sm"><ShoppingCart size={20} aria-hidden="true" /><span className="sr-only">Comprar</span></button>
+      </div>
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
         <p><strong>Código:</strong> {p.code}</p>
         <p><strong>Fabricante:</strong> {p.manufacturer || "Não informado"}</p>
