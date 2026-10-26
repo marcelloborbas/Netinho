@@ -5,7 +5,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, Heart, GitCompareArrows, History, Tag } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
-import { productsQuery, productMatches, type Product } from "@/lib/queries";
+import { productsQuery, categoriesQuery, productMatches, type Product } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import { draftActions, useDraft } from "@/lib/order-store";
 import { toast } from "sonner";
@@ -80,6 +80,7 @@ function Catalog() {
     ["compras", "Compras"], ["favoritos", "Favoritos"], ["disponiveis", "Disponíveis"], ["recentes", "Vistos recentemente"],
   ] as const;
   const { data: products = [], isLoading, error, refetch } = useQuery(productsQuery);
+  const { data: registeredCategories = [], error: categoriesError, refetch: refetchCategories } = useQuery(categoriesQuery);
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true || access?.level === 1;
   const visibleFilterOptions = canSell ? filterOptions : filterOptions.filter(([value]) => ["menor", "maior", "ofertas", "recentes"].includes(value));
@@ -104,7 +105,7 @@ function Catalog() {
     ...localFco,
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
-  const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD").map((p) => p.categories?.name).filter((n): n is string => !!n))).sort(), [combined]);
+  const categories = useMemo(() => Array.from(new Set([...registeredCategories.map((item) => item.name), ...combined.filter((p) => p.manufacturer !== "HD").map((p) => p.categories?.name)].filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [registeredCategories, combined]);
   const list = useMemo(() => {
     const matching = combined.filter((p) =>
       p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
@@ -184,6 +185,7 @@ function Catalog() {
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/><span>Todas<br />as peças</span></button>
         {categories.map((name) => { const Icon = categoryIcon(name); const photo = /caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(name) ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(name); return <button key={name} type="button" className={photo ? "category-with-photo" : ""} style={photo ? { backgroundImage: `linear-gradient(#07192b55,#07192b55),url("${photo}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name.trim().split(/\s+/).length > 1 ? <>{name.trim().split(/\s+/)[0]}<br />{name.trim().split(/\s+/).slice(1).join(" ")}</> : <>{name}<br />&nbsp;</>}</span></button>; })}
       </nav>
+      {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
       {list.length ? (
