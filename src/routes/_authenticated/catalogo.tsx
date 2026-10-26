@@ -156,8 +156,8 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
-      <header className="catalog-showcase-heading rounded-2xl border border-[#33577b] bg-gradient-to-br from-[#06172c] via-[#102e51] to-[#081b33] px-4 py-5 text-center text-white shadow-lg">
-        <h1 className="text-[28px] font-black leading-tight tracking-tight text-white sm:text-[34px]">Catálogo de <span className="text-[#ffd54f]">Peças</span></h1><p className="mt-1 text-xs font-medium text-blue-100">Encontre a peça certa para seu veículo</p>
+      <header className="catalog-showcase-heading rounded-2xl px-2 py-4 text-left text-white">
+        <h1 className="text-left text-[28px] font-black leading-tight tracking-tight text-white sm:text-[34px]">Catálogo de <span className="text-[#ffd54f]">Peças</span></h1><p className="mt-1 text-xs font-medium text-blue-100">Encontre a peça certa para seu veículo</p>
 
       </header>
 
@@ -215,7 +215,7 @@ function Catalog() {
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
       {list.length ? (
-        <ul className="catalog-product-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="catalog-product-grid grid grid-cols-1 gap-4">
           {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => <CatalogCard key={p.id} p={p} isFavorite={favorites.includes(p.id)} onToggleFavorite={() => toggleFavorite(p.id)} isCompared={compared.includes(p.id)} onToggleCompare={() => toggleCompare(p.id)} onView={() => recordViewed(p.code)}/>)}
         </ul>
       ) : !isLoading && <div className="surface-card p-10 text-center"><PackageSearch className="mx-auto text-primary" size={36}/><p className="mt-3 font-bold">Nenhuma peça encontrada.</p><button type="button" className="mt-3 underline" onClick={reset}>Mostrar todas</button></div>}
@@ -314,8 +314,8 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     ["À vista", p.price_cash], ["30 dias", p.price_30],
     ["30/45/60 dias", p.price_30_45_60], ["30/45/60/75 dias", p.price_30_45_60_75],
   ] as const;
-  return <li className="catalog-product-card surface-card flex min-w-0 flex-col overflow-hidden rounded-2xl p-3">
-    <div className="relative"><button type="button" onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} className="absolute right-2 top-2 z-10 rounded-full bg-[#09213c] p-2 text-[#39ff79] shadow-lg"><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
+  return <li className="catalog-product-card surface-card grid min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden rounded-2xl p-3 sm:grid-cols-[minmax(150px,28%)_minmax(0,1fr)]">
+    <div className="relative catalog-card-image-col"><button type="button" onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} className="absolute right-2 top-2 z-10 rounded-full bg-[#09213c] p-2 text-[#39ff79] shadow-lg"><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
       <div className="mb-2 flex items-start justify-between gap-2"><p className="font-extrabold">Deseja comprar a peça {p.code}?</p><button type="button" aria-label="Fechar opções de contato" onClick={() => setShowContact(false)}><X size={20}/></button></div>
@@ -327,7 +327,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       <button type="button" onClick={() => whatsapp("5515992458492")} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#137c45] p-3 text-center text-sm font-extrabold text-white"><MessageCircle size={20}/> Falar com o atendimento Netinho</button>
       {representativesError && <p className="mt-2 text-xs">A lista de representantes não está disponível. Utilize o atendimento Netinho.</p>}
     </div>}
-    <div className="flex flex-1 flex-col px-1 pb-2 pt-4">
+    <div className="catalog-card-info flex min-w-0 flex-1 flex-col px-1 pb-2 pt-4">
       <div className="flex items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 text-xl font-black text-[#39ff79] drop-shadow-[0_0_5px_rgba(57,255,121,0.45)]">{p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva"}</h2>
         {canSell && <button type="button" onClick={buy} title={`Adicionar peça ${p.code} ao pedido`} aria-label={`Comprar peça ${p.code}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0677ef] text-white"><ShoppingCart size={23}/></button>}
