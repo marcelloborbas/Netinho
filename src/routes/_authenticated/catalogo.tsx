@@ -37,6 +37,25 @@ const localHd = hdCatalog.map((p) => ({
   stock: 0, active: true, brand: "HD", created_at: "", updated_at: "", localOnly: true,
 })) as CatalogProduct[];
 
+const categoryPhotos: Array<[RegExp, string]> = [
+  [/atuador.*embreagem/i, "Atuador de Embreagem.webp"],
+  [/bobina.*igni/i, "Bobina de Ignição.webp"],
+  [/bomba.*dire/i, "Bomba de direção.webp"],
+  [/caixa.*dire|dire[cç][aã]o/i, "Caixa de Direção.webp"],
+  [/coxim.*amortec/i, "Coxim de Amortecedor.webp"],
+  [/corrente.*comando/i, "Kit de corrente de comando.webp"],
+  [/kit.*embreagem|embreagem.*kit/i, "Kit de embreagem.webp"],
+  [/revestimento/i, "Revestimento.webp"],
+  [/rolamento.*embreagem/i, "Rolamento de Embreagem.webp"],
+  [/rolamento.*roda/i, "Rolamento de Roda.webp"],
+  [/\btbi\b|corpo.*borboleta/i, "TBI.webp"],
+  [/turbina|turbo/i, "Turbina.webp"],
+];
+const categoryPhoto = (name: string) => {
+  const filename = categoryPhotos.find(([pattern]) => pattern.test(name))?.[1];
+  return filename ? `/images/categorias/${encodeURIComponent(filename)}` : null;
+};
+
 function Catalog() {
   const search = Route.useSearch();
   const [q, setQ] = useState(search.q ?? "");
@@ -183,7 +202,14 @@ function Catalog() {
       </section>}
       <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/><span>Todas<br />as peças</span></button>
-        {categories.map((name) => { const Icon = categoryIcon(name); const photo = /caixa.*dire[cç][aã]o|dire[cç][aã]o/i.test(name) ? "/images/campaign/Caixa-de-direcao-mecanica-fiat-strada-2000-ate-2013.webp" : partImage(name); return <button key={name} type="button" className={photo ? "category-with-photo" : ""} style={photo ? { backgroundImage: `linear-gradient(#07192b55,#07192b55),url("${photo}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>{photo ? <img src={photo} alt="" loading="lazy" className="h-12 w-14 rounded-lg object-contain" /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}<span>{name.trim().split(/\s+/).length > 1 ? <>{name.trim().split(/\s+/)[0]}<br />{name.trim().split(/\s+/).slice(1).join(" ")}</> : <>{name}<br />&nbsp;</>}</span></button>; })}
+        {categories.map((name) => {
+          const Icon = categoryIcon(name);
+          const photo = categoryPhoto(name);
+          return <button key={name} type="button" className={photo ? "category-with-photo" : ""} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>
+            {photo ? <img src={photo} alt={name} loading="lazy" className="catalog-category-photo" onError={(event) => { event.currentTarget.style.display = "none"; }} /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
+            <span>{name}</span>
+          </button>;
+        })}
       </nav>
       {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
