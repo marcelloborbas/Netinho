@@ -3585,3 +3585,33 @@ body:has(.app-navigation-bar) main > div:not(.catalog-product-card) {
     height: 149.5px !important;
   }
 }
+
+/* Padrao definitivo: a LIA de Catalogo, Vender e Pedidos tem exatamente
+   as dimensoes da LIA da pagina inicial, inclusive no celular. */
+html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large,
+html body .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  width: 150.8px !important;
+  height: 150.8px !important;
+  min-width: 150.8px !important;
+  min-height: 150.8px !important;
+  max-width: 150.8px !important;
+  max-height: 150.8px !important;
+  flex-shrink: 0 !important;
+}
+html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-large img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+@media (min-width: 640px) {
+  html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large,
+  html body .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: 149.5px !important;
+    height: 149.5px !important;
+    min-width: 149.5px !important;
+    min-height: 149.5px !important;
+    max-width: 149.5px !important;
+    max-height: 149.5px !important;
+  }
+}
