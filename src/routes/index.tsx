@@ -37,8 +37,9 @@ function Home() {
       setAccountName(String(candidate || emailName).trim());
     }).catch(() => {});
   }, []);
-  const rawName = access?.name?.trim() || accountName;
-  const userName = rawName ? rawName.split(/\s+/)[0] : "Usuário";
+  const rawName = accountName || access?.name?.trim() || "";
+  const firstName = rawName.split(/\s+/)[0]?.trim();
+  const userName = firstName && !["usuário", "usuario", "visitante"].includes(firstName.toLowerCase()) ? firstName : "";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
   return (
@@ -46,7 +47,7 @@ function Home() {
       <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-2 px-1.5 py-2 sm:gap-4 sm:px-6 sm:py-5">
         <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-3 py-4 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
-          <h2 className="text-3xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-4xl">{`${greeting}, Sr. ${userName}!`}</h2>
+          <h2 className="text-3xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-4xl">{userName ? `${greeting}, Sr. ${userName}!` : `${greeting}!`}</h2>
         </section>
         <HomePartsCarousel />
 
