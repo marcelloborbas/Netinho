@@ -3237,8 +3237,8 @@ main, section, article { min-width: 0; }
     bottom: calc(100% + 6px) !important;
   }
   .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {
-    width: clamp(84px, 26vw, 132px) !important;
-    height: auto !important;
+    width: clamp(142px, 38vw, 161px) !important;
+    height: clamp(142px, 38vw, 161px) !important;
   }
   .welcome-auth-stage .welcome-auth-actions {
     width: min(100%, 390px);
