@@ -189,17 +189,6 @@ function Catalog() {
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        {canSell && <Link to="/pedidos" className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#102e51] px-3 font-bold text-white"><History size={17}/> Histórico de pedidos</Link>}
-        {canSell && <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#102e51] px-3 font-bold text-white"><ShoppingCart size={17}/> Pedido rápido</Link>}
-        {compared.length > 0 && <button type="button" onClick={() => setCompareOpen(!compareOpen)} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#39ff79] bg-[#102e51] px-3 font-bold text-[#39ff79]"><GitCompareArrows size={17}/> Comparar ({compared.length})</button>}
-      </div>
-      {compareOpen && comparedProducts.length > 0 && <section aria-label="Comparação de peças" className="overflow-x-auto rounded-xl border border-[#42678b] bg-[#0b2745] p-3 text-white">
-        <div className="mb-2 flex items-center justify-between"><h2 className="font-extrabold text-[#39ff79]">Comparar peças</h2><button type="button" onClick={() => setCompared([])} className="text-xs underline">Limpar comparação</button></div>
-        <table className="w-full min-w-[420px] border-collapse text-left text-xs"><thead><tr><th className="p-2">Característica</th>{comparedProducts.map((p) => <th key={p.id} className="p-2 text-[#39ff79]">{p.code}</th>)}</tr></thead><tbody>
-          {([["Peça", (p: CatalogProduct) => p.categories?.name || "—"], ["Fabricante", (p: CatalogProduct) => p.manufacturer || "—"], ["Aplicação", (p: CatalogProduct) => p.application || "Não informada"], ["Referências", (p: CatalogProduct) => p.refs || "Não informadas"], ["À vista", (p: CatalogProduct) => p.price_cash == null ? "Não informado" : brl(p.price_cash)]] as const).map(([label, getter]) => <tr key={label} className="border-t border-[#35536e]"><th className="p-2 align-top">{label}</th>{comparedProducts.map((p) => <td key={p.id} className="p-2 align-top">{getter(p)}</td>)}</tr>)}
-        </tbody></table>
-      </section>}
       <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <button type="button" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><Grid2X2 size={20}/><span>Todas<br />as peças</span></button>
         {categories.map((name) => {
@@ -337,7 +326,6 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
           <option value="normal">Normal</option><option value="oferta">Oferta</option><option value="saldao">Saldão</option>
         </select>
       </label>}
-      <div className="flex flex-wrap gap-2"><button type="button" aria-pressed={isCompared} onClick={onToggleCompare} className={`inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 text-sm font-bold ${isCompared ? "border-[#39ff79] bg-[#163d52] text-[#39ff79]" : "border-[#42678b] bg-[#142f4c] text-white"}`}><GitCompareArrows size={17}/>{isCompared ? "Selecionada" : "Comparar"}</button></div>
       <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="my-3 inline-flex min-h-10 items-center gap-2 self-start rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#35536e] bg-[#07182d] p-3 text-sm leading-6">
         <p><strong>Código:</strong> {p.code}</p>
