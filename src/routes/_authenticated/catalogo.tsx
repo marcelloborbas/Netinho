@@ -125,6 +125,15 @@ function Catalog() {
     ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
   ], [products, localFco]);
   const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD" && p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
+  const categoryCounts = useMemo(() => {
+    const eligible = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq));
+    const counts = new Map<string, number>();
+    for (const p of eligible) {
+      const name = p.categories?.name;
+      if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+    }
+    return { total: eligible.length, counts };
+  }, [combined, manufacturer, dq]);
   const list = useMemo(() => {
     const matching = combined.filter((p) =>
       p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
@@ -156,8 +165,8 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
-      <header className="catalog-showcase-heading mx-auto w-full rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]">
-        <h1 className="text-center text-[22px] font-black uppercase leading-tight tracking-wide text-white sm:text-[30px]">CATÁLOGO DE PEÇAS</h1>
+      <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
+        <h1 className="w-full text-center text-[22px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[30px]" style={{ textAlign: "center" }}>CATÁLOGO DE PEÇAS</h1>
       </header>
 
       <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
@@ -171,8 +180,7 @@ function Catalog() {
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <p role="status" className="text-sm font-semibold text-[#dbeafe]">{list.length} peças encontradas</p>
-            <div className="relative">
+                        <div className="relative">
               <button type="button" aria-label="Filtros do catálogo" aria-expanded={filterOpen} onClick={() => setFilterOpen((open) => !open)}
                 className="flex items-center gap-1 rounded-lg border border-[#8bc8ff] bg-white px-2.5 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
                 <Filter size={19} /><span className="text-xs font-bold">Filtros</span>
@@ -189,11 +197,11 @@ function Catalog() {
       </section>
 
       <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
-        <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
+        <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /><span className="absolute bottom-0 left-0 right-0 z-20 !min-h-0 bg-[#071a30]/90 px-1 py-1 text-center !text-xs font-bold !text-white">{categoryCounts.total} peças</span></button>
         {categories.map((name) => {
           const Icon = categoryIcon(name);
           const photo = categoryPhoto(name);
-          return <button key={name} type="button" aria-label={name} title={name} className={photo ? "category-with-photo !p-0 !overflow-hidden" : ""} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>
+          return <button key={name} type="button" aria-label={name} title={name} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>
             {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={name} loading="lazy" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
           </button>;
         })}
