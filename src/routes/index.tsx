@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -10,11 +10,6 @@ import { PublicFooter } from "@/components/PublicFooter";
 
 export const Route = createFileRoute("/")({
   ssr: false,
-  beforeLoad: async () => {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data } = await supabase.auth.getSession();
-    if (!data.session || window.sessionStorage.getItem("netinho-entry-approved") !== "1") throw redirect({ to: "/auth" });
-  },
   head: () => ({ meta: [
     { title: "Início | Netinho Auto Parts" },
     { name: "description", content: "Acesse clientes, vendas, orçamentos, pedidos e campanhas Netinho Auto Parts." },
@@ -39,8 +34,8 @@ function Home() {
       <BrandHeader />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-3 px-3 py-3 sm:gap-4 sm:px-6 sm:py-5">
         <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-5 py-5 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
-          <h2 className="text-2xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-3xl">{greeting}, Sr. {userName || "Usuário"}!</h2>
-          <p className="mt-4 text-sm font-semibold text-[#102a52]">Permissão de vender segue o perfil autorizado.</p>
+          <h2 className="text-2xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-3xl">{userName ? `${greeting}, Sr. ${userName}!` : "Bem-vindo à Netinho Auto Parts!"}</h2>
+          <p className="mt-4 text-sm font-semibold text-[#102a52]">Conheça nossas peças, ofertas e soluções para o mercado automotivo.</p>
         </section>
         <PromotionBanner />
 
