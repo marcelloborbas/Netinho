@@ -175,17 +175,16 @@ function Catalog() {
       </header>
 
       <section className="space-y-4 rounded-2xl border-2 border-[#102a52] bg-white p-4 shadow-lg" aria-label="Pesquisar catálogo">
-        <form className="flex items-center gap-2" role="search" onSubmit={(event) => { event.preventDefault(); setQ(searchInput.trim()); setPage(1); }}>
-          <div className="relative min-w-0 flex-1">
+        <div className="w-full" role="search">
+          <div className="relative w-full min-w-0">
             <Search className="absolute left-3 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
             <input id="catalog-search" aria-label="Buscar peças" value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(e) => { const value = e.target.value; setSearchInput(value); setQ(value.trim()); setPage(1); }}
               placeholder="Busque pelo código, pela peça ou pelo veículo..."
               style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#102a52] pl-10 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
             {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-3.5 text-[#102a52]"><X size={20}/></button>}
           </div>
-          <button type="submit" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#0878ed] px-3 text-sm font-extrabold text-white shadow-md hover:bg-[#0062c9]" aria-label="Buscar no catálogo"><Search size={18} aria-hidden="true" />Buscar</button>
-        </form>
+        </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
                         <div className="relative">
