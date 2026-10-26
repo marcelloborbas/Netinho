@@ -65,7 +65,7 @@ function Home() {
         <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-3 py-4 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
           <h2 className="text-3xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-4xl">{userName ? `${greeting}, Sr. ${userName}!` : `${greeting}!`}</h2>
         </section>
-        <div className="flex w-full flex-1 items-start justify-center pt-3 sm:pt-4"><HomePartsCarousel /></div>
+        <div className="flex w-full flex-1 items-start justify-center pt-10 sm:pt-12"><HomePartsCarousel /></div>
 
       </main>
       <PublicFooter />   </div>
