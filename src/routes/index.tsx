@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
   beforeLoad: async () => {
     const { supabase } = await import("@/integrations/supabase/client");
     const { data } = await supabase.auth.getSession();
-    if (!data.session) throw redirect({ to: "/auth" });
+    if (!data.session || window.sessionStorage.getItem("netinho-entry-approved") !== "1") throw redirect({ to: "/auth" });
   },
   head: () => ({ meta: [
     { title: "Início | Netinho Auto Parts" },
