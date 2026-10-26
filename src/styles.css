@@ -3273,3 +3273,44 @@ main, section, article { min-width: 0; }
     justify-content: space-between;
   }
 }
+
+
+/* Padrão único LIA: centralizada e acima das imagens e menus em todas as páginas. */
+.netinho-assistant,
+.netinho-assistant.netinho-assistant-auth {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 1000 !important;
+  align-items: center !important;
+  bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+}
+.netinho-assistant.netinho-assistant-auth {
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+}
+.netinho-assistant .netinho-assistant-panel {
+  position: absolute !important;
+  bottom: calc(100% + 10px) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 1001 !important;
+  box-sizing: border-box;
+  width: min(420px, calc(100vw - 20px)) !important;
+  max-height: min(65dvh, 540px) !important;
+  overflow-y: auto !important;
+}
+.netinho-assistant .netinho-assistant-avatar { z-index: 1000 !important; }
+@media (max-width: 639px) {
+  .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: 116px !important;
+    height: 116px !important;
+  }
+  .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: clamp(136px, 39vw, 154px) !important;
+    height: clamp(136px, 39vw, 154px) !important;
+  }
+}
