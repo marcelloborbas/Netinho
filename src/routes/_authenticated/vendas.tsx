@@ -10,7 +10,7 @@ import { readOffers, type Offer } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/vendas")({
   validateSearch: (s: Record<string, unknown>) => ({ modo: s["modo"] === "consulta" ? "consulta" as const : "venda" as const, q: typeof s["q"] === "string" ? s["q"] : "", promo: typeof s["promo"] === "string" ? s["promo"] : "" }),
-  head: () => ({ meta: [{ title: "Meu Pedido | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [{ title: "Fazer Pedido | Netinho Auto Parts" }] }),
   component: SalesPage,
 });
 
@@ -91,9 +91,8 @@ function SalesPage() {
     toast.success("Peça adicionada ao " + (kind === "pedido" ? "pedido." : "orçamento."));
   }
   return <div className="mx-auto w-full max-w-6xl space-y-4 pb-8">
-    <header className="rounded-2xl border border-[#b8cee8] bg-[#edf4ff] px-4 py-5 text-center text-[#102a52] shadow-sm">
-      <h1 className="text-[28px] font-extrabold sm:text-[34px]">{search.modo === "consulta" ? "ORÇAMENTOS" : "MEU PEDIDO"}</h1>
-      <p className="mt-2 text-sm">Identifique o cliente, escolha as peças e revise antes de finalizar.</p>
+    <header className="mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
+      <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>{search.modo === "consulta" ? "ORÇAMENTOS" : "FAZER PEDIDO"}</h1>
     </header>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="font-extrabold text-[#102a52]">1. Cliente</h2>
