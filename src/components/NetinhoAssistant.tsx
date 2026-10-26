@@ -38,13 +38,13 @@ export function NetinhoAssistant() {
   }, [pathname, isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
   const hint = hints.find((item) => item.match.test(pathname));
-  const greeting = pathname === "/" ? `${new Date().getHours() < 12 ? "Bom dia" : new Date().getHours() < 18 ? "Boa tarde" : "Boa noite"}, ${access?.name?.trim().split(/\s+/)[0] || "usuário"}. Para acessar um perfil avançado, clique em solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador.` : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
+  const greeting = pathname === "/" ? "Vamos lá! Aqui é tudo bem facinho!\n\nNo menu superior, clique na sua foto para consultar seu perfil, visualizar suas informações ou sair da conta.\n\nLembre-se: somente perfis autorizados podem realizar vendas!\n\nNesta página, você também acompanha nossas novidades e atualizações!\n\nQuer voltar ao início? É só clicar na logomarca da Netinho!\n\nNo menu inferior, estão seus atalhos rápidos: Início, Catálogo de Peças, Vender, Pedidos e Sair.\n\nViu como é simples?\n\nAgora, bora fazer boas vendas!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speak = () => {
-    if (isAuth) {
-      const audio = loginAudioRef.current ?? new Audio("/audio/lia/lia-login.mp3");
+    if (isAuth || pathname === "/") {
+      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : "/audio/lia/lia-pagina%20inicial.mp3");
       loginAudioRef.current = audio;
       audio.onended = () => setSpeaking(false);
-      audio.onerror = () => setSpeaking(false);
+      audio.onerror = () => { setSpeaking(false); if (pathname === "/") { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
       if (speaking) { audio.pause(); audio.currentTime = 0; setSpeaking(false); return; }
       audio.currentTime = 0;
       void audio.play().then(() => setSpeaking(true)).catch(() => setSpeaking(false));
