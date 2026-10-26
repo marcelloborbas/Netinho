@@ -23,13 +23,13 @@ export function HomePartsCarousel() {
   const part = parts[index];
   const move = (direction: number) => setIndex(i => (i + direction + parts.length) % parts.length);
   return (
-    <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white p-3 shadow-md sm:p-5" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
-      <h2 className="mb-3 text-center text-lg font-black text-[#102a52] sm:text-xl">Peças em destaque</h2>
+    <section className="mx-auto w-full max-w-3xl overflow-hidden rounded-2xl border border-[#d5e0ee] bg-white shadow-md" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+
       <div className="flex items-center gap-2">
         <button type="button" onClick={() => move(-1)} aria-label="Peça anterior" className="shrink-0 rounded-full bg-[#102a52] p-2 text-white"><ChevronLeft size={20}/></button>
-        <Link to="/catalogo" search={{ q: part.search }} className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-xl p-2 text-center transition hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-blue-600">
-          <img key={part.image} src={part.image} alt={part.title} className="aspect-square h-auto max-h-[580px] w-full object-contain" loading="lazy"/>
-          <span className="rounded-full bg-[#1262e8] px-4 py-2 text-xs font-bold text-white">Ver peça no catálogo</span>
+        <Link to="/catalogo" search={{ q: part.search }} className="flex min-w-0 flex-1 items-center justify-center">
+          <img key={part.image} src={part.image} alt={part.title} className="aspect-square h-auto w-full object-contain" loading="lazy"/>
+
         </Link>
         <button type="button" onClick={() => move(1)} aria-label="Próxima peça" className="shrink-0 rounded-full bg-[#102a52] p-2 text-white"><ChevronRight size={20}/></button>
       </div>
