@@ -168,19 +168,19 @@ function Catalog() {
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
-    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
+    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 pt-12 pb-28 sm:px-6 sm:pt-14 sm:pb-32">
       <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
         <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>CATÁLOGO DE PEÇAS</h1>
       </header>
 
-      <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
+      <section className="space-y-4 rounded-2xl border-2 border-[#102a52] bg-white p-4 shadow-lg" aria-label="Pesquisar catálogo">
         <form className="flex items-center gap-2" role="search" onSubmit={(event) => { event.preventDefault(); setQ(searchInput.trim()); setPage(1); }}>
           <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
             <input id="catalog-search" aria-label="Buscar peças" value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Busque pelo código, pela peça ou pelo veículo..."
-              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#8bc8ff] pl-10 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#102a52] pl-10 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
             {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-3.5 text-[#102a52]"><X size={20}/></button>}
           </div>
           <button type="submit" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#0878ed] px-3 text-sm font-extrabold text-white shadow-md hover:bg-[#0062c9]" aria-label="Buscar no catálogo"><Search size={18} aria-hidden="true" />Buscar</button>
@@ -189,7 +189,7 @@ function Catalog() {
           <div className="flex items-center gap-2">
                         <div className="relative">
               <button type="button" aria-label="Filtros do catálogo" aria-expanded={filterOpen} onClick={() => setFilterOpen((open) => !open)}
-                className="flex items-center gap-1 rounded-lg border border-[#8bc8ff] bg-white px-2.5 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
+                className="flex items-center gap-1 rounded-lg border-2 border-[#102a52] bg-white px-2.5 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
                 <Filter size={19} /><span className="text-xs font-bold">Filtros</span>
               </button>
               {filterOpen && <div className="absolute left-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-[#416c93] bg-[#09213c] p-1 shadow-xl" role="group" aria-label="Ordenar e filtrar peças">
@@ -199,7 +199,7 @@ function Catalog() {
               </div>}
             </div>
           </div>
-          <button type="button" onClick={() => { reset(); setFilterOpen(false); }} className="inline-flex items-center gap-1.5 rounded-lg border border-[#8bc8ff] bg-white px-3 py-2 text-xs font-bold text-[#102a52] hover:bg-[#eaf2ff]" aria-label="Limpar filtros do catálogo"><X size={17} aria-hidden="true" />Limpar filtros</button>
+          <button type="button" onClick={() => { reset(); setFilterOpen(false); }} className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#102a52] bg-white px-3 py-2 text-xs font-bold text-[#102a52] hover:bg-[#eaf2ff]" aria-label="Limpar filtros do catálogo"><X size={17} aria-hidden="true" />Limpar filtros</button>
         </div>
       </section>
 
