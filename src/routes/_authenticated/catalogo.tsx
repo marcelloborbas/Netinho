@@ -198,6 +198,9 @@ function Catalog() {
           </button>;
         })}
       </nav>
+      <div className="relative z-20 flex w-full justify-center py-3" aria-label="LIA, assistente do catálogo">
+        <img src="/images/lia-catalogo.webp" alt="LIA, assistente da Netinho Auto Parts no catálogo de peças" loading="eager" decoding="async" className="pointer-events-none block h-auto w-[min(60vw,250px)] max-w-full object-contain drop-shadow-lg" />
+      </div>
       {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
