@@ -38,7 +38,7 @@ const localHd = hdCatalog.map((p) => ({
 })) as CatalogProduct[];
 
 const categoryPhotos: Array<[RegExp, string]> = [
-  [/atuador.*(?:embreagem|hidr[aá]ulic)/i, "Atuador de Embreagem.webp"],
+  [/atuador\s*(?:de\s*)?(?:embreagem|hidr[aá]ulic)|atuador.*hidr[aá]ulic/i, "Atuador de Embreagem.webp"],
   [/bobina.*igni/i, "Bobina de Ignição.webp"],
   [/bomba.*dire/i, "Bomba de direção.webp"],
   [/caixa.*dire|dire[cç][aã]o/i, "Caixa de Direção.webp"],
