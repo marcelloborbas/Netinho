@@ -40,28 +40,28 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.17 0.045 255);
-  --surface: oklch(0.205 0.05 255);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.225 0.055 255);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.225 0.055 255);
-  --popover-foreground: oklch(0.97 0 0);
+  --background: #ffffff;
+  --surface: #ffffff;
+  --foreground: #102a52;
+  --card: #ffffff;
+  --card-foreground: #102a52;
+  --popover: #ffffff;
+  --popover-foreground: #102a52;
   --primary: oklch(0.6 0.22 27);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.28 0.045 255);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.27 0.035 255);
-  --muted-foreground: oklch(0.7 0.01 260);
-  --accent: oklch(0.3 0.04 255);
-  --accent-foreground: oklch(0.97 0 0);
+  --secondary: #edf3fb;
+  --secondary-foreground: #102a52;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #e8f1ff;
+  --accent-foreground: #102a52;
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.72 0.16 150);
   --warning: oklch(0.8 0.15 80);
   --metal: oklch(0.78 0.01 260);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 14%);
+  --border: #d9e2ee;
+  --input: #cbd5e1;
   --ring: oklch(0.6 0.22 27);
   --gradient-metal: linear-gradient(180deg, oklch(0.26 0.05 255), oklch(0.2 0.04 255));
   --gradient-red: linear-gradient(135deg, oklch(0.62 0.22 27), oklch(0.52 0.21 25));
@@ -74,7 +74,7 @@
     border-color: var(--color-border);
   }
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
     background-color: var(--color-background);
@@ -3314,3 +3314,19 @@ main, section, article { min-width: 0; }
     height: clamp(136px, 39vw, 154px) !important;
   }
 }
+
+/* Tema claro unificado Netinho: superficies brancas e tipografia contrastante. */
+html, body, #root { background-color: #fff; color: #102a52; }
+body { color-scheme: light; }
+.home-page, .auth-stage, .welcome-auth-stage, .auth-stage > main,
+main:not(.welcome-art-frame), .app-shell { background-color: #fff; }
+.auth-stage { background-image: none !important; color: #102a52; }
+.auth-stage > div:not(.welcome-art-frame) { color: #102a52; }
+.auth-stage .text-white, .auth-stage .bg-gradient-red { color: #fff; }
+.auth-stage .bg-\[\#102a52\] { background-color: #fff; color: #102a52; border-color: #d9e2ee; }
+.auth-stage .bg-\[\#102a52\] h1, .auth-stage .bg-\[\#102a52\] p { color: #102a52; }
+.auth-stage .bg-\[\#102a52\] .text-blue-100 { color: #475569; }
+.auth-stage .bg-\[\#102a52\] button.bg-gradient-red { color: #fff; }
+.netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-panel { color: #fff; }
+input, select, textarea { color: #102a52; }
+input::placeholder, textarea::placeholder { color: #64748b; opacity: 1; }
