@@ -156,9 +156,8 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 py-5 sm:px-6">
-      <header className="catalog-showcase-heading rounded-2xl px-2 py-4 text-left text-white">
-        <h1 className="text-left text-[28px] font-black leading-tight tracking-tight text-white sm:text-[34px]">Catálogo de <span className="text-[#ffd54f]">Peças</span></h1><p className="mt-1 text-xs font-medium text-blue-100">Encontre a peça certa para seu veículo</p>
-
+      <header className="catalog-showcase-heading mx-auto w-full rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]">
+        <h1 className="text-center text-[22px] font-black uppercase leading-tight tracking-wide text-white sm:text-[30px]">CATÁLOGO DE PEÇAS</h1>
       </header>
 
       <section className="space-y-4 rounded-2xl border border-[#31587f] bg-[#0b2745] p-4 shadow-lg" aria-label="Pesquisar catálogo">
