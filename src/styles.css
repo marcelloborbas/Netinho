@@ -3493,3 +3493,17 @@ main:has(> .catalog-showcase) { background: #06172b !important; color: #f5f8ff !
   .catalog-showcase .catalog-product-card .catalog-card-info button { font-size: 12px; }
   .catalog-showcase .catalog-product-card .catalog-card-info .flex.flex-wrap { gap: 4px; }
 }
+
+
+/* Ajuste pontual: LIA 1.3x somente na pagina inicial, acima dos banners. */
+.netinho-assistant.netinho-assistant-home { z-index: 110 !important; }
+.netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  width: 150.8px !important;
+  height: 150.8px !important;
+}
+@media (min-width: 640px) {
+  .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: 149.5px !important;
+    height: 149.5px !important;
+  }
+}
