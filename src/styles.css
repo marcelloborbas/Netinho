@@ -3450,3 +3450,46 @@ main:not(.welcome-art-frame), .app-shell { background-color: #f1f1f1; }
     height: 149.5px !important;
   }
 }
+
+
+/* Catalogo exclusivo: identidade azul-marinho da referencia, sem alterar outras paginas. */
+main:has(> .catalog-showcase) { background: #06172b !important; color: #f5f8ff !important; max-width: none !important; padding: 0 !important; }
+.catalog-showcase { background: #06172b !important; color: #f5f8ff !important; max-width: 1100px; min-height: 100%; padding: 18px 14px 48px; }
+.catalog-showcase .catalog-showcase-heading { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 4px 2px 8px; }
+.catalog-showcase .catalog-showcase-heading h1,
+.catalog-showcase .catalog-showcase-heading h1 span { color: #fff !important; text-align: left; font-size: clamp(27px,4vw,42px); }
+.catalog-showcase .catalog-showcase-heading p { color: #bed0e4 !important; text-align: left; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] { background: #0c2744 !important; color: #fff !important; border: 1px solid #315272 !important; }
+.catalog-showcase section[aria-label="Pesquisar catálogo"] [role="status"] { color: #fff !important; }
+.catalog-showcase #catalog-search { background: #102c48 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; border: 1px solid #4b6786 !important; }
+.catalog-showcase #catalog-search::placeholder { color: #b8c8db !important; -webkit-text-fill-color: #b8c8db !important; }
+.catalog-showcase .catalog-category-filters button,
+.catalog-showcase .catalog-category-filters button[aria-pressed="true"] { background: #102740 !important; color: #fff !important; border: 1px solid #34516d !important; min-height: 116px; }
+.catalog-showcase .catalog-category-filters button[aria-pressed="true"] { background: #0878ed !important; border-color: #55adff !important; }
+.catalog-showcase .catalog-category-filters button span,
+.catalog-showcase .catalog-category-filters button svg { color: #fff !important; text-shadow: none !important; }
+.catalog-showcase .catalog-category-filters button .catalog-category-photo { background: #fff !important; border-radius: 8px; }
+.catalog-showcase .catalog-product-grid { grid-template-columns: minmax(0,1fr) !important; }
+.catalog-showcase .catalog-product-card { background: linear-gradient(115deg,#0b2844,#071b31) !important; color: #fff !important; border: 1px solid #294764 !important; display: grid !important; grid-template-columns: minmax(0,27%) minmax(0,1fr) !important; gap: 14px; align-items: start; padding: 14px; }
+.catalog-showcase .catalog-product-card .catalog-card-image-col { align-self: stretch; display: flex; align-items: center; justify-content: center; }
+.catalog-showcase .catalog-product-card .product-visual { background: #071a2e !important; border-radius: 12px; width: 100%; min-height: 170px; display: flex; align-items: center; justify-content: center; }
+.catalog-showcase .catalog-product-card .product-visual img { background: transparent !important; max-height: 210px; width: 100%; object-fit: contain !important; }
+.catalog-showcase .catalog-product-card .catalog-card-info { padding-top: 0; }
+.catalog-showcase .catalog-product-card h2 { color: #fff !important; text-shadow: none !important; font-size: clamp(17px,2.4vw,25px); }
+.catalog-showcase .catalog-product-card .catalog-card-stock { color: #3df082 !important; }
+.catalog-showcase .catalog-product-card .catalog-card-info > div:last-child { border-color: #31506b; }
+.catalog-showcase .catalog-product-card .catalog-card-info > div:last-child p { color: #e7f1ff !important; }
+.catalog-showcase .catalog-product-card .catalog-card-info dd { color: #ffdd37 !important; text-shadow: none !important; font-size: 1.12rem; }
+.catalog-showcase .catalog-product-card button[aria-expanded] { background: #213a55 !important; color: #fff !important; }
+.catalog-showcase .catalog-product-card [aria-expanded="true"] + div { color: #fff; }
+.catalog-showcase .catalog-product-card label { color: #fff; }
+.catalog-showcase > p, .catalog-showcase > nav, .catalog-showcase > div { color: #f5f8ff; }
+@media (max-width: 480px) {
+  .catalog-showcase { padding: 12px 8px 36px; }
+  .catalog-showcase .catalog-product-card { grid-template-columns: minmax(0,34%) minmax(0,1fr) !important; gap: 9px; padding: 9px; }
+  .catalog-showcase .catalog-product-card .product-visual { min-height: 130px; }
+  .catalog-showcase .catalog-product-card .product-visual img { max-height: 160px; }
+  .catalog-showcase .catalog-product-card .catalog-card-info h2 { font-size: 16px; }
+  .catalog-showcase .catalog-product-card .catalog-card-info button { font-size: 12px; }
+  .catalog-showcase .catalog-product-card .catalog-card-info .flex.flex-wrap { gap: 4px; }
+}
