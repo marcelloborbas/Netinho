@@ -206,7 +206,7 @@ function Catalog() {
           const Icon = categoryIcon(name);
           const photo = categoryPhoto(name);
           return <button key={name} type="button" className={photo ? "category-with-photo" : ""} aria-pressed={category === name} onClick={() => { setCategory(name); setPage(1); }}>
-            {photo ? <img src={photo} alt={name} loading="lazy" className="catalog-category-photo" onError={(event) => { event.currentTarget.style.display = "none"; }} /> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
+            {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={name} loading="lazy" className="catalog-category-photo relative z-10" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
             <span>{name}</span>
           </button>;
         })}
