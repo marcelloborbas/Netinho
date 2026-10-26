@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BrandHeader } from "@/components/BrandHeader";
+import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
@@ -26,15 +27,26 @@ function Home() {
     if (previousLevel.current !== null && previousLevel.current !== current && (access.can_sell || access.level === 1)) toast.success("Seu acesso foi atualizado! Confira os perfis disponíveis.");
     previousLevel.current = current;
   }, [access]);
-  const userName = access?.name?.trim().split(/\s+/)[0];
+  const [accountName, setAccountName] = useState("");
+  useEffect(() => {
+    void supabase.auth.getUser().then(({ data }) => {
+      const user = data.user;
+      const meta = user?.user_metadata;
+      const candidate = meta?.full_name || meta?.name || meta?.given_name || "";
+      const emailName = user?.email?.split("@")[0]?.replace(/[._-]+/g, " ") || "";
+      setAccountName(String(candidate || emailName).trim());
+    }).catch(() => {});
+  }, []);
+  const rawName = access?.name?.trim() || accountName;
+  const userName = rawName ? rawName.split(/\s+/)[0] : "Usuário";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
   return (
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-3 px-3 py-3 sm:gap-4 sm:px-6 sm:py-5">
-        <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-5 py-5 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
-          <h2 className="text-3xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-4xl">`${greeting}, Sr. ${userName || "Usuário"}!`</h2>
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-2 px-1.5 py-2 sm:gap-4 sm:px-6 sm:py-5">
+        <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-3 py-4 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
+          <h2 className="text-3xl font-black leading-tight text-[#102a52] drop-shadow-[0_0_9px_rgba(250,204,21,0.6)] sm:text-4xl">{`${greeting}, Sr. ${userName}!`}</h2>
         </section>
         <HomePartsCarousel />
 
