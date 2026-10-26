@@ -3615,3 +3615,37 @@ html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-
     max-height: 149.5px !important;
   }
 }
+
+/* Catalogo: recipientes de TODOS os produtos iguais ao fundo da pagina,
+   somente contorno azul-escuro; textos legiveis no fundo claro. */
+.catalog-showcase .catalog-product-grid .catalog-product-card {
+  background: var(--netinho-page-bg, #f1f1f1) !important;
+  background-image: none !important;
+  border: 2px solid #102a52 !important;
+  color: #102a52 !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card h2,
+.catalog-showcase .catalog-product-grid .catalog-product-card h3,
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info,
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info p,
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info label,
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info dt {
+  color: #102a52 !important;
+  text-shadow: none !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .product-visual {
+  background: transparent !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info > div:last-child {
+  border-color: #102a52 !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info > div:last-child p {
+  color: #102a52 !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info dd {
+  color: #102a52 !important;
+  text-shadow: none !important;
+}
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-stock {
+  color: #16783d !important;
+}
