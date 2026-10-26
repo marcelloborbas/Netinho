@@ -3438,3 +3438,15 @@ main:not(.welcome-art-frame), .app-shell { background-color: #f1f1f1; }
   color: #713f12 !important;
 }
 .catalog-showcase [role="alert"] button { color: #713f12 !important; }
+
+/* LIA 1.3x exclusivamente na pagina inicial; posicao e demais paginas preservadas. */
+.netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  width: 150.8px !important;
+  height: 150.8px !important;
+}
+@media (min-width: 640px) {
+  .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: 149.5px !important;
+    height: 149.5px !important;
+  }
+}
