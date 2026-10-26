@@ -283,7 +283,7 @@ function AuthPage() {
     );
   }
   return (
-    <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen bg-[#0b1f3f] px-4 py-6 text-white sm:py-10"}>
+    <main className={showWelcome ? "welcome-auth-stage" : "auth-stage min-h-screen bg-white px-4 py-6 text-[#102a52] sm:py-10"}>
       {showWelcome && (
         <>
           <div className="welcome-art-frame">
@@ -353,7 +353,7 @@ function AuthPage() {
           <LoaderCircle className="animate-spin" aria-label="Verificando sessão" />
         </div>
       ) : !showWelcome && signedIn && !recovery ? (
-        <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-white/20 bg-[#102a52] p-5 shadow-2xl sm:p-8">
+        <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 text-[#102a52] shadow-xl sm:p-8">
           {error ? (
             <div className="surface-card space-y-4 p-6">
               <h1 className="text-2xl font-bold">Não foi possível verificar seu acesso</h1>
@@ -377,11 +377,11 @@ function AuthPage() {
             <>
               <div className="mb-7 flex items-start justify-between gap-3">
                 <div>
-                  <span className="eyebrow !text-blue-100">QUE BOM TER VOCÊ AQUI</span>
-                  <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
+                  <span className="eyebrow !text-[#475569]">QUE BOM TER VOCÊ AQUI</span>
+                  <h1 className="mt-3 text-3xl font-bold text-[#102a52] sm:text-4xl">
                     {greeting(`sr. ${access.name.split(" ")[0]}`)}
                   </h1>
-                  <p className="mt-2 text-blue-100">
+                  <p className="mt-2 text-[#475569]">
                     Preparando suas opções de vendas e catálogos.
                   </p>
                 </div>
@@ -395,7 +395,7 @@ function AuthPage() {
               >
                 Continuar para minha área <ArrowRight size={18} />
               </Button>
-              <p className="mt-4 text-center text-xs text-blue-100">
+              <p className="mt-4 text-center text-xs text-[#475569]">
                 Conectado como {access.email}
               </p>
             </>
