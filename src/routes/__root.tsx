@@ -141,6 +141,8 @@ function RootComponent() {
     };
     let hoveredControl: Element | null = null;
     const playControlPointerOver = (event: PointerEvent) => {
+      // Em telas sensiveis ao toque, pointerover pode disparar a cada toque e atrasar a navegacao.
+      if (event.pointerType !== "mouse") return;
       const control = findSoundControl(event.target);
       if (!control || hoveredControl === control) return;
       hoveredControl = control;
