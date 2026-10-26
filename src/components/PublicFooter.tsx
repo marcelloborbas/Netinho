@@ -1,10 +1,8 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Home, Search, ShoppingCart, ClipboardList, LogOut, LogIn } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { accessQuery } from "@/lib/access";
 
 function clickSound() {
   try {
@@ -27,21 +25,14 @@ function clickSound() {
 
 /** Rodapé único das páginas públicas, seguindo o modelo da página inicial. */
 export function PublicFooter() {
-  const { data: access } = useQuery({ ...accessQuery, retry: false });
   const pathname = useLocation().pathname;
   const navigate = useNavigate();
-  const isAdmin = access?.level === 1;
-  const canSell = access?.can_sell === true || isAdmin;
-  const links = canSell ? [
+  const links = [
     { to: "/" as const, label: "Início", icon: Home },
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
     { to: "/vendas" as const, label: "Vender", icon: ShoppingCart },
     { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
-    { to: "/auth" as const, label: "Sair", icon: LogOut, logout: true },
-  ] : [
-    { to: "/" as const, label: "Início", icon: Home },
-    { to: "/catalogo" as const, label: "Catálogo", icon: Search },
-    { to: "/auth" as const, label: "Login", icon: LogIn },
+    { to: "/auth" as const, label: "Sair", icon: LogOut },
   ];
   async function logout() {
     const { error } = await supabase.auth.signOut();
