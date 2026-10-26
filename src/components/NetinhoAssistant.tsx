@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
 import { useRouterState } from "@tanstack/react-router";
@@ -23,6 +23,48 @@ export function NetinhoAssistant() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data: access } = useQuery({ ...accessQuery, enabled: pathname === "/" });
   const isAuth = /^\/(auth|login)(\/|$)/.test(pathname);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const dragRef = useRef<{ id: number; startX: number; startY: number; x: number; y: number; moved: boolean } | null>(null);
+  const ignoreClickRef = useRef(false);
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("netinho-lia-position");
+      if (saved) {
+        const value = JSON.parse(saved);
+        if (typeof value.x === "number" && typeof value.y === "number") setPosition({ x: Math.max(10, Math.min(90, value.x)), y: Math.max(10, Math.min(90, value.y)) });
+      }
+    } catch { /* posição padrão */ }
+  }, []);
+  const onDragStart = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = position?.x ?? ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+    const y = position?.y ?? ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+    dragRef.current = { id: event.pointerId, startX: event.clientX, startY: event.clientY, x, y, moved: false };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const onDragMove = (event: PointerEvent<HTMLButtonElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.id !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.moved && Math.hypot(dx, dy) < 8) return;
+    drag.moved = true;
+    const halfX = Math.min(45, (event.currentTarget.offsetWidth / 2 + 8) / window.innerWidth * 100);
+    const halfY = Math.min(45, (event.currentTarget.offsetHeight / 2 + 8) / window.innerHeight * 100);
+    setPosition({ x: Math.max(halfX, Math.min(100 - halfX, drag.x + dx / window.innerWidth * 100)), y: Math.max(halfY, Math.min(100 - halfY, drag.y + dy / window.innerHeight * 100)) });
+  };
+  const onDragEnd = (event: PointerEvent<HTMLButtonElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.id !== event.pointerId) return;
+    if (drag.moved) {
+      ignoreClickRef.current = true;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const finalPosition = { x: (rect.left + rect.width / 2) / window.innerWidth * 100, y: (rect.top + rect.height / 2) / window.innerHeight * 100 };
+      try { window.localStorage.setItem("netinho-lia-position", JSON.stringify(finalPosition)); } catch { /* armazenamento indisponível */ }
+    }
+    dragRef.current = null;
+  };
   const [open, setOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -68,7 +110,7 @@ export function NetinhoAssistant() {
     window.speechSynthesis.speak(utterance);
     if (window.speechSynthesis.paused) window.speechSynthesis.resume();
   };
-  return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}`} aria-label="Assistente de navegação LIA">
+  return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}${position ? " netinho-assistant-moved" : ""}`} style={position ? ({ "--lia-x": `${position.x}%`, "--lia-y": `${position.y}%` } as CSSProperties) : undefined} aria-label="Assistente de navegação LIA">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
       <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : (hint?.title ?? "Ajuda")}</strong><div>
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
@@ -76,8 +118,8 @@ export function NetinhoAssistant() {
       </div></div>
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{greeting}</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p>{greeting}</p>}
     </div>}
-    <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onClick={() => setOpen(!open)}>
-      <img src={pathname === "/" ? "/images/LIA%20pagina%20inicial.webp" : isAuth ? "/images/Mascote%20LIA%20ajuda.webp" : pathname === "/catalogo" ? "/images/lia-catalogo.webp" : "/images/Mascote%20LIA%20ajuda.png"} alt="Mascote LIA" width="118" height="118" />
+    <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onPointerDown={onDragStart} onPointerMove={onDragMove} onPointerUp={onDragEnd} onPointerCancel={() => { dragRef.current = null; }} onClick={() => { if (ignoreClickRef.current) { ignoreClickRef.current = false; return; } setOpen(!open); }}>
+      <img src="/images/Mascote%20LIA%20ajuda.webp" alt="Mascote LIA" width="118" height="118" />
     </button>
   </aside>;
 }
