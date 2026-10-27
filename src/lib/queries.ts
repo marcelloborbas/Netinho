@@ -15,6 +15,8 @@ export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
 export const categoriesQuery = queryOptions({
   queryKey: ["categories"],
   staleTime: 5 * 60_000,
+  gcTime: 30 * 60_000,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const { data, error } = await supabase
       .from("categories")
@@ -29,6 +31,8 @@ export const categoriesQuery = queryOptions({
 export const productsQuery = queryOptions({
   queryKey: ["products"],
   staleTime: 5 * 60_000,
+  gcTime: 30 * 60_000,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const { data, error } = await supabase.rpc("catalog_products");
     if (!error) return (data ?? []) as unknown as Product[];
