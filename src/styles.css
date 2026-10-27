@@ -4137,3 +4137,28 @@ html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth .ne
     max-height: 100% !important;
   }
 }
+
+/* Catálogo: garantir que a LIA permaneça visível sobre o conteúdo e acima do menu. */
+html body:has(.catalog-showcase) .netinho-assistant:not(.netinho-assistant-auth):not(.netinho-assistant-home) {
+  position: fixed !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  top: auto !important;
+  left: auto !important;
+  right: 8px !important;
+  bottom: var(--lia-footer-offset, 66px) !important;
+  transform: none !important;
+  z-index: 1200 !important;
+}
+html body:has(.catalog-showcase) .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  display: block !important;
+  width: 112px !important;
+  height: 112px !important;
+  min-width: 112px !important;
+  min-height: 112px !important;
+  max-width: 112px !important;
+  max-height: 112px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
