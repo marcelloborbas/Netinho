@@ -19,9 +19,10 @@ export async function handleDeletePerson(request: Request, services: DeletePerso
   if (request.method === "OPTIONS") return new Response(null, { headers });
   if (request.method !== "POST") return respond(405, "Método não permitido.");
   const bearer = request.headers.get("Authorization")?.match(/^Bearer\s+(\S+)$/i);
-  if (!bearer) return respond(401, "Identificação necessária.");
+  const token = bearer?.[1];
+  if (!token) return respond(401, "Identificação necessária.");
   try {
-    const user = await services.authenticate(bearer[1]);
+    const user = await services.authenticate(token);
     if (!user) return respond(401, "Sessão inválida.");
     if (!await services.isAdmin(user.id)) return respond(403, "Somente o administrador pode excluir pessoas.");
     let body: unknown;
