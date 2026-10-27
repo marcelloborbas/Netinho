@@ -3871,3 +3871,22 @@ html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-moved
 @media (max-width: 390px) {
   .brand-header .brand-header-representations .partner-logos.partner-logos-compact { column-gap: 4px !important; }
 }
+
+/* LIA com imagem retangular: apoiar a base visual no topo exato do rodape.
+   Remove a moldura circular e o padding que deixavam uma faixa vazia. */
+html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large img {
+  display: block !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+}
