@@ -21,6 +21,7 @@ import { Route } from "@/routes/_authenticated/pessoas";
 function mount() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
   const Page = Route.options.component;
+  if (!Page) throw new Error("PESSOAL component is missing");
   render(<QueryClientProvider client={client}><Page /></QueryClientProvider>);
   return client;
 }
