@@ -42,6 +42,11 @@ function CadastroPage() {
   const name = account?.name || "";
   const map = /abdenego|abdnego/i.test(name) ? "/images/territories/abdenego.webp"
     : /livaldo/i.test(name) ? "/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" : null;
+  const city = account?.details?.city?.trim() || "";
+  const state = account?.profile?.territory_uf?.trim() || account?.details?.state?.trim() || "";
+  const cityQuery = [city, state, "Brasil"].filter(Boolean).join(", ");
+  const cityMapUrl = city ? "https://maps.google.com/maps?q=" + encodeURIComponent(cityQuery) + "&output=embed" : null;
+  const cityMapLink = city ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(cityQuery) : null;
   const line = (label: string, value: string | null | undefined) => <p className="border-b border-[#c8d6e6] py-2 text-sm"><strong>{label}:</strong> {value?.trim() || "Não informado"}</p>;
   return <div className="mx-auto max-w-3xl space-y-4 pb-8 text-[#102a52]">
     <header className="rounded-xl border-2 border-[#102a52] bg-[#f1f1f1] p-4 text-center">
@@ -66,10 +71,18 @@ function CadastroPage() {
         {line("Cidade-base", account.details?.city)}
         {line("Cidades atendidas", account.profile?.territory_cities || account.details?.service_cities)}
         {line("Endereço", [account.details?.street_address, account.details?.neighborhood, account.details?.postal_code].filter(Boolean).join(" · "))}
-        {map ? <a href={map} target="_blank" rel="noreferrer" className="mt-4 block rounded-lg border border-[#102a52] bg-white p-2">
-          <img src={map} alt={`Mapa de atuação de ${account.name}`} className="max-h-[440px] w-full object-contain" />
-          <span className="block py-2 text-center text-sm font-bold">Ampliar mapa</span>
-        </a> : <p className="mt-4 rounded-lg border border-[#c8d6e6] p-4 text-center text-sm">Não há imagem de mapa vinculada a este cadastro.</p>}
+        <div className="mt-4 space-y-3">
+          <h3 className="text-base font-extrabold text-[#102a52]">Mapa da cidade-base</h3>
+          {cityMapUrl && cityMapLink ? <div className="overflow-hidden rounded-xl border-2 border-[#102a52] bg-white">
+            <iframe title={`Mapa de ${cityQuery}`} src={cityMapUrl} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="h-[300px] w-full border-0 sm:h-[390px]" />
+            <a href={cityMapLink} target="_blank" rel="noopener noreferrer" className="block px-3 py-3 text-center text-sm font-extrabold text-[#102a52] underline">Abrir mapa de {cityQuery}</a>
+          </div> : <p className="rounded-lg border border-[#c8d6e6] p-4 text-sm">A cidade-base ainda não foi informada no cadastro. O mapa será exibido quando esse dado estiver disponível.</p>}
+          <h3 className="pt-2 text-base font-extrabold text-[#102a52]">Mapa da área de atuação</h3>
+          {map ? <a href={map} target="_blank" rel="noreferrer" className="block rounded-lg border border-[#102a52] bg-white p-2">
+            <img src={map} alt={`Mapa de atuação de ${account.name}`} className="max-h-[440px] w-full object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+            <span className="block py-2 text-center text-sm font-bold">Consultar mapa de atuação cadastrado</span>
+          </a> : <p className="rounded-lg border border-[#c8d6e6] p-4 text-sm">Não há imagem de território comercial vinculada a este cadastro.</p>}
+        </div>
       </section>
     </>}
   </div>;
