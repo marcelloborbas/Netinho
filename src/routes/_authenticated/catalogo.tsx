@@ -288,7 +288,7 @@ function Catalog() {
       </section>
 
       <section className="mt-5" aria-label="Buscar peças por representação">
-        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">Representações</p>
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">1 - SELECIONE O CATÁLOGO</p>
         <nav className="grid grid-cols-4 items-stretch gap-2" aria-label="Filtro por representação">
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
@@ -313,7 +313,7 @@ function Catalog() {
         </nav>
       </section>
 
-      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">2 - ESCOLHA A CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
@@ -329,7 +329,7 @@ function Catalog() {
           </div>;
         })}
       </nav>
-      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Qual o veículo</p>
+      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">3 - QUAL VEÍCULO</p>
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
         {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
