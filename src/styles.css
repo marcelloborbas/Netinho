@@ -3850,3 +3850,24 @@ html body .netinho-assistant:not(.netinho-assistant-auth) {
 html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-moved) {
   bottom: var(--lia-footer-offset, 66px) !important;
 }
+
+/* Cabeçalho: três representações com larguras e distâncias rigorosamente iguais. */
+.brand-header .brand-header-representations .partner-logos.partner-logos-compact {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  column-gap: 6px !important;
+  justify-content: center !important;
+  align-items: start !important;
+  width: max-content !important;
+  max-width: 100% !important;
+}
+.brand-header .brand-header-representations .partner-logos.partner-logos-compact > div {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+@media (max-width: 390px) {
+  .brand-header .brand-header-representations .partner-logos.partner-logos-compact { column-gap: 4px !important; }
+}
