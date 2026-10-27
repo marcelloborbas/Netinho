@@ -76,7 +76,7 @@ function Home() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center gap-5 px-1.5 pt-8 pb-2 sm:gap-6 sm:px-6 sm:pt-10 sm:pb-5">
         <section className="mx-auto w-full max-w-3xl rounded-2xl border border-[#d5e0ee] bg-white px-3 py-4 text-center shadow-lg" aria-label="Boas-vindas ao Netinho">
           <h2 className="text-3xl font-black leading-tight text-[#102a52] sm:text-4xl">{salutation}, Sr. {userName || "usuário"}!</h2>
-          <p className="mt-2 text-lg font-bold text-[#102a52] sm:text-2xl">Que sua {hour === null ? "jornada" : hour < 12 ? "dia" : hour < 18 ? "tarde" : "noite"} seja abençoada!</p>
+          <p className="mt-2 text-lg font-bold text-[#102a52] sm:text-2xl">{hour === null ? "Que seu dia seja abençoado!" : hour < 12 ? "Que seu dia seja abençoado!" : hour < 18 ? "Que sua tarde seja abençoada!" : "Que sua noite seja abençoada!"}</p>
         </section>
         <div className="flex w-full flex-1 items-start justify-center pt-4 sm:pt-6"><HomePartsCarousel /></div>
 
