@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Search, Plus, Minus, ShoppingCart, FilePenLine, ClipboardCheck } from "lucide-react";
+import { Search, Plus, Minus, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { customersQuery, productsQuery, productMatches, type Product } from "@/lib/queries";
 import { draftActions, draftTotals, useDraft } from "@/lib/order-store";
@@ -69,9 +69,6 @@ function SalesPage() {
   const kind = draft.items.length || draft.customerId ? draft.kind : (search.modo === "consulta" ? "orcamento" : "pedido");
   const selected = customers.find((c) => c.id === draft.customerId);
   const total = draftTotals(draft);
-  function setKind(next: "pedido" | "orcamento") {
-    draftActions.update({ kind: next });
-  }
   function add(p: (typeof matches)[number]) {
     if (!draft.customerId) { toast.error("Identifique o cliente antes de adicionar peças."); return; }
     const prices = {
@@ -119,17 +116,9 @@ function SalesPage() {
         <p className="min-w-0 truncate text-sm font-semibold text-[#174e9b]">{selected ? `Cliente: ${selected.trade_name || selected.company_name}` : "Nenhum cliente selecionado"}</p>
         <Link to="/clientes" className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] px-3 py-2 text-sm font-bold text-[#102a52]">+ Novo cliente</Link>
       </div>
-      <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">2. Qual é a Forma de atendimento:</h2>
-      <div className="grid grid-cols-2 gap-3">
-        {([{ value: "pedido", label: "Venda", icon: ShoppingCart }, { value: "orcamento", label: "Orçamento", icon: FilePenLine }] as const).map(({value,label,icon:Icon}) =>
-          <button type="button" key={value} aria-pressed={kind === value} onClick={() => setKind(value)}
-            className={`flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 px-2 font-extrabold ${kind === value ? "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset" : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52]"}`}>
-            <Icon size={20}/>{label}
-          </button>)}
-      </div>
     </section>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
-      <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">3. Adicione suas Peças</h2>
+      <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">2. Adicione suas Peças</h2>
       {draft.items.length > 0 && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peças já selecionadas: {draft.items.map((item) => `${item.code} (qtd. ${item.quantity})`).join(", ")}. Você pode acrescentar outras peças abaixo.</p>}
       <div className="grid grid-cols-3 gap-2">
         {(["all", "FCO", "HD"] as const).map((value) => <button key={value} type="button" disabled={value === "HD"} aria-label={value === "HD" ? "HD Embreagens — em breve" : value} aria-pressed={brand === value}
@@ -179,7 +168,7 @@ function SalesPage() {
       </div>}
     </section>
     <section className="space-y-3 rounded-2xl border border-[#b8cee8] bg-[#edf4ff] p-4 text-[#102a52] shadow-sm">
-      <h2 className="font-extrabold">4. Revisar {kind === "pedido" ? "venda" : "orçamento"}</h2>
+      <h2 className="font-extrabold">3. Revisar {kind === "pedido" ? "venda" : "orçamento"}</h2>
       <p className="text-sm">{total.units} unidades em {draft.items.length} itens</p>
       <p className="text-xl font-extrabold">{brl(total.net)}</p>
       <Link to="/pedido" className={`flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#174e9b] px-4 font-extrabold text-white ${!draft.items.length || !draft.customerId ? "pointer-events-none opacity-50" : ""}`} aria-disabled={!draft.items.length || !draft.customerId}>
