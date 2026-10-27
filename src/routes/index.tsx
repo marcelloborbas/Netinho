@@ -20,6 +20,17 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const navigate = useNavigate();
+  const [footerHeight, setFooterHeight] = useState(66);
+  useEffect(() => {
+    const footer = document.querySelector<HTMLElement>(".mobile-nav");
+    if (!footer) return;
+    const update = () => setFooterHeight(Math.max(0, window.innerHeight - footer.getBoundingClientRect().top));
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(footer);
+    window.addEventListener("resize", update);
+    return () => { observer.disconnect(); window.removeEventListener("resize", update); };
+  }, []);
   const [hour, setHour] = useState<number | null>(null);
   useEffect(() => {
     const refreshGreeting = () => setHour(new Date().getHours());
@@ -81,6 +92,9 @@ function Home() {
         <div className="flex w-full flex-1 items-start justify-center pt-4 sm:pt-6"><HomePartsCarousel /></div>
 
       </main>
+      <button type="button" className="home-lia-help-image" style={{ bottom: footerHeight }} onClick={() => window.dispatchEvent(new Event("netinho:lia-help"))} aria-label="Abrir ajuda da LIA" title="Clique para ouvir a LIA">
+        <img src="/images/Lia%20Aponta%20para%20a%20Ajuda.webp" alt="LIA: Quer ajuda, clique em seu ícone!" decoding="async" />
+      </button>
       <PublicFooter />   </div>
   );
 }
