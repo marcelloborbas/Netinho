@@ -4346,3 +4346,25 @@ html body .netinho-assistant.netinho-assistant-menu-help .netinho-assistant-pane
 html body .netinho-assistant.netinho-assistant-menu-help > .netinho-assistant-avatar {
   display: none !important;
 }
+
+/* Nova LIA exclusiva da página inicial: base no topo real do rodapé. */
+html body .home-lia-help-image {
+  position: fixed;
+  left: 8px;
+  width: clamp(145px, 42vw, 230px);
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1250;
+  line-height: 0;
+}
+html body .home-lia-help-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: bottom;
+}
