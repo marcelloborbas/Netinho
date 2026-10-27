@@ -61,7 +61,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
             </div>
           <div className="relative flex shrink-0 items-center justify-end">
               <button type="button" onClick={(event) => { if (!user) { void navigate({ to: "/auth" }); return; } const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={user ? `Abrir opções de ${user.name}` : "Entrar na conta"} title={user?.name || "Entrar na conta"} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
-                {user?.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[68px] w-[68px] rounded-full object-cover" /> : <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={39} /></span>}
+                {user?.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[75px] w-[75px] rounded-full object-cover" /> : <span className="flex h-[75px] w-[75px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={43} /></span>}
               </button>
               {user && menuOpen && typeof document !== "undefined" && createPortal(
                 <div role="menu" aria-label="Opções do usuário" style={{ top: menuPosition.top, right: menuPosition.right }} className="fixed z-[9999] min-w-52 max-w-[calc(100vw-16px)] rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-2xl">
