@@ -5,10 +5,11 @@ import { Trash2, Pencil, X, UserPlus, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/pessoas")({
   component: Pessoas,
-  head: () => ({ meta: [{ title: "Pessoal | Netinho" }] }),
+  head: () => ({ meta: [{ title: "Pessoal | Netinho" }, { name: "description", content: "Administração de pessoas e acessos da Netinho Auto Parts." }, { property: "og:title", content: "Pessoal | Netinho" }, { property: "og:description", content: "Administração de pessoas e acessos da Netinho Auto Parts." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
 });
 type Role = "Visitante" | "Vendedor" | "Representante" | "Administrador";
 type Person = { id:string; full_name:string; email:string; site_role:Role; access_active:boolean; territory_uf:string|null; territory_cities:string|null; supervisor_id:string|null; phone:string|null };
@@ -62,6 +63,9 @@ function Pessoas() {
  </main>;
 }
 function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+ const {data:me}=useQuery(meQuery);
+ const qc=useQueryClient();
+ const ownAccount=me?.id===person.id;
  const [name,setName]=useState(person.full_name??"");
  const [phone,setPhone]=useState(person.phone??"");
  const [role,setRole]=useState<Role>(person.site_role);
@@ -116,7 +120,8 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
-   <button type="button" disabled={busy} onClick={async()=>{
+   <Button type="button" variant="outline" size="icon" disabled={busy||ownAccount} onClick={async()=>{
+    if(ownAccount||busy)return;
     const identity=person.full_name||person.email;
     if(!window.confirm(`Excluir DEFINITIVAMENTE ${identity}? A conta de login e o cadastro serão apagados. Esta ação não pode ser desfeita.`))return;
     setBusy(true);
@@ -130,21 +135,25 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
         }
         const network=/failed to send|failed to fetch|network|fetch failed/i.test(detail);
         toast.error(network
-          ?"O serviço de exclusão não respondeu. É necessário publicar/verificar a função delete-person no Supabase. Nenhum cadastro foi apagado."
+          ?"O serviço de exclusão não respondeu. Não foi possível confirmar a exclusão. Atualize PESSOAL antes de tentar novamente."
           :"Não foi possível excluir: "+detail,{duration:9000});
         return;
       }
-      if(!data||typeof data.message!=="string"||!data.message.includes("excluída permanentemente")){
+      if(!data||data.success!==true||data.deletedUserId!==person.id){
         toast.error("Exclusão não confirmada: "+(data?.message||"Resposta inesperada do servidor."),{duration:9000});
         return;
       }
+      qc.setQueryData<Person[]>(["admin-people"],current=>current?.filter(p=>p.id!==person.id));
+      // Hide linked commercial rows until their server-backed list is refreshed.
+      qc.setQueryData<CommercialRepresentative[]>(["admin-commercial-representatives"],current=>current?.filter(p=>p.email.trim().toLowerCase()!==person.email.trim().toLowerCase()));
       toast.success("Usuário excluído permanentemente.");
       onSaved();
+      onClose?.();
     } catch(cause){
       toast.error("Falha na comunicação com o serviço de exclusão. Nenhum cadastro foi confirmado como excluído.",{duration:9000});
       console.error("delete-person:",cause);
     } finally {setBusy(false);}
-   }} title="Excluir usuário permanentemente" aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
+   }} title={ownAccount?"Não é permitido excluir a própria conta administrativa":"Excluir usuário permanentemente"} aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="border-destructive text-destructive disabled:opacity-40"><Trash2 size={19}/></Button>
   </div>
 
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Editar usuário</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">

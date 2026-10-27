@@ -10,6 +10,8 @@
 <!-- LOVABLE:END -->
 
 ## Architecture rules
+- Maintain the existing delete-person Edge Function for permanent Auth deletion; its Auth lifecycle cleanup trigger removes target-only profiles/roles/linked commercial records atomically, preserves shared customers and order history, and rejects blocking supervisor references without editing other users.
+- Delete-person returns structured success with the exact deleted user ID; PESSOAL removes cached rows only on that confirmation and revalidates the lists.
 - Orders are created only via the `create_order(payload)` SQL function — prices are recomputed server-side from `products`, so clients can't tamper with them.
 - Order items snapshot code/price/application and orders snapshot the customer — history must not change when the catalog changes.
 - The in-progress order draft lives in localStorage (`src/lib/order-store.ts`) — survives connection loss and reloads.
