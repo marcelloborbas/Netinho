@@ -73,20 +73,20 @@ function Orders() {
     toast.success("Status do pedido atualizado.");
   }
   return (
-    <div className="space-y-4">
-      <h1 className="rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 text-center text-3xl font-black uppercase text-white">MEUS PEDIDOS</h1>
-      <section className="rounded-xl border-2 border-red-800 bg-red-700 px-4 py-4 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total dos pedidos feitos</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p><p className="mt-1 text-xs">Soma dos pedidos exibidos, sem orçamentos ou cancelados</p></section>
+    <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-3 px-2 pb-24 sm:px-4">
+      <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MEUS PEDIDOS</h1>
+      <section className="rounded-2xl border-2 border-red-800 bg-red-700 px-3 py-3 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total dos pedidos feitos</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p></section>
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {list.map((o) => {
             const c = o.customer_snapshot as { company_name?: string; trade_name?: string };
             const st = ORDER_STATUS[o.status];
             return (
-              <li key={o.id} className="flex flex-wrap items-center gap-3 rounded-xl border-2 border-[#102a52] bg-white p-3 shadow-sm">
-                <Link to="/pedidos/$id" params={{ id: o.id }} className="flex min-w-[190px] flex-1 flex-wrap items-center justify-between gap-3 rounded-lg p-2 text-[#102a52] hover:bg-slate-50">
-                  <div className="min-w-0">
+              <li key={o.id} className="meus-pedidos-card flex flex-col gap-2 rounded-2xl border-2 border-[#102a52] bg-white p-3 shadow-sm sm:p-4">
+                <Link to="/pedidos/$id" params={{ id: o.id }} className="flex w-full min-w-0 flex-wrap items-start justify-between gap-2 rounded-lg p-1 text-[#102a52] hover:bg-slate-50 sm:gap-4">
+                  <div className="min-w-0 flex-1 basis-[55%]">
                     <p className="text-xs font-bold uppercase text-[#102a52]">Dados do pedido</p><p className="font-extrabold">Nº {o.number} · {c.trade_name || c.company_name}</p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(o.created_at).toLocaleDateString("pt-BR")} · {o.item_count} itens · {termLabel(o.payment_term)}
@@ -97,7 +97,7 @@ function Orders() {
                     <p className="mt-1 text-[11px] font-bold uppercase">Status do pedido</p><span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
                   </div>
                 </Link>
-                {isAdmin && <label className="flex flex-col gap-1 text-xs font-bold">Status<select aria-label={`Status do pedido ${o.number}`} value={o.status} disabled={savingStatus === o.id} onChange={e=>void changeStatus(o.id,e.target.value)} className="min-h-10 rounded-lg border border-slate-300 bg-white px-2 text-[#102a52]"><option value="received">Feito pedido</option><option value="processing">Em andamento</option><option value="sent">Enviado</option><option value="invoiced">Faturado</option></select></label>}
+                {isAdmin && <label className="flex w-full max-w-xs flex-col gap-1 text-xs font-bold">Status<select aria-label={`Status do pedido ${o.number}`} value={o.status} disabled={savingStatus === o.id} onChange={e=>void changeStatus(o.id,e.target.value)} className="min-h-10 rounded-lg border border-slate-300 bg-white px-2 text-[#102a52]"><option value="received">Feito pedido</option><option value="processing">Em andamento</option><option value="sent">Enviado</option><option value="invoiced">Faturado</option></select></label>}
                 {isAdmin && !["cancelled", "sent", "invoiced"].includes(o.status) && <button type="button" disabled={deletingId !== null} onClick={() => void cancelOrder(o.id)} aria-label={`Excluir ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} title={`Excluir ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-50 text-red-700 hover:border-red-600 hover:bg-red-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-red-400 disabled:opacity-40"><Trash2 size={19}/></button>}
               </li>
             );
