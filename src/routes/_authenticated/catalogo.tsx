@@ -334,11 +334,11 @@ function Catalog() {
         {availableVehicleBrands.map((brand) => <button key={brand.name} type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
           <span>{brand.name}</span>
-          <span className="text-[10px] opacity-70">{brand.count} peças</span>
-        </button>)}
+          
+        </button>) }
       </nav>
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
-        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Modelos dos veículos · {vehicleBrand}</p>
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">Modelos dos veículos · {vehicleBrand}</p>
         {availableVehicleModels.length ? <div className="flex flex-wrap gap-2">
           {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`rounded-lg border px-3 py-2 text-xs font-bold ${vehicleModel === model.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
             {model.name} <span className="opacity-65">({model.count})</span>
