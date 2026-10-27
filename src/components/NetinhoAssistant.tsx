@@ -8,7 +8,7 @@ import { InstallAppButton } from "@/components/InstallAppButton";
 const hints = [
   { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Olá! Seja muito bem-vindo!\n\nÉ uma imensa alegria em ter você conosco!\n\nEntre com sua conta do Google ou clique no envelope para receber seu link por e-mail.\n\nQuer praticidade? Baixe o atalho, aguarde a instalação e acesse pelo ícone na tela do seu celular.\n\nConte comigo para ajudar você em cada etapa!\n\nE não se esqueça:\n\nJesus te ama! Que Deus o abençoe em sua caminhada!" },
   { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
-  { match: /catalogo|catálogo/, title: "Catálogo", message: "Selecione a peça para ver. Pedidos exigem perfis autorizados." },
+  { match: /catalogo|catálogo/, title: "LIA - Catálogo de Peças", message: "Bem-vindo ao nosso Catálogo Virtual de Peças!\n\nClique na lupa e encontre sua peça pela marca, modelo do veículo ou nome.\n\nPode também pesquisar pelas categorias!\n\nEm Filtros, organize. Para limpar, clique no botão ao lado!\n\nÉ simples e prático!\n\nAgora é só encontrar as peças e fazer boas vendas! Boa sorte!" },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
   { match: /pedidos/, title: "Pedidos", message: "Consulte seus pedidos e acompanhe o andamento. A edição depende do seu perfil e das permissões concedidas." },
   { match: /pedido|vendas/, title: "Vendas", message: "Selecione o cliente, confira as peças e quantidades e revise antes de enviar. É necessário ter acesso comercial autorizado." },
@@ -82,11 +82,11 @@ export function NetinhoAssistant() {
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = pathname === "/" ? "Vamos lá! Aqui é tudo bem facinho!\n\nNo menu superior, clique na sua foto para consultar seu perfil, visualizar suas informações ou sair da conta.\n\nLembre-se: somente perfis autorizados podem realizar vendas!\n\nNesta página, você também acompanha nossas novidades e atualizações!\n\nNo menu inferior, estão seus atalhos rápidos:\n\nInício, Catálogo de Peças, Vender, Pedidos e Sair.\n\nNão disse que era simples? Agora é só vender!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speak = () => {
-    if (isAuth || pathname === "/") {
-      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : "/audio/lia/lia-pagina%20inicial.mp3");
+    if (isAuth || pathname === "/" || /catalogo|catálogo/.test(pathname)) {
+      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-pagina%20inicial.mp3" : "/audio/lia/lia-pagina%20catalogo.mp3");
       loginAudioRef.current = audio;
       audio.onended = () => setSpeaking(false);
-      audio.onerror = () => { setSpeaking(false); if (pathname === "/") { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
+      audio.onerror = () => { setSpeaking(false); if (pathname === "/" || /catalogo|catálogo/.test(pathname)) { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
       if (speaking) { audio.pause(); audio.currentTime = 0; setSpeaking(false); return; }
       audio.currentTime = 0;
       void audio.play().then(() => setSpeaking(true)).catch(() => setSpeaking(false));
