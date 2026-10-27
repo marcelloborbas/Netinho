@@ -57,7 +57,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
         <div className="brand-header-representations min-w-0">
           <div className="brand-header-right flex w-full items-center justify-end gap-2 sm:gap-3">
             <div className="brand-header-partners flex min-w-0 flex-col items-center gap-1">
-              <p className="m-0 text-center text-[9px] font-bold leading-tight whitespace-nowrap sm:text-[10px]">Representante Oficial</p>
+              <p className="m-0 text-center text-[11px] font-bold leading-tight whitespace-nowrap sm:text-[12px]">Representante Oficial</p>
               <PartnerLogos compact linked={false} />
             </div>
           <div className="brand-header-account relative flex shrink-0 items-center justify-end">
