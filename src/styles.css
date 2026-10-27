@@ -3981,3 +3981,40 @@ html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth {
   right: auto !important;
   transform: translateX(-50%) !important;
 }
+
+/* Login: limpar recipientes por tras dos icones, sem mexer na arte da capa. */
+html body .welcome-auth-stage .welcome-auth-actions,
+html body .welcome-auth-stage .welcome-login-icons,
+html body .welcome-auth-stage .welcome-login-icons > button {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+html body .welcome-auth-stage .welcome-login-icons {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+html body .welcome-auth-stage .welcome-login-icons > button {
+  position: static !important;
+  flex: 0 0 auto !important;
+  padding: 4px !important;
+}
+/* Mesa da LIA encostada na base da capa do login, sem margem do botao. */
+html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar.netinho-assistant-avatar-large img {
+  display: block !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+}
