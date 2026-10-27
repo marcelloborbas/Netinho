@@ -4085,7 +4085,7 @@ html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth .ne
     justify-self: stretch !important;
   }
   html body .brand-header .brand-header-partners > p {
-    font-size: clamp(7px, 1.9vw, 10px) !important;
+    font-size: clamp(10px, 2.5vw, 12px) !important;
     white-space: nowrap !important;
     line-height: 1.15 !important;
   }
