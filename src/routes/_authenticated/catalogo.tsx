@@ -329,7 +329,7 @@ function Catalog() {
           </div>;
         })}
       </nav>
-      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Marcas dos veículos</p>
+      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Qual o veículo</p>
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
         {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
