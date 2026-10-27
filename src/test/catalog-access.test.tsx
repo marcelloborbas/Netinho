@@ -83,6 +83,7 @@ describe("catalog access presentation", () => {
   it("shows only the cash price to visitors and offers a representative instead of an order", () => {
     state.seller = false;
     render(<Catalog />);
+    fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
     expect(screen.getByText("Preço à vista:")).toBeVisible();
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
     expect(screen.queryByRole("button", { name: "Adicionar peça à venda" })).not.toBeInTheDocument();
