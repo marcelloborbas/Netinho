@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { UserRound, LogOut, ShieldCheck, Settings } from "lucide-react";
+import { UserRound, LogOut, ShieldCheck, Settings, CircleHelp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -71,6 +71,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
                     <strong className="mb-2 block text-sm font-extrabold text-[#102a52]">Permissões:</strong><p>{access?.level === 1 ? "Gerenciar usuários, permissões, catálogo e pedidos." : access?.can_sell && access?.attribution === "Representante" ? "Vender, consultar pedidos e supervisionar vendedores vinculados." : access?.can_sell ? "Vender, consultar clientes e acompanhar seus pedidos." : "Visualizar o catálogo e consultar peças, sem comprar ou enviar pedidos."}</p>
                   </div>}
 
+                  <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={18} /> Ajuda</button>
                   {access?.level === 1 && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); void navigate({ to: "/admin" }); }} className="flex w-full items-center gap-2 rounded-lg bg-[#102a52] px-3 py-2 text-left text-sm font-extrabold text-white hover:bg-[#1c467b]"><Settings size={18} aria-hidden="true" /> Administração</button>}
                   {profile !== "Visitante" && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); void navigate({ to: "/cadastro" }); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><UserRound size={18} /> Cadastro</button>}
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
