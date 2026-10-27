@@ -186,13 +186,17 @@ function Catalog() {
   }, [combined, manufacturer]);
   const selectedVehicleBrand = useMemo(() => vehicleBrands.find((brand) => brand.name === vehicleBrand), [vehicleBrand]);
   const list = useMemo(() => {
+    // Índices temporários evitam percorrer favoritos e itens do pedido para cada peça.
+    const favoriteIds = filterMode === "favoritos" ? new Set(favorites) : null;
+    const orderProductIds = filterMode === "compras" ? new Set(draft.items.map((item) => item.productId)) : null;
+    const recentPositions = filterMode === "recentes" ? new Map(recentCodes.map((code, index) => [code, index])) : null;
     const matching = combined.filter((p) =>
       p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || selectedVehicleBrand?.pattern.test(p.application ?? "")) && productMatches(p, dq));
     const selected = matching.filter((p) => {
-      if (filterMode === "recentes") return recentCodes.includes(p.code);
+      if (filterMode === "recentes") return recentPositions?.has(p.code) === true;
       if (filterMode === "disponiveis") return p.stock > 0;
-      if (filterMode === "favoritos") return favorites.includes(p.id);
-      if (filterMode === "compras") return draft.items.some((item) => item.productId === p.id);
+      if (filterMode === "favoritos") return favoriteIds?.has(p.id) === true;
+      if (filterMode === "compras") return orderProductIds?.has(p.id) === true;
       if (filterMode === "ofertas") return /oferta|promo[cç][aã]o|campanha/i.test(p.price_note ?? "");
       if (filterMode === "saldao") return /sald[aã]o|liquida[cç][aã]o|queima de estoque/i.test(p.price_note ?? "");
       return true;
@@ -205,7 +209,7 @@ function Catalog() {
         return filterMode === "menor" ? aPrice - bPrice : bPrice - aPrice;
       });
     }
-    if (filterMode === "recentes") return [...selected].sort((a, b) => recentCodes.indexOf(a.code) - recentCodes.indexOf(b.code));
+    if (filterMode === "recentes") return [...selected].sort((a, b) => (recentPositions?.get(a.code) ?? Infinity) - (recentPositions?.get(b.code) ?? Infinity));
     return selected;
   }, [combined, manufacturer, category, vehicleBrand, selectedVehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
   const showProducts = hasSelectedCategory || vehicleBrand !== "all" || q.trim().length > 0;
