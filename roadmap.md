@@ -1,5 +1,11 @@
 # Roadmap NETINHO
 
+## Exclusão de PESSOAL em 27/10/2026
+- [ ] Publicar a função existente delete-person no Lovable Cloud atual.
+- [ ] Garantir administrador autenticado, confirmação, bloqueio da própria conta e exclusão definitiva com integridade dos vínculos.
+- [ ] Atualizar PESSOAL imediatamente e mostrar falhas sem falso sucesso.
+- [ ] Testar com segurança sem excluir usuários reais.
+
 ## Reestruturação de 16/10/2026
 
 - [x] Entrada com imagem oficial, botão Google e saudação por nome.
