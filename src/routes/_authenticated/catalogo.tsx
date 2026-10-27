@@ -255,7 +255,7 @@ function Catalog() {
       </section>
 
       <section className="mt-5" aria-label="Buscar peças por representação">
-        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Representações</p>
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#0b2340]">Representações</p>
         <nav className="flex flex-wrap items-center justify-center gap-2 sm:justify-start" aria-label="Filtro por representação">
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
