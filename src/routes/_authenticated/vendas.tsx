@@ -58,7 +58,7 @@ function SalesPage() {
     draftActions.addItem({ productId: product.id, code: product.code, category: product.categories?.name ?? "Peça FCO", application: product.application ?? "", prices, quantity: 1 });
     toast.success(`Peça ${product.code} incluída automaticamente no pedido.`);
   }, [search.promo, draft.customerId, products, loadingProducts, offers]);
-  const [brand, setBrand] = useState<"all" | "FCO" | "HD">("all");
+  const [brand, setBrand] = useState<"all" | "FCO" | "HD" | "JCREI">("all");
   const [page, setPage] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const term = useDeferredValue(q);
@@ -120,11 +120,11 @@ function SalesPage() {
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">2. Adicione suas Peças</h2>
       {draft.items.length > 0 && <p className="rounded-lg border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">Peças já selecionadas: {draft.items.map((item) => `${item.code} (qtd. ${item.quantity})`).join(", ")}. Você pode acrescentar outras peças abaixo.</p>}
-      <div className="grid grid-cols-3 gap-2">
-        {(["all", "FCO", "HD"] as const).map((value) => <button key={value} type="button" disabled={value === "HD"} aria-label={value === "HD" ? "HD Embreagens — em breve" : value} aria-pressed={brand === value}
-          onClick={() => { if (value === "HD") return; setBrand(value); setPage(1); }}
-          className={`min-h-12 rounded-xl border-2 px-2 font-extrabold ${value === "HD" ? "cursor-not-allowed bg-zinc-200 grayscale opacity-65" : ""} ${brand === value ? "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset" : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52]"}`}>
-          {value === "all" ? "Geral" : <img className="mx-auto h-9 max-w-full object-contain" alt={value} src={value === "FCO" ? "/images/brands/fco.webp" : "/images/brands/hd.png"}/>}{value === "HD" && <span className="block text-xs font-extrabold text-zinc-700">Em breve</span>}
+      <div className="grid grid-cols-4 gap-2">
+        {(["all", "FCO", "HD", "JCREI"] as const).map((value) => <button key={value} type="button" disabled={value === "HD" || value === "JCREI"} aria-label={value === "HD" ? "HD Embreagens — em breve" : value === "JCREI" ? "JC REI — em breve" : value} aria-pressed={brand === value}
+          onClick={() => { if (value === "HD" || value === "JCREI") return; setBrand(value); setPage(1); }}
+          className={`min-h-12 rounded-xl border-2 px-2 font-extrabold ${value === "HD" || value === "JCREI" ? "cursor-not-allowed bg-zinc-200 grayscale opacity-65" : ""} ${brand === value ? "border-[#174e9b] bg-white text-[#102a52] ring-2 ring-[#174e9b] ring-inset" : "border-[#a7c1e5] bg-[#eaf2ff] text-[#102a52]"}`}>
+          {value === "all" ? "Geral" : <img className="mx-auto h-9 max-w-full object-contain" alt={value} src={value === "FCO" ? "/images/brands/fco.webp" : value === "HD" ? "/images/brands/hd.png" : "/images/brands/Logo.webp"}/>}{(value === "HD" || value === "JCREI") && <span className="block text-[10px] font-extrabold text-zinc-700">Em breve</span>}
         </button>)}
       </div>
       <div className="relative">
