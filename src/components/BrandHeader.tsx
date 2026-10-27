@@ -63,11 +63,6 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
               <button type="button" onClick={(event) => { if (!user) { void navigate({ to: "/auth" }); return; } const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={user ? `Abrir opções de ${user.name}` : "Entrar na conta"} title={user?.name || "Entrar na conta"} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
                 {user?.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[75px] w-[75px] rounded-full object-cover" /> : <span className="flex h-[75px] w-[75px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={43} /></span>}
               </button>
-              {user && access?.level === 1 && (
-                <button type="button" onClick={() => { setMenuOpen(false); void navigate({ to: "/admin" }); }} aria-label="Abrir administração" title="Administração" className="absolute -bottom-1 -right-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#102a52] text-white shadow-md transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37]">
-                  <Settings size={16} aria-hidden="true" />
-                </button>
-              )}
               {user && menuOpen && typeof document !== "undefined" && createPortal(
                 <div role="menu" aria-label="Opções do usuário" style={{ top: menuPosition.top, right: menuPosition.right }} className="fixed z-[9999] min-w-52 max-w-[calc(100vw-16px)] rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-2xl">
                   <button role="menuitem" type="button" onClick={() => setProfileDetailsOpen((open) => !open)} aria-expanded={profileDetailsOpen} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> {profile}</button>
@@ -75,6 +70,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
                     <strong className="mb-2 block text-sm font-extrabold text-[#102a52]">Permissões:</strong><p>{access?.level === 1 ? "Gerenciar usuários, permissões, catálogo e pedidos." : access?.can_sell && access?.attribution === "Representante" ? "Vender, consultar pedidos e supervisionar vendedores vinculados." : access?.can_sell ? "Vender, consultar clientes e acompanhar seus pedidos." : "Visualizar o catálogo e consultar peças, sem comprar ou enviar pedidos."}</p>
                   </div>}
 
+                  {access?.level === 1 && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); void navigate({ to: "/admin" }); }} className="flex w-full items-center gap-2 rounded-lg bg-[#102a52] px-3 py-2 text-left text-sm font-extrabold text-white hover:bg-[#1c467b]"><Settings size={18} aria-hidden="true" /> Administração</button>}
                   <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); void navigate({ to: "/cadastro" }); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><UserRound size={18} /> Cadastro</button>
                   <button role="menuitem" type="button" disabled={signingOut} onClick={() => void signOut()} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"><LogOut size={18} /> {signingOut ? "Saindo..." : "Sair"}</button>
                 </div>, document.body
