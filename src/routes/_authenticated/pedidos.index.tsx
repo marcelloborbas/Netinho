@@ -5,7 +5,7 @@ import { ordersQuery } from "@/lib/queries";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trash2, ArrowLeft, ArrowRight } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { ORDER_STATUS, brl, termLabel } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -74,9 +74,8 @@ function Orders() {
   }
   return (
     <div className="space-y-4">
-      <nav className="flex justify-between gap-2 text-sm"><Link to="/admin" className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-2 font-bold"><ArrowLeft size={16}/> Voltar</Link><Link to="/admin-gestao" className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-2 font-bold">Avançar <ArrowRight size={16}/></Link></nav><h1 className="rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 text-center text-3xl font-black uppercase text-white">MEUS PEDIDOS</h1>
+      <h1 className="rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 text-center text-3xl font-black uppercase text-white">MEUS PEDIDOS</h1>
       <section className="rounded-xl border-2 border-red-800 bg-red-700 px-4 py-4 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total dos pedidos feitos</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p><p className="mt-1 text-xs">Soma dos pedidos exibidos, sem orçamentos ou cancelados</p></section>
-      {isAdmin && <p className="text-sm">Todos os pedidos disponíveis, com status de acompanhamento.</p>}
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
       ) : (
