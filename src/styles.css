@@ -4164,3 +4164,54 @@ html body:has(.catalog-showcase) .netinho-assistant:not(.netinho-assistant-auth)
 }
 
 @media(max-width:639px){html body .meus-pedidos-page{display:flex!important;flex-direction:column!important;gap:10px!important;padding-bottom:145px!important}html body .meus-pedidos-page>*{margin-top:0!important;margin-bottom:0!important}html body .meus-pedidos-page>ul{display:flex!important;flex-direction:column!important;gap:10px!important;margin:0!important;padding:0!important;list-style:none!important}html body .meus-pedidos-page>ul>.meus-pedidos-card{margin:0!important;min-height:0!important;height:auto!important;padding:12px 108px 12px 12px!important;gap:8px!important}html body:has(.meus-pedidos-page) .netinho-assistant:not(.netinho-assistant-auth):not(.netinho-assistant-home){display:flex!important;position:fixed!important;right:4px!important;left:auto!important;top:auto!important;bottom:var(--lia-footer-offset,66px)!important;transform:none!important;opacity:1!important;visibility:visible!important;z-index:1200!important}html body:has(.meus-pedidos-page) .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large{width:102px!important;height:102px!important;min-width:102px!important;min-height:102px!important;max-width:102px!important;max-height:102px!important}}
+
+/* Posicionamento único da LIA: mesmo tamanho e base fixa no topo do rodapé.
+   A página de login não possui barra de navegação e mantém sua base na capa. */
+html body .netinho-assistant:not(.netinho-assistant-auth),
+html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-auth),
+html body:has(.meus-pedidos-page) .netinho-assistant:not(.netinho-assistant-auth),
+html body:has(.catalog-showcase) .netinho-assistant:not(.netinho-assistant-auth) {
+  position: fixed !important;
+  display: flex !important;
+  left: auto !important;
+  right: 6px !important;
+  top: auto !important;
+  bottom: var(--lia-footer-offset, 66px) !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 1200 !important;
+}
+html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large,
+html body:has(.meus-pedidos-page) .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large,
+html body:has(.catalog-showcase) .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 112px !important;
+  height: 112px !important;
+  min-width: 112px !important;
+  min-height: 112px !important;
+  max-width: 112px !important;
+  max-height: 112px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  animation: none !important;
+  transform: none !important;
+}
+html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  border-radius: 0 !important;
+  animation: none !important;
+}
