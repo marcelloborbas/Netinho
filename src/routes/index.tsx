@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -19,6 +19,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const navigate = useNavigate();
+  const entryApproved = typeof window !== "undefined" && window.sessionStorage.getItem("netinho-entry-approved") === "1";
+  useEffect(() => {
+    if (!entryApproved) void navigate({ to: "/auth", replace: true });
+  }, [entryApproved, navigate]);
   const { data: access } = useQuery({ ...accessQuery, retry: false, refetchInterval: 60000 });
   const previousLevel = useRef<string | null>(null);
   useEffect(() => {
@@ -56,6 +61,7 @@ function Home() {
     return first && !["usuário", "usuario", "visitante", "sr.", "sr"].includes(first.toLowerCase()) ? first : "";
   };
   const userName = validName(accountName) || validName(access?.name || "") || validName(savedName);
+  if (!entryApproved) return null;
   return (
     <div className="home-page flex min-h-screen flex-col">
       <BrandHeader />
