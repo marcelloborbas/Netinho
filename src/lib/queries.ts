@@ -133,7 +133,7 @@ function normalizeProductSearch(value: string) {
 
 export function productMatches(p: Product, q: string) {
   if (!q.trim()) return true;
-  const terms = normalizeProductSearch(q).split(/\\s+/).filter(Boolean);
+  const terms = normalizeProductSearch(q).split(/\s+/).filter(Boolean);
   const source = [p.code, p.application, p.refs, p.categories?.name, p.manufacturer, p.search_text]
     .filter(Boolean)
     .join(" ");
