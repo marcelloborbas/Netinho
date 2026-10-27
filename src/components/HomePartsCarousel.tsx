@@ -18,18 +18,18 @@ export function HomePartsCarousel() {
     const id = window.setInterval(() => setIndex(i => (i + 1) % parts.length), 2200);
     return () => window.clearInterval(id);
   }, [paused]);
-  // Mantem todas as imagens carregadas para evitar tela vazia entre trocas.
+  // Carrega apenas o destaque e o próximo slide; as demais imagens entram sob demanda.
   return (
     <section className="relative mx-auto w-full max-w-3xl" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
       <div className="w-full">
         <div className="w-full">
           <div className="relative w-full" style={{ aspectRatio: "1 / 1" }}>
-            {parts.map((part, i) => (
+            {parts.map((part, i) => (i === index || i === (index + 1) % parts.length) && (
               <img key={part.image} src={part.image} alt={part.title}
                 aria-hidden={i !== index}
                 className={`absolute inset-0 block h-full w-full object-contain transition-opacity duration-300 ease-linear ${i === index ? "opacity-100" : "opacity-0"}`}
-                loading={i < 2 ? "eager" : "lazy"} decoding="async" />
+                loading={i === index ? "eager" : "lazy"} fetchPriority={i === index ? "high" : "low"} decoding="async" />
             ))}
           </div>
 
