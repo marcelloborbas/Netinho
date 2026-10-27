@@ -4215,3 +4215,22 @@ html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-ava
   border-radius: 0 !important;
   animation: none !important;
 }
+
+/* Catálogo: LIA maior, no lado esquerdo, com a mesa apoiada no topo do rodapé. */
+html body .netinho-assistant.netinho-assistant-catalog:not(.netinho-assistant-auth) {
+  position: fixed !important;
+  left: 8px !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: var(--lia-footer-offset, 66px) !important;
+  transform: none !important;
+  z-index: 1200 !important;
+}
+html body .netinho-assistant.netinho-assistant-catalog:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  width: 150px !important;
+  height: 150px !important;
+  min-width: 150px !important;
+  min-height: 150px !important;
+  max-width: 150px !important;
+  max-height: 150px !important;
+}
