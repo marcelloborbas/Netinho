@@ -3818,3 +3818,8 @@ html body .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar {
   min-width: 56.12px !important;
   min-height: 56.12px !important;
 }
+
+/* Pagina inicial: base da LIA encostada no topo do rodape fixo (sem sobrepor o menu). */
+html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-moved) {
+  bottom: calc(64px + env(safe-area-inset-bottom)) !important;
+}
