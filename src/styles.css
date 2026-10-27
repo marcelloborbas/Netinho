@@ -3971,3 +3971,13 @@ html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-auth)
     min-height: 100px !important;
   }
 }
+
+/* Login: base da LIA alinhada a base real da imagem da capa, sem afastamento extra. */
+html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth {
+  position: fixed !important;
+  top: auto !important;
+  bottom: var(--lia-login-cover-offset, 0px) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
