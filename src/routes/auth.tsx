@@ -305,8 +305,8 @@ function AuthPage() {
                 @media (prefers-reduced-motion: reduce) { .netinho-google-icon { animation: none; } }
               `}</style>
               
-              <div className="mx-auto flex w-full max-w-xs items-center justify-between px-2 sm:px-3">
-                <button type="button" className="netinho-google-icon relative -left-4 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-transparent p-1 transition-transform active:scale-90 disabled:opacity-60 sm:h-[86px] sm:w-[86px]" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
+              <div className="welcome-login-icons mx-auto flex w-full max-w-xs items-center justify-between gap-4 px-2 sm:px-3">
+                <button type="button" className="netinho-google-icon flex h-[72px] w-[72px] items-center justify-center rounded-full bg-transparent p-1 transition-transform active:scale-90 disabled:opacity-60 sm:h-[86px] sm:w-[86px]" disabled={busy} onClick={() => void googleLogin()} aria-label="Entrar com Google" title="Entrar com Google">
                   <img src="/images/google-login.svg" alt="" aria-hidden="true" className="h-full w-full object-contain" />
                 </button>
                 <button type="button" className="netinho-google-icon flex h-[72px] w-[72px] items-center justify-center rounded-full bg-transparent p-1 transition-transform active:scale-90 disabled:opacity-60 sm:h-[86px] sm:w-[86px]" disabled={busy} onClick={() => setEmailLoginOpen((value) => !value)} aria-label="Entrar por e-mail" title="Entrar por e-mail">
