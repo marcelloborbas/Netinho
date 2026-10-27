@@ -3890,3 +3890,32 @@ html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-ava
   object-fit: contain !important;
   object-position: center bottom !important;
 }
+
+/* As tres marcas do cabecalho ocupam celulas iguais, sem deslocamento individual. */
+.brand-header .brand-header-representations .partner-logos.partner-logos-compact {
+  display: grid !important;
+  grid-template-columns: repeat(3, 39px) !important;
+  gap: 6px !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  justify-content: center !important;
+  align-items: start !important;
+}
+.brand-header .brand-header-representations .partner-logos.partner-logos-compact > div,
+.brand-header .brand-header-representations .partner-logos.partner-logos-compact > div:first-child {
+  width: 39px !important;
+  min-width: 39px !important;
+  transform: none !important;
+  margin: 0 !important;
+  gap: 2px !important;
+}
+.brand-header .brand-header-representations .partner-logos.partner-logos-compact .partner-logo {
+  width: 39px !important;
+  min-width: 39px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 390px) {
+  .brand-header .brand-header-representations .partner-logos.partner-logos-compact { gap: 4px !important; }
+}
