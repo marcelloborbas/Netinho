@@ -3799,3 +3799,11 @@ html body .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar {
   cursor: pointer !important;
   touch-action: manipulation !important;
 }
+
+/* Ícone Netinho no cabeçalho: redução de 15% (49.6px → 42.16px). */
+.brand-header .brand-header-logo > img {
+  width: 42.16px !important;
+  height: 42.16px !important;
+  min-width: 42.16px !important;
+  min-height: 42.16px !important;
+}
