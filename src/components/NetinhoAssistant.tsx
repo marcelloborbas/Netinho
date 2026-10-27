@@ -36,6 +36,19 @@ export function NetinhoAssistant() {
     window.addEventListener("resize", update);
     return () => { observer.disconnect(); window.removeEventListener("resize", update); };
   }, [pathname, isAuth]);
+  const [coverOffset, setCoverOffset] = useState<number | null>(null);
+  useEffect(() => {
+    if (pathname !== "/") { setCoverOffset(null); return; }
+    const cover = document.querySelector<HTMLElement>(".home-cover-anchor");
+    if (!cover) return;
+    const update = () => setCoverOffset(window.innerHeight - cover.getBoundingClientRect().bottom);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(cover);
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, { passive: true });
+    return () => { observer.disconnect(); window.removeEventListener("resize", update); window.removeEventListener("scroll", update); };
+  }, [pathname]);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const dragRef = useRef<{ id: number; startX: number; startY: number; x: number; y: number; moved: boolean } | null>(null);
   const ignoreClickRef = useRef(false);
@@ -128,7 +141,7 @@ export function NetinhoAssistant() {
     window.speechSynthesis.speak(utterance);
     if (window.speechSynthesis.paused) window.speechSynthesis.resume();
   };
-  return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}${position && !fixedAtFooter ? " netinho-assistant-moved" : ""}`} style={!isAuth ? ({ "--lia-footer-offset": `${footerOffset}px` } as CSSProperties) : undefined} aria-label="Assistente de navegação LIA">
+  return <aside className={`netinho-assistant${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}${position && !fixedAtFooter ? " netinho-assistant-moved" : ""}`} style={!isAuth ? ({ "--lia-footer-offset": `${footerOffset}px`, "--lia-cover-offset": `${coverOffset ?? footerOffset}px` } as CSSProperties) : undefined} aria-label="Assistente de navegação LIA">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
       <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : (hint?.title ?? "Ajuda")}</strong><div>
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
