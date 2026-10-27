@@ -125,12 +125,6 @@ export function NetinhoAssistant() {
     setOpen(false);
     return () => { window.speechSynthesis?.cancel(); loginAudioRef.current?.pause(); };
   }, [pathname, isAuth]);
-  useEffect(() => {
-    if (isAuth) return;
-    const showHelp = () => { setOpen(true); };
-    window.addEventListener("netinho:lia-help", showHelp);
-    return () => window.removeEventListener("netinho:lia-help", showHelp);
-  }, [isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = pathname === "/" ? "Vamos lá! Vou te mostrar como tudo funciona fácil!\n\nClicando na sua foto lá em cima, você pode ver seu status, seu cadastro ou sair da conta.\n\nLembre-se! Para fazer vendas, você precisa ter autorização.\n\nAqui você também acompanha todas as novidades da Netinho!\n\nE olha só! No menu abaixo, você encontra os atalhos rápidos.\n\nBem fácil né? Agora é com você!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
@@ -163,6 +157,12 @@ export function NetinhoAssistant() {
     window.speechSynthesis.speak(utterance);
     if (window.speechSynthesis.paused) window.speechSynthesis.resume();
   };
+  useEffect(() => {
+    if (isAuth) return;
+    const showHelp = () => { setOpen(true); speak(); };
+    window.addEventListener("netinho:lia-help", showHelp);
+    return () => window.removeEventListener("netinho:lia-help", showHelp);
+  }, [pathname, isAuth, speaking]);
   return <aside className={`netinho-assistant${!isAuth ? " netinho-assistant-menu-help" : ""}${/catalogo|catálogo/.test(pathname) ? " netinho-assistant-catalog" : ""}${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}${position && !fixedAtFooter ? " netinho-assistant-moved" : ""}`} style={({ "--lia-footer-offset": `${footerOffset}px`, "--lia-cover-offset": `${coverOffset ?? footerOffset}px`, "--lia-login-cover-offset": `${loginCoverOffset}px` } as CSSProperties)} aria-label="Assistente de navegação LIA">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
       <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : (hint?.title ?? "Ajuda")}</strong><div>
