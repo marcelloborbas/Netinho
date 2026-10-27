@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trash2, Pencil, X } from "lucide-react";
+import { Trash2, Pencil, X, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated/pessoas")({
   component: Pessoas,
-  head: () => ({ meta: [{ title: "RH - Pessoas | Netinho" }] }),
+  head: () => ({ meta: [{ title: "Pessoal | Netinho" }] }),
 });
 type Role = "Visitante" | "Vendedor" | "Representante" | "Administrador";
 type Person = { id:string; full_name:string; email:string; site_role:Role; access_active:boolean; territory_uf:string|null; territory_cities:string|null; supervisor_id:string|null; phone:string|null };
@@ -16,6 +16,21 @@ const roles:Role[] = ["Visitante","Vendedor","Representante","Administrador"];
 function Pessoas() {
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const qc=useQueryClient();
+ const [adding,setAdding]=useState(false);
+ const [newName,setNewName]=useState("");
+ const [newEmail,setNewEmail]=useState("");
+ const [creating,setCreating]=useState(false);
+ async function addPerson(){
+  if(!newName.trim()||!/^\S+@\S+\.\S+$/.test(newEmail.trim())){toast.error("Informe nome e e-mail válidos.");return;}
+  setCreating(true);
+  const {error}=await supabase.from("commercial_representatives").insert({full_name:newName.trim(),email:newEmail.trim().toLowerCase(),active:true});
+  setCreating(false);
+  if(error){toast.error("Não foi possível adicionar: "+error.message);return;}
+  toast.success("Pessoa adicionada ao cadastro comercial. Para acessar o site, será necessário vincular uma conta de usuário.");
+  setAdding(false);setNewName("");setNewEmail("");
+  void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});
+ }
+
  const {data:representatives=[],isLoading:loadingRepresentatives,error:representativesError}=useQuery({queryKey:["admin-commercial-representatives"],enabled:!!me?.isAdmin,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representatives").select("id,full_name,email,active").order("full_name");if(error)throw error;return data??[];}});
  const {data:people=[],isLoading,error}=useQuery({queryKey:["admin-people"],enabled:!!me?.isAdmin,queryFn:async()=>{
   const {data,error}=await supabase.from("profiles").select("id,full_name,email,site_role,access_active,territory_uf,territory_cities,supervisor_id,phone").order("full_name");
@@ -24,10 +39,10 @@ function Pessoas() {
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
-  <header className="rounded-2xl bg-[#102a52] p-5 text-white"><h1 className="mt-2 text-3xl font-black">RH - Pessoas</h1></header>
+  <div className="flex items-stretch gap-2"><header className="flex min-h-16 min-w-0 flex-1 items-center justify-center rounded-2xl bg-[#102a52] px-3 py-4 text-white"><h1 className="text-center text-2xl font-black sm:text-3xl">PESSOAL</h1></header><button type="button" onClick={()=>setAdding(true)} className="inline-flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-[#d4af37] bg-white px-3 text-xs font-extrabold text-[#102a52]" aria-label="Adicionar nova pessoa"><UserPlus size={22}/>Adicionar</button></div>
+  {adding&&<div role="dialog" aria-modal="true" aria-label="Adicionar nova pessoa" className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="flex items-center justify-between"><h2 className="text-xl font-black">Adicionar pessoa</h2><button type="button" aria-label="Fechar" onClick={()=>setAdding(false)}><X size={22}/></button></div><p className="text-sm text-slate-600">Novo cadastro comercial. O acesso ao site exige uma conta de usuário vinculada.</p><label className="block text-sm font-bold">Nome completo<input value={newName} onChange={e=>setNewName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><label className="block text-sm font-bold">E-mail<input type="email" value={newEmail} onChange={e=>setNewEmail(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><button type="button" disabled={creating} onClick={()=>void addPerson()} className="min-h-12 w-full rounded-lg bg-[#102a52] px-4 font-bold text-white disabled:opacity-50">{creating?"Adicionando…":"Adicionar pessoa"}</button></div></div>}
   
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
-  <p className="rounded-xl bg-blue-50 p-3 text-sm"><strong>Cadastros:</strong> {people.length} pessoas com perfil de acesso e {representatives.length} representantes comerciais cadastrados. Nomes genéricos como "Vendedor" vêm do cadastro original; confira o e-mail antes de editar.</p>
   {[...people.map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
    ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});}}/>
    : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});}}/>)}
