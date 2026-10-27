@@ -89,7 +89,7 @@ export function NetinhoAssistant() {
   const greeting = pathname === "/" ? "Vamos lá! Vou te mostrar como tudo funciona fácil!\n\nClicando na sua foto lá em cima, você pode ver seu status, seu cadastro ou sair da conta.\n\nLembre-se! Para fazer vendas, você precisa ter autorização.\n\nAqui você também acompanha todas as novidades da Netinho!\n\nE olha só! No menu abaixo, você encontra os atalhos rápidos.\n\nBem fácil né? Agora é com você!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speak = () => {
     if (isAuth || pathname === "/" || /catalogo|catálogo/.test(pathname) || /pedido|vendas/.test(pathname)) {
-      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-inicio.mp3" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-pagina%20catalogo.mp3" : "/audio/lia/lia-vender.mp3");
+      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-inicio.mp3?v=2" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-pagina%20catalogo.mp3" : "/audio/lia/lia-vender.mp3");
       loginAudioRef.current = audio;
       audio.onended = () => setSpeaking(false);
       audio.onerror = () => { setSpeaking(false); if (pathname === "/" || /catalogo|catálogo/.test(pathname) || /pedido|vendas/.test(pathname)) { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
