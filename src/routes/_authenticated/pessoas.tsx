@@ -133,7 +133,7 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
  const [email,setEmail]=useState(representative.email);
  const [active,setActive]=useState(representative.active);
  async function save(){
-  if(!name.trim()||!/^\\S+@\\S+\\.\\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
+  if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
   const {error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id);
   setBusy(false);
