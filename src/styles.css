@@ -3749,3 +3749,32 @@ html body .netinho-assistant .netinho-assistant-avatar {
   user-select: none;
 }
 html body .netinho-assistant .netinho-assistant-avatar:active { cursor: grabbing; }
+
+
+/* Cabecalho: Representante Oficial e marcas centralizados no espaco entre Netinho e avatar. */
+.brand-header .brand-header-inner {
+  grid-template-columns: auto minmax(0, 1fr) !important;
+}
+.brand-header .brand-header-representations {
+  width: 100% !important;
+  justify-self: stretch !important;
+}
+.brand-header .brand-header-representations > div:first-child {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+.brand-header .brand-header-representations > div:first-child > div:first-child {
+  justify-self: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  min-width: 0 !important;
+}
+.brand-header .brand-header-representations > div:first-child > div:last-child {
+  justify-self: end !important;
+}
+@media (max-width: 390px) {
+  .brand-header .brand-header-representations > div:first-child { gap: 2px !important; }
+}
