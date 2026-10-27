@@ -3948,3 +3948,26 @@ html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-ava
 html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-auth) {
   bottom: var(--lia-cover-offset, var(--lia-footer-offset, 66px)) !important;
 }
+
+/* Meus Pedidos: cartões sem espaços artificiais e LIA discreta no celular. */
+@media (max-width: 639px) {
+  html body:has(.meus-pedidos-page) .netinho-assistant:not(.netinho-assistant-auth):not(.netinho-assistant-home) {
+    left: auto !important;
+    right: 6px !important;
+    top: auto !important;
+    transform: none !important;
+    bottom: var(--lia-footer-offset, 66px) !important;
+  }
+  html body:has(.meus-pedidos-page) .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-avatar.netinho-assistant-avatar-large {
+    width: 78px !important;
+    min-width: 78px !important;
+    max-width: 78px !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    max-height: 78px !important;
+  }
+  html body:has(.meus-pedidos-page) .meus-pedidos-card {
+    padding-right: 88px !important;
+    min-height: 100px !important;
+  }
+}
