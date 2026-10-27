@@ -42,7 +42,7 @@ export function PartnerLogos({
               <img src={s.image} alt={s.name} />
             </span>
           )}
-          {(s.brand === "HD" || s.brand === "JCREI") && <span className="block text-center text-xs font-extrabold text-zinc-500">Em breve</span>}
+          {(s.brand === "HD" || s.brand === "JCREI") && <span className="partner-coming-soon block w-full text-center text-xs font-extrabold text-zinc-400">Em breve</span>}
           {s.brand !== "HD" && s.brand !== "JCREI" && !compact && downloads && <CatalogDownload brand={s.brand} />}
         </div>
       ))}
