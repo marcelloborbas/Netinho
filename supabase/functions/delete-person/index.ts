@@ -1,31 +1,43 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { handleDeletePerson } from "./handler.ts";
 
-Deno.serve(async (request) => {
-  const headers = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", "Content-Type": "application/json" };
-  if (request.method === "OPTIONS") return new Response(null, { headers });
-  const respond = (status: number, message: string) => new Response(JSON.stringify({ message }), { status, headers });
-  if (request.method !== "POST") return respond(405, "Método não permitido.");
-  const token = request.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
-  if (!token) return respond(401, "Identificação necessária.");
+Deno.serve(async (request: Request) => {
   const url = Deno.env.get("SUPABASE_URL");
   const anon = Deno.env.get("SUPABASE_ANON_KEY");
   const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !anon || !service) return respond(500, "Configuração administrativa indisponível.");
-  const client = createClient(url, anon, { global: { headers: { Authorization: `Bearer ${token}` } } });
-  const { data: { user }, error: authError } = await client.auth.getUser();
-  if (authError || !user) return respond(401, "Sessão inválida.");
-  const admin = createClient(url, service);
-  const { data: role, error: roleError } = await admin.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-  if (roleError || !role) return respond(403, "Somente o administrador pode excluir pessoas.");
-  let target: string;
-  try { const body = await request.json(); target = body.userId; } catch { return respond(400, "Dados inválidos."); }
-  if (typeof target !== "string" || !/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(target)) return respond(400, "Usuário inválido.");
-  if (target === user.id) return respond(403, "Não é permitido excluir a própria conta administrativa.");
-  const { data: profile, error: profileError } = await admin.from("profiles").select("id").eq("id", target).maybeSingle();
-  if (profileError || !profile) return respond(404, "Cadastro não encontrado.");
-  // A exclusão do Auth remove a conta e aplica as regras FK do banco.
-  // Se houver vínculos que impeçam a exclusão, não mascarar falha como sucesso.
-  const { error: deleteError } = await admin.auth.admin.deleteUser(target);
-  if (deleteError) return respond(409, "Exclusão não concluída: " + deleteError.message);
-  return respond(200, "Conta excluída permanentemente.");
+  if (!url || !anon || !service) return new Response(JSON.stringify({ message: "Configuração administrativa indisponível." }), { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } });
+  const options = { auth: { persistSession: false, autoRefreshToken: false } };
+  const client = createClient(url, anon, options);
+  const admin = createClient(url, service, options);
+  return handleDeletePerson(request, {
+    async authenticate(token) {
+      const { data, error } = await client.auth.getUser(token);
+      return error || data.user?.is_anonymous ? null : data.user;
+    },
+    async isAdmin(userId) {
+      const { data, error } = await admin.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+      if (error) throw error;
+      return Boolean(data);
+    },
+    async targetExists(userId) {
+      const { data, error } = await admin.auth.admin.getUserById(userId);
+      if (error && error.status !== 404) throw error;
+      return Boolean(data.user);
+    },
+    async deleteUser(userId) {
+      const { error } = await admin.auth.admin.deleteUser(userId, false);
+      if (error) throw error;
+    },
+    async verifyRemoved(userId) {
+      const [auth, profile, roles, representatives] = await Promise.all([
+        admin.auth.admin.getUserById(userId),
+        admin.from("profiles").select("id").eq("id", userId),
+        admin.from("user_roles").select("id").eq("user_id", userId),
+        admin.from("commercial_representatives").select("id").eq("user_id", userId),
+      ]);
+      if (auth.error && auth.error.status !== 404) throw auth.error;
+      if (profile.error || roles.error || representatives.error) throw new Error("Cleanup verification failed");
+      return !auth.data.user && !profile.data?.length && !roles.data?.length && !representatives.data?.length;
+    },
+  });
 });
