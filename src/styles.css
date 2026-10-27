@@ -3728,3 +3728,24 @@ html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-
   flex: 0 0 auto !important;
   letter-spacing: -0.04em !important;
 }
+
+
+/* LIA arrastavel: posicao personalizada tem prioridade sobre os locais padrao. */
+html body .netinho-assistant.netinho-assistant-moved,
+html body .netinho-assistant.netinho-assistant-auth.netinho-assistant-moved,
+html body .netinho-assistant.netinho-assistant-home.netinho-assistant-moved {
+  position: fixed !important;
+  left: var(--lia-x) !important;
+  top: var(--lia-y) !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1200 !important;
+}
+html body .netinho-assistant .netinho-assistant-avatar {
+  touch-action: none !important;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+html body .netinho-assistant .netinho-assistant-avatar:active { cursor: grabbing; }
