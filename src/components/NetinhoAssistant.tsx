@@ -34,7 +34,8 @@ export function NetinhoAssistant() {
     const observer = new ResizeObserver(update);
     observer.observe(footer);
     window.addEventListener("resize", update);
-    return () => { observer.disconnect(); window.removeEventListener("resize", update); };
+    window.addEventListener("scroll", update, { passive: true });
+    return () => { observer.disconnect(); window.removeEventListener("resize", update); window.removeEventListener("scroll", update); };
   }, [pathname, isAuth]);
   const [coverOffset, setCoverOffset] = useState<number | null>(null);
   useEffect(() => {
