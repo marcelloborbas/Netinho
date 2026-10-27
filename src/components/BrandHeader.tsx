@@ -41,6 +41,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
     if (error) { window.alert("Não foi possível sair. Tente novamente."); return; }
     setMenuOpen(false);
     localStorage.removeItem("netinho-vendedor");
+    window.sessionStorage.removeItem("netinho-entry-approved");
     void navigate({ to: "/auth" });
   }
   return (
