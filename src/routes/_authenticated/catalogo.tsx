@@ -152,11 +152,16 @@ function Catalog() {
     price_30_45_60_75: null, price_note: "Campanha outubro/2026", search_text: null,
     stock, active: true, brand: "FCO", created_at: "", updated_at: "", localOnly: true,
   })) as CatalogProduct[], [campaignOffers, products]);
-  const combined = useMemo(() => [
-    ...products,
-    ...localFco,
-    ...localHd.filter((hd) => !products.some((p) => p.manufacturer === "HD" && p.code === hd.code)),
-  ], [products, localFco]);
+  const combined = useMemo(() => {
+    // Indexa os códigos HD uma vez, evitando percorrer todos os produtos
+    // para cada item do catálogo local.
+    const hdCodes = new Set(products.filter((p) => p.manufacturer === "HD").map((p) => p.code));
+    return [
+      ...products,
+      ...localFco,
+      ...localHd.filter((hd) => !hdCodes.has(hd.code)),
+    ];
+  }, [products, localFco]);
   const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD" && p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
   const categoryCounts = useMemo(() => {
     const eligible = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq));
