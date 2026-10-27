@@ -3823,3 +3823,20 @@ html body .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar {
 html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-moved) {
   bottom: calc(64px + env(safe-area-inset-bottom)) !important;
 }
+
+/* Cabeçalho: aproveitar as margens laterais no celular sem alterar tamanhos ou marcas. */
+@media (max-width: 639px) {
+  .brand-header .brand-header-inner {
+    width: calc(100% - 8px) !important;
+    margin-inline: 4px !important;
+    column-gap: 3px !important;
+  }
+  .brand-header .brand-header-inner > :first-child {
+    justify-self: start !important;
+    margin-left: 0 !important;
+  }
+  .brand-header .brand-header-representations > div:first-child > div:last-child {
+    justify-self: end !important;
+    margin-right: 0 !important;
+  }
+}
