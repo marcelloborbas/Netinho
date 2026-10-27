@@ -260,7 +260,7 @@ function Catalog() {
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
             const selected = manufacturer === brand;
-            const logo = brand === "FCO" ? "/images/brands/fco.webp" : brand === "HD" ? "/images/brands/hd.png" : brand === "JCREI" ? "/images/brands/jc-rei.svg" : null;
+            const logo = brand === "FCO" ? "/images/brands/fco.webp" : brand === "HD" ? "/images/brands/hd.png" : brand === "JCREI" ? "/images/brands/Logo.webp" : null;
             return (
               <button
                 key={brand}
