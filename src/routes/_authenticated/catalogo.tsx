@@ -58,7 +58,8 @@ const vehicleModels: Record<string, string[]> = {
   Jeep: ["Renegade", "Compass", "Commander"],
 };
 const mentionsModel = (application: string, model: string) =>
-  new RegExp(`(^|[^\\p{L}\\p{N}])${model.replace(/[.*+?^${}()|[\\]\\]/g, "\\function VehicleBrandIcons({ application }: { application?: string | null }) {")}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
+  new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
+function VehicleBrandIcons({ application }: { application?: string | null }) {")}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
 function VehicleBrandIcons({ application }: { application?: string | null }) {
   if (!application) return null;
   const matches = vehicleBrands.filter((brand) => brand.pattern.test(application));
