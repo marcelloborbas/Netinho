@@ -123,17 +123,24 @@ export const meQuery = queryOptions({
   },
 });
 
+// Reaproveita o índice de busca de cada peça enquanto seus dados não mudarem.
+// WeakMap não mantém peças removidas do catálogo presas na memória.
+const productSearchCache = new WeakMap<Product, { source: string; text: string }>();
+
+function normalizeProductSearch(value: string) {
+  return value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase();
+}
+
 export function productMatches(p: Product, q: string) {
-  const normalize = (value: string) =>
-    value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-  const terms = normalize(q).split(/\s+/).filter(Boolean);
-  const text = normalize(
-    [p.code, p.application, p.refs, p.categories?.name, p.manufacturer, p.search_text]
-      .filter(Boolean)
-      .join(" "),
-  );
-  return terms.every((t) => text.includes(t));
+  if (!q.trim()) return true;
+  const terms = normalizeProductSearch(q).split(/\\s+/).filter(Boolean);
+  const source = [p.code, p.application, p.refs, p.categories?.name, p.manufacturer, p.search_text]
+    .filter(Boolean)
+    .join(" ");
+  let cached = productSearchCache.get(p);
+  if (!cached || cached.source !== source) {
+    cached = { source, text: normalizeProductSearch(source) };
+    productSearchCache.set(p, cached);
+  }
+  return terms.every((term) => cached!.text.includes(term));
 }
