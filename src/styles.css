@@ -3919,3 +3919,27 @@ html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-ava
 @media (max-width: 390px) {
   .brand-header .brand-header-representations .partner-logos.partner-logos-compact { gap: 4px !important; }
 }
+
+/* Cabeçalho: avisos alinhados sob cada logomarca e telefone mais legível. */
+.brand-header .brand-header-representations .partner-logos-compact > div .partner-coming-soon {
+  display: block !important;
+  width: 100% !important;
+  margin: 2px 0 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+  font-size: 9px !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+.brand-header .brand-header-logo .brand-wordmark [aria-label^="Telefone Netinho"] {
+  font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-stretch: condensed;
+  font-weight: 800 !important;
+  letter-spacing: -0.35px !important;
+  line-height: 1.1 !important;
+  margin-top: 5px !important;
+}
+@media (min-width: 640px) {
+  .brand-header .brand-header-logo .brand-wordmark [aria-label^="Telefone Netinho"] { font-size: 16px !important; }
+}
