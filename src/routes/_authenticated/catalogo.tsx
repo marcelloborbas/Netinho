@@ -167,10 +167,22 @@ function Catalog() {
     }
     return { total: eligible.length, counts };
   }, [combined, manufacturer, dq]);
-  const availableVehicleBrands = useMemo(() => vehicleBrands.map((brand) => ({ ...brand, count: combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && brand.pattern.test(p.application ?? "")).length })).filter((brand) => brand.count > 0), [combined, manufacturer]);
+  const availableVehicleBrands = useMemo(() => {
+    // Uma única passagem pelos produtos elegíveis, sem repetir filtros para cada marca.
+    const counts = new Map<string, number>();
+    for (const product of combined) {
+      if (product.active === false || product.manufacturer === "HD" || (manufacturer !== "all" && (product.manufacturer ?? "FCO") !== manufacturer)) continue;
+      const application = product.application ?? "";
+      for (const brand of vehicleBrands) {
+        if (brand.pattern.test(application)) counts.set(brand.name, (counts.get(brand.name) ?? 0) + 1);
+      }
+    }
+    return vehicleBrands.map((brand) => ({ ...brand, count: counts.get(brand.name) ?? 0 })).filter((brand) => brand.count > 0);
+  }, [combined, manufacturer]);
+  const selectedVehicleBrand = useMemo(() => vehicleBrands.find((brand) => brand.name === vehicleBrand), [vehicleBrand]);
   const list = useMemo(() => {
     const matching = combined.filter((p) =>
-      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || vehicleBrands.find((brand) => brand.name === vehicleBrand)?.pattern.test(p.application ?? "")) && productMatches(p, dq));
+      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || selectedVehicleBrand?.pattern.test(p.application ?? "")) && productMatches(p, dq));
     const selected = matching.filter((p) => {
       if (filterMode === "recentes") return recentCodes.includes(p.code);
       if (filterMode === "disponiveis") return p.stock > 0;
@@ -190,7 +202,7 @@ function Catalog() {
     }
     if (filterMode === "recentes") return [...selected].sort((a, b) => recentCodes.indexOf(a.code) - recentCodes.indexOf(b.code));
     return selected;
-  }, [combined, manufacturer, category, vehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
+  }, [combined, manufacturer, category, vehicleBrand, selectedVehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
   const showProducts = hasSelectedCategory || vehicleBrand !== "all" || q.trim().length > 0;
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
