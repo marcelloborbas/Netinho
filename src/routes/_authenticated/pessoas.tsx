@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trash2, Pencil, X, UserPlus } from "lucide-react";
+import { Trash2, Pencil, X, UserPlus, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -17,6 +17,7 @@ function Pessoas() {
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const qc=useQueryClient();
  const [adding,setAdding]=useState(false);
+ const [editing,setEditing]=useState<string|null>(null);
  const [newName,setNewName]=useState("");
  const [newEmail,setNewEmail]=useState("");
  const [creating,setCreating]=useState(false);
@@ -38,20 +39,29 @@ function Pessoas() {
  }});
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
+ const selectedPerson=people.find(p=>editing===`person:${p.id}`);
+ const selectedRepresentative=representatives.find(p=>editing===`representative:${p.id}`);
+ const refresh=()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});};
+ if(editing&&(selectedPerson||selectedRepresentative))return <main className="mx-auto min-h-[calc(100dvh-140px)] w-full max-w-3xl space-y-4 bg-[#f1f1f1] px-3 py-4 text-[#102a52]">
+  <button type="button" onClick={()=>setEditing(null)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-bold"><ArrowLeft size={19}/>Voltar para PESSOAL</button>
+  <h1 className="rounded-xl bg-[#102a52] p-4 text-center text-xl font-black text-white">EDITAR FICHA DE PESSOA</h1>
+  {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
+ </main>;
+
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
   <div className="flex items-stretch gap-2"><header className="flex min-h-16 min-w-0 flex-1 items-center justify-center rounded-2xl bg-[#102a52] px-3 py-4 text-white"><h1 className="text-center text-2xl font-black sm:text-3xl">PESSOAL</h1></header><button type="button" onClick={()=>setAdding(true)} className="inline-flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-[#d4af37] bg-white px-3 text-xs font-extrabold text-[#102a52]" aria-label="Adicionar nova pessoa"><UserPlus size={22}/>Adicionar</button></div>
   {adding&&<div role="dialog" aria-modal="true" aria-label="Adicionar nova pessoa" className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="flex items-center justify-between"><h2 className="text-xl font-black">Adicionar pessoa</h2><button type="button" aria-label="Fechar" onClick={()=>setAdding(false)}><X size={22}/></button></div><p className="text-sm text-slate-600">Novo cadastro comercial. O acesso ao site exige uma conta de usuário vinculada.</p><label className="block text-sm font-bold">Nome completo<input value={newName} onChange={e=>setNewName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><label className="block text-sm font-bold">E-mail<input type="email" value={newEmail} onChange={e=>setNewEmail(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><button type="button" disabled={creating} onClick={()=>void addPerson()} className="min-h-12 w-full rounded-lg bg-[#102a52] px-4 font-bold text-white disabled:opacity-50">{creating?"Adicionando…":"Adicionar pessoa"}</button></div></div>}
   
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
   {[...people.map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
-   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});}}/>
-   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});}}/>)}
+   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});}}/>
+   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});}}/>)}
   {loadingRepresentatives&&<p>Carregando representantes…</p>}
   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
-function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSaved:()=>void}) {
+function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
  const [name,setName]=useState(person.full_name??"");
  const [phone,setPhone]=useState(person.phone??"");
  const [role,setRole]=useState<Role>(person.site_role);
@@ -64,10 +74,10 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
  const [mapFile,setMapFile]=useState<File|null>(null);
  const [supervisor,setSupervisor]=useState(person.supervisor_id??"");
  const [busy,setBusy]=useState(false);
- const [open,setOpen]=useState(false);
+ const [open,setOpen]=useState(editingPage);
 
  const sales=role==="Vendedor"||role==="Representante";
- const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open,queryFn:async()=>{
+ const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open||editingPage,queryFn:async()=>{
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
   const value=data as {city_base:string;region:string;map_url:string}|null;
@@ -96,15 +106,15 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
   const {error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"});
   setBusy(false);
   if(territoryError){toast.error("Permissões salvas, mas região/mapa não: "+territoryError.message);return;}
-  setMapUrl(image);setMapFile(null);toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);
+  setMapUrl(image);setMapFile(null);toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>setOpen(true)} aria-expanded={open} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
+  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
    <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span></span>
    <span className="shrink-0 text-right text-sm font-bold">{person.access_active?"Ativo":"Inativo"}</span>
   </button>
   <div className="mt-2 flex items-center justify-between gap-2">
-   <button type="button" onClick={()=>setOpen(true)} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar</button>
+   <button type="button" onClick={()=>onEdit?.()} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
    <button type="button" disabled={busy} onClick={async()=>{
     const identity=person.full_name||person.email;
@@ -118,7 +128,7 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
    }} title="Excluir usuário permanentemente" aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
   </div>
 
-  {open&&<div role="dialog" aria-modal="true" aria-label={`Editar ${person.full_name||person.email}`} className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Editar usuário</h2><button type="button" onClick={()=>setOpen(false)} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">
+  {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Editar usuário</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">
    <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm"><strong className="block">Ficha de dados — campos editáveis</strong><label className="block font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label><label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label><p><strong>E-mail de acesso:</strong> {person.email} <span className="text-slate-600">(vinculado à conta de login)</span></p></div>
    <RepresentativeDetails name={person.full_name} email={person.email} />
    <label className="block text-sm font-bold">Tipo de acesso<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
@@ -147,8 +157,8 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
 }
 
 type CommercialRepresentative = {id:string;full_name:string;email:string;active:boolean};
-function RepresentativeCard({representative,onSaved}:{representative:CommercialRepresentative;onSaved:()=>void}) {
- const [open,setOpen]=useState(false);
+function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+ const [open,setOpen]=useState(editingPage);
  const [busy,setBusy]=useState(false);
  const [name,setName]=useState(representative.full_name);
  const [email,setEmail]=useState(representative.email);
@@ -159,7 +169,7 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
   const {error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id);
   setBusy(false);
   if(error){toast.error("Não foi possível salvar: "+error.message);return;}
-  toast.success("Representante atualizado.");onSaved();setOpen(false);
+  toast.success("Representante atualizado.");onSaved();setOpen(false);onClose?.();
  }
  async function remove(){
   if(!window.confirm(`Excluir DEFINITIVAMENTE o cadastro comercial de ${representative.full_name}? Esta ação não pode ser desfeita.`))return;
@@ -171,14 +181,14 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>setOpen(true)} aria-expanded={open} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}</strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
+  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}</strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
   <div className="mt-2 flex items-center justify-between gap-2">
-   <button type="button" onClick={()=>setOpen(true)} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar</button>
+   <button type="button" onClick={()=>onEdit?.()} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
    <button type="button" disabled={busy} onClick={()=>void remove()} title="Excluir cadastro comercial" aria-label={`Excluir cadastro comercial de ${representative.full_name}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
   </div>
   <p className="mt-2 text-xs font-bold text-amber-800">Atribuição: Representante (cadastro comercial)</p>
-  {open&&<div role="dialog" aria-modal="true" aria-label={`Editar ${representative.full_name}`} className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Editar representante</h2><button type="button" onClick={()=>setOpen(false)} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
+  {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Editar representante</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
    <h3 className="text-lg font-extrabold">Ficha completa do representante</h3>
    <p className="text-sm"><strong>Atribuição:</strong> Representante comercial</p>
    <RepresentativeDetails name={representative.full_name} email={representative.email} />
