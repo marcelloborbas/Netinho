@@ -29,18 +29,18 @@ export const Route = createFileRoute("/_authenticated/catalogo")({
 type CatalogProduct = Product & { localOnly?: boolean };
 type VehicleBrand = { name: string; pattern: RegExp; slug: string; color: string };
 const vehicleBrands: VehicleBrand[] = [
-  { name: "Volkswagen", pattern: /\\bvolkswagen\\b|\\bvw\\b|\\bgol\\b|\\bfox\\b|\\bpolo\\b|\\bvoyage\\b|\\bsaveiro\\b/i, slug: "volkswagen", color: "001E50" },
-  { name: "Fiat", pattern: /\\bfiat\\b|\\bpalio\\b|\\buno\\b|\\bstrada\\b|\\bargo\\b|\\bmobi\\b/i, slug: "fiat", color: "941711" },
-  { name: "Chevrolet", pattern: /\\bchevrolet\\b|\\bchevy\\b|\\b(onix|ônix|corsa|celta|prisma|spin|s10)\\b/i, slug: "chevrolet", color: "D1A24A" },
-  { name: "Ford", pattern: /\\bford\\b|\\b(ka|fiesta|ecosport|focus|ranger)\\b/i, slug: "ford", color: "002E6B" },
-  { name: "Renault", pattern: /\\brenault\\b|\\b(sandero|logan|duster|kwid)\\b/i, slug: "renault", color: "FFCC33" },
-  { name: "Toyota", pattern: /\\btoyota\\b|\\b(corolla|hilux|etios|yaris)\\b/i, slug: "toyota", color: "EB0A1E" },
-  { name: "Honda", pattern: /\\bhonda\\b|\\b(civic|fit|hr-v|city)\\b/i, slug: "honda", color: "CC0000" },
-  { name: "Hyundai", pattern: /\\bhyundai\\b|\\b(hb20|creta|tucson)\\b/i, slug: "hyundai", color: "002C5F" },
-  { name: "Nissan", pattern: /\\bnissan\\b|\\b(kicks|versa|sentra|march)\\b/i, slug: "nissan", color: "C3002F" },
-  { name: "Peugeot", pattern: /\\bpeugeot\\b/i, slug: "peugeot", color: "000000" },
-  { name: "Citroën", pattern: /\\bcitro[eë]n\\b/i, slug: "citroen", color: "AC1926" },
-  { name: "Jeep", pattern: /\\bjeep\\b|\\b(renegade|compass)\\b/i, slug: "jeep", color: "000000" },
+  { name: "Volkswagen", pattern: /\bvolkswagen\b|\bvw\b|\bgol\b|\bfox\b|\bpolo\b|\bvoyage\b|\bsaveiro\b/i, slug: "volkswagen", color: "001E50" },
+  { name: "Fiat", pattern: /\bfiat\b|\bpalio\b|\buno\b|\bstrada\b|\bargo\b|\bmobi\b/i, slug: "fiat", color: "941711" },
+  { name: "Chevrolet", pattern: /\bchevrolet\b|\bchevy\b|\b(onix|ônix|corsa|celta|prisma|spin|s10)\b/i, slug: "chevrolet", color: "D1A24A" },
+  { name: "Ford", pattern: /\bford\b|\b(ka|fiesta|ecosport|focus|ranger)\b/i, slug: "ford", color: "002E6B" },
+  { name: "Renault", pattern: /\brenault\b|\b(sandero|logan|duster|kwid)\b/i, slug: "renault", color: "FFCC33" },
+  { name: "Toyota", pattern: /\btoyota\b|\b(corolla|hilux|etios|yaris)\b/i, slug: "toyota", color: "EB0A1E" },
+  { name: "Honda", pattern: /\bhonda\b|\b(civic|fit|hr-v|city)\b/i, slug: "honda", color: "CC0000" },
+  { name: "Hyundai", pattern: /\bhyundai\b|\b(hb20|creta|tucson)\b/i, slug: "hyundai", color: "002C5F" },
+  { name: "Nissan", pattern: /\bnissan\b|\b(kicks|versa|sentra|march)\b/i, slug: "nissan", color: "C3002F" },
+  { name: "Peugeot", pattern: /\bpeugeot\b/i, slug: "peugeot", color: "000000" },
+  { name: "Citroën", pattern: /\bcitro[eë]n\b/i, slug: "citroen", color: "AC1926" },
+  { name: "Jeep", pattern: /\bjeep\b|\b(renegade|compass)\b/i, slug: "jeep", color: "000000" },
 ];
 function VehicleBrandIcons({ application }: { application?: string | null }) {
   if (!application) return null;
