@@ -4018,3 +4018,122 @@ html body:has(.welcome-auth-stage) .netinho-assistant.netinho-assistant-auth .ne
   object-position: center bottom !important;
   border-radius: 0 !important;
 }
+
+/* Cabeçalho responsivo: identidade, representações e usuário sem sobreposição.
+   Regras finais substituem ajustes antigos de tamanhos fixos. */
+@media (max-width: 639px) {
+  html body .brand-header { overflow: visible; }
+  html body .brand-header .brand-header-inner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: clamp(3px, 1vw, 8px) !important;
+    width: calc(100% - 12px) !important;
+    margin-inline: 6px !important;
+    min-width: 0 !important;
+  }
+  html body .brand-header .brand-header-identity,
+  html body .brand-header .brand-header-home,
+  html body .brand-header .brand-header-logo,
+  html body .brand-header .brand-header-representations {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  html body .brand-header .brand-header-logo {
+    display: flex !important;
+    gap: clamp(3px, 1vw, 7px) !important;
+    align-items: center !important;
+  }
+  html body .brand-header .brand-header-logo > img {
+    width: clamp(35px, 10vw, 51px) !important;
+    height: clamp(35px, 10vw, 51px) !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    flex-shrink: 0 !important;
+  }
+  html body .brand-header .brand-header-logo .brand-wordmark {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  html body .brand-header .brand-header-logo .brand-wordmark-name {
+    font-size: clamp(17px, 5.1vw, 27px) !important;
+    letter-spacing: -0.045em !important;
+    white-space: nowrap !important;
+  }
+  html body .brand-header .brand-header-logo .brand-wordmark-tagline {
+    font-size: clamp(7px, 1.85vw, 10px) !important;
+    letter-spacing: 0.12em !important;
+    white-space: nowrap !important;
+  }
+  html body .brand-header .brand-header-logo .brand-wordmark [aria-label^="Telefone Netinho"] {
+    font-size: clamp(9px, 2.75vw, 14px) !important;
+    letter-spacing: -0.04em !important;
+    margin-top: 4px !important;
+    white-space: nowrap !important;
+  }
+  html body .brand-header .brand-header-representations .brand-header-right {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: clamp(2px, 0.8vw, 6px) !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  html body .brand-header .brand-header-partners {
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 3px !important;
+    justify-self: stretch !important;
+  }
+  html body .brand-header .brand-header-partners > p {
+    font-size: clamp(7px, 1.9vw, 10px) !important;
+    white-space: nowrap !important;
+    line-height: 1.15 !important;
+  }
+  html body .brand-header .brand-header-representations .partner-logos.partner-logos-compact {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(2px, 0.65vw, 5px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  html body .brand-header .brand-header-representations .partner-logos-compact > div,
+  html body .brand-header .brand-header-representations .partner-logos-compact > div:first-child {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  html body .brand-header .brand-header-representations .partner-logos-compact .partner-logo {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: clamp(24px, 7vw, 33px) !important;
+    min-height: 0 !important;
+  }
+  html body .brand-header .brand-header-representations .partner-logos-compact .partner-logo img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+  html body .brand-header .brand-header-representations .partner-coming-soon {
+    font-size: clamp(6px, 1.55vw, 9px) !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+  html body .brand-header .brand-header-account { min-width: 0 !important; }
+  html body .brand-header .brand-header-avatar-button {
+    width: clamp(40px, 12vw, 62px) !important;
+    height: clamp(40px, 12vw, 62px) !important;
+    padding: 2px !important;
+    flex-shrink: 0 !important;
+  }
+  html body .brand-header .brand-header-avatar {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+}
