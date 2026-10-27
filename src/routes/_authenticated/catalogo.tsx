@@ -91,6 +91,7 @@ function Catalog() {
   const [manufacturer, setManufacturer] = useState(search.marca === "HD" ? "all" : (search.marca ?? "all"));
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
+  const [vehicleBrand, setVehicleBrand] = useState("all");
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
   const dq = useDeferredValue(q);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -139,6 +140,7 @@ function Catalog() {
     setSearchInput(search.q ?? "");
     setHasSelectedCategory(false);
     setCategory("all");
+    setVehicleBrand("all");
     setPage(1);
   }, [search.marca, search.q]);
 
@@ -165,9 +167,10 @@ function Catalog() {
     }
     return { total: eligible.length, counts };
   }, [combined, manufacturer, dq]);
+  const availableVehicleBrands = useMemo(() => vehicleBrands.map((brand) => ({ ...brand, count: combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && brand.pattern.test(p.application ?? "")).length })).filter((brand) => brand.count > 0), [combined, manufacturer]);
   const list = useMemo(() => {
     const matching = combined.filter((p) =>
-      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && productMatches(p, dq));
+      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || vehicleBrands.find((brand) => brand.name === vehicleBrand)?.pattern.test(p.application ?? "")) && productMatches(p, dq));
     const selected = matching.filter((p) => {
       if (filterMode === "recentes") return recentCodes.includes(p.code);
       if (filterMode === "disponiveis") return p.stock > 0;
@@ -187,11 +190,11 @@ function Catalog() {
     }
     if (filterMode === "recentes") return [...selected].sort((a, b) => recentCodes.indexOf(a.code) - recentCodes.indexOf(b.code));
     return selected;
-  }, [combined, manufacturer, category, dq, filterMode, favorites, draft.items, recentCodes]);
-  const showProducts = hasSelectedCategory || q.trim().length > 0;
+  }, [combined, manufacturer, category, vehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
+  const showProducts = hasSelectedCategory || vehicleBrand !== "all" || q.trim().length > 0;
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setHasSelectedCategory(false); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -230,7 +233,13 @@ function Catalog() {
         </div>
       </section>
 
-      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
+        {availableVehicleBrands.map((brand) => <button key={brand.name} type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
+          <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+          <span>{brand.name}</span>
+          <span className="text-[10px] opacity-70">{brand.count} peças</span>
+        </button>)}
+      </nav><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
