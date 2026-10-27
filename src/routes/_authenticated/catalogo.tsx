@@ -42,6 +42,23 @@ const vehicleBrands: VehicleBrand[] = [
   { name: "Citroën", pattern: /\bcitro[eë]n\b/i, slug: "citroen", color: "AC1926" },
   { name: "Jeep", pattern: /\bjeep\b|\b(renegade|compass)\b/i, slug: "jeep", color: "000000" },
 ];
+// Modelos exibidos apenas quando citados explicitamente na aplicação da peça.
+const vehicleModels: Record<string, string[]> = {
+  Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up"],
+  Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino"],
+  Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra"],
+  Ford: ["Ka", "Fiesta", "Focus", "EcoSport", "Ranger", "Fusion"],
+  Renault: ["Kwid", "Sandero", "Logan", "Duster", "Oroch", "Clio", "Kangoo"],
+  Hyundai: ["HB20", "Creta", "Tucson", "i30"],
+  Toyota: ["Corolla", "Etios", "Hilux", "Yaris"],
+  Honda: ["Civic", "Fit", "City", "HR-V"],
+  Nissan: ["Kicks", "Versa", "Sentra", "March", "Frontier"],
+  Peugeot: ["206", "207", "208", "307", "308", "2008", "3008"],
+  "Citroën": ["C3", "C4", "Aircross", "Berlingo"],
+  Jeep: ["Renegade", "Compass", "Commander"],
+};
+const mentionsModel = (application: string, model: string) =>
+  new RegExp(`(^|[^\\p{L}\\p{N}])${model.replace(/[.*+?^${}()|[\\]\\]/g, "\\function VehicleBrandIcons({ application }: { application?: string | null }) {")}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
 function VehicleBrandIcons({ application }: { application?: string | null }) {
   if (!application) return null;
   const matches = vehicleBrands.filter((brand) => brand.pattern.test(application));
@@ -92,6 +109,7 @@ function Catalog() {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
   const [vehicleBrand, setVehicleBrand] = useState("all");
+  const [vehicleModel, setVehicleModel] = useState("all");
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
   const dq = useDeferredValue(q);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -141,6 +159,7 @@ function Catalog() {
     setHasSelectedCategory(false);
     setCategory("all");
     setVehicleBrand("all");
+    setVehicleModel("all");
     setPage(1);
   }, [search.marca, search.q]);
 
@@ -185,13 +204,27 @@ function Catalog() {
     return vehicleBrands.map((brand) => ({ ...brand, count: counts.get(brand.name) ?? 0 })).filter((brand) => brand.count > 0);
   }, [combined, manufacturer]);
   const selectedVehicleBrand = useMemo(() => vehicleBrands.find((brand) => brand.name === vehicleBrand), [vehicleBrand]);
+  const availableVehicleModels = useMemo(() => {
+    if (vehicleBrand === "all") return [];
+    const counts = new Map<string, number>();
+    for (const product of combined) {
+      if (product.active === false || product.manufacturer === "HD" || (manufacturer !== "all" && (product.manufacturer ?? "FCO") !== manufacturer)) continue;
+      const application = product.application ?? "";
+      if (!selectedVehicleBrand?.pattern.test(application)) continue;
+      for (const model of vehicleModels[vehicleBrand] ?? []) {
+        if (mentionsModel(application, model)) counts.set(model, (counts.get(model) ?? 0) + 1);
+      }
+    }
+    return [...counts].map(([name, count]) => ({name, count})).sort((a,b) => a.name.localeCompare(b.name,"pt-BR"));
+  }, [combined, manufacturer, vehicleBrand, selectedVehicleBrand]);
+
   const list = useMemo(() => {
     // Índices temporários evitam percorrer favoritos e itens do pedido para cada peça.
     const favoriteIds = filterMode === "favoritos" ? new Set(favorites) : null;
     const orderProductIds = filterMode === "compras" ? new Set(draft.items.map((item) => item.productId)) : null;
     const recentPositions = filterMode === "recentes" ? new Map(recentCodes.map((code, index) => [code, index])) : null;
     const matching = combined.filter((p) =>
-      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || selectedVehicleBrand?.pattern.test(p.application ?? "")) && productMatches(p, dq));
+      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || selectedVehicleBrand?.pattern.test(p.application ?? "")) && (vehicleModel === "all" || mentionsModel(p.application ?? "", vehicleModel)) && productMatches(p, dq));
     const selected = matching.filter((p) => {
       if (filterMode === "recentes") return recentPositions?.has(p.code) === true;
       if (filterMode === "disponiveis") return p.stock > 0;
@@ -211,11 +244,11 @@ function Catalog() {
     }
     if (filterMode === "recentes") return [...selected].sort((a, b) => (recentPositions?.get(a.code) ?? Infinity) - (recentPositions?.get(b.code) ?? Infinity));
     return selected;
-  }, [combined, manufacturer, category, vehicleBrand, selectedVehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
+  }, [combined, manufacturer, category, vehicleBrand, vehicleModel, selectedVehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
   const showProducts = hasSelectedCategory || vehicleBrand !== "all" || q.trim().length > 0;
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -298,12 +331,20 @@ function Catalog() {
       </nav>
       <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Marcas dos veículos</p>
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
-        {availableVehicleBrands.map((brand) => <button key={brand.name} type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
+        {availableVehicleBrands.map((brand) => <button key={brand.name} type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
           <span>{brand.name}</span>
           <span className="text-[10px] opacity-70">{brand.count} peças</span>
         </button>)}
       </nav>
+      {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Modelos dos veículos · {vehicleBrand}</p>
+        {availableVehicleModels.length ? <div className="flex flex-wrap gap-2">
+          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`rounded-lg border px-3 py-2 text-xs font-bold ${vehicleModel === model.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
+            {model.name} <span className="opacity-65">({model.count})</span>
+          </button>)}
+        </div> : <p className="text-xs text-[#102a52]">Nenhum modelo identificado nas aplicações cadastradas para esta marca.</p>}
+      </section>}
       {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
