@@ -20,7 +20,7 @@ export function HomePartsCarousel() {
   }, [paused]);
   // Carrega apenas o destaque e o próximo slide; as demais imagens entram sob demanda.
   return (
-    <section className="relative mx-auto w-full max-w-3xl" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+    <section className="home-cover-anchor relative mx-auto w-full max-w-3xl" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
       <div className="w-full">
         <div className="w-full">
