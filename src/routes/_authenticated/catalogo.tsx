@@ -255,7 +255,7 @@ function Catalog() {
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 pt-12 pb-28 sm:px-6 sm:pt-14 sm:pb-32">
       <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
-        <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>CATÁLOGO DE PEÇAS</h1>
+        <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>CATÁLOGOS DE PEÇAS</h1>
       </header>
 
       <section className="space-y-4 rounded-2xl border-2 border-[#102a52] bg-white p-4 shadow-lg" aria-label="Pesquisar catálogo">
@@ -338,7 +338,7 @@ function Catalog() {
         </button><span className="text-[11px] font-bold text-[#102a52]">{brand.count} peças</span></div>)}
       </nav>
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
-        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">Modelos dos veículos · {vehicleBrand}</p>
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">4 - SELECIONE O MODELO</p>
         {availableVehicleModels.length ? <div className="flex flex-wrap gap-2">
           {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`rounded-lg border px-3 py-2 text-xs font-bold ${vehicleModel === model.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
             {model.name} <span className="opacity-65">({model.count})</span>
