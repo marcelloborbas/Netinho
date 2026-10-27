@@ -47,7 +47,7 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
   return (
     <header className="app-header brand-header">
       <div className="brand-header-inner">
-        <div className="flex min-w-0 shrink-0 flex-col items-start gap-0.5">
+        <div className="brand-header-identity flex min-w-0 flex-col items-start gap-0.5">
           <Link to="/" onClick={() => setMenuOpen(false)} aria-label="Ir para a página inicial da Netinho" title="Página inicial" className="brand-header-home">
             <Logo className="brand-header-logo" showPhone />
           </Link>
@@ -55,14 +55,14 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
 
         </div>
         <div className="brand-header-representations min-w-0">
-          <div className="flex w-full items-center justify-end gap-2 sm:gap-3">
-            <div className="flex shrink-0 flex-col items-center gap-1">
+          <div className="brand-header-right flex w-full items-center justify-end gap-2 sm:gap-3">
+            <div className="brand-header-partners flex min-w-0 flex-col items-center gap-1">
               <p className="m-0 text-center text-[9px] font-bold leading-tight whitespace-nowrap sm:text-[10px]">Representante Oficial</p>
               <PartnerLogos compact linked={false} />
             </div>
-          <div className="relative flex shrink-0 items-center justify-end">
-              <button type="button" onClick={(event) => { if (!user) { void navigate({ to: "/auth" }); return; } const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={user ? `Abrir opções de ${user.name}` : "Entrar na conta"} title={user?.name || "Entrar na conta"} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
-                {user?.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" loading="lazy" decoding="async" className="h-[121px] w-[121px] rounded-full object-cover" /> : <span className="flex h-[121px] w-[121px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={69} /></span>}
+          <div className="brand-header-account relative flex shrink-0 items-center justify-end">
+              <button type="button" onClick={(event) => { if (!user) { void navigate({ to: "/auth" }); return; } const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={user ? `Abrir opções de ${user.name}` : "Entrar na conta"} title={user?.name || "Entrar na conta"} className="brand-header-avatar-button flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
+                {user?.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" loading="lazy" decoding="async" className="brand-header-avatar h-[121px] w-[121px] rounded-full object-cover" /> : <span className="brand-header-avatar flex h-[121px] w-[121px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={69} /></span>}
               </button>
               {user && menuOpen && typeof document !== "undefined" && createPortal(
                 <div role="menu" aria-label="Opções do usuário" style={{ top: menuPosition.top, right: menuPosition.right }} className="fixed z-[9999] min-w-52 max-w-[calc(100vw-16px)] rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-2xl">
