@@ -120,11 +120,30 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
     const identity=person.full_name||person.email;
     if(!window.confirm(`Excluir DEFINITIVAMENTE ${identity}? A conta de login e o cadastro serão apagados. Esta ação não pode ser desfeita.`))return;
     setBusy(true);
-    const {data,error}=await supabase.functions.invoke("delete-person",{body:{userId:person.id}});
-    setBusy(false);
-    if(error||!data||typeof data.message!=="string"||!data.message.includes("excluída permanentemente")){toast.error("Não foi possível excluir: "+(data?.message||error?.message||"Erro desconhecido"));return;}
-    toast.success("Usuário excluído permanentemente.");
-    onSaved();
+    try {
+      const {data,error}=await supabase.functions.invoke("delete-person",{body:{userId:person.id}});
+      if(error){
+        let detail=error.message;
+        if("context" in error && error.context instanceof Response){
+          const response=error.context;
+          try {const payload=await response.clone().json();detail=payload?.message||payload?.error||detail;}catch{detail=detail+" (HTTP "+response.status+")";}
+        }
+        const network=/failed to send|failed to fetch|network|fetch failed/i.test(detail);
+        toast.error(network
+          ?"O serviço de exclusão não respondeu. É necessário publicar/verificar a função delete-person no Supabase. Nenhum cadastro foi apagado."
+          :"Não foi possível excluir: "+detail,{duration:9000});
+        return;
+      }
+      if(!data||typeof data.message!=="string"||!data.message.includes("excluída permanentemente")){
+        toast.error("Exclusão não confirmada: "+(data?.message||"Resposta inesperada do servidor."),{duration:9000});
+        return;
+      }
+      toast.success("Usuário excluído permanentemente.");
+      onSaved();
+    } catch(cause){
+      toast.error("Falha na comunicação com o serviço de exclusão. Nenhum cadastro foi confirmado como excluído.",{duration:9000});
+      console.error("delete-person:",cause);
+    } finally {setBusy(false);}
    }} title="Excluir usuário permanentemente" aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
   </div>
 
