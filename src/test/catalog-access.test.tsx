@@ -95,6 +95,7 @@ describe("catalog access presentation", () => {
   it("shows stock and adds the part to the sale for an authorized seller", async () => {
     state.seller = true;
     render(<Catalog />);
+    fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
     expect(screen.getByText(/Estoque = 8/)).toBeVisible();
     fireEvent.click(screen.getByRole("button", { name: "Adicionar peça à venda" }));
     await waitFor(() =>
