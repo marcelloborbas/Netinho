@@ -128,7 +128,7 @@ export const meQuery = queryOptions({
 const productSearchCache = new WeakMap<Product, { source: string; text: string }>();
 
 function normalizeProductSearch(value: string) {
-  return value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase();
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 export function productMatches(p: Product, q: string) {
