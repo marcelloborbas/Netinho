@@ -4307,3 +4307,9 @@ html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-auth)
   bottom: var(--lia-cover-offset, var(--lia-footer-offset, 66px)) !important;
   transform: translateX(-50%) !important;
 }
+
+/* Login: deslocar somente a logo do Google para a esquerda. */
+html body .welcome-auth-stage .welcome-login-icons > button:first-child {
+  position: relative !important;
+  left: -14px !important;
+}
