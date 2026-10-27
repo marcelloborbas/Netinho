@@ -3778,3 +3778,24 @@ html body .netinho-assistant .netinho-assistant-avatar:active { cursor: grabbing
 @media (max-width: 390px) {
   .brand-header .brand-header-representations > div:first-child { gap: 2px !important; }
 }
+
+
+/* Login e Inicio: LIA fixa e centralizada no pe da pagina; outras rotas continuam arrastaveis. */
+html body .netinho-assistant.netinho-assistant-auth,
+html body .netinho-assistant.netinho-assistant-home {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  z-index: 1200 !important;
+}
+html body .netinho-assistant.netinho-assistant-home {
+  bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+}
+html body .netinho-assistant.netinho-assistant-auth .netinho-assistant-avatar,
+html body .netinho-assistant.netinho-assistant-home .netinho-assistant-avatar {
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+}
