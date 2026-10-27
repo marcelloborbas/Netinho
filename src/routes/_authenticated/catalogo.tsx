@@ -233,13 +233,7 @@ function Catalog() {
         </div>
       </section>
 
-      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
-        {availableVehicleBrands.map((brand) => <button key={brand.name} type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
-          <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
-          <span>{brand.name}</span>
-          <span className="text-[10px] opacity-70">{brand.count} peças</span>
-        </button>)}
-      </nav><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
@@ -254,6 +248,14 @@ function Catalog() {
             <span className="catalog-category-count">{categoryCounts.counts.get(name) ?? 0} Itens</span>
           </div>;
         })}
+      </nav>
+      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Marcas dos veículos</p>
+      <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
+        {availableVehicleBrands.map((brand) => <button key={brand.name} type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setCategory("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
+          <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+          <span>{brand.name}</span>
+          <span className="text-[10px] opacity-70">{brand.count} peças</span>
+        </button>)}
       </nav>
       {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
