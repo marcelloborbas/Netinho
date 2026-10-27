@@ -4234,3 +4234,76 @@ html body .netinho-assistant.netinho-assistant-catalog:not(.netinho-assistant-au
   max-width: 150px !important;
   max-height: 150px !important;
 }
+
+/* LIA - REGRA ÚNICA E DEFINITIVA (exceto Login).
+   Neutraliza regras históricas de páginas individuais e garante visibilidade. */
+html body .netinho-assistant:not(.netinho-assistant-auth) {
+  --lia-size: 150px;
+  position: fixed !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: var(--lia-size) !important;
+  min-width: var(--lia-size) !important;
+  max-width: var(--lia-size) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  top: auto !important;
+  bottom: var(--lia-footer-offset, 66px) !important;
+  left: auto !important;
+  right: 8px !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 1500 !important;
+}
+html body .netinho-assistant:not(.netinho-assistant-auth) > .netinho-assistant-avatar.netinho-assistant-avatar-large {
+  display: block !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  flex: 0 0 var(--lia-size) !important;
+  width: var(--lia-size) !important;
+  height: var(--lia-size) !important;
+  min-width: var(--lia-size) !important;
+  min-height: var(--lia-size) !important;
+  max-width: var(--lia-size) !important;
+  max-height: var(--lia-size) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+html body .netinho-assistant:not(.netinho-assistant-auth) > .netinho-assistant-avatar.netinho-assistant-avatar-large > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+html body .netinho-assistant.netinho-assistant-catalog:not(.netinho-assistant-auth) {
+  left: 8px !important;
+  right: auto !important;
+}
+html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-auth) {
+  left: 50% !important;
+  right: auto !important;
+  bottom: var(--lia-cover-offset, var(--lia-footer-offset, 66px)) !important;
+  transform: translateX(-50%) !important;
+}
