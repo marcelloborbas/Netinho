@@ -35,7 +35,7 @@ function CadastroPage() {
           details = detail;
         }
       }
-      return { profile, email, name: profile?.full_name || regional?.full_name || String(auth.user.user_metadata?.full_name || auth.user.user_metadata?.name || auth.user.email || "Não informado"), regional, details };
+      return { profile, email, name: profile?["full_name"] || regional?["full_name"] || String(auth.user.user_metadata?["full_name"] || auth.user.user_metadata?["name"] || auth.user.email || "Não informado"), regional, details };
     },
   });
   const role = access?.level === 1 ? "Administrador" : access?.attribution || account?.profile?.site_role || "Visitante";
