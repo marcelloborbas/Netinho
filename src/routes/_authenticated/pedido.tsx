@@ -129,7 +129,7 @@ function OrderPage() {
       <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
           <div className="grid grid-cols-2 gap-3"><div className="space-y-1.5">
-          <Label>Cliente *</Label>
+          <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Cliente *</Label>
           {selectedCustomer?.order_class && (
             <p className="text-sm text-amber-400">
               Classe {selectedCustomer.order_class} · Pedido mínimo{" "}
@@ -282,7 +282,7 @@ function OrderPage() {
       </ul>
       <section className="surface-card p-4">
         <div className="space-y-1.5">
-          <Label>Condição de pagamento</Label>
+          <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
           <Select
             value={d.paymentTerm}
             onValueChange={(v) => draftActions.update({ paymentTerm: v as PaymentTerm })}
@@ -303,7 +303,7 @@ function OrderPage() {
       </section>
 
       <div className="space-y-1.5">
-        <Label>Observações do pedido</Label>
+        <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Observações do pedido</Label>
         <Textarea
           value={d.notes}
           onChange={(e) => draftActions.update({ notes: e.target.value })}
@@ -380,7 +380,7 @@ function Field({
 }) {
   return (
     <div className="space-y-1.5">
-      <Label>{label}</Label>
+      <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">{label}</Label>
       <Input value={value} onChange={(e) => onChange(e.target.value)} className="h-12" />
     </div>
   );
