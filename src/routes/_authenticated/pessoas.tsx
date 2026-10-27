@@ -52,6 +52,8 @@ function Pessoas() {
  </main>;
 }
 function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSaved:()=>void}) {
+ const [name,setName]=useState(person.full_name??"");
+ const [phone,setPhone]=useState(person.phone??"");
  const [role,setRole]=useState<Role>(person.site_role);
  const [active,setActive]=useState(person.access_active);
  const [uf,setUf]=useState(person.territory_uf??"");
@@ -68,17 +70,21 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
  const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open,queryFn:async()=>{
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
-  return data as {city_base:string;region:string;map_url:string}|null;
+  const value=data as {city_base:string;region:string;map_url:string}|null;
+  setCityBase(value?.city_base??"");setRegion(value?.region??"");setMapUrl(value?.map_url??"");
+  return value;
  }});
- const effectiveCity=cityBase||territory?.city_base||"";
- const effectiveRegion=region||territory?.region||"";
- const effectiveMap=mapUrl||territory?.map_url||"";
+ const effectiveCity=cityBase;
+ const effectiveRegion=region;
+ const effectiveMap=mapUrl;
 
  async function save(){
-  
+  if(!name.trim()){toast.error("Informe o nome da pessoa.");return;}
   setBusy(true);
   const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:role,p_active:active,p_uf:uf,p_cities:cities,p_supervisor:supervisor||null} as never);
-  if(error){setBusy(false);toast.error("Não foi possível salvar: "+error.message);return;}
+  if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
+  const {error:profileError}=await supabase.from("profiles").update({full_name:name.trim(),phone:phone.trim()||null}).eq("id",person.id);
+  if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não: "+profileError.message);onSaved();return;}
   let image=effectiveMap.trim();
   if(mapFile){
    const extension=mapFile.name.split(".").pop()?.toLowerCase()||"webp";
@@ -113,7 +119,7 @@ function PersonCard({person,people,onSaved}:{person:Person;people:Person[];onSav
   </div>
 
   {open&&<div role="dialog" aria-modal="true" aria-label={`Editar ${person.full_name||person.email}`} className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Editar usuário</h2><button type="button" onClick={()=>setOpen(false)} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">
-   <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm"><strong>Ficha de dados</strong><p>Nome: {person.full_name||"Não informado"}</p><p>E-mail: {person.email}</p><p>Telefone: {person.phone||"Não informado"}</p><p>Atribuição: {person.site_role}</p><p>Estado(s): {uf||"Não informado"}</p><p>Cidades: {cities||"Não informadas"}</p></div>
+   <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm"><strong className="block">Ficha de dados — campos editáveis</strong><label className="block font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label><label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label><p><strong>E-mail de acesso:</strong> {person.email} <span className="text-slate-600">(vinculado à conta de login)</span></p></div>
    <RepresentativeDetails name={person.full_name} email={person.email} />
    <label className="block text-sm font-bold">Tipo de acesso<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
    <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)} className="h-5 w-5"/> Acesso ativo</label>
@@ -158,9 +164,10 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
  async function remove(){
   if(!window.confirm(`Excluir DEFINITIVAMENTE o cadastro comercial de ${representative.full_name}? Esta ação não pode ser desfeita.`))return;
   setBusy(true);
-  const {error}=await supabase.from("commercial_representatives").delete().eq("id",representative.id);
+  const {data,error}=await supabase.from("commercial_representatives").delete().eq("id",representative.id).select("id");
   setBusy(false);
   if(error){toast.error("Não foi possível excluir: "+error.message);return;}
+  if(!data?.length){toast.error("O cadastro não foi excluído. Verifique as permissões do administrador.");return;}
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
