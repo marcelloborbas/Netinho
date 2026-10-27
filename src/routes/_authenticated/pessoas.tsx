@@ -133,7 +133,7 @@ function RepresentativeCard({representative,onSaved}:{representative:CommercialR
  const [email,setEmail]=useState(representative.email);
  const [active,setActive]=useState(representative.active);
  async function save(){
-  if(!name.trim()||!/^\\S+@\\S+\\.\\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
+  if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
   const {error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id);
   setBusy(false);
@@ -175,7 +175,7 @@ function RepresentativeDetails({name,email}:{name:string;email:string}) {
   queryFn:async()=>{
    const {data:profiles,error:profileError}=await supabase.from("representative_profiles").select("slug,full_name,email,phone,region");
    if(profileError)throw profileError;
-   const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").trim().toLowerCase();
+   const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
    const profile=profiles?.find(p=>!!email&&norm(p.email)===norm(email))??profiles?.find(p=>norm(p.full_name)===norm(name));
    if(!profile)return null;
    const {data:details,error:detailsError}=await supabase.from("representative_private_details").select("city,state,service_cities,street_address,neighborhood,postal_code,cpf,rg").eq("slug",profile.slug).maybeSingle();
