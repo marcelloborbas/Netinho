@@ -3658,7 +3658,7 @@ html body .netinho-assistant .netinho-assistant-avatar.netinho-assistant-avatar-
   text-shadow: none !important;
 }
 .catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info > div[aria-expanded],
-.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .rounded-xl.bg-\\[\\#ffffff\\] {
+.catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .rounded-xl.bg-\[\#ffffff\] {
   color: #102a52;
 }
 .catalog-showcase .catalog-product-grid .catalog-product-card .catalog-card-info .catalog-card-stock {
