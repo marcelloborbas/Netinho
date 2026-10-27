@@ -4313,3 +4313,36 @@ html body .welcome-auth-stage .welcome-login-icons > button:first-child {
   position: relative !important;
   left: -14px !important;
 }
+
+/* Ajuda no menu do usuário: painel central sem mascote nas páginas internas. */
+html body .netinho-assistant.netinho-assistant-menu-help {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  transform: none !important;
+  z-index: 3000 !important;
+}
+html body .netinho-assistant.netinho-assistant-menu-help .netinho-assistant-panel {
+  position: relative !important;
+  display: block !important;
+  inset: auto !important;
+  transform: none !important;
+  width: min(420px, calc(100vw - 32px)) !important;
+  max-width: min(420px, calc(100vw - 32px)) !important;
+  max-height: min(75dvh, 650px) !important;
+  overflow-y: auto !important;
+  pointer-events: auto !important;
+  z-index: 3001 !important;
+}
+html body .netinho-assistant.netinho-assistant-menu-help > .netinho-assistant-avatar {
+  display: none !important;
+}
