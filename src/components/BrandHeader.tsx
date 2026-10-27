@@ -59,12 +59,11 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
               <p className="m-0 text-center text-[9px] font-bold leading-tight whitespace-nowrap sm:text-[10px]">Representante Oficial</p>
               <PartnerLogos compact linked={false} />
             </div>
-          {user && (
-            <div className="relative flex shrink-0 items-center justify-end">
-              <button type="button" onClick={(event) => { const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={`Abrir opções de ${user.name}`} title={user.name} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
-                {user.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[68px] w-[68px] rounded-full object-cover" /> : <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={39} /></span>}
+          <div className="relative flex shrink-0 items-center justify-end">
+              <button type="button" onClick={(event) => { if (!user) { void navigate({ to: "/auth" }); return; } const rect = event.currentTarget.getBoundingClientRect(); setMenuPosition({ top: rect.bottom + 8, right: Math.max(8, window.innerWidth - rect.right) }); setMenuOpen((open) => !open); setProfileDetailsOpen(false); }} aria-expanded={menuOpen} aria-haspopup="menu" aria-label={user ? `Abrir opções de ${user.name}` : "Entrar na conta"} title={user?.name || "Entrar na conta"} className="flex items-center gap-1 rounded-full border-2 border-white/50 p-0.5">
+                {user?.picture ? <img src={user.picture} alt={`Foto de ${user.name}`} referrerPolicy="no-referrer" className="h-[68px] w-[68px] rounded-full object-cover" /> : <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-white/15 text-white"><UserRound size={39} /></span>}
               </button>
-              {menuOpen && typeof document !== "undefined" && createPortal(
+              {user && menuOpen && typeof document !== "undefined" && createPortal(
                 <div role="menu" aria-label="Opções do usuário" style={{ top: menuPosition.top, right: menuPosition.right }} className="fixed z-[9999] min-w-52 max-w-[calc(100vw-16px)] rounded-xl border border-slate-200 bg-white p-2 text-slate-900 shadow-2xl">
                   <button role="menuitem" type="button" onClick={() => setProfileDetailsOpen((open) => !open)} aria-expanded={profileDetailsOpen} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={18} /> {profile}</button>
                   {profileDetailsOpen && <div className="mx-1 mb-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800" role="region" aria-label="Permissões do perfil">
@@ -76,7 +75,6 @@ export function BrandHeader({ actions }: { actions?: ReactNode }) {
                 </div>, document.body
               )}
             </div>
-          )}
           </div>
           {actions && <div className="brand-header-actions">{actions}</div>}
         </div>
