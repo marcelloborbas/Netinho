@@ -125,7 +125,7 @@ export function NetinhoAssistant() {
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{greeting}</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p className="whitespace-pre-line">{greeting}</p>}
     </div>}
     <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onPointerDown={fixedAtFooter ? undefined : onDragStart} onPointerMove={fixedAtFooter ? undefined : onDragMove} onPointerUp={fixedAtFooter ? undefined : onDragEnd} onPointerCancel={fixedAtFooter ? undefined : (event) => { onDragEnd(event); }} onClick={() => { if (ignoreClickRef.current) { ignoreClickRef.current = false; return; } setOpen(!open); }}>
-      <img src="/images/Mascote%20LIA%20ajuda.webp" alt="Mascote LIA" width="118" height="118" />
+      <img src={/^(\/|\/catalogo|\/vendas|\/pedidos)\/?$/.test(pathname) ? "/images/lia-Sorridente%20-%20Posso%20te%20ajudar.webp" : "/images/Mascote%20LIA%20ajuda.webp"} onError={(event) => { if (!event.currentTarget.src.includes("Mascote%20LIA%20ajuda.webp")) event.currentTarget.src = "/images/Mascote%20LIA%20ajuda.webp"; }} alt="Mascote LIA" width="118" height="118" decoding="async" />
     </button>
   </aside>;
 }
