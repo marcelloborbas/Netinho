@@ -43,6 +43,13 @@
       "when": 1792757723344,
       "tag": "0005_unified_people_roles_and_cash_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793107868931,
+      "tag": "0006_block_guests_restrict_reps_catalogs",
+      "breakpoints": true
     }
   ]
 }
