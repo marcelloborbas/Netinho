@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
+    links: [{ rel: "preload", as: "image", href: "/images/netinho-auth-nova.webp" }],
     meta: [
       { title: "Login | Netinho Auto Parts" },
       {
@@ -290,6 +291,8 @@ function AuthPage() {
             <img
               className="welcome-auth-art"
               src="/images/netinho-auth-nova.webp"
+              fetchPriority="high"
+              decoding="async"
               alt="Seja bem-vindo ao mundo automotivo."
             />
             <section className="welcome-auth-actions" aria-label="Acesso temporário ao site">
