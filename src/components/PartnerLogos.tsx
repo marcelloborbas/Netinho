@@ -43,7 +43,7 @@ export function PartnerLogos({
             </span>
           )}
           {(s.brand === "HD" || s.brand === "JCREI") && <span className="block text-center text-xs font-extrabold text-zinc-500">Em breve</span>}
-          {s.brand !== "HD" && !compact && downloads && <CatalogDownload brand={s.brand} />}
+          {s.brand !== "HD" && s.brand !== "JCREI" && !compact && downloads && <CatalogDownload brand={s.brand} />}
         </div>
       ))}
     </div>
