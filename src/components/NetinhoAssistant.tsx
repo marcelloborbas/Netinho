@@ -11,7 +11,7 @@ const hints = [
   { match: /catalogo|catálogo/, title: "LIA - Catálogo de Peças", message: "Bem-vindo ao nosso Catálogo Virtual de Peças!\n\nClique na lupa e encontre sua peça pela marca, modelo do veículo ou nome.\n\nPode também pesquisar pelas categorias!\n\nEm Filtros, organize. Para limpar, clique no botão ao lado!\n\nÉ simples e prático!\n\nAgora é só encontrar as peças e fazer boas vendas! Boa sorte!" },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
   { match: /pedidos/, title: "Pedidos", message: "Consulte seus pedidos e acompanhe o andamento. A edição depende do seu perfil e das permissões concedidas." },
-  { match: /pedido|vendas/, title: "Vendas", message: "Selecione o cliente, confira as peças e quantidades e revise antes de enviar. É necessário ter acesso comercial autorizado." },
+  { match: /pedido|vendas/, title: "LIA - Fazer Pedido", message: "Chegou a hora de fazer seu pedido!\n\nSelecione o cliente! Caso não esteja na seleção, clique em Novo Cliente!\n\nInforme a forma de atendimento: Venda ou Orçamento.\n\nEscolha as peças, ajuste as quantidades e confira os valores!\n\nSe precisar de mais produtos, é só clicar em Continuar Comprando!\n\nConfira os dados do cliente, escolha a condição de pagamento e finalize seu pedido!" },
   { match: /ofertas|promoc/, title: "Promoções", message: "Confira o código e a aplicação da peça. Toque em Comprar para continuar, caso tenha autorização para vendas." },
   { match: /admin/, title: "Administração", message: "Gerencie usuários, permissões e operações conforme seu acesso de administrador." },
   { match: /representante|vendedores/, title: "Representantes", message: "Informe sua cidade e estado para localizar o representante que atende sua região." },
@@ -88,11 +88,11 @@ export function NetinhoAssistant() {
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = pathname === "/" ? "Vamos lá! Aqui é tudo bem facinho!\n\nNo menu superior, clique na sua foto para consultar seu perfil, visualizar suas informações ou sair da conta.\n\nLembre-se: somente perfis autorizados podem realizar vendas!\n\nNesta página, você também acompanha nossas novidades e atualizações!\n\nNo menu inferior, estão seus atalhos rápidos:\n\nInício, Catálogo de Peças, Vender, Pedidos e Sair.\n\nNão disse que era simples? Agora é só vender!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speak = () => {
-    if (isAuth || pathname === "/" || /catalogo|catálogo/.test(pathname)) {
-      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-pagina%20inicial.mp3" : "/audio/lia/lia-pagina%20catalogo.mp3");
+    if (isAuth || pathname === "/" || /catalogo|catálogo/.test(pathname) || /pedido|vendas/.test(pathname)) {
+      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-pagina%20inicial.mp3" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-pagina%20catalogo.mp3" : "/audio/lia/lia-vender.mp3");
       loginAudioRef.current = audio;
       audio.onended = () => setSpeaking(false);
-      audio.onerror = () => { setSpeaking(false); if (pathname === "/" || /catalogo|catálogo/.test(pathname)) { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
+      audio.onerror = () => { setSpeaking(false); if (pathname === "/" || /catalogo|catálogo/.test(pathname) || /pedido|vendas/.test(pathname)) { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
       if (speaking) { audio.pause(); audio.currentTime = 0; setSpeaking(false); return; }
       audio.currentTime = 0;
       void audio.play().then(() => setSpeaking(true)).catch(() => setSpeaking(false));
