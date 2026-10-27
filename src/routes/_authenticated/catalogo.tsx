@@ -254,6 +254,30 @@ function Catalog() {
         </div>
       </section>
 
+      <section className="mt-5" aria-label="Buscar peças por representação">
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Representações</p>
+        <nav className="flex flex-wrap items-center justify-center gap-2 sm:justify-start" aria-label="Filtro por representação">
+          {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
+            const pending = brand === "HD" || brand === "JCREI";
+            const selected = manufacturer === brand;
+            return (
+              <button
+                key={brand}
+                type="button"
+                disabled={pending}
+                aria-pressed={!pending && selected}
+                title={pending ? "Em breve — representação em negociação" : `Mostrar peças ${brand === "all" ? "de todas as representações" : "FCO"}`}
+                onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); }}
+                className={`min-w-[76px] rounded-xl border px-4 py-2.5 text-center text-sm font-extrabold transition-colors ${pending ? "cursor-not-allowed border-slate-500/40 bg-slate-700/40 text-slate-400" : selected ? "border-yellow-300 bg-yellow-400 text-slate-950" : "border-white/30 bg-white/10 text-white hover:border-yellow-300"}`}
+              >
+                {brand === "all" ? "TODAS" : brand === "JCREI" ? "JC REI" : brand}
+                {pending && <span className="block text-[10px] font-semibold">Em breve</span>}
+              </button>
+            );
+          })}
+        </nav>
+      </section>
+
       <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">Categorias</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
