@@ -1,9 +1,8 @@
-import { render, screen, cleanup, fireEvent, waitFor, within } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   seller: false,
-  customerEnabled: false,
-  search: {} as { modo?: string; marca?: string },
+  search: {} as { modo?: string; marca?: string; q?: string },
 }));
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (options: unknown) => ({ options, useSearch: () => state.search }),
@@ -27,10 +26,6 @@ vi.mock("@tanstack/react-query", () => ({
           email: "test@example.com",
         },
       };
-    if (key === "customers") {
-      state.customerEnabled = options.enabled === true;
-      return { data: [] };
-    }
     if (key === "products")
       return {
         data: [
@@ -53,7 +48,7 @@ vi.mock("@tanstack/react-query", () => ({
       };
     return { data: [] };
   },
-  useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+  useQueryClient: () => ({ invalidateQueries: vi.fn(), prefetchQuery: vi.fn() }),
 }));
 import { toast } from "sonner";
 import { Route } from "@/routes/_authenticated/catalogo";
@@ -64,44 +59,43 @@ afterEach(() => {
   cleanup();
   state.search = {};
   localStorage.clear();
+  sessionStorage.removeItem("netinho-entry-approved");
   vi.clearAllMocks();
 });
 describe("catalog access presentation", () => {
-  it("shows the sales entry to an authorized representative", () => {
+  it("greets the authorized representative and offers the main actions after entry approval", () => {
     state.seller = true;
+    sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
     expect(screen.getByRole("heading", { name: /Marcello/ })).toBeVisible();
     expect(screen.getByRole("link", { name: "Vender" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Ver Catálogo" })).toBeVisible();
-    expect(screen.queryByText("Vender · restrito")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Administração" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Catálogo" })).toBeVisible();
+    expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
-  it("keeps selling away from visitors but keeps the catalog open", () => {
+  it("keeps the home open to visitors, who only browse", () => {
     state.seller = false;
+    sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
-    expect(screen.getByText("Vender · restrito")).toBeVisible();
-    expect(screen.getByText(/A consulta ao catálogo é livre/)).toBeVisible();
-    expect(screen.getByRole("link", { name: "Ver Catálogo" })).toBeVisible();
-    expect(screen.queryByRole("link", { name: "Vender" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Marcello/ })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Catálogo" })).toBeVisible();
+    expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("shows only the cash price to visitors and offers a representative instead of an order", () => {
     state.seller = false;
     render(<Catalog />);
-    expect(screen.getByText("Preço à vista")).toBeVisible();
+    expect(screen.getByText("Preço à vista:")).toBeVisible();
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Comprar peça FCO-TESTE" })).not.toBeInTheDocument();
-    expect(state.customerEnabled).toBe(false);
-    expect(
-      screen.queryByRole("complementary", { name: "Resumo do pedido" }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Adicionar peça à venda" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Estoque/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Consultar compra da peça" }));
+    expect(screen.getByRole("group", { name: "Contato para comprar FCO-TESTE" })).toBeVisible();
     expect(toast.success).not.toHaveBeenCalled();
   });
-  it("shows commercial prices and adds the part to the sale for an authorized seller", async () => {
+  it("shows stock and adds the part to the sale for an authorized seller", async () => {
     state.seller = true;
     render(<Catalog />);
-    expect(screen.getByText("Valores")).toBeVisible();
-    expect(screen.getByText(/1\.234,56/)).toBeVisible();
-    fireEvent.click(screen.getAllByRole("button", { name: "Comprar peça FCO-TESTE" })[0]!);
+    expect(screen.getByText(/Estoque = 8/)).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Adicionar peça à venda" }));
     await waitFor(() =>
       expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada à venda."),
     );
@@ -109,7 +103,6 @@ describe("catalog access presentation", () => {
   it("does not list HD parts while the brand is still marked as coming soon", () => {
     state.seller = true;
     render(<Catalog />);
-    expect(screen.queryByRole("button", { name: "Comprar peça K6246.HD" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Injeção eletrônica" })).toBeVisible();
   });
