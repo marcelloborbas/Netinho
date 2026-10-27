@@ -3943,3 +3943,8 @@ html body .netinho-assistant:not(.netinho-assistant-auth) .netinho-assistant-ava
 @media (min-width: 640px) {
   .brand-header .brand-header-logo .brand-wordmark [aria-label^="Telefone Netinho"] { font-size: 16px !important; }
 }
+
+/* Somente Inicial: a base da LIA acompanha a base da imagem da capa, nao o rodape. */
+html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-auth) {
+  bottom: var(--lia-cover-offset, var(--lia-footer-offset, 66px)) !important;
+}
