@@ -18,7 +18,7 @@ export function PartnerLogos({
         [
           { brand: "FCO", name: "FCO Automotive", image: "/images/brands/fco.webp" },
           { brand: "HD", name: "HD Embreagens", image: "/images/brands/hd.png" },
-          { brand: "JCREI", name: "JC REI", image: "/images/brands/jc-rei.svg" },
+          { brand: "JCREI", name: "JC REI", image: "/images/brands/Logo.webp" },
         ] as const
       ).map((s) => (
         <div key={s.brand} className={s.brand === "HD" || s.brand === "JCREI" ? "flex flex-col items-center" : "flex flex-col items-center"}>
