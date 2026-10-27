@@ -18,6 +18,7 @@ import { Route as RepresentanteLivaldoRouteImport } from './routes/representante
 import { Route as SolicitarAcessoRouteImport } from './routes/solicitar-acesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminGestaoRouteImport } from './routes/_authenticated/admin-gestao'
+import { Route as AuthenticatedCadastroRouteImport } from './routes/_authenticated/cadastro'
 import { Route as AuthenticatedCatalogoRouteImport } from './routes/_authenticated/catalogo'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedDistribuidorasRouteImport } from './routes/_authenticated/distribuidoras'
@@ -77,6 +78,11 @@ const AuthenticatedAdminGestaoRoute =
     path: '/admin-gestao',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCadastroRoute = AuthenticatedCadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCatalogoRoute = AuthenticatedCatalogoRouteImport.update({
   id: '/catalogo',
   path: '/catalogo',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
+  '/cadastro': typeof AuthenticatedCadastroRoute
   '/catalogo': typeof AuthenticatedCatalogoRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/distribuidoras': typeof AuthenticatedDistribuidorasRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
+  '/cadastro': typeof AuthenticatedCadastroRoute
   '/catalogo': typeof AuthenticatedCatalogoRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/distribuidoras': typeof AuthenticatedDistribuidorasRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin-gestao': typeof AuthenticatedAdminGestaoRoute
+  '/_authenticated/cadastro': typeof AuthenticatedCadastroRoute
   '/_authenticated/catalogo': typeof AuthenticatedCatalogoRoute
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/distribuidoras': typeof AuthenticatedDistribuidorasRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/solicitar-acesso'
     | '/admin'
     | '/admin-gestao'
+    | '/cadastro'
     | '/catalogo'
     | '/clientes'
     | '/distribuidoras'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/solicitar-acesso'
     | '/admin'
     | '/admin-gestao'
+    | '/cadastro'
     | '/catalogo'
     | '/clientes'
     | '/distribuidoras'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/solicitar-acesso'
     | '/_authenticated/admin'
     | '/_authenticated/admin-gestao'
+    | '/_authenticated/cadastro'
     | '/_authenticated/catalogo'
     | '/_authenticated/clientes'
     | '/_authenticated/distribuidoras'
@@ -365,6 +377,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-gestao'
       fullPath: '/admin-gestao'
       preLoaderRoute: typeof AuthenticatedAdminGestaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cadastro': {
+      id: '/_authenticated/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof AuthenticatedCadastroRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/catalogo': {
@@ -464,6 +483,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAdminGestaoRoute: typeof AuthenticatedAdminGestaoRoute
+  AuthenticatedCadastroRoute: typeof AuthenticatedCadastroRoute
   AuthenticatedCatalogoRoute: typeof AuthenticatedCatalogoRoute
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedDistribuidorasRoute: typeof AuthenticatedDistribuidorasRoute
@@ -481,6 +501,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAdminGestaoRoute: AuthenticatedAdminGestaoRoute,
+  AuthenticatedCadastroRoute: AuthenticatedCadastroRoute,
   AuthenticatedCatalogoRoute: AuthenticatedCatalogoRoute,
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedDistribuidorasRoute: AuthenticatedDistribuidorasRoute,
