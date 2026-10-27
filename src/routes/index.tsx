@@ -33,7 +33,7 @@ function Home() {
     const readName = (user: { user_metadata?: Record<string, unknown>; email?: string } | null | undefined) => {
       if (!active) return;
       const meta = user?.user_metadata ?? {};
-      const candidate = [meta.full_name, meta.name, meta.given_name, meta.display_name]
+      const candidate = [meta["full_name"], meta["name"], meta["given_name"], meta["display_name"]]
         .find((value) => typeof value === "string" && value.trim());
       const emailName = user?.email?.split("@")[0]?.replace(/[._-]+/g, " ") ?? "";
       setAccountName(String(candidate || emailName).trim());
