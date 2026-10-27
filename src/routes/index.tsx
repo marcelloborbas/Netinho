@@ -24,7 +24,7 @@ function Home() {
   useEffect(() => {
     if (!entryApproved) void navigate({ to: "/auth", replace: true });
   }, [entryApproved, navigate]);
-  const { data: access } = useQuery({ ...accessQuery, retry: false, refetchInterval: 60000 });
+  const { data: access } = useQuery({ ...accessQuery, enabled: entryApproved, retry: false, refetchInterval: entryApproved ? 60000 : false });
   const previousLevel = useRef<string | null>(null);
   useEffect(() => {
     if (!access) return;
@@ -43,12 +43,12 @@ function Home() {
       const emailName = user?.email?.split("@")[0]?.replace(/[._-]+/g, " ") ?? "";
       setAccountName(String(candidate || emailName).trim());
     };
-    void supabase.auth.getUser().then(({ data }) => readName(data.user)).catch(() => {});
+    if (entryApproved) void supabase.auth.getSession().then(({ data }) => readName(data.session?.user)).catch(() => {});
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       readName(session?.user);
     });
     return () => { active = false; subscription.unsubscribe(); };
-  }, []);
+  }, [entryApproved]);
   const savedName = (() => {
     if (typeof window === "undefined") return "";
     try {
