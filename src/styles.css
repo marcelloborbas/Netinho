@@ -3840,3 +3840,13 @@ html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-moved
     margin-right: 0 !important;
   }
 }
+
+/* LIA: a base do avatar acompanha exatamente o topo do menu inferior em todas as paginas. */
+html body .netinho-assistant:not(.netinho-assistant-auth) {
+  position: fixed !important;
+  bottom: var(--lia-footer-offset, 66px) !important;
+  z-index: 1200 !important;
+}
+html body .netinho-assistant.netinho-assistant-home:not(.netinho-assistant-moved) {
+  bottom: var(--lia-footer-offset, 66px) !important;
+}
