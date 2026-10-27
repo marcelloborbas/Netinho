@@ -255,23 +255,25 @@ function Catalog() {
       </section>
 
       <section className="mt-5" aria-label="Buscar peças por representação">
-        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#0b2340]">Representações</p>
-        <nav className="flex flex-wrap items-center justify-center gap-2 sm:justify-start" aria-label="Filtro por representação">
+        <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">Representações</p>
+        <nav className="grid grid-cols-4 items-stretch gap-2" aria-label="Filtro por representação">
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
             const selected = manufacturer === brand;
+            const logo = brand === "FCO" ? "/images/brands/fco.webp" : brand === "HD" ? "/images/brands/hd.png" : brand === "JCREI" ? "/images/brands/jc-rei.svg" : null;
             return (
               <button
                 key={brand}
                 type="button"
                 disabled={pending}
                 aria-pressed={!pending && selected}
-                title={pending ? "Em breve — representação em negociação" : `Mostrar peças ${brand === "all" ? "de todas as representações" : "FCO"}`}
+                aria-label={brand === "all" ? "Todas as representações" : brand === "JCREI" ? "JC REI — em breve" : `${brand}${pending ? " — em breve" : ""}`}
+                title={pending ? "Em breve — representação em negociação" : brand === "all" ? "Todas as representações" : "Peças FCO"}
                 onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`min-w-[76px] rounded-xl border px-4 py-2.5 text-center text-sm font-extrabold transition-colors ${pending ? "cursor-not-allowed border-slate-500/40 bg-slate-700/40 text-slate-400" : selected ? "border-yellow-300 bg-yellow-400 text-slate-950" : "border-white/30 bg-white/10 text-white hover:border-yellow-300"}`}
+                className={`flex min-w-0 min-h-[62px] flex-col items-center justify-center gap-0.5 rounded-xl border-2 px-1 py-2 text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
               >
-                {brand === "all" ? "TODAS" : brand === "JCREI" ? "JC REI" : brand}
-                {pending && <span className="block text-[10px] font-semibold">Em breve</span>}
+                {logo ? <img src={logo} alt={brand === "JCREI" ? "JC REI" : brand} loading="lazy" decoding="async" className={`h-8 w-full max-w-[82px] object-contain ${pending ? "grayscale opacity-65" : ""}`} /> : <span className="text-xs font-extrabold sm:text-sm">TODAS</span>}
+                {pending && <span className="text-[10px] font-bold leading-tight text-[#102a52]">Em breve</span>}
               </button>
             );
           })}
