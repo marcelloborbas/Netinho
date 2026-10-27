@@ -392,7 +392,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         <div className="catalog-card-stock">{p.stock > 0 ? `● Estoque = ${p.stock} un.` : "Estoque não informado"}</div>
       </div>}
       <div className="mt-auto pt-3">
-        <div className="catalog-price-highlight flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 shadow-md"><span className="text-base font-extrabold text-[#f4cf60]">Preço à vista:</span>{p.price_cash != null ? <strong className="text-2xl font-black text-[#f4cf60]">{brl(p.price_cash)}</strong> : <span className="text-sm font-semibold text-[#f4cf60]">Sob consulta</span>}</div>
+        <div className="catalog-price-highlight flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 shadow-md"><span className="text-base font-extrabold text-[#f4cf60]">{p.price_cash != null ? "Preço à vista:" : "Preço disponível:"}</span>{p.price_cash != null ? <strong className="text-2xl font-black text-[#f4cf60]">{brl(p.price_cash)}</strong> : <span className="text-sm font-semibold text-[#f4cf60]">{p.price_30 != null ? `30 dias: ${brl(p.price_30)}` : p.price_30_45_60 != null ? `30/45/60 dias: ${brl(p.price_30_45_60)}` : p.price_30_45_60_75 != null ? `30/45/60/75 dias: ${brl(p.price_30_45_60_75)}` : "Sob consulta"}</span>}</div>
       </div>
     </div>
   </li>;
