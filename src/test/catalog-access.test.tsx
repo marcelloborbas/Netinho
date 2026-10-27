@@ -105,6 +105,7 @@ describe("catalog access presentation", () => {
   it("does not list HD parts while the brand is still marked as coming soon", () => {
     state.seller = true;
     render(<Catalog />);
+    fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
     expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Injeção eletrônica" })).toBeVisible();
   });
