@@ -27,6 +27,33 @@ export const Route = createFileRoute("/_authenticated/catalogo")({
 });
 
 type CatalogProduct = Product & { localOnly?: boolean };
+type VehicleBrand = { name: string; pattern: RegExp; slug: string; color: string };
+const vehicleBrands: VehicleBrand[] = [
+  { name: "Volkswagen", pattern: /\\bvolkswagen\\b|\\bvw\\b|\\bgol\\b|\\bfox\\b|\\bpolo\\b|\\bvoyage\\b|\\bsaveiro\\b/i, slug: "volkswagen", color: "001E50" },
+  { name: "Fiat", pattern: /\\bfiat\\b|\\bpalio\\b|\\buno\\b|\\bstrada\\b|\\bargo\\b|\\bmobi\\b/i, slug: "fiat", color: "941711" },
+  { name: "Chevrolet", pattern: /\\bchevrolet\\b|\\bchevy\\b|\\b(onix|ônix|corsa|celta|prisma|spin|s10)\\b/i, slug: "chevrolet", color: "D1A24A" },
+  { name: "Ford", pattern: /\\bford\\b|\\b(ka|fiesta|ecosport|focus|ranger)\\b/i, slug: "ford", color: "002E6B" },
+  { name: "Renault", pattern: /\\brenault\\b|\\b(sandero|logan|duster|kwid)\\b/i, slug: "renault", color: "FFCC33" },
+  { name: "Toyota", pattern: /\\btoyota\\b|\\b(corolla|hilux|etios|yaris)\\b/i, slug: "toyota", color: "EB0A1E" },
+  { name: "Honda", pattern: /\\bhonda\\b|\\b(civic|fit|hr-v|city)\\b/i, slug: "honda", color: "CC0000" },
+  { name: "Hyundai", pattern: /\\bhyundai\\b|\\b(hb20|creta|tucson)\\b/i, slug: "hyundai", color: "002C5F" },
+  { name: "Nissan", pattern: /\\bnissan\\b|\\b(kicks|versa|sentra|march)\\b/i, slug: "nissan", color: "C3002F" },
+  { name: "Peugeot", pattern: /\\bpeugeot\\b/i, slug: "peugeot", color: "000000" },
+  { name: "Citroën", pattern: /\\bcitro[eë]n\\b/i, slug: "citroen", color: "AC1926" },
+  { name: "Jeep", pattern: /\\bjeep\\b|\\b(renegade|compass)\\b/i, slug: "jeep", color: "000000" },
+];
+function VehicleBrandIcons({ application }: { application?: string | null }) {
+  if (!application) return null;
+  const matches = vehicleBrands.filter((brand) => brand.pattern.test(application));
+  if (!matches.length) return null;
+  return <div className="my-2 flex flex-wrap items-center gap-2" aria-label="Montadoras identificadas nas aplicações">
+    {matches.map((brand) => <span key={brand.name} title={brand.name} className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-[#102a52]">
+      <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-6 w-6 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+      {brand.name}
+    </span>)}
+  </div>;
+}
+
 const localHd = hdCatalog.map((p) => ({
   id: p.id, code: p.code, application: p.application,
   refs: [p.name, p.refs].filter(Boolean).join(" · "),
@@ -335,6 +362,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       <div className="flex items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 text-2xl sm:text-3xl font-black text-[#102a52]">{displayCategoryName(p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva")}</h2>
       </div>
+      <VehicleBrandIcons application={p.application} />
       {promotionType !== "normal" && <span className="mb-2 inline-flex items-center gap-1 self-start rounded-lg bg-[#facc15] px-2 py-1 text-xs font-extrabold text-[#102a52]"><Tag size={14}/>{promotionType === "saldao" ? "SALDÃO" : "OFERTA"}</span>}
       <div className="my-3 flex flex-wrap items-center gap-2">
         <button type="button" aria-expanded={details} onClick={() => { if (!details) onView(); setDetails(!details); }} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#42678b] bg-[#142f4c] px-3 py-2 text-sm font-bold text-[#e5f2ff]"><PackageSearch size={18}/>{details ? "Fechar ficha técnica" : "Ficha técnica"}</button>
