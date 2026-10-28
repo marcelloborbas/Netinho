@@ -97,16 +97,16 @@ function AppShell() {
       </main>
       {canSell && draft.items.length > 0 && (
         <Link to="/pedido" className="order-dock">
-          <span className="flex items-center gap-3">
-            <ShoppingCart size={20} />
-            <span>
-              <b className="block max-w-[55vw] truncate text-sm" title={`Pedido em andamento — ${draft.customerName || "Cliente não selecionado"}`}>Pedido — {draft.customerName || "Selecione o cliente"}</b>
-              <span className="text-xs opacity-80">
-                {draft.items.length} itens · revisar e finalizar
+          <span className="flex min-w-0 flex-1 items-center gap-2 text-white">
+            <ShoppingCart size={20} className="shrink-0" />
+            <span className="min-w-0 flex-1">
+              <b className="block text-sm font-bold text-white">Pedido</b>
+              <span className="block truncate text-xs font-semibold text-white" title={draft.customerName || "Selecione o cliente"}>
+                {draft.customerName || "Selecione o cliente"}
               </span>
             </span>
           </span>
-          <b className="text-xl">{brl(draftTotals(draft).net)}</b>
+          <b className="shrink-0 whitespace-nowrap text-lg font-black text-[#FFED00] drop-shadow-[0_0_5px_rgba(255,237,0,0.45)] sm:text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
       <PublicFooter />
