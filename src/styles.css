@@ -4377,3 +4377,43 @@ html body .home-lia-help-image {
   width: clamp(217.5px, 63vw, 345px) !important;
   max-width: calc(100vw - 16px) !important;
 }
+
+/* Correção do Catálogo: o balão da Ajuda deve aparecer sobre a página,
+   com texto legível e botão Rever ajuda abaixo, sem exibir a mascote. */
+html body .netinho-assistant.netinho-assistant-catalog.netinho-assistant-menu-help:not(.netinho-assistant-auth) {
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  width: 100vw !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100dvh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  pointer-events: none !important;
+  z-index: 4000 !important;
+}
+html body .netinho-assistant.netinho-assistant-catalog.netinho-assistant-menu-help:not(.netinho-assistant-auth) .netinho-assistant-panel {
+  display: block !important;
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: min(420px, calc(100vw - 32px)) !important;
+  max-width: min(420px, calc(100vw - 32px)) !important;
+  max-height: 75dvh !important;
+  overflow-y: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 4001 !important;
+}
