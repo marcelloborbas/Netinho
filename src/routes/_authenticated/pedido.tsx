@@ -110,8 +110,8 @@ function OrderPage() {
 
   return (
     <div className="space-y-5">
-      <div className="relative flex items-center justify-center">
-        <h1 className="text-center text-3xl font-bold uppercase">
+      <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
+        <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
           {review ? "Revisar pedido" : "Fazer pedido"}
         </h1>
         <button
@@ -189,7 +189,19 @@ function OrderPage() {
         </div>
       </section>
 
-      <ul className="space-y-2">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Ações do pedido">
+        <Button type="button" variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm" onClick={() => { setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+          Editar pedido
+        </Button>
+        <Button asChild variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm">
+          <Link to="/catalogo" search={{ modo: "venda" }}>Continuar comprando</Link>
+        </Button>
+        <Button type="button" className="h-auto min-h-12 whitespace-normal bg-[#102a52] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#173b70] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
+          Finalizar pedido
+        </Button>
+      </div>
+
+      <ul id="pedido-itens" className="space-y-2">
         {d.items.map((i) => {
           const unit = i.prices[d.paymentTerm];
           const net = lineNet(i, d.paymentTerm);
