@@ -216,10 +216,10 @@ function OrderPage() {
       </section>
 
       <div className="grid grid-cols-2 gap-2 sm:gap-3" aria-label="Ações do pedido">
-        <Button type="button" variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm" onClick={() => { setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+        <Button type="button" className="h-auto min-h-12 whitespace-normal border-0 bg-[#ea580c] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#c2410c] sm:text-sm" onClick={() => { setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
           Editar pedido
         </Button>
-        <Button asChild variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm">
+        <Button asChild className="h-auto min-h-12 whitespace-normal border-0 bg-[#166534] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#14532d] sm:text-sm">
           <Link to="/catalogo" search={{ modo: "venda" }}>Continuar comprando</Link>
         </Button>
         <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#0c70bc] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
