@@ -1,8 +1,8 @@
 import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Trash2, Minus, Plus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Trash2, Minus, Plus, RotateCcw, Volume2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { customersQuery } from "@/lib/queries";
@@ -41,13 +41,65 @@ function OrderPage() {
   const navigate = useNavigate();
   const [review, setReview] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAudioError, setConfirmAudioError] = useState(false);
+  const confirmAudio = useRef<HTMLAudioElement | null>(null);
+  const [footerOffset, setFooterOffset] = useState(66);
+  useEffect(() => {
+    const footer = document.querySelector<HTMLElement>(".mobile-nav");
+    if (!footer) return;
+    const update = () => setFooterOffset(Math.max(0, window.innerHeight - footer.getBoundingClientRect().top));
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(footer);
+    window.addEventListener("resize", update);
+    return () => { observer.disconnect(); window.removeEventListener("resize", update); };
+  }, []);
+  useEffect(() => () => { confirmAudio.current?.pause(); }, []);
+  function buttonSound() {
+    try {
+      const AudioContextClass = window.AudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(740, ctx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(980, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.025, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      oscillator.connect(gain).connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.12);
+      oscillator.onended = () => { void ctx.close(); };
+    } catch { /* áudio opcional */ }
+  }
+  function playConfirmation() {
+    confirmAudio.current?.pause();
+    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3");
+    confirmAudio.current = audio;
+    audio.oncanplay = () => setConfirmAudioError(false);
+    audio.onerror = () => setConfirmAudioError(true);
+    void audio.play().catch(() => setConfirmAudioError(true));
+  }
+  function openConfirmation() {
+    if (!d.customerId) { toast.error("Selecione o cliente."); return; }
+    if (!d.items.length || busy) return;
+    buttonSound();
+    setReview(true);
+    setConfirmOpen(true);
+    playConfirmation();
+  }
+  function closeConfirmation() {
+    confirmAudio.current?.pause();
+    confirmAudio.current = null;
+    setConfirmOpen(false);
+    setReview(false);
+    buttonSound();
+  }
+
 
   async function finalize() {
-    if (!review) {
-      setReview(true);
-      window.scrollTo(0, 0);
-      return;
-    }
     if (!d.customerId) {
       toast.error("Selecione o cliente.");
       return;
@@ -110,6 +162,29 @@ function OrderPage() {
 
   return (
     <div className="space-y-5">
+      {confirmOpen && (
+        <div className="fixed inset-0 z-[6000] flex items-start justify-center bg-[#071c37]/75 px-4 pt-[8vh]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+          <div className="w-full max-w-md rounded-2xl border-2 border-[#d4af37] bg-white p-4 pb-5 shadow-2xl">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="lia-confirm-title" className="text-xl font-black text-[#102a52]">CONFIRME SEU PEDIDO</h2>
+              <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="rounded-lg p-2 text-[#102a52] hover:bg-slate-100"><X size={22} /></button>
+            </div>
+            <p className="mt-3 whitespace-pre-line text-base font-semibold leading-7 text-[#102a52]">{"Vamos lá!\\n\\nAntes de enviar, confira os dados do pedido!\\n\\nEstá tudo certinho?\\n\\nEntão, é só clicar em Enviar Pedido!".replaceAll("\\n", "\n")}</p>
+            <div className="mt-3 rounded-lg bg-slate-100 p-3 text-sm text-[#102a52]">
+              <p><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
+              <p><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
+              <p><strong>Peças:</strong> {d.items.length} · <strong>Total:</strong> {brl(t.net)}</p>
+            </div>
+            <button type="button" onClick={() => { buttonSound(); playConfirmation(); }} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#102a52] px-4 text-sm font-bold text-[#102a52] transition-transform active:scale-95"><RotateCcw size={17} /> Rever ajuda <Volume2 size={17} /></button>
+            {confirmAudioError && <p className="mt-2 text-xs text-amber-700">A gravação da LIA ainda não está disponível neste endereço.</p>}
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <Button type="button" className="h-12 bg-[#ea580c] text-base font-bold text-white transition-transform active:scale-95 hover:bg-[#c2410c]" onClick={closeConfirmation}>Corrigir pedido</Button>
+              <Button type="button" className="h-12 bg-[#1687d9] text-base font-bold text-white transition-transform active:scale-95 hover:bg-[#0c70bc]" disabled={busy} onClick={() => { buttonSound(); confirmAudio.current?.pause(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
+            </div>
+          </div>
+          <img src="/images/lia-confirma%20pedido.webp" alt="LIA confirma o envio do pedido" className="pointer-events-none fixed left-1/2 z-[6001] w-[min(76vw,310px)] -translate-x-1/2 object-contain object-bottom" style={{ bottom: footerOffset }} />
+        </div>
+      )}
       <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
         <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
           {review ? "Revisar pedido" : "Fazer pedido"}
@@ -216,13 +291,13 @@ function OrderPage() {
       </section>
 
       <div className="grid grid-cols-2 gap-2 sm:gap-3" aria-label="Ações do pedido">
-        <Button type="button" className="h-auto min-h-12 whitespace-normal border-0 bg-[#ea580c] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#c2410c] sm:text-sm" onClick={() => { setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+        <Button type="button" className="h-auto min-h-12 whitespace-normal border-0 bg-[#ea580c] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#c2410c] sm:text-base" onClick={() => { buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
           Editar pedido
         </Button>
-        <Button asChild className="h-auto min-h-12 whitespace-normal border-0 bg-[#166534] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#14532d] sm:text-sm">
-          <Link to="/catalogo" search={{ modo: "venda" }}>Continuar comprando</Link>
+        <Button asChild className="h-auto min-h-12 whitespace-normal border-0 bg-[#166534] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#14532d] sm:text-base">
+          <Link to="/catalogo" search={{ modo: "venda" }} onClick={buttonSound}>Continuar comprando</Link>
         </Button>
-        <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#0c70bc] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
+        <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-base font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#0c70bc] sm:text-lg" disabled={busy || !d.items.length} onClick={openConfirmation}>
           Enviar PEDIDO
         </Button>
       </div>
@@ -352,7 +427,7 @@ function OrderPage() {
             <Button
               className="h-12 bg-gradient-red font-semibold shadow-glow"
               disabled={busy}
-              onClick={finalize}
+              onClick={openConfirmation}
             >
               {busy ? "Enviando..." : "Registrar pedido"}
             </Button>
@@ -368,8 +443,7 @@ function OrderPage() {
                 toast.error("Selecione o cliente.");
                 return;
               }
-              setReview(true);
-              window.scrollTo(0, 0);
+              openConfirmation();
             }}
           >
             Revisar pedido
