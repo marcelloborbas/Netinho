@@ -128,12 +128,7 @@ function OrderPage() {
 
       <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
-          <div className="flex items-center justify-between gap-3">
-            <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
-            <Link to="/clientes" className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-lg bg-[#166534] px-3 py-2 text-center text-xs font-bold text-white shadow-sm hover:bg-[#14532d] sm:text-sm">
-              + Novo cliente
-            </Link>
-          </div>
+          <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label className="text-sm font-bold text-[#102a52]">Selecione o cliente</Label>
@@ -146,6 +141,7 @@ function OrderPage() {
                 : " · Mínimo atingido"}
             </p>
           )}
+          <div className="flex items-center gap-2">
           <Select
             value={d.customerId ?? ""}
             onValueChange={(id) => {
@@ -159,7 +155,7 @@ function OrderPage() {
                 });
             }}
           >
-            <SelectTrigger className="h-12">
+            <SelectTrigger className="h-12 min-w-0 flex-1">
               <SelectValue placeholder="Selecione o cliente" />
             </SelectTrigger>
             <SelectContent>
@@ -171,6 +167,10 @@ function OrderPage() {
               ))}
             </SelectContent>
           </Select>
+          <Link to="/clientes" className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-[#166534] px-2.5 text-center text-xs font-bold leading-tight text-white shadow-sm hover:bg-[#14532d] sm:px-3 sm:text-sm">
+            + Novo cliente
+          </Link>
+          </div>
             </div>
             <div className="space-y-1.5"><Field label="Comprador" value={d.buyer} onChange={(v) => draftActions.update({ buyer: v })} /></div></div>
           {selectedCustomer && (
