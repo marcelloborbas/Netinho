@@ -218,8 +218,8 @@ function OrderPage() {
         <Button asChild variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm">
           <Link to="/catalogo" search={{ modo: "venda" }}>Continuar comprando</Link>
         </Button>
-        <Button type="button" className="h-auto min-h-12 whitespace-normal bg-[#102a52] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#173b70] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
-          Finalizar pedido
+        <Button type="button" className="h-auto min-h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#0c70bc] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
+          Enviar PEDIDO
         </Button>
       </div>
 
