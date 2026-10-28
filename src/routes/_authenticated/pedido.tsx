@@ -189,6 +189,28 @@ function OrderPage() {
         </div>
       </section>
 
+      <section className="surface-card p-4">
+        <div className="space-y-1.5">
+          <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
+          <Select
+            value={d.paymentTerm}
+            onValueChange={(v) => draftActions.update({ paymentTerm: v as PaymentTerm })}
+          >
+            <SelectTrigger className="h-12">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PAYMENT_TERMS.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+      </section>
+
       <div className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Ações do pedido">
         <Button type="button" variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm" onClick={() => { setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
           Editar pedido
@@ -292,28 +314,6 @@ function OrderPage() {
           );
         })}
       </ul>
-      <section className="surface-card p-4">
-        <div className="space-y-1.5">
-          <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
-          <Select
-            value={d.paymentTerm}
-            onValueChange={(v) => draftActions.update({ paymentTerm: v as PaymentTerm })}
-          >
-            <SelectTrigger className="h-12">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PAYMENT_TERMS.map((p) => (
-                <SelectItem key={p.value} value={p.value}>
-                  {p.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-      </section>
-
       <div className="space-y-1.5">
         <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Observações do pedido</Label>
         <Textarea
