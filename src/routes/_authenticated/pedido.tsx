@@ -128,13 +128,15 @@ function OrderPage() {
 
       <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
-          <div className="grid grid-cols-2 gap-3"><div className="space-y-1.5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-3">
             <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
-            <Link to="/clientes" className="inline-flex min-h-10 items-center justify-center rounded-lg bg-[#166534] px-3 py-2 text-center text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#14532d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#166534] sm:text-sm">
-              + Cadastrar novo cliente
+            <Link to="/clientes" className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-lg bg-[#166534] px-3 py-2 text-center text-xs font-bold text-white shadow-sm hover:bg-[#14532d] sm:text-sm">
+              + Novo cliente
             </Link>
           </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-bold text-[#102a52]">Selecione o cliente</Label>
           {selectedCustomer?.order_class && (
             <p className="text-sm text-amber-400">
               Classe {selectedCustomer.order_class} · Pedido mínimo{" "}
@@ -169,8 +171,8 @@ function OrderPage() {
               ))}
             </SelectContent>
           </Select>
-          </div>
-          <div className="space-y-1.5"><Field label="Comprador" value={d.buyer} onChange={(v) => draftActions.update({ buyer: v })} /></div></div>
+            </div>
+            <div className="space-y-1.5"><Field label="Comprador" value={d.buyer} onChange={(v) => draftActions.update({ buyer: v })} /></div></div>
           {selectedCustomer && (
             <div className="rounded-lg bg-secondary/40 p-3 text-xs leading-5 text-muted-foreground">
               <b className="text-foreground">
@@ -213,14 +215,14 @@ function OrderPage() {
 
       </section>
 
-      <div className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Ações do pedido">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3" aria-label="Ações do pedido">
         <Button type="button" variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm" onClick={() => { setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
           Editar pedido
         </Button>
         <Button asChild variant="outline" className="h-auto min-h-12 whitespace-normal px-2 py-2 text-center text-xs font-bold text-[#102a52] sm:text-sm">
           <Link to="/catalogo" search={{ modo: "venda" }}>Continuar comprando</Link>
         </Button>
-        <Button type="button" className="h-auto min-h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#0c70bc] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
+        <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-xs font-bold text-white hover:bg-[#0c70bc] sm:text-sm" disabled={busy || !d.items.length} onClick={() => { if (!d.customerId) { toast.error("Selecione o cliente."); return; } if (review) { void finalize(); } else { setReview(true); window.scrollTo({ top: 0, behavior: "smooth" }); } }}>
           Enviar PEDIDO
         </Button>
       </div>
