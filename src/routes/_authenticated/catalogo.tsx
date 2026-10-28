@@ -439,8 +439,8 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     const term = prices[draft.paymentTerm] != null ? draft.paymentTerm : (prices.cash != null ? "cash" : prices["30"] != null ? "30" : prices["30_45_60"] != null ? "30_45_60" : "30_45_60_75");
     draftActions.update({ kind: "pedido", paymentTerm: term });
     draftActions.addItem({ productId: p.id, code: p.code, category: `${brand} · ${p.categories?.name ?? "Peça automotiva"}`, application: p.application ?? "", prices, quantity: 1 });
-    toast.success(`Peça ${p.code} adicionada à venda.`);
-    void navigate({ to: "/vendas", search: { modo: "venda", q: "", promo: "" } });
+    toast.success(`Peça ${p.code} adicionada ao pedido.`);
+    void navigate({ to: "/pedido" });
   }
   const brand = p.manufacturer ?? "FCO";
   const img = p.image_url || categoryPhoto(p.categories?.name ?? "") || partImage(p.categories?.name);
