@@ -164,7 +164,7 @@ function OrderPage() {
     <div className="space-y-5">
       {confirmOpen && (
         <div className="fixed inset-0 z-[6000] flex items-start justify-center bg-[#071c37]/75 px-4 pt-[8vh]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="w-full max-w-md rounded-2xl border-2 border-[#d4af37] bg-white p-4 pb-5 shadow-2xl">
+          <div className="relative z-[2] max-h-[min(64dvh,520px)] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-[#d4af37] bg-white p-4 pb-5 shadow-2xl">
             <div className="flex items-center justify-between gap-3">
               <h2 id="lia-confirm-title" className="text-xl font-black text-[#102a52]">CONFIRME SEU PEDIDO</h2>
               <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="rounded-lg p-2 text-[#102a52] hover:bg-slate-100"><X size={22} /></button>
@@ -182,7 +182,7 @@ function OrderPage() {
               <Button type="button" className="h-12 bg-[#1687d9] text-base font-bold text-white transition-transform active:scale-95 hover:bg-[#0c70bc]" disabled={busy} onClick={() => { buttonSound(); confirmAudio.current?.pause(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
             </div>
           </div>
-          <img src="/images/lia-confirma%20pedido.webp" alt="LIA confirma o envio do pedido" className="pointer-events-none fixed left-1/2 z-[6001] w-[min(76vw,310px)] -translate-x-1/2 object-contain object-bottom" style={{ bottom: footerOffset }} />
+          <img src="/images/lia-confirma%20pedido.webp" alt="LIA confirma o envio do pedido" className="pointer-events-none fixed left-1/2 z-[1] w-[min(54vw,230px)] -translate-x-1/2 object-contain object-bottom" style={{ bottom: footerOffset }} />
         </div>
       )}
       <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
