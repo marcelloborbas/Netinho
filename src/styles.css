@@ -4368,3 +4368,12 @@ html body .home-lia-help-image img {
   object-fit: contain;
   object-position: bottom;
 }
+
+/* Inicial: LIA 1,5x maior, centralizada, mantendo a base no mesmo rodapé. */
+html body .home-lia-help-image {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: clamp(217.5px, 63vw, 345px) !important;
+  max-width: calc(100vw - 16px) !important;
+}
