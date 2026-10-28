@@ -129,7 +129,12 @@ function OrderPage() {
       <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
           <div className="grid grid-cols-2 gap-3"><div className="space-y-1.5">
-          <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Cliente *</Label>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
+            <Link to="/clientes" className="inline-flex min-h-10 items-center justify-center rounded-lg bg-[#166534] px-3 py-2 text-center text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#14532d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#166534] sm:text-sm">
+              + Cadastrar novo cliente
+            </Link>
+          </div>
           {selectedCustomer?.order_class && (
             <p className="text-sm text-amber-400">
               Classe {selectedCustomer.order_class} · Pedido mínimo{" "}
@@ -166,9 +171,6 @@ function OrderPage() {
           </Select>
           </div>
           <div className="space-y-1.5"><Field label="Comprador" value={d.buyer} onChange={(v) => draftActions.update({ buyer: v })} /></div></div>
-          <Link to="/clientes" className="text-xs font-semibold text-primary">
-            + Cadastrar novo cliente
-          </Link>
           {selectedCustomer && (
             <div className="rounded-lg bg-secondary/40 p-3 text-xs leading-5 text-muted-foreground">
               <b className="text-foreground">
