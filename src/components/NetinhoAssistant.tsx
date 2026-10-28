@@ -4,6 +4,7 @@ import { accessQuery } from "@/lib/access";
 import { useRouterState } from "@tanstack/react-router";
 import { X, Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { InstallAppButton } from "@/components/InstallAppButton";
+import { createPortal } from "react-dom";
 
 const hints = [
   { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Olá! Seja muito bem-vindo à Netinho Auto Parts!\n\nÉ uma imensa alegria em tê-lo conosco!\n\nPara acessar o APP, entre com sua conta do Google clicando na letra G.\n\nSe sua conta não for do Google, clique no envelope, insira seu e-mail e aguarde para receber seu link no e-mail que você indicou.\n\nVou te dar uma dica genial!\n\nPraticidade! Você pode baixar o APP clicando no atalho abaixo e aguarde um pouco para a instalação.\n\nPronto! Agora você pode acessar pelo ícone instalado na tela do seu celular. Isso deixará você logado automaticamente.\n\nE tem mais: conte comigo para ajudar você em cada etapa. Clique em seu ícone no cabeçalho da página e depois em Ajuda!\n\nE não se esqueça:\n\nJesus te ama! Que Deus o abençoe em sua caminhada!" },
@@ -174,7 +175,7 @@ export function NetinhoAssistant() {
     return () => window.removeEventListener("netinho:lia-help", showHelp);
   }, [isAuth]);
   return <aside className={`netinho-assistant${!isAuth ? " netinho-assistant-menu-help" : ""}${/catalogo|catálogo/.test(pathname) ? " netinho-assistant-catalog" : ""}${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}${position && !fixedAtFooter ? " netinho-assistant-moved" : ""}`} style={({ "--lia-footer-offset": `${footerOffset}px`, "--lia-cover-offset": `${coverOffset ?? footerOffset}px`, "--lia-login-cover-offset": `${loginCoverOffset}px` } as CSSProperties)} aria-label="Assistente de navegação LIA">
-    {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
+    {open && (isAuth ? <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
       <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : (hint?.title ?? "Ajuda")}</strong><div>
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={() => { if (speaking) { loginAudioRef.current?.pause(); loginAudioRef.current = null; window.speechSynthesis?.cancel(); speechRef.current = null; setSpeaking(false); } else speak(); }}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); setOpen(false); }}><X size={18}/></button>
@@ -183,7 +184,21 @@ export function NetinhoAssistant() {
         <p className="whitespace-pre-line">{greeting}</p>
         <button type="button" className="flex items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 text-sm font-bold text-white hover:bg-[#1d467b]" onClick={speak} aria-label="Rever a ajuda e ouvir novamente a LIA"><RotateCcw size={16} /> Rever ajuda</button>
       </div>}
-    </div>}
+    </div> : createPortal(
+      <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#071c37]/65 px-4 py-6" role="presentation">
+        <div className="w-full max-w-[440px] max-h-[80dvh] overflow-y-auto rounded-2xl border-2 border-[#d4af37] bg-[#061c35] p-4 text-white shadow-2xl" role="dialog" aria-modal="true" aria-label="Ajuda da LIA">
+          <div className="mb-3 flex items-center justify-between gap-2 border-b border-white/20 pb-2">
+            <strong className="text-base font-extrabold uppercase">{pathname === "/" ? "AJUDA - PÁGINA INICIAL" : (hint?.title ?? "Ajuda")}</strong>
+            <button type="button" aria-label="Fechar ajuda" className="rounded-lg bg-[#153a60] p-2" onClick={() => { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); setOpen(false); }}><X size={20}/></button>
+          </div>
+          <p className="whitespace-pre-line text-[15px] leading-7">{greeting}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#1687d9] px-4 text-sm font-bold text-white" onClick={speak}><RotateCcw size={17}/> Rever ajuda</button>
+            <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/40 px-4 text-sm font-bold" onClick={() => { if (speaking) { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); } else speak(); }}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>} {speaking ? "Parar áudio" : "Ouvir áudio"}</button>
+          </div>
+        </div>
+      </div>, document.body
+    ))}
     {isAuth && <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onPointerDown={fixedAtFooter ? undefined : onDragStart} onPointerMove={fixedAtFooter ? undefined : onDragMove} onPointerUp={fixedAtFooter ? undefined : onDragEnd} onPointerCancel={fixedAtFooter ? undefined : (event) => { onDragEnd(event); }} onClick={() => { if (ignoreClickRef.current) { ignoreClickRef.current = false; return; } if (open) { loginAudioRef.current?.pause(); loginAudioRef.current = null; window.speechSynthesis?.cancel(); speechRef.current = null; setSpeaking(false); setOpen(false); } else { setOpen(true); speak(); } }}>
       <img src="/images/Mascote%20LIA%20ajuda.webp" alt="Mascote LIA" width="118" height="118" decoding="async" />
     </button>}
