@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
 import { useRouterState } from "@tanstack/react-router";
-import { X, Volume2, VolumeX } from "lucide-react";
+import { X, Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { InstallAppButton } from "@/components/InstallAppButton";
 
 const hints = [
@@ -179,7 +179,10 @@ export function NetinhoAssistant() {
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={() => { if (speaking) { loginAudioRef.current?.pause(); loginAudioRef.current = null; window.speechSynthesis?.cancel(); speechRef.current = null; setSpeaking(false); } else speak(); }}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); setOpen(false); }}><X size={18}/></button>
       </div></div>
-      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{greeting}</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p className="whitespace-pre-line">{greeting}</p>}
+      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{greeting}</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <div className="space-y-3">
+        <p className="whitespace-pre-line">{greeting}</p>
+        <button type="button" className="flex items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 text-sm font-bold text-white hover:bg-[#1d467b]" onClick={speak} aria-label="Rever a ajuda e ouvir novamente a LIA"><RotateCcw size={16} /> Rever ajuda</button>
+      </div>}
     </div>}
     {isAuth && <button type="button" className="netinho-assistant-avatar netinho-assistant-avatar-large" aria-label={open ? "Fechar assistente LIA" : "Abrir ajuda da LIA"} aria-expanded={open} onPointerDown={fixedAtFooter ? undefined : onDragStart} onPointerMove={fixedAtFooter ? undefined : onDragMove} onPointerUp={fixedAtFooter ? undefined : onDragEnd} onPointerCancel={fixedAtFooter ? undefined : (event) => { onDragEnd(event); }} onClick={() => { if (ignoreClickRef.current) { ignoreClickRef.current = false; return; } setOpen(!open); }}>
       <img src="/images/Mascote%20LIA%20ajuda.webp" alt="Mascote LIA" width="118" height="118" decoding="async" />
