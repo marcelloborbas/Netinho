@@ -127,7 +127,7 @@ export function NetinhoAssistant() {
   }, [pathname, isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
   const hint = hints.find((item) => item.match.test(pathname));
-  const greeting = pathname === "/" ? "Vamos lá! Vou te mostrar como tudo funciona fácil!\n\nClicando na sua foto lá em cima, você pode ver seu status, seu cadastro ou sair da conta.\n\nLembre-se! Para fazer vendas, você precisa ter autorização.\n\nAqui você também acompanha todas as novidades da Netinho!\n\nE olha só! No menu abaixo, você encontra os atalhos rápidos.\n\nBem fácil né? Agora é com você!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
+  const greeting = pathname === "/" ? "Vamos lá! Vou te mostrar como tudo funciona facinho por aqui!\n\nClicando na sua foto lá em cima, você pode ver seu status, seu cadastro, a Ajuda, ou sair da conta.\n\nSaiba que para fazer vendas, você precisa ter autorização, status de Representante ou Vendedor.\n\nNeste espaço, você poderá acompanhar todas as novidades da Netinho Auto Parts!\n\nE olha só! No menu abaixo, você encontra os atalhos rápidos que agilizam sua navegação.\n\nNão disse que é fácil mesmo? Agora é com você! Boas vendas!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speechRefLatest = useRef<() => void>(() => {});
   const speak = () => {
     const audioPath = isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-inicio.mp3?v=2" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-pagina%20catalogo.mp3" : /pedido|vendas/.test(pathname) ? "/audio/lia/lia-vender.mp3" : null;
