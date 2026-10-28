@@ -242,7 +242,7 @@ function OrderPage() {
               ))}
             </SelectContent>
           </Select>
-          <Link to="/clientes" className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-[#166534] px-2.5 text-center text-xs font-bold leading-tight text-white shadow-sm hover:bg-[#14532d] sm:px-3 sm:text-sm">
+          <Link to="/novo-cliente" className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-[#166534] px-2.5 text-center text-xs font-bold leading-tight text-white shadow-sm hover:bg-[#14532d] sm:px-3 sm:text-sm">
             + Novo cliente
           </Link>
           </div>
