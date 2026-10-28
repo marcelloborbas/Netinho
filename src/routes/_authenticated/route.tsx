@@ -100,7 +100,7 @@ function AppShell() {
           <span className="flex items-center gap-3">
             <ShoppingCart size={20} />
             <span>
-              <b className="block text-sm">Meu pedido</b>
+              <b className="block max-w-[55vw] truncate text-sm" title={`Pedido em andamento — ${draft.customerName || "Cliente não selecionado"}`}>Pedido (a numerar) — {draft.customerName || "Selecione o cliente"}</b>
               <span className="text-xs opacity-80">
                 {draft.items.length} itens · revisar e finalizar
               </span>
