@@ -128,45 +128,55 @@ export function NetinhoAssistant() {
   if (/^\/callback(\/|$)/.test(pathname)) return null;
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = pathname === "/" ? "Vamos lá! Vou te mostrar como tudo funciona fácil!\n\nClicando na sua foto lá em cima, você pode ver seu status, seu cadastro ou sair da conta.\n\nLembre-se! Para fazer vendas, você precisa ter autorização.\n\nAqui você também acompanha todas as novidades da Netinho!\n\nE olha só! No menu abaixo, você encontra os atalhos rápidos.\n\nBem fácil né? Agora é com você!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
+  const speechRefLatest = useRef<() => void>(() => {});
   const speak = () => {
-    if (isAuth || pathname === "/" || /catalogo|catálogo/.test(pathname) || /pedido|vendas/.test(pathname)) {
-      const audio = loginAudioRef.current ?? new Audio(isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-inicio.mp3?v=2" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-pagina%20catalogo.mp3" : "/audio/lia/lia-vender.mp3");
-      loginAudioRef.current = audio;
-      audio.onended = () => setSpeaking(false);
-      audio.onerror = () => { setSpeaking(false); if (pathname === "/" || /catalogo|catálogo/.test(pathname) || /pedido|vendas/.test(pathname)) { window.speechSynthesis?.cancel(); const utterance = new SpeechSynthesisUtterance(greeting); utterance.lang = "pt-BR"; utterance.rate = 0.94; window.speechSynthesis?.speak(utterance); } };
-      if (speaking) { audio.pause(); audio.currentTime = 0; setSpeaking(false); return; }
-      audio.currentTime = 0;
-      void audio.play().then(() => setSpeaking(true)).catch(() => setSpeaking(false));
-      return;
-    }
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    if (speechRef.current) { speechRef.current = null; setSpeaking(false); return; }
-    const textToRead = greeting;
-    const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.94;
-    utterance.pitch = 0.8;
-    const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find(v => /^pt/i.test(v.lang) && /male|masculin|daniel|ricardo|antonio|antônio|felipe|paulo|carlos|francisco/i.test(v.name)) ?? voices.find(v => /^pt/i.test(v.lang));
-    if (voice) utterance.voice = voice;
-    utterance.onend = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
-    utterance.onerror = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
-    speechRef.current = utterance;
-    setSpeaking(true);
-    window.speechSynthesis.speak(utterance);
-    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    const audioPath = isAuth ? "/audio/lia/lia-login.mp3" : pathname === "/" ? "/audio/lia/lia-inicio.mp3?v=2" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-pagina%20catalogo.mp3" : /pedido|vendas/.test(pathname) ? "/audio/lia/lia-vender.mp3" : null;
+    // Parar qualquer locução anterior antes de iniciar a orientação desta página.
+    loginAudioRef.current?.pause();
+    loginAudioRef.current = null;
+    window.speechSynthesis?.cancel();
+    speechRef.current = null;
+    setSpeaking(false);
+    const readText = () => {
+      if (!("speechSynthesis" in window)) return;
+      const utterance = new SpeechSynthesisUtterance(greeting);
+      utterance.lang = "pt-BR";
+      utterance.rate = 0.94;
+      const voice = window.speechSynthesis.getVoices().find(v => /^pt-BR$/i.test(v.lang) && /fem|maria|luciana|francisca/i.test(v.name))
+        ?? window.speechSynthesis.getVoices().find(v => /^pt/i.test(v.lang));
+      if (voice) utterance.voice = voice;
+      utterance.onend = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
+      utterance.onerror = () => { if (speechRef.current === utterance) { speechRef.current = null; setSpeaking(false); } };
+      speechRef.current = utterance;
+      setSpeaking(true);
+      window.speechSynthesis.speak(utterance);
+      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    };
+    if (!audioPath) { readText(); return; }
+    const audio = new Audio(audioPath);
+    loginAudioRef.current = audio;
+    audio.onended = () => { if (loginAudioRef.current === audio) setSpeaking(false); };
+    audio.onerror = () => { if (loginAudioRef.current === audio) { loginAudioRef.current = null; readText(); } };
+    void audio.play().then(() => {
+      if (loginAudioRef.current === audio) setSpeaking(true);
+    }).catch(() => {
+      if (loginAudioRef.current === audio) { loginAudioRef.current = null; readText(); }
+    });
   };
+  speechRefLatest.current = speak;
   useEffect(() => {
     if (isAuth) return;
-    const showHelp = () => { setOpen(true); speak(); };
+    const showHelp = () => {
+      setOpen(true);
+      speechRefLatest.current();
+    };
     window.addEventListener("netinho:lia-help", showHelp);
     return () => window.removeEventListener("netinho:lia-help", showHelp);
-  }, [pathname, isAuth, speaking]);
+  }, [isAuth]);
   return <aside className={`netinho-assistant${!isAuth ? " netinho-assistant-menu-help" : ""}${/catalogo|catálogo/.test(pathname) ? " netinho-assistant-catalog" : ""}${isAuth ? " netinho-assistant-auth" : ""}${pathname === "/" ? " netinho-assistant-home" : ""}${position && !fixedAtFooter ? " netinho-assistant-moved" : ""}`} style={({ "--lia-footer-offset": `${footerOffset}px`, "--lia-cover-offset": `${coverOffset ?? footerOffset}px`, "--lia-login-cover-offset": `${loginCoverOffset}px` } as CSSProperties)} aria-label="Assistente de navegação LIA">
     {open && <div className="netinho-assistant-panel" role="dialog" aria-label="Ajuda da LIA">
       <div className="netinho-assistant-head"><strong className={isAuth ? "text-[#facc15] uppercase" : ""}>{isAuth ? "COMO ACESSAR O SITE" : (hint?.title ?? "Ajuda")}</strong><div>
-        <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={speak}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
+        <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={() => { if (speaking) { loginAudioRef.current?.pause(); loginAudioRef.current = null; window.speechSynthesis?.cancel(); speechRef.current = null; setSpeaking(false); } else speak(); }}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); setOpen(false); }}><X size={18}/></button>
       </div></div>
       {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{greeting}</p><InstallAppButton assistantStyle label="Baixar atalho" /></div> : <p className="whitespace-pre-line">{greeting}</p>}
