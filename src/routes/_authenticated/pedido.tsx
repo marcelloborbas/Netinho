@@ -76,7 +76,7 @@ function OrderPage() {
   }
   function playConfirmation() {
     confirmAudio.current?.pause();
-    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3");
+    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261028-2");
     confirmAudio.current = audio;
     audio.oncanplay = () => setConfirmAudioError(false);
     audio.onerror = () => setConfirmAudioError(true);
@@ -169,7 +169,7 @@ function OrderPage() {
               <h2 id="lia-confirm-title" className="text-xl font-black text-[#102a52]">CONFIRME SEU PEDIDO</h2>
               <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="rounded-lg p-2 text-[#102a52] hover:bg-slate-100"><X size={22} /></button>
             </div>
-            <p className="mt-3 whitespace-pre-line text-base font-semibold leading-7 text-[#102a52]">{"Vamos lá!\\n\\nAntes de enviar, confira os dados do pedido!\\n\\nEstá tudo certinho?\\n\\nEntão, é só clicar em Enviar Pedido!".replaceAll("\\n", "\n")}</p>
+            <p className="mt-3 whitespace-pre-line text-base font-semibold leading-7 text-[#102a52]">{"Vamos lá!\n\nAntes de enviar seu pedido, confira todos os dados!\n\nSe estiver tudo certinho,\n\nEntão, é só clicar em Enviar Pedido!\n\nMas se acaso precise algum tipo de acerto, clique em corrigir pedido, e faça suas devidas alterações.\n\nFicamos felizes que você tenha chegado até aqui!\n\nQue seu dia e de sua família, seja repleto de benção!"}</p>
             <div className="mt-3 rounded-lg bg-slate-100 p-3 text-sm text-[#102a52]">
               <p><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
               <p><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
