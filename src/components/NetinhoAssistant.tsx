@@ -164,7 +164,7 @@ export function NetinhoAssistant() {
     loginAudioRef.current = audio;
     setActiveAudio(audio);
     audio.onended = () => { if (loginAudioRef.current === audio) setSpeaking(false); };
-    audio.onerror = () => { if (loginAudioRef.current === audio) { loginAudioRef.current = null; readText(); } };
+    audio.onerror = () => { if (loginAudioRef.current === audio) { loginAudioRef.current = null; setActiveAudio(null); readText(); } };
     void audio.play().then(() => {
       if (loginAudioRef.current === audio) setSpeaking(true);
     }).catch(() => {
