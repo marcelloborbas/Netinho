@@ -127,10 +127,19 @@ function MonthlySalesReport() {
       </div>
       <p className="mb-3 mt-1 text-sm font-semibold">{customer.orders.length} pedido(s)</p>
       <div className="divide-y divide-slate-200">
-        {customer.orders.map(order => <Link key={order.id} to="/pedidos/$id" params={{ id: order.id }} className="flex min-h-12 items-center justify-between gap-2 py-2 text-sm hover:underline">
-          <span className="flex items-center gap-2"><FileText size={16}/> Nº {order.number} · {formatDate(order.created_at)}</span>
-          <strong>{brl(Number(order.total || 0))}</strong>
-        </Link>)}
+        {customer.orders.map(order => <div key={order.id} className="py-3">
+          <Link to="/pedidos/$id" params={{ id: order.id }} className="flex min-h-11 items-center justify-between gap-2 text-sm hover:underline">
+            <span className="flex items-center gap-2"><FileText size={16}/> Nº {order.number} · {formatDate(order.created_at)}</span>
+            <strong>{brl(Number(order.total || 0))}</strong>
+          </Link>
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#b91c1c] px-4 py-3 text-white shadow-sm" aria-label={`Comissão estimada do pedido ${order.number}`}>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wide">Sua comissão nesta venda</p>
+              <p className="mt-0.5 text-xs font-medium text-red-100">{commissionError ? "Não foi possível consultar a taxa" : commissionRate == null ? "Aguardando definição pela Administração" : `Estimativa · ${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
+            </div>
+            <strong className="text-xl font-black tabular-nums">{commissionRate == null || commissionError ? "—" : brl(Math.round(Number(order.total || 0) * Number(commissionRate)) / 100)}</strong>
+          </div>
+        </div>)}
       </div>
     </section>)}
     <p className="text-xs text-slate-600">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
