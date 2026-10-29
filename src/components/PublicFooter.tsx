@@ -41,7 +41,7 @@ export function PublicFooter() {
   const links = [
     { to: "/" as const, label: "Início", icon: Home },
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
-    { to: "/vendas" as const, label: "Pedido", icon: ShoppingCart },
+    { to: "/pedido" as const, label: "Pedido", icon: ShoppingCart },
     { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
     { to: "/auth" as const, label: "Sair", icon: LogOut },
   ];
