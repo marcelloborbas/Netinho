@@ -187,7 +187,7 @@ function OrderPage() {
       )}
       <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
         <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-          {review ? "Revisar pedido" : "Fazer pedido"}
+          {review ? "Revisar pedido" : "Pedido"}
         </h1>
         <button
           onClick={() => {
