@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Trash2, Minus, Plus, RotateCcw, Volume2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { confirmOrderEmail } from "@/lib/order-email";
 import { customersQuery } from "@/lib/queries";
 import { draftActions, draftTotals, lineNet, useDraft } from "@/lib/order-store";
 import { BRAND, PAYMENT_TERMS, brl, termLabel, type PaymentTerm } from "@/lib/brand";
@@ -27,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/pedido")({
       { name: "description", content: "Conferir e finalizar o pedido em andamento." },
       { property: "og:title", content: "Meu pedido | NETINHO" },
       { property: "og:description", content: "Conferir e finalizar o pedido em andamento." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: OrderPage,
@@ -41,6 +44,8 @@ function OrderPage() {
   const navigate = useNavigate();
   const [review, setReview] = useState(false);
   const [busy, setBusy] = useState(false);
+  const submissionLock = useRef(false);
+  const [sendError, setSendError] = useState("");
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAudioError, setConfirmAudioError] = useState(false);
@@ -111,7 +116,8 @@ function OrderPage() {
       );
       return;
     }
-    if (busy || !d.items.length) return;
+    if (submissionLock.current || busy || !d.items.length) return;
+    submissionLock.current = true;
     setBusy(true);
     try {
       const { data, error } = await supabase.rpc("create_order", {
@@ -135,20 +141,16 @@ function OrderPage() {
       const orderId = typeof data === "string" ? data : String(data);
       let emailSent = false;
       try {
-        const { data: mail, error: mailError } = await supabase.functions.invoke("send-order-email", {
-          body: { orderId },
-        });
-        if (mailError || !mail?.sent) throw mailError ?? new Error(mail?.error || "Envio não confirmado");
+        await confirmOrderEmail(orderId);
         emailSent = true;
       } catch (mailError) {
         console.error("Falha no envio automático do pedido:", mailError);
+        setSendError(mailError instanceof Error ? mailError.message : "O envio não foi confirmado.");
       }
       draftActions.clear();
       void qc.invalidateQueries({ queryKey: ["orders"] });
       void qc.invalidateQueries({ queryKey: ["customers"] });
-      if (emailSent) {
-        toast.success("Pedido registrado e enviado à Netinho com PDF e Excel.");
-      } else {
+      if (!emailSent) {
         toast.error("Pedido registrado, mas o e-mail não foi confirmado. Consulte o pedido antes de tentar reenviar.", { duration: 9000 });
       }
       setSentResult(emailSent ? "sent" : "failed");
@@ -160,6 +162,7 @@ function OrderPage() {
       );
     } finally {
       setBusy(false);
+      submissionLock.current = false;
     }
   }
 
@@ -170,7 +173,7 @@ function OrderPage() {
           {sentResult === "sent" ? "Pedido enviado à Netinho, obrigado pela presteza!" : "Pedido registrado, mas o envio à Netinho não foi confirmado."}
         </h1>
         {sentResult === "failed" && (
-          <p className="text-sm text-red-700">O pedido foi salvo. Verifique o envio em Minhas Vendas antes de tentar novamente. Não crie outro pedido.</p>
+          <p className="text-sm text-destructive">{sendError} Verifique o envio em Minhas Vendas antes de tentar novamente.</p>
         )}
         <Button asChild className="w-full bg-[#102a52] text-white">
           <Link to="/pedidos">Ir para Minhas Vendas</Link>

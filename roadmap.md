@@ -1,5 +1,11 @@
 # Roadmap NETINHO
 
+## Envio de pedidos em 29/10/2026
+- [x] Verificar autenticação Resend: chave disponível e aceita em chamada inválida sem envio (422); registro DKIM existe. Consulta de domínio bloqueada pela chave restrita a envio.
+- [x] Corrigir confirmação por ID Resend/pedido, anexos PDF/XLSX, logs e bloqueio de duplo clique, sem alterar valores.
+- [x] Implantar versão 2026-10-29.1; versão confirmada no cabeçalho e logs; chamada autenticada com pedido inexistente retorna 404. Fluxos de sucesso/falha simulados na tela, sem pedidos reais; 8 testes específicos passam.
+- [ ] Confirmar domínio verificado e recebimento real: exige acesso ao estado do domínio no Resend ou envio autorizado; nenhum e-mail real enviado nesta verificação.
+
 ## Exclusão de PESSOAL em 27/10/2026
 - [x] Publicar a função existente delete-person no Lovable Cloud atual.
 - [x] Garantir administrador autenticado, confirmação, bloqueio da própria conta e exclusão definitiva com integridade dos vínculos.
