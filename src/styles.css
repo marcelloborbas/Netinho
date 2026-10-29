@@ -4417,3 +4417,24 @@ html body .netinho-assistant.netinho-assistant-catalog.netinho-assistant-menu-he
   pointer-events: auto !important;
   z-index: 4001 !important;
 }
+
+
+/* Acessibilidade: prevalece sobre as regras antigas de 13px do balão da LIA no login. */
+html body .netinho-assistant.netinho-assistant-auth .netinho-assistant-panel p {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: clamp(20px, 4.8vw, 23px) !important;
+  font-weight: 600 !important;
+  line-height: 1.75 !important;
+  letter-spacing: 0.015em !important;
+  color: #fff !important;
+  overflow-wrap: break-word !important;
+}
+html body .netinho-assistant.netinho-assistant-auth .netinho-assistant-panel {
+  width: min(520px, calc(100vw - 20px)) !important;
+  max-height: min(74dvh, 680px) !important;
+  scrollbar-width: auto;
+}
+html body .netinho-assistant.netinho-assistant-auth .netinho-assistant-head strong {
+  font-size: 17px !important;
+  line-height: 1.4 !important;
+}
