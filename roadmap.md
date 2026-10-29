@@ -1,5 +1,10 @@
 # Roadmap NETINHO
 
+## Envio de pedidos em 29/10/2026
+- [ ] Verificar autenticação Resend, remetente e função implantada.
+- [ ] Corrigir confirmação, anexos e logs, sem duplicar pedidos nem alterar valores.
+- [ ] Implantar a função atualizada e testar com segurança, sem pedidos reais.
+
 ## Exclusão de PESSOAL em 27/10/2026
 - [x] Publicar a função existente delete-person no Lovable Cloud atual.
 - [x] Garantir administrador autenticado, confirmação, bloqueio da própria conta e exclusão definitiva com integridade dos vínculos.
