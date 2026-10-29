@@ -100,8 +100,8 @@ function AppShell() {
           <span className="flex min-w-0 flex-1 items-center gap-2 text-white">
             <ShoppingCart size={20} className="shrink-0" />
             <span className="min-w-0 flex-1">
-              <b className="block text-sm font-bold text-white">Pedido</b>
-              <span className="block truncate text-xs font-semibold text-white" title={draft.customerName || "Selecione o cliente"}>
+              <b className="block text-sm font-bold text-white">Pedido em Aberto!</b>
+              <span className="block truncate text-xs font-semibold text-white" title={draft.customerName?.trim().split(/\s+/)[0] || "Selecione o cliente"}>
                 {draft.customerName || "Selecione o cliente"}
               </span>
             </span>
