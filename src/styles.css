@@ -4438,3 +4438,31 @@ html body .netinho-assistant.netinho-assistant-auth .netinho-assistant-head stro
   font-size: 17px !important;
   line-height: 1.4 !important;
 }
+
+
+/* Padrão único da locução LIA: Login, Inicial, Catálogo e Fazer Pedido. */
+html body .netinho-assistant .lia-speech-text,
+html body .netinho-assistant.netinho-assistant-auth .netinho-assistant-panel .lia-speech-text,
+html body [role="dialog"] .lia-speech-text {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: clamp(20px, 4.8vw, 23px) !important;
+  font-weight: 600 !important;
+  line-height: 1.75 !important;
+  letter-spacing: 0.012em !important;
+  color: #fff !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-line !important;
+}
+html body .lia-speech-text .lia-spoken-word {
+  border-radius: 4px;
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+html body .lia-speech-text .lia-spoken-word-active {
+  background: #facc15 !important;
+  color: #102a52 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 0 2px #facc1533;
+}
+@media (prefers-reduced-motion: reduce) {
+  html body .lia-speech-text .lia-spoken-word { transition: none !important; }
+}
