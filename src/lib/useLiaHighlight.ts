@@ -58,6 +58,6 @@ export function useLiaHighlight(text: string, speaking: boolean, audio: HTMLAudi
   return parts.map((part, key) => {
     const start = offset;
     offset += part.length;
-    return { text: part, highlighted: speaking && !!part.trim() && start <= spokenLength && spokenLength < offset, key };
+    return { text: part, highlighted: speaking && !!part.trim() && start <= spokenLength && spokenLength < offset, read: speaking && !!part.trim() && offset <= spokenLength, key };
   });
 }
