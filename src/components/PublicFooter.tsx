@@ -42,7 +42,7 @@ export function PublicFooter() {
     { to: "/" as const, label: "Início", icon: Home },
     { to: "/catalogo" as const, label: "Catálogo", icon: Search },
     { to: "/pedido" as const, label: "Pedido", icon: ShoppingCart },
-    { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
+    { to: "/pedidos" as const, label: "Vendas", icon: ClipboardList },
     { to: "/auth" as const, label: "Sair", icon: LogOut },
   ];
   async function logout() {
