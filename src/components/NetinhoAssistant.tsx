@@ -117,6 +117,7 @@ export function NetinhoAssistant() {
   const [open, setOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [boundaryIndex, setBoundaryIndex] = useState<number | null>(null);
+  const [activeAudio, setActiveAudio] = useState<HTMLAudioElement | null>(null);
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const loginAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
@@ -141,6 +142,7 @@ export function NetinhoAssistant() {
     speechRef.current = null;
     setSpeaking(false);
     setBoundaryIndex(null);
+    setActiveAudio(null);
     const readText = () => {
       if (!("speechSynthesis" in window)) return;
       const utterance = new SpeechSynthesisUtterance(greeting);
@@ -160,6 +162,7 @@ export function NetinhoAssistant() {
     if (!audioPath) { readText(); return; }
     const audio = new Audio(audioPath);
     loginAudioRef.current = audio;
+    setActiveAudio(audio);
     audio.onended = () => { if (loginAudioRef.current === audio) setSpeaking(false); };
     audio.onerror = () => { if (loginAudioRef.current === audio) { loginAudioRef.current = null; readText(); } };
     void audio.play().then(() => {
@@ -168,7 +171,7 @@ export function NetinhoAssistant() {
       if (loginAudioRef.current === audio) { loginAudioRef.current = null; readText(); }
     });
   };
-  const highlighted = useLiaHighlight(greeting, speaking, loginAudioRef.current, boundaryIndex);
+  const highlighted = useLiaHighlight(greeting, speaking, activeAudio, boundaryIndex);
   const highlightedText = highlighted.map(part => <span key={part.key} className={part.highlighted ? "text-[#facc15] font-bold" : ""}>{part.text}</span>);
   speechRefLatest.current = speak;
   useEffect(() => {
