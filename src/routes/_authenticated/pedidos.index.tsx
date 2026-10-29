@@ -62,16 +62,6 @@ function Orders() {
   }
   const list = (data ?? []).filter(o => o.status !== "cancelled");
   const totalPedidos = list.filter(o => o.kind !== "orcamento").reduce((sum,o) => sum + Number(o.total || 0),0);
-  const [savingStatus, setSavingStatus] = useState<string | null>(null);
-  async function changeStatus(id: string, status: string) {
-    if (!isAdmin || savingStatus) return;
-    setSavingStatus(id);
-    const { error } = await supabase.rpc("update_order_status", { order_id: id, new_status: status });
-    setSavingStatus(null);
-    if (error) { toast.error("Não foi possível alterar o status: " + error.message); return; }
-    await qc.invalidateQueries({ queryKey: ["orders"] });
-    toast.success("Status do pedido atualizado.");
-  }
   return (
     <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-3 px-2 pb-24 sm:px-4">
       <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MEUS PEDIDOS</h1>
@@ -92,12 +82,15 @@ function Orders() {
                       {new Date(o.created_at).toLocaleDateString("pt-BR")} · {o.item_count} itens · {termLabel(o.payment_term)}
                       {o.kind === "orcamento" && " · Orçamento"}</p>
                   </div>
-                  <div className="shrink-0 text-right">
+                  <div className="flex shrink-0 flex-col items-end gap-2 text-right">
+                    <div className="flex flex-col items-end gap-1">
+                      <p className="text-[11px] font-bold uppercase">Status do pedido</p>
+                      <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
+                    </div>
                     <p className="font-semibold">{brl(Number(o.total))}</p>
-                    <p className="mt-1 text-[11px] font-bold uppercase">Status do pedido</p><span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
+
                   </div>
                 </Link>
-                {isAdmin && <label className="flex w-full max-w-xs flex-col gap-1 text-xs font-bold">Status<select aria-label={`Status do pedido ${o.number}`} value={o.status} disabled={savingStatus === o.id} onChange={e=>void changeStatus(o.id,e.target.value)} className="min-h-10 rounded-lg border border-slate-300 bg-white px-2 text-[#102a52]"><option value="received">Feito pedido</option><option value="processing">Em andamento</option><option value="sent">Enviado</option><option value="invoiced">Faturado</option></select></label>}
                 {isAdmin && !["cancelled", "sent", "invoiced"].includes(o.status) && <button type="button" disabled={deletingId !== null} onClick={() => void cancelOrder(o.id)} aria-label={`Excluir ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} title={`Excluir ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-50 text-red-700 hover:border-red-600 hover:bg-red-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-red-400 disabled:opacity-40"><Trash2 size={19}/></button>}
               </li>
             );
