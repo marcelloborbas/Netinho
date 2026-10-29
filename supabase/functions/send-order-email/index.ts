@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { jsPDF } from "npm:jspdf@4.2.1";
 import { autoTable } from "npm:jspdf-autotable@5.0.8";
+import ExcelJS from "npm:exceljs@4.4.0";
 
 // Only explicit commercial-user requests send an email. Prices and customer
 // data are loaded again through the caller's RLS session, never from the body.
@@ -39,7 +40,7 @@ Deno.serve(async (request) => {
     if (error || itemError || !order || !items?.length)
       return json({ error: "Pedido não encontrado" }, 404);
     const to = "netinhoautoparts@gmail.com";
-    const from = Deno.env.get("NETINHO_FROM_EMAIL");
+    const from = Deno.env.get("NETINHO_FROM_EMAIL") || "pedidos@netinhoautoparts.live";
     const apiKey = Deno.env.get("RESEND_API_KEY");
     if (!to || !from || !apiKey)
       return json(
@@ -113,6 +114,50 @@ Deno.serve(async (request) => {
       }
     }
     const content = doc.output("datauristring").split(",")[1];
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Pedido");
+    sheet.columns = [
+      { header: "Campo / Código", key: "code", width: 25 },
+      { header: "Descrição / Aplicação", key: "description", width: 55 },
+      { header: "Quantidade", key: "quantity", width: 16 },
+      { header: "Desconto (%)", key: "discount", width: 17 },
+      { header: "Valor unitário (R$)", key: "unit", width: 23 },
+      { header: "Total (R$)", key: "total", width: 23 },
+    ];
+    sheet.addRow(["NETINHO AUTO PARTS", "Pedido " + order.number]);
+    sheet.addRow(["Cliente", customer.company_name ?? ""]);
+    sheet.addRow(["CNPJ", customer.cnpj ?? ""]);
+    sheet.addRow(["Comprador", order.buyer ?? ""]);
+    sheet.addRow(["Representante", sellerLabel]);
+    sheet.addRow(["Condição de pagamento", order.payment_term]);
+    sheet.addRow(["Endereço", [customer.address, customer.city, customer.state].filter(Boolean).join(", ")]);
+    sheet.addRow(["Telefone", customer.phone ?? ""]);
+    sheet.addRow(["Observações", order.notes ?? ""]);
+    sheet.addRow([]);
+    sheet.addRow(["Marca / Código", "Aplicação", "Quantidade", "Desconto (%)", "Unitário (R$)", "Total (R$)"]);
+    for (const item of items) {
+      sheet.addRow([
+        `${item.manufacturer ?? "FCO"} ${item.code}`,
+        item.application ?? "",
+        Number(item.quantity),
+        Number(item.discount_pct ?? 0),
+        Number(item.net_price),
+        Number(item.line_total),
+      ]);
+    }
+    sheet.addRow(["TOTAL", "", "", "", "", Number(order.total)]);
+    sheet.getRow(1).font = { bold: true, size: 15 };
+    sheet.getRow(12).font = { bold: true };
+    sheet.getRow(sheet.rowCount).font = { bold: true };
+    for (let i = 13; i <= sheet.rowCount; i++) {
+      sheet.getCell(`E${i}`).numFmt = '"R$" #,##0.00';
+      sheet.getCell(`F${i}`).numFmt = '"R$" #,##0.00';
+    }
+    const xlsxBuffer = await workbook.xlsx.writeBuffer();
+    const xlsxBytes = new Uint8Array(xlsxBuffer);
+    let binary = "";
+    for (const byte of xlsxBytes) binary += String.fromCharCode(byte);
+    const excelContent = btoa(binary);
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -126,7 +171,10 @@ Deno.serve(async (request) => {
         reply_to: auth.user.email,
         subject: `${order.kind === "orcamento" ? "Orçamento" : "Pedido"} ${order.number} | Netinho Auto Parts`,
         text: `Segue pedido ${order.number} em PDF.\nCliente: ${customer.company_name ?? ""}\nRepresentante: ${auth.user.email}\nTotal: ${brl(order.total)}`,
-        attachments: [{ filename: `pedido-${order.number}.pdf`, content }],
+        attachments: [
+          { filename: `pedido-${order.number}.pdf`, content },
+          { filename: `pedido-${order.number}.xlsx`, content: excelContent },
+        ],
       }),
     });
     if (!response.ok)
