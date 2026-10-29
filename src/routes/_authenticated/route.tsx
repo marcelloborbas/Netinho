@@ -49,7 +49,7 @@ function AppShell() {
         { to: "/" as const, label: "Início", icon: Home },
         { to: "/catalogo" as const, label: "Catálogo", icon: Search },
         { to: "/pedido" as const, label: "Pedido", icon: ShoppingCart },
-        { to: "/pedidos" as const, label: "Pedidos", icon: ClipboardList },
+        { to: "/pedidos" as const, label: "Vendas", icon: ClipboardList },
         { to: "/admin" as const, label: "Adm", icon: Settings },
       ] as const)
     : ([
