@@ -65,7 +65,7 @@ function Orders() {
   return (
     <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-3 px-2 pb-24 sm:px-4">
       <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MINHAS VENDAS</h1>
-      <section className="rounded-2xl border-2 border-red-800 bg-red-700 px-3 py-3 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total dos pedidos feitos</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p></section>
+      <section className="rounded-2xl border-2 border-red-800 bg-red-700 px-3 py-3 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total das vendas realizadas</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p></section>
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
       ) : (
@@ -75,22 +75,21 @@ function Orders() {
             const st = ORDER_STATUS[o.status];
             return (
               <li key={o.id} className="meus-pedidos-card flex flex-col gap-2 rounded-2xl border-2 border-[#102a52] bg-white p-3 shadow-sm sm:p-4">
-                <Link to="/pedidos/$id" params={{ id: o.id }} className="flex w-full min-w-0 flex-wrap items-start justify-between gap-2 rounded-lg p-1 text-[#102a52] hover:bg-slate-50 sm:gap-4">
-                  <div className="min-w-0 flex-1 basis-[55%]">
-                    <p className="text-xs font-bold uppercase text-[#102a52]">Dados do pedido</p><p className="font-extrabold">Nº {o.number} · {c.trade_name || c.company_name}</p>
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 text-[#102a52]">
+                  <Link to="/pedidos/$id" params={{ id: o.id }} className="min-w-0 rounded-lg p-1 hover:bg-slate-50">
+                    <p className="text-xs font-bold uppercase">Dados do pedido</p>
+                    <p className="break-words font-extrabold">Nº {o.number} · {c.trade_name || c.company_name}</p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(o.created_at).toLocaleDateString("pt-BR")} · {o.item_count} itens · {termLabel(o.payment_term)}
-                      {o.kind === "orcamento" && " · Orçamento"}</p>
+                      {o.kind === "orcamento" && " · Orçamento"}
+                    </p>
+                    <p className="mt-2 font-semibold">{brl(Number(o.total))}</p>
+                  </Link>
+                  <div className="flex min-w-[92px] flex-col items-end gap-1 pt-1 text-right">
+                    <p className="text-[10px] font-bold uppercase leading-tight">Status do pedido</p>
+                    <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
                   </div>
-                  <div className="flex shrink-0 flex-col items-end gap-2 text-right">
-                    <div className="flex flex-col items-end gap-1">
-                      <p className="text-[11px] font-bold uppercase">Status do pedido</p>
-                      <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
-                    </div>
-                    <p className="font-semibold">{brl(Number(o.total))}</p>
-
-                  </div>
-                </Link>
+                </div>
                 {isAdmin && !["cancelled", "sent", "invoiced"].includes(o.status) && <button type="button" disabled={deletingId !== null} onClick={() => void cancelOrder(o.id)} aria-label={`Excluir ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} title={`Excluir ${o.kind === "orcamento" ? "orçamento" : "pedido"} nº ${o.number}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-50 text-red-700 hover:border-red-600 hover:bg-red-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-red-400 disabled:opacity-40"><Trash2 size={19}/></button>}
               </li>
             );
