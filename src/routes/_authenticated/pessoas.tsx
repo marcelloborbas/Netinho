@@ -80,9 +80,11 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
  const [mapFile,setMapFile]=useState<File|null>(null);
  const [supervisor,setSupervisor]=useState(person.supervisor_id??"");
  const [busy,setBusy]=useState(false);
+ const [commissionRate,setCommissionRate]=useState("");
  const [open,setOpen]=useState(editingPage);
 
  const sales=role==="Vendedor"||role==="Representante";
+ const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:open||editingPage,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate == null ? "" : String(rate));return rate;}});
  const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open||editingPage,queryFn:async()=>{
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
@@ -101,6 +103,13 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
   const {error:profileError}=await supabase.from("profiles").update({full_name:name.trim(),phone:phone.trim()||null}).eq("id",person.id);
   if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não: "+profileError.message);onSaved();return;}
+  if(sales){
+   const parsed=commissionRate === "" ? null : Number(commissionRate);
+   if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
+   const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
+   if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message);onSaved();return;}
+   void qc.invalidateQueries({queryKey:["person-commission",person.id]});
+  }
   let image=effectiveMap.trim();
   if(mapFile){
    const extension=mapFile.name.split(".").pop()?.toLowerCase()||"webp";
@@ -166,6 +175,9 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
    {sales&&<div className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3">
     <strong>Área de atuação</strong>
+    <label className="block text-sm font-bold">Comissão individual sobre vendas (%)<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>
+    {commissionError&&<p className="text-sm font-bold text-red-700">Não foi possível consultar a comissão cadastrada. Não salve uma alteração até verificar a migração do banco.</p>}
+    <p className="text-xs text-slate-600">A comissão é definida somente pela Administração. Deixe sem definição quando não houver taxa aprovada.</p>
     <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>setCityBase(e.target.value)} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>setRegion(e.target.value)} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Estado(s) — UF<input value={uf} onChange={e=>setUf(e.target.value)} placeholder="Ex.: SP, MG" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
