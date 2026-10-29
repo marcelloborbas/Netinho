@@ -10,7 +10,7 @@ import { readOffers, type Offer } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/vendas")({
   validateSearch: (s: Record<string, unknown>) => ({ modo: s["modo"] === "consulta" ? "consulta" as const : "venda" as const, q: typeof s["q"] === "string" ? s["q"] : "", promo: typeof s["promo"] === "string" ? s["promo"] : "" }),
-  head: () => ({ meta: [{ title: "Fazer Pedido | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [{ title: "Pedido | Netinho Auto Parts" }] }),
   component: SalesPage,
 });
 
@@ -89,7 +89,7 @@ function SalesPage() {
   }
   return <div className="mx-auto w-full max-w-6xl space-y-4 pb-8">
     <header className="mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
-      <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>{search.modo === "consulta" ? "ORÇAMENTOS" : "FAZER PEDIDO"}</h1>
+      <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>{search.modo === "consulta" ? "ORÇAMENTOS" : "PEDIDO"}</h1>
     </header>
     <section className="space-y-4 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm">
       <h2 className="mb-3 border-b-2 border-[#d4af37] pb-2 text-xl font-black leading-tight text-[#102a52] sm:text-2xl">1. Primeiro selecione seu Cliente:</h2>
