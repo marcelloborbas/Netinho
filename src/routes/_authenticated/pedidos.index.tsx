@@ -74,18 +74,18 @@ function Orders() {
             const c = o.customer_snapshot as { company_name?: string; trade_name?: string };
             const st = ORDER_STATUS[o.status];
             return (
-              <li key={o.id} className="meus-pedidos-card flex flex-col gap-2 rounded-2xl border-2 border-[#102a52] bg-white p-3 shadow-sm sm:p-4">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 text-[#102a52]">
+              <li key={o.id} className="meus-pedidos-card flex flex-col gap-3 rounded-2xl border-2 border-[#102a52] bg-white p-3 shadow-sm sm:p-4">
+                <div className="grid grid-cols-[minmax(0,1fr)_minmax(92px,auto)] items-start gap-x-2 gap-y-3 text-[#102a52] sm:gap-x-4">
                   <Link to="/pedidos/$id" params={{ id: o.id }} className="min-w-0 rounded-lg p-1 hover:bg-slate-50">
                     <p className="text-xs font-bold uppercase">Dados do pedido</p>
-                    <p className="break-words font-extrabold">Nº {o.number} · {c.trade_name || c.company_name}</p>
+                    <p className="break-words font-extrabold">Nº {o.number} · {(c.trade_name || c.company_name || "Cliente").trim().split(/\s+/)[0]}</p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(o.created_at).toLocaleDateString("pt-BR")} · {o.item_count} itens · {termLabel(o.payment_term)}
                       {o.kind === "orcamento" && " · Orçamento"}
                     </p>
-                    <p className="mt-2 font-semibold">{brl(Number(o.total))}</p>
+                    <p className="mt-3 inline-flex rounded-xl bg-red-700 px-3 py-2 text-base font-black text-[#FFED00] shadow-sm">{brl(Number(o.total))}</p>
                   </Link>
-                  <div className="flex min-w-[92px] flex-col items-end gap-1 pt-1 text-right">
+                  <div className="flex min-w-0 flex-col items-end gap-2 pt-1 text-right">
                     <p className="text-[10px] font-bold uppercase leading-tight">Status do pedido</p>
                     <span className={cn("rounded px-2 py-0.5 text-[11px] font-semibold", st?.tone)}>{st?.label}</span>
                   </div>
