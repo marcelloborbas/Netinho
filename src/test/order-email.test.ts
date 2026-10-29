@@ -13,7 +13,9 @@ describe("saved order email", () => {
   it("sends both attachments to Netinho using the requested sender and stable saved-order key", async () => {
     const request = vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify({ id: "email-123" }), { status: 200 }));
     await expect(sendOrderEmail(email, "test-credential", request)).resolves.toBe("email-123");
-    const [, options] = request.mock.calls[0];
+    const call = request.mock.calls[0];
+    if (!call) throw new Error("Expected an email request");
+    const [, options] = call;
     const body = JSON.parse(String(options?.body));
     expect(body.from).toBe("pedidos@netinhoautoparts.live");
     expect(body.to).toEqual(["netinhoautoparts@gmail.com"]);

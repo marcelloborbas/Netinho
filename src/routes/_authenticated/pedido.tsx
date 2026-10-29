@@ -173,7 +173,7 @@ function OrderPage() {
           {sentResult === "sent" ? "Pedido enviado à Netinho, obrigado pela presteza!" : "Pedido registrado, mas o envio à Netinho não foi confirmado."}
         </h1>
         {sentResult === "failed" && (
-          <p className="text-sm text-destructive">{sendError} O pedido foi salvo. Verifique o envio em Minhas Vendas. Não crie outro pedido.</p>
+          <p className="text-sm text-destructive">{sendError} Verifique o envio em Minhas Vendas antes de tentar novamente.</p>
         )}
         <Button asChild className="w-full bg-[#102a52] text-white">
           <Link to="/pedidos">Ir para Minhas Vendas</Link>
