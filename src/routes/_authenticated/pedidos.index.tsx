@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/pedidos/")({
   head: () => ({
     meta: [
-      { title: "Meus pedidos – NETINHO" },
+      { title: "Minhas Vendas – NETINHO" },
       { name: "description", content: "Histórico de pedidos enviados." },
-      { property: "og:title", content: "Meus pedidos – NETINHO" },
+      { property: "og:title", content: "Minhas Vendas – NETINHO" },
       { property: "og:description", content: "Histórico de pedidos enviados." },
     ],
   }),
@@ -64,7 +64,7 @@ function Orders() {
   const totalPedidos = list.filter(o => o.kind !== "orcamento").reduce((sum,o) => sum + Number(o.total || 0),0);
   return (
     <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-3 px-2 pb-24 sm:px-4">
-      <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MEUS PEDIDOS</h1>
+      <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MINHAS VENDAS</h1>
       <section className="rounded-2xl border-2 border-red-800 bg-red-700 px-3 py-3 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total dos pedidos feitos</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p></section>
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
