@@ -119,44 +119,56 @@ Deno.serve(async (request) => {
       }
     }
     const content = doc.output("datauristring").split(",")[1];
+    // Modelo oficial aprovado, preservando logotipo, desenho e formatação da planilha.
+    const templateUrl = "https://raw.githubusercontent.com/marcelloborbas/Netinho/main/Formulario_Pedido_Netinho_Auto_Parts.xlsx";
+    const templateResponse = await fetch(templateUrl);
+    if (!templateResponse.ok) throw new Error("Modelo oficial de pedido indisponível: " + templateResponse.status);
     const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet("Pedido");
-    sheet.columns = [
-      { header: "Campo / Código", key: "code", width: 25 },
-      { header: "Descrição / Aplicação", key: "description", width: 55 },
-      { header: "Quantidade", key: "quantity", width: 16 },
-      { header: "Desconto (%)", key: "discount", width: 17 },
-      { header: "Valor unitário (R$)", key: "unit", width: 23 },
-      { header: "Total (R$)", key: "total", width: 23 },
-    ];
-    sheet.addRow(["NETINHO AUTO PARTS", "Pedido " + order.number]);
-    sheet.addRow(["Cliente", customer.company_name ?? ""]);
-    sheet.addRow(["CNPJ", customer.cnpj ?? ""]);
-    sheet.addRow(["Comprador", order.buyer ?? ""]);
-    sheet.addRow(["Representante", sellerLabel]);
-    sheet.addRow(["Condição de pagamento", order.payment_term]);
-    sheet.addRow(["Endereço", [customer.address, customer.city, customer.state].filter(Boolean).join(", ")]);
-    sheet.addRow(["Telefone", customer.phone ?? ""]);
-    sheet.addRow(["Observações", order.notes ?? ""]);
-    sheet.addRow([]);
-    const tableHeader = sheet.addRow(["Marca / Código", "Aplicação", "Quantidade", "Desconto (%)", "Unitário (R$)", "Total (R$)"]);
-    for (const item of items) {
-      sheet.addRow([
-        `${item.manufacturer ?? "FCO"} ${item.code}`,
-        item.application ?? "",
-        Number(item.quantity),
-        Number(item.discount_pct ?? 0),
-        Number(item.net_price),
-        Number(item.line_total),
-      ]);
+    await workbook.xlsx.load(await templateResponse.arrayBuffer());
+    const sheet = workbook.worksheets[0];
+    if (!sheet) throw new Error("Modelo de pedido sem planilha");
+    // Preencher apenas campos do modelo; nunca reconstruir a folha.
+    const put = (cell: string, value: ExcelJS.CellValue) => { sheet.getCell(cell).value = value; };
+    put("B1", "NETINHO AUTO PARTS");
+    put("B2", "Representante Oficial");
+    put("B3", "Pedidos: netinhoautoparts@gmail.com");
+    put("B4", "netinhoautoparts.live");
+    put("A5", "(15) 9.9245-8492");
+    put("B6", new Date(order.created_at ?? Date.now()).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }) + "  Nº " + order.number);
+    put("B8", customer.company_name ?? "");
+    put("G8", customer.trade_name ?? customer.fantasy_name ?? "");
+    put("B9", customer.address ?? "");
+    put("G9", customer.neighborhood ?? "");
+    put("B10", customer.city ?? "");
+    put("G10", customer.state ?? "");
+    put("I10", customer.zip_code ?? customer.cep ?? "");
+    put("B11", customer.cnpj ?? "");
+    put("G11", customer.state_registration ?? "");
+    put("B12", order.payment_term ?? "");
+    put("G12", "FOB");
+    put("B13", "FOB");
+    put("B14", customer.email ?? "");
+    put("H14", customer.phone ?? "");
+    put("B15", sellerLabel);
+    put("G15", order.buyer ?? "");
+    put("A17", "CÓDIGO");
+    put("B17", "Família Produto");
+    const firstItemRow = 18;
+    const lastTemplateItemRow = 36;
+    if (items.length > lastTemplateItemRow - firstItemRow + 1) {
+      sheet.duplicateRow(lastTemplateItemRow, items.length - (lastTemplateItemRow - firstItemRow + 1), true);
     }
-    sheet.addRow(["TOTAL", "", "", "", "", Number(order.total)]);
-    sheet.getRow(1).font = { bold: true, size: 15 };
-    tableHeader.font = { bold: true };
-    sheet.getRow(sheet.rowCount).font = { bold: true };
-    for (let i = tableHeader.number + 1; i <= sheet.rowCount; i++) {
-      sheet.getCell(`E${i}`).numFmt = '"R$" #,##0.00';
-      sheet.getCell(`F${i}`).numFmt = '"R$" #,##0.00';
+    for (let i = 0; i < Math.max(items.length, lastTemplateItemRow - firstItemRow + 1); i++) {
+      const row = firstItemRow + i;
+      const item = items[i];
+      put("A" + row, item ? String(item.code ?? "") : "");
+      put("B" + row, item ? String(item.manufacturer ?? "") : "");
+      put("D" + row, item ? String(item.application ?? "") : "");
+      put("F" + row, item ? Number(item.quantity) : 0);
+      put("G" + row, item ? Number(item.discount_pct ?? 0) : 0);
+      put("H" + row, item ? Number(item.net_price) : 0);
+      // Valor unitário já líquido: não aplicar desconto novamente.
+      put("I" + row, item ? { formula: `F${row}*H${row}`, result: Number(item.line_total) } : 0);
     }
     const xlsxBuffer = await workbook.xlsx.writeBuffer();
     const xlsxBytes = new Uint8Array(xlsxBuffer);
