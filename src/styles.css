@@ -4466,3 +4466,24 @@ html body .lia-speech-text .lia-spoken-word-active {
 @media (prefers-reduced-motion: reduce) {
   html body .lia-speech-text .lia-spoken-word { transition: none !important; }
 }
+
+
+/* Leitura progressiva LIA: trecho lido discreto, palavra atual com luz dourada. */
+html body .lia-speech-text .lia-spoken-word-read {
+  color: #b8cce3 !important;
+  opacity: .82;
+}
+html body .lia-speech-text .lia-spoken-word-active {
+  background: #facc15 !important;
+  color: #102a52 !important;
+  border-radius: 5px;
+  padding: 1px 2px;
+  text-decoration: underline;
+  text-decoration-color: #102a52;
+  text-underline-offset: 3px;
+  box-shadow: 0 0 0 2px #facc1540, 0 0 12px #facc1566;
+  transition: background-color 110ms ease, color 110ms ease, box-shadow 110ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html body .lia-speech-text .lia-spoken-word-active { transition: none !important; }
+}
