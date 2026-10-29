@@ -2,7 +2,7 @@ import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Trash2, Minus, Plus, RotateCcw, Volume2, X } from "lucide-react";
+import { Trash2, Minus, Plus, RotateCcw, Volume2, X, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
@@ -167,18 +167,48 @@ function OrderPage() {
   }
 
   if (sentResult) {
+    const successful = sentResult === "sent";
     return (
-      <section className="surface-card mx-auto max-w-lg space-y-5 p-6 text-center" role="status" aria-live="polite">
-        <h1 className="text-2xl font-black text-[#102a52]">
-          {sentResult === "sent" ? "Pedido enviado à Netinho, obrigado pela presteza!" : "Pedido registrado, mas o envio à Netinho não foi confirmado."}
-        </h1>
-        {sentResult === "failed" && (
-          <p className="text-sm text-destructive">{sendError} Verifique o envio em Minhas Vendas antes de tentar novamente.</p>
-        )}
-        <Button asChild className="w-full bg-[#102a52] text-white">
-          <Link to="/pedidos">Ir para Minhas Vendas</Link>
-        </Button>
-      </section>
+      <main className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-[28px] border-2 border-[#d4af37] bg-gradient-to-b from-[#102a52] via-[#123c70] to-[#eaf7ff] shadow-2xl" role="status" aria-live="polite">
+        {successful && <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          {Array.from({ length: 32 }, (_, i) => (
+            <span key={i} className="netinho-confetti absolute top-[-12px] block h-3 w-2 rounded-sm"
+              style={{ left: `${(i * 37 + 11) % 100}%`, backgroundColor: ["#facc15","#7dd3fc","#ffffff","#fb7185","#4ade80"][i % 5], animationDelay: `${(i % 11) * -0.32}s`, animationDuration: `${2.6 + (i % 6) * .37}s` }} />
+          ))}
+        </div>}
+        <div className="relative z-10 px-5 pb-7 pt-8 text-center sm:px-10 sm:pt-11">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-[#42d9b4] to-[#159968] shadow-[0_0_36px_#4ade8080]">
+            {successful ? <CheckCircle2 className="h-14 w-14 text-white" strokeWidth={2.7}/> : <ClipboardCheck className="h-14 w-14 text-white" strokeWidth={2.7}/>}
+          </div>
+          <div className="mt-5 flex items-center justify-center gap-2 text-[#facc15]">
+            {successful && <PartyPopper className="h-7 w-7"/>}
+            <span className="text-sm font-black uppercase tracking-[.16em]">{successful ? "Venda concluída!" : "Pedido registrado"}</span>
+            {successful && <Sparkles className="h-6 w-6"/>}
+          </div>
+          <h1 className="mt-3 text-3xl font-black leading-tight text-white sm:text-4xl">
+            {successful ? "Parabéns pela sua venda!" : "Seu pedido foi registrado"}
+          </h1>
+          <p className="mx-auto mt-4 max-w-md text-lg font-semibold leading-relaxed text-[#e7f6ff]">
+            {successful ? "Que alegria! Seu pedido foi enviado à Netinho Auto Parts. Obrigado pela dedicação e confiança!" : "O envio do e-mail ainda não foi confirmado. Confira os detalhes antes de tentar novamente."}
+          </p>
+          <div className="mx-auto mt-6 max-w-md rounded-2xl border border-[#a7e8ff] bg-white/95 p-5 text-left text-[#102a52] shadow-xl">
+            <div className="flex items-center gap-3">
+              {successful ? <MailCheck className="h-9 w-9 shrink-0 text-[#15803d]"/> : <ClipboardCheck className="h-9 w-9 shrink-0 text-[#b45309]"/>}
+              <div>
+                <p className="text-lg font-black">{successful ? "Pedido enviado com sucesso!" : "Envio pendente de confirmação"}</p>
+                <p className="mt-1 text-sm font-medium">{successful ? "Seu pedido foi encaminhado. Acompanhe o andamento em Minhas Vendas." : "O pedido está registrado, mas não foi possível confirmar a entrega do e-mail."}</p>
+              </div>
+            </div>
+            {!successful && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-900">{sendError} Consulte Minhas Vendas antes de tentar reenviar.</p>}
+          </div>
+          <p className="mt-7 text-xl font-black text-[#102a52]">Você fez acontecer! <span aria-hidden="true">🎉</span></p>
+          <p className="mt-2 text-base font-semibold text-[#102a52]">Que Deus abençoe seu dia e seus negócios!</p>
+          <Button asChild className="mt-6 h-auto min-h-16 w-full max-w-md rounded-2xl border-2 border-white bg-gradient-to-b from-[#8ce5ff] to-[#35b7f2] px-5 py-4 text-lg font-black uppercase tracking-wide text-[#07345d] shadow-[0_8px_0_#1473aa,0_12px_24px_#07345d55] transition-all duration-200 hover:-translate-y-1 hover:from-[#b5f0ff] hover:to-[#5ac9ff] hover:text-[#07345d] active:translate-y-1 active:shadow-[0_3px_0_#1473aa]">
+            <Link to="/pedidos" className="flex items-center justify-center gap-3"><Sparkles className="h-6 w-6"/> Ir para Minhas Vendas <ArrowRight className="h-6 w-6"/></Link>
+          </Button>
+        </div>
+        <style>{`@keyframes netinhoConfettiFall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 0; } 12% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(640px) rotate(560deg); opacity: 0; } } .netinho-confetti { animation: netinhoConfettiFall 3.5s linear infinite; } @media (prefers-reduced-motion: reduce) { .netinho-confetti { animation: none; opacity: .65; top: 12%; } }`}</style>
+      </main>
     );
   }
 
