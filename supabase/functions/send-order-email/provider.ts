@@ -1,4 +1,4 @@
-export const EMAIL_VERSION = "2026-10-29.1";
+export const EMAIL_VERSION = "2026-10-29.2";
 export const ORDER_FROM = "pedidos@netinhoautoparts.live";
 export const ORDER_TO = "netinhoautoparts@gmail.com";
 
@@ -7,6 +7,7 @@ export interface OrderEmail {
   number: number;
   kind: string;
   replyTo?: string;
+  userEmail?: string;
   text: string;
   pdf: string;
   xlsx: string;
@@ -19,11 +20,11 @@ export async function sendOrderEmail(email: OrderEmail, apiKey: string, request:
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "Idempotency-Key": `netinho-order-${email.orderId}`,
+      "Idempotency-Key": `netinho-order-${email.orderId}-v2`,
     },
     body: JSON.stringify({
       from: ORDER_FROM,
-      to: [ORDER_TO],
+      to: [ORDER_TO, ...(email.userEmail && email.userEmail.toLowerCase() !== ORDER_TO.toLowerCase() ? [email.userEmail] : [])],
       reply_to: email.replyTo,
       subject: `${email.kind === "orcamento" ? "Orçamento" : "Pedido"} ${email.number} | Netinho Auto Parts`,
       text: email.text,
