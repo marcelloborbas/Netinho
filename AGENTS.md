@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture rules
+- Maintain the existing send-order-email Edge Function: read saved snapshots under caller RLS, generate both attachments, and confirm only a Resend email ID tied to the saved order; stable provider idempotency and a synchronous submit lock prevent repeated sends/creation on double clicks without changing prices.
 - Maintain the existing delete-person Edge Function for permanent Auth deletion; its Auth lifecycle cleanup trigger removes target-only profiles/roles/linked commercial records atomically, preserves shared customers and order history, and rejects blocking supervisor references without editing other users.
 - Delete-person returns structured success with the exact deleted user ID; PESSOAL removes cached rows only on that confirmation and revalidates the lists.
 - Orders are created only via the `create_order(payload)` SQL function — prices are recomputed server-side from `products`, so clients can't tamper with them.

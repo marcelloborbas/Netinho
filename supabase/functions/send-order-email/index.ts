@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { jsPDF } from "npm:jspdf@4.2.1";
 import { autoTable } from "npm:jspdf-autotable@5.0.8";
 import ExcelJS from "npm:exceljs@4.4.0";
+import { EMAIL_VERSION, sendOrderEmail } from "./provider.ts";
 
 // Only explicit commercial-user requests send an email. Prices and customer
 // data are loaded again through the caller's RLS session, never from the body.
@@ -13,17 +14,21 @@ const cors = {
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { ...cors, "Content-Type": "application/json" },
+    headers: { ...cors, "Content-Type": "application/json", "X-Netinho-Email-Version": EMAIL_VERSION },
   });
 Deno.serve(async (request) => {
+  console.info("send-order-email request", { version: EMAIL_VERSION, method: request.method });
   if (request.method === "OPTIONS") return new Response(null, { headers: cors });
   if (request.method !== "POST") return json({ error: "Método não permitido" }, 405);
   try {
     const authorization = request.headers.get("Authorization");
     if (!authorization) return json({ error: "Autenticação necessária" }, 401);
-    const client = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
+    const url = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!url || !anonKey) throw new Error("Configuração de autenticação indisponível.");
+    const client = createClient(url, anonKey, {
       global: { headers: { Authorization: authorization } },
-      auth: { persistSession: false },
+      auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: auth, error: authError } = await client.auth.getUser();
     if (authError || !auth.user) return json({ error: "Sessão inválida" }, 401);
@@ -31,7 +36,7 @@ Deno.serve(async (request) => {
     if (accessError || !access?.can_sell)
       return json({ error: "Acesso comercial necessário" }, 403);
     const { orderId } = await request.json();
-    if (typeof orderId !== "string" || !/^[\da-f-]{36}$/i.test(orderId))
+    if (typeof orderId !== "string" || !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(orderId))
       return json({ error: "Pedido inválido" }, 400);
     const [{ data: order, error }, { data: items, error: itemError }] = await Promise.all([
       client.from("orders").select("*").eq("id", orderId).single(),
@@ -39,14 +44,14 @@ Deno.serve(async (request) => {
     ]);
     if (error || itemError || !order || !items?.length)
       return json({ error: "Pedido não encontrado" }, 404);
-    const to = "netinhoautoparts@gmail.com";
-    const from = Deno.env.get("NETINHO_FROM_EMAIL") || "pedidos@netinhoautoparts.live";
     const apiKey = Deno.env.get("RESEND_API_KEY");
-    if (!to || !from || !apiKey)
+    if (!apiKey) {
+      console.error("send-order-email configuration missing", { version: EMAIL_VERSION, secret: "RESEND_API_KEY" });
       return json(
-        { error: "Configure o e-mail de compras, o remetente verificado e o serviço de envio." },
+        { error: "O serviço de envio está indisponível. O pedido está salvo; não crie outro pedido." },
         503,
       );
+    }
     const brl = (value: unknown) =>
       Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     const customer = order.customer_snapshot ?? {};
@@ -134,7 +139,7 @@ Deno.serve(async (request) => {
     sheet.addRow(["Telefone", customer.phone ?? ""]);
     sheet.addRow(["Observações", order.notes ?? ""]);
     sheet.addRow([]);
-    sheet.addRow(["Marca / Código", "Aplicação", "Quantidade", "Desconto (%)", "Unitário (R$)", "Total (R$)"]);
+    const tableHeader = sheet.addRow(["Marca / Código", "Aplicação", "Quantidade", "Desconto (%)", "Unitário (R$)", "Total (R$)"]);
     for (const item of items) {
       sheet.addRow([
         `${item.manufacturer ?? "FCO"} ${item.code}`,
@@ -147,9 +152,9 @@ Deno.serve(async (request) => {
     }
     sheet.addRow(["TOTAL", "", "", "", "", Number(order.total)]);
     sheet.getRow(1).font = { bold: true, size: 15 };
-    sheet.getRow(12).font = { bold: true };
+    tableHeader.font = { bold: true };
     sheet.getRow(sheet.rowCount).font = { bold: true };
-    for (let i = 13; i <= sheet.rowCount; i++) {
+    for (let i = tableHeader.number + 1; i <= sheet.rowCount; i++) {
       sheet.getCell(`E${i}`).numFmt = '"R$" #,##0.00';
       sheet.getCell(`F${i}`).numFmt = '"R$" #,##0.00';
     }
@@ -158,32 +163,20 @@ Deno.serve(async (request) => {
     let binary = "";
     for (const byte of xlsxBytes) binary += String.fromCharCode(byte);
     const excelContent = btoa(binary);
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "Idempotency-Key": `netinho-order-${order.id}`,
-      },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: auth.user.email,
-        subject: `${order.kind === "orcamento" ? "Orçamento" : "Pedido"} ${order.number} | Netinho Auto Parts`,
-        text: `Segue pedido ${order.number} em PDF.\nCliente: ${customer.company_name ?? ""}\nRepresentante: ${auth.user.email}\nTotal: ${brl(order.total)}`,
-        attachments: [
-          { filename: `pedido-${order.number}.pdf`, content },
-          { filename: `pedido-${order.number}.xlsx`, content: excelContent },
-        ],
-      }),
-    });
-    if (!response.ok)
-      return json(
-        { error: "O serviço de e-mail não confirmou o envio. Tente novamente mais tarde." },
-        502,
-      );
-    return json({ sent: true });
-  } catch {
-    return json({ error: "Não foi possível enviar o pedido." }, 500);
+    if (!content) throw new Error("Não foi possível gerar o PDF do pedido.");
+    try {
+      const emailId = await sendOrderEmail({
+        orderId: order.id, number: order.number, kind: order.kind,
+        replyTo: seller?.email || undefined,
+        text: `Segue pedido ${order.number} em PDF e Excel (.xlsx).\nCliente: ${customer.company_name ?? ""}\nRepresentante: ${sellerLabel}\nTotal: ${brl(order.total)}`,
+        pdf: content, xlsx: excelContent,
+      }, apiKey);
+      return json({ sent: true, orderId: order.id, emailId, version: EMAIL_VERSION });
+    } catch (error) {
+      return json({ error: error instanceof Error ? error.message : "O envio não foi confirmado. O pedido está salvo." }, 502);
+    }
+  } catch (error) {
+    console.error("send-order-email internal failure", { version: EMAIL_VERSION, reason: error instanceof Error ? error.message : "Unknown failure" });
+    return json({ error: "Não foi possível enviar o e-mail. O pedido está salvo; não crie outro pedido." }, 500);
   }
 });
