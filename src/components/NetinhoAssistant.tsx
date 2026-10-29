@@ -168,11 +168,11 @@ export function NetinhoAssistant() {
     void audio.play().then(() => {
       if (loginAudioRef.current === audio) setSpeaking(true);
     }).catch(() => {
-      if (loginAudioRef.current === audio) { loginAudioRef.current = null; readText(); }
+      if (loginAudioRef.current === audio) { loginAudioRef.current = null; setActiveAudio(null); readText(); }
     });
   };
   const highlighted = useLiaHighlight(greeting, speaking, activeAudio, boundaryIndex);
-  const highlightedText = highlighted.map(part => <span key={part.key} className={part.highlighted ? "lia-spoken-word lia-spoken-word-active" : "lia-spoken-word"}>{part.text}</span>);
+  const highlightedText = highlighted.map(part => <span key={part.key} className={part.highlighted ? "lia-spoken-word lia-spoken-word-active" : part.read ? "lia-spoken-word lia-spoken-word-read" : "lia-spoken-word"}>{part.text}</span>);
   speechRefLatest.current = speak;
   useEffect(() => {
     if (isAuth) return;
