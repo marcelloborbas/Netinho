@@ -130,11 +130,27 @@ function OrderPage() {
         },
       });
       if (error || !data) throw error ?? new Error("Erro ao registrar pedido.");
+      // O pedido já foi gravado: não refazer create_order caso o e-mail falhe.
+      const orderId = typeof data === "string" ? data : String(data);
+      let emailSent = false;
+      try {
+        const { data: mail, error: mailError } = await supabase.functions.invoke("send-order-email", {
+          body: { orderId },
+        });
+        if (mailError || !mail?.sent) throw mailError ?? new Error(mail?.error || "Envio não confirmado");
+        emailSent = true;
+      } catch (mailError) {
+        console.error("Falha no envio automático do pedido:", mailError);
+      }
       draftActions.clear();
       void qc.invalidateQueries({ queryKey: ["orders"] });
       void qc.invalidateQueries({ queryKey: ["customers"] });
-      toast.success("Pedido registrado! Gere o PDF ou envie ao setor de compras.");
-      navigate({ to: "/pedidos/$id", params: { id: data } });
+      if (emailSent) {
+        toast.success("Pedido registrado e enviado à Netinho com PDF e Excel.");
+      } else {
+        toast.error("Pedido registrado, mas o e-mail não foi confirmado. Consulte o pedido antes de tentar reenviar.", { duration: 9000 });
+      }
+      navigate({ to: "/pedidos/$id", params: { id: orderId } });
     } catch (error) {
       toast.error(
         error instanceof Error
