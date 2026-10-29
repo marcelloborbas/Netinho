@@ -180,6 +180,7 @@ Deno.serve(async (request) => {
       const emailId = await sendOrderEmail({
         orderId: order.id, number: order.number, kind: order.kind,
         replyTo: seller?.email || undefined,
+        userEmail: seller?.email && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(seller.email) ? seller.email : auth.user.id === order.seller_id ? auth.user.email : undefined,
         text: `Segue pedido ${order.number} em PDF e Excel (.xlsx).\nCliente: ${customer.company_name ?? ""}\nRepresentante: ${sellerLabel}\nTotal: ${brl(order.total)}`,
         pdf: content, xlsx: excelContent,
       }, apiKey);
