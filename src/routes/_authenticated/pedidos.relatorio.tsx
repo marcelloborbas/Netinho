@@ -22,6 +22,7 @@ type OrderRow = {
 
 const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const formatDate = (value: string) => new Date(value).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+const brazilMonth = (date: Date) => { const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit" }).formatToParts(date); return `${parts.find(p => p.type === "year")?.value}-${parts.find(p => p.type === "month")?.value}`; };
 
 async function loadMonth(year: number, month: number): Promise<OrderRow[]> {
   // A consulta permanece sob as políticas de acesso (RLS) já aplicadas aos pedidos.
@@ -39,14 +40,14 @@ async function loadMonth(year: number, month: number): Promise<OrderRow[]> {
     if (!data || data.length < 500) break;
   }
   return rows.filter(o => {
-    const localMonth = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit" }).format(new Date(o.created_at));
+    const localMonth = brazilMonth(new Date(o.created_at));
     return localMonth === `${year}-${String(month).padStart(2, "0")}`;
   });
 }
 
 function MonthlySalesReport() {
   const today = new Date();
-  const brasil = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit" }).format(today);
+  const brasil = brazilMonth(today);
   const [year, setYear] = useState(Number(brasil.slice(0, 4)));
   const [month, setMonth] = useState(Number(brasil.slice(5, 7)));
   const { data = [], isLoading, isError, refetch } = useQuery({
@@ -96,7 +97,7 @@ function MonthlySalesReport() {
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
-    {customers.map(customer => <section key={customer.name} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
+    {customers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 break-words text-lg font-black">{customer.name}</h2>
         <strong className="rounded-lg bg-[#102a52] px-3 py-2 text-white">{brl(customer.total)}</strong>
