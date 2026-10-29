@@ -189,7 +189,7 @@ export function NetinhoAssistant() {
         <button type="button" aria-label={speaking ? "Parar leitura da página" : "Ouvir orientação desta página"} title={speaking ? "Parar leitura" : "Ouvir orientação"} onClick={() => { if (speaking) { loginAudioRef.current?.pause(); loginAudioRef.current = null; window.speechSynthesis?.cancel(); speechRef.current = null; setSpeaking(false); } else speak(); }}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
         <button type="button" aria-label="Fechar ajuda" onClick={() => { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); setOpen(false); }}><X size={18}/></button>
       </div></div>
-      {isAuth ? <div className="space-y-3 text-sm leading-relaxed"><p className="whitespace-pre-line">{highlightedText}</p><InstallAppButton assistantStyle label="Baixar atalho" /><button type="button" className="flex items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 text-sm font-bold text-white hover:bg-[#1d467b]" onClick={() => { setOpen(true); speak(); }} aria-label="Rever o texto e ouvir novamente a locução da LIA"><RotateCcw size={16} /> Rever ajuda</button></div> : <div className="space-y-3">
+      {isAuth ? <div className="space-y-3 text-[17px] leading-[1.8]"><p className="whitespace-pre-line text-[17px] leading-[1.8] font-medium tracking-[0.01em]">{highlightedText}</p><InstallAppButton assistantStyle label="Baixar atalho" /><button type="button" className="flex items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 text-sm font-bold text-white hover:bg-[#1d467b]" onClick={() => { setOpen(true); speak(); }} aria-label="Rever o texto e ouvir novamente a locução da LIA"><RotateCcw size={16} /> Rever ajuda</button></div> : <div className="space-y-3">
         <p className="whitespace-pre-line">{highlightedText}</p>
         <button type="button" className="flex items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 text-sm font-bold text-white hover:bg-[#1d467b]" onClick={speak} aria-label="Rever a ajuda e ouvir novamente a LIA"><RotateCcw size={16} /> Rever ajuda</button>
       </div>}
@@ -200,7 +200,7 @@ export function NetinhoAssistant() {
             <strong className="text-base font-extrabold uppercase">{pathname === "/" ? "AJUDA - PÁGINA INICIAL" : (hint?.title ?? "Ajuda")}</strong>
             <button type="button" aria-label="Fechar ajuda" className="rounded-lg bg-[#153a60] p-2" onClick={() => { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); setOpen(false); }}><X size={20}/></button>
           </div>
-          <p className="whitespace-pre-line text-[15px] leading-7">{highlightedText}</p>
+          <p className="whitespace-pre-line text-[17px] leading-[1.8] font-medium tracking-[0.01em]">{highlightedText}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#1687d9] px-4 text-sm font-bold text-white" onClick={speak}><RotateCcw size={17}/> Rever ajuda</button>
             <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/40 px-4 text-sm font-bold" onClick={() => { if (speaking) { loginAudioRef.current?.pause(); window.speechSynthesis?.cancel(); setSpeaking(false); } else speak(); }}>{speaking ? <VolumeX size={17}/> : <Volume2 size={17}/>} {speaking ? "Parar áudio" : "Ouvir áudio"}</button>
