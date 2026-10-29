@@ -5,7 +5,7 @@ import { ordersQuery } from "@/lib/queries";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Trash2, ChartColumnIncreasing } from "lucide-react";
 import { ORDER_STATUS, brl, termLabel } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -65,6 +65,7 @@ function Orders() {
   return (
     <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-3 px-2 pb-24 sm:px-4">
       <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MINHAS VENDAS</h1>
+      <Link to="/pedidos/relatorio" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#d4af37] bg-white px-4 py-3 text-center text-base font-black uppercase text-[#102a52] shadow-sm hover:bg-blue-50"><ChartColumnIncreasing size={22}/> Relatório de Vendas por Cliente e Mês</Link>
       <section className="rounded-2xl border-2 border-red-800 bg-red-700 px-3 py-3 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total das vendas realizadas</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p></section>
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
