@@ -229,26 +229,38 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       {confirmOpen && (
-        <div className="fixed inset-0 z-[6000] flex items-start justify-center bg-[#071c37]/75 px-4 pt-[8vh]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="relative z-[2] max-h-[min(64dvh,520px)] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-[#d4af37] bg-white p-4 pb-5 shadow-2xl">
-            <div className="flex items-center justify-between gap-3">
-              <h2 id="lia-confirm-title" className="text-xl font-black text-[#102a52]">CONFIRME SEU PEDIDO</h2>
-              <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="rounded-lg p-2 text-[#102a52] hover:bg-slate-100"><X size={22} /></button>
+        <div className="fixed inset-0 z-[6000] flex items-center justify-center bg-[#06172e]/85 px-3 py-4 backdrop-blur-[3px]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+          <div className="relative z-[2] flex max-h-[min(90dvh,760px)] w-full max-w-lg flex-col overflow-hidden rounded-[26px] border-[3px] border-[#d4af37] bg-white shadow-[0_20px_70px_#0007]">
+            <div className="relative shrink-0 bg-gradient-to-br from-[#102a52] to-[#17609b] px-5 pb-5 pt-5 text-center text-white">
+              <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="absolute right-3 top-3 rounded-full border border-white/40 bg-white/15 p-2 text-white hover:bg-white/25"><X size={21}/></button>
+              <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#facc15] bg-white/15 shadow-[0_0_20px_#facc1540]"><ClipboardCheck size={31} className="text-[#facc15]"/></div>
+              <h2 id="lia-confirm-title" className="text-2xl font-black uppercase tracking-wide sm:text-3xl">Tudo pronto para enviar?</h2>
+              <p className="mt-2 text-base font-semibold text-[#e1f4ff]">Confira os dados do pedido antes de concluir sua venda!</p>
             </div>
-            <p className="mt-3 whitespace-pre-line text-base font-semibold leading-7 text-[#102a52]">{"Vamos lá!\n\nAntes de enviar seu pedido, confira todos os dados!\n\nSe estiver tudo certinho,\n\nEntão, é só clicar em Enviar Pedido!\n\nMas se acaso precise algum tipo de acerto, clique em corrigir pedido, e faça suas devidas alterações.\n\nFicamos felizes que você tenha chegado até aqui!\n\nQue seu dia e de sua família, seja repleto de benção!"}</p>
-            <div className="mt-3 rounded-lg bg-slate-100 p-3 text-sm text-[#102a52]">
-              <p><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
-              <p><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
-              <p><strong>Peças:</strong> {d.items.length} · <strong>Total:</strong> {brl(t.net)}</p>
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-6">
+              <div className="rounded-2xl border border-[#b8d9f2] bg-[#f0f8ff] p-4 text-[#102a52]">
+                <p className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide"><CheckCircle2 size={19} className="text-[#16845b]"/> Resumo do pedido</p>
+                <p className="break-words text-base"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
+                <p className="mt-2 text-base"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
+                <p className="mt-2 text-base"><strong>Peças:</strong> {d.items.length}</p>
+                <div className="mt-3 rounded-xl bg-[#b91c1c] px-4 py-3 text-center text-white">
+                  <p className="text-xs font-bold uppercase tracking-wide">Valor total do pedido</p>
+                  <p className="text-2xl font-black">{brl(t.net)}</p>
+                </div>
+              </div>
+              <div className="rounded-xl border-l-4 border-[#d4af37] bg-[#fff9e9] px-4 py-3 text-[#102a52]">
+                <p className="text-sm font-bold">A LIA está aqui para ajudar!</p>
+                <p className="mt-1 text-sm leading-relaxed">Se estiver tudo certinho, envie o pedido. Precisa mudar algo? Escolha Corrigir Pedido.</p>
+                <button type="button" onClick={() => { buttonSound(); playConfirmation(); }} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-[#102a52] bg-white px-4 text-sm font-black text-[#102a52] transition-transform active:scale-95"><RotateCcw size={17}/> Ouvir orientação da LIA <Volume2 size={17}/></button>
+                {confirmAudioError && <p className="mt-2 text-xs font-semibold text-amber-800">A gravação da LIA ainda não está disponível neste endereço.</p>}
+              </div>
+              <p className="text-center text-sm font-semibold text-[#102a52]">Que Deus abençoe seu dia e suas vendas!</p>
             </div>
-            <button type="button" onClick={() => { buttonSound(); playConfirmation(); }} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#102a52] px-4 text-sm font-bold text-[#102a52] transition-transform active:scale-95"><RotateCcw size={17} /> Rever ajuda <Volume2 size={17} /></button>
-            {confirmAudioError && <p className="mt-2 text-xs text-amber-700">A gravação da LIA ainda não está disponível neste endereço.</p>}
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <Button type="button" className="h-12 bg-[#ea580c] text-base font-bold text-white transition-transform active:scale-95 hover:bg-[#c2410c]" onClick={closeConfirmation}>Corrigir pedido</Button>
-              <Button type="button" className="h-12 bg-[#1687d9] text-base font-bold text-white transition-transform active:scale-95 hover:bg-[#0c70bc]" disabled={busy} onClick={() => { buttonSound(); confirmAudio.current?.pause(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
+            <div className="grid shrink-0 grid-cols-2 gap-3 border-t border-slate-200 bg-white px-4 py-4 sm:px-6">
+              <Button type="button" className="h-14 rounded-xl border-2 border-[#d98b27] bg-[#fff2d7] px-2 text-sm font-black text-[#7d3c0a] shadow-sm hover:bg-[#ffe2a3] sm:text-base" onClick={closeConfirmation}>Corrigir Pedido</Button>
+              <Button type="button" className="h-14 rounded-xl border-2 border-white bg-gradient-to-b from-[#91e6ff] to-[#2fb7f3] px-2 text-sm font-black text-[#07345d] shadow-[0_5px_0_#1374aa] transition-transform hover:-translate-y-0.5 hover:from-[#b3efff] hover:to-[#58ccff] active:translate-y-0.5 sm:text-base" disabled={busy} onClick={() => { buttonSound(); confirmAudio.current?.pause(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
             </div>
           </div>
-          <img src="/images/lia-confirma%20pedido.webp" alt="LIA confirma o envio do pedido" className="pointer-events-none fixed left-1/2 z-[1] w-[min(54vw,230px)] -translate-x-1/2 object-contain object-bottom" style={{ bottom: footerOffset }} />
         </div>
       )}
       <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
