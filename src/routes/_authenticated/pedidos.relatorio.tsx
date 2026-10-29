@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/pedidos/relatorio")({
 
 type OrderRow = {
   id: string;
+  seller_id: string;
   number: number | string;
   created_at: string;
   total: number | null;
@@ -29,10 +30,13 @@ async function loadMonth(year: number, month: number): Promise<OrderRow[]> {
   // Margem de 1 dia em UTC para contemplar a virada do mês no horário de Brasília.
   const start = new Date(Date.UTC(year, month - 1, 1) - 86400000).toISOString();
   const end = new Date(Date.UTC(year, month, 1) + 86400000).toISOString();
+  const {data:auth,error:authError}=await supabase.auth.getUser();
+  if(authError||!auth.user) throw authError ?? new Error("Faça login para consultar suas vendas.");
   const rows: OrderRow[] = [];
   for (let from = 0; ; from += 500) {
     const { data, error } = await supabase.from("orders")
-      .select("id,number,created_at,total,kind,status,customer_snapshot")
+      .select("id,seller_id,number,created_at,total,kind,status,customer_snapshot")
+      .eq("seller_id",auth.user.id)
       .gte("created_at", start).lt("created_at", end)
       .order("created_at", { ascending: false }).range(from, from + 499);
     if (error) throw error;
@@ -55,6 +59,7 @@ function MonthlySalesReport() {
     queryKey: ["sales-monthly-report", year, month],
     queryFn: () => loadMonth(year, month),
   });
+  const {data:commissionRate, isError:commissionError}=useQuery({queryKey:["my-sales-commission"],queryFn:async()=>{const {data:auth,error:authError}=await supabase.auth.getUser();if(authError||!auth.user)throw authError??new Error("Sem login");const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",auth.user.id).maybeSingle();if(error)throw error;return (data as {rate:number}|null)?.rate??null;}});
   const { customers, total, count } = useMemo(() => {
     const groups = new Map<string, { name: string; total: number; orders: OrderRow[] }>();
     let total = 0;
@@ -107,6 +112,12 @@ function MonthlySalesReport() {
       <p className="mt-1 text-3xl font-black">{isLoading ? "Carregando..." : brl(visibleTotal)}</p>
       <p className="mt-2 text-sm font-semibold">{visibleCount} pedidos · {visibleCustomers.length} clientes</p>
     </section>
+    <section className="rounded-xl border-2 border-[#d4af37] bg-white p-4 text-[#102a52]">
+      <p className="font-black uppercase">Sua comissão estimada</p>
+      <p className="mt-1 text-sm font-semibold">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
+      <p className="mt-2 text-2xl font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
+      <p className="mt-1 text-xs text-slate-600">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
+    </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
     {visibleCustomers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
@@ -122,6 +133,6 @@ function MonthlySalesReport() {
         </Link>)}
       </div>
     </section>)}
-    <p className="text-xs text-slate-600">Relatório dos pedidos visíveis à sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
+    <p className="text-xs text-slate-600">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
   </main>;
 }
