@@ -41,6 +41,7 @@ function OrderPage() {
   const navigate = useNavigate();
   const [review, setReview] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAudioError, setConfirmAudioError] = useState(false);
   const confirmAudio = useRef<HTMLAudioElement | null>(null);
@@ -150,7 +151,7 @@ function OrderPage() {
       } else {
         toast.error("Pedido registrado, mas o e-mail não foi confirmado. Consulte o pedido antes de tentar reenviar.", { duration: 9000 });
       }
-      navigate({ to: "/pedidos/$id", params: { id: orderId } });
+      setSentResult(emailSent ? "sent" : "failed");
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -160,6 +161,22 @@ function OrderPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  if (sentResult) {
+    return (
+      <section className="surface-card mx-auto max-w-lg space-y-5 p-6 text-center" role="status" aria-live="polite">
+        <h1 className="text-2xl font-black text-[#102a52]">
+          {sentResult === "sent" ? "Pedido enviado à Netinho, obrigado pela presteza!" : "Pedido registrado, mas o envio à Netinho não foi confirmado."}
+        </h1>
+        {sentResult === "failed" && (
+          <p className="text-sm text-red-700">O pedido foi salvo. Verifique o envio em Minhas Vendas antes de tentar novamente. Não crie outro pedido.</p>
+        )}
+        <Button asChild className="w-full bg-[#102a52] text-white">
+          <Link to="/pedidos">Ir para Minhas Vendas</Link>
+        </Button>
+      </section>
+    );
   }
 
   if (d.items.length === 0) {
