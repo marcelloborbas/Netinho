@@ -50,6 +50,7 @@ function MonthlySalesReport() {
   const brasil = brazilMonth(today);
   const [year, setYear] = useState(Number(brasil.slice(0, 4)));
   const [month, setMonth] = useState(Number(brasil.slice(5, 7)));
+  const [selectedClient, setSelectedClient] = useState("todos");
   const { data = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["sales-monthly-report", year, month],
     queryFn: () => loadMonth(year, month),
@@ -73,6 +74,9 @@ function MonthlySalesReport() {
     }
     return { customers: [...groups.values()].sort((a,b) => b.total - a.total || a.name.localeCompare(b.name)), total, count };
   }, [data]);
+  const visibleCustomers = selectedClient === "todos" ? customers : customers.filter(c => c.name === selectedClient);
+  const visibleTotal = visibleCustomers.reduce((sum, c) => sum + c.total, 0);
+  const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
   return <main className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-24 sm:px-5">
@@ -90,14 +94,22 @@ function MonthlySalesReport() {
         </select>
       </label>
     </section>
+    <section className="rounded-xl border border-blue-200 bg-white p-4">
+      <label className="block text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio">Cliente</label>
+      <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-2 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-3 text-base font-semibold text-[#102a52]">
+        <option value="todos">Todos os clientes ({customers.length})</option>
+        {customers.map((customer, i) => <option key={i} value={customer.name}>{customer.name}</option>)}
+      </select>
+      <p className="mt-2 text-xs text-slate-600">Selecione um cliente para ver somente os pedidos e o total dele no mês escolhido.</p>
+    </section>
     <section className="rounded-2xl bg-red-700 px-4 py-5 text-center text-white" aria-live="polite">
       <p className="text-sm font-extrabold uppercase">Total de vendas · {MONTHS[month-1]} de {year}</p>
-      <p className="mt-1 text-3xl font-black">{isLoading ? "Carregando..." : brl(total)}</p>
-      <p className="mt-2 text-sm font-semibold">{count} pedidos · {customers.length} clientes</p>
+      <p className="mt-1 text-3xl font-black">{isLoading ? "Carregando..." : brl(visibleTotal)}</p>
+      <p className="mt-2 text-sm font-semibold">{visibleCount} pedidos · {visibleCustomers.length} clientes</p>
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
-    {customers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
+    {visibleCustomers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 break-words text-lg font-black">{customer.name}</h2>
         <strong className="rounded-lg bg-[#102a52] px-3 py-2 text-white">{brl(customer.total)}</strong>
