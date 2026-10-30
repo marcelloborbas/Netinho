@@ -14,8 +14,8 @@ export function HomePartsCarousel() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   useEffect(() => {
-    if (paused) return;
-    const id = window.setInterval(() => setIndex(i => (i + 1) % parts.length), 2200);
+    if (paused || (typeof document !== "undefined" && document.hidden)) return;
+    const id = window.setInterval(() => { if (!document.hidden) setIndex(i => (i + 1) % parts.length); }, 3200);
     return () => window.clearInterval(id);
   }, [paused]);
   // Carrega apenas o destaque e o próximo slide; as demais imagens entram sob demanda.
