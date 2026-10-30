@@ -60,13 +60,23 @@ function Orders() {
       setDeletingId(null);
     }
   }
-  const list = (data ?? []).filter(o => o.status !== "cancelled");
+  // Ciclo mensal de Brasília; histórico permanece no banco e no relatório.
+  const monthKey = (date: Date) => {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit" }).formatToParts(date);
+    return parts.find(p => p.type === "year")?.value + "-" + parts.find(p => p.type === "month")?.value;
+  };
+  const thisMonth = monthKey(new Date());
+  const list = (data ?? []).filter(o => o.status !== "cancelled" && monthKey(new Date(o.created_at)) === thisMonth);
   const totalPedidos = list.filter(o => o.kind !== "orcamento").reduce((sum,o) => sum + Number(o.total || 0),0);
   return (
     <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-3 px-2 pb-24 sm:px-4">
+      <img src="/images/lia-cabe%C3%A7alho-minhas%20vendas.webp" alt="Cabeçalho ilustrado de Minhas Vendas" className="mx-auto h-auto w-full rounded-2xl object-contain" />
       <h1 className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-3 py-3 text-center text-[clamp(1.5rem,6vw,2rem)] font-black uppercase text-white">MINHAS VENDAS</h1>
       <Link to="/pedidos/relatorio" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#d4af37] bg-white px-4 py-3 text-center text-base font-black uppercase text-[#102a52] shadow-sm hover:bg-blue-50"><ChartColumnIncreasing size={22}/> Relatório de Vendas por Cliente e Mês</Link>
       <section className="rounded-2xl border-2 border-red-800 bg-red-700 px-3 py-3 text-center text-white shadow-md" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total das vendas realizadas</p><p className="mt-1 text-3xl font-black">{brl(totalPedidos)}</p></section>
+      <div className="relative">
+        <img src="/images/lia-minhas%20vendas.webp" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.06]" loading="lazy" />
+        <div className="relative">
       {isLoading ? <div className="surface-card h-24 animate-pulse" /> : list.length === 0 ? (
         <p className="surface-card p-5 text-sm text-muted-foreground">Nenhum pedido encontrado.</p>
       ) : (
@@ -97,6 +107,9 @@ function Orders() {
           })}
         </ul>
       )}
+        </div>
+      </div>
+      <img src="/images/lia-rodap%C3%A9-minhas%20vendas.webp" alt="Arte de rodapé de Minhas Vendas" className="mx-auto h-auto w-full rounded-2xl object-contain" loading="lazy" />
     </div>
   );
 }
