@@ -258,8 +258,11 @@ function OrderPage() {
     <div className="space-y-5">
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] isolate overflow-y-auto overscroll-contain bg-[#0862bd] p-0" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="relative mx-auto h-[100dvh] min-h-[600px] w-full overflow-hidden sm:h-auto sm:min-h-0 sm:max-w-[600px] sm:aspect-[9/16]">
-            <img src="/images/lia-confirmacao-pedido-web.webp?v=875902f2" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
+          <div className="relative mx-auto w-full max-w-[600px] aspect-[9/20] overflow-hidden sm:aspect-[9/16]">
+            <picture>
+              <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2" />
+              <img src="/images/lia-confirmacao-pedido-mobile.webp?v=b2af2f61" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
+            </picture>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
             <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[44%] bottom-[25%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
