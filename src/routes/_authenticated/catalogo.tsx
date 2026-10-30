@@ -163,14 +163,17 @@ function Catalog() {
     setPage(1);
   }, [search.marca, search.q]);
 
-  const localFco = useMemo(() => campaignOffers.filter(([code]) => !products.some((p) => p.code.toUpperCase() === code.toUpperCase() && (p.manufacturer ?? "FCO") === "FCO")).map(([code, application, price, stock]) => ({
+  const localFco = useMemo(() => {
+    const registeredFcoCodes = new Set(products.filter((p) => (p.manufacturer ?? "FCO") === "FCO").map((p) => p.code.toUpperCase()));
+    return campaignOffers.filter(([code]) => !registeredFcoCodes.has(code.toUpperCase())).map(([code, application, price, stock]) => ({
     id: `fco-campaign-${code}`, code, application, refs: "",
     categories: { name: "Caixas de direção" }, category_id: "fco-campaign",
     manufacturer: "FCO" as const, image_url: null, catalog_page: null,
     price_cash: null, price_30: null, price_30_45_60: price,
     price_30_45_60_75: null, price_note: "Campanha outubro/2026", search_text: null,
     stock, active: true, brand: "FCO", created_at: "", updated_at: "", localOnly: true,
-  })) as CatalogProduct[], [campaignOffers, products]);
+  })) as CatalogProduct[];
+  }, [campaignOffers, products]);
   const combined = useMemo(() => {
     // Indexa os códigos HD uma vez, evitando percorrer todos os produtos
     // para cada item do catálogo local.
@@ -323,7 +326,7 @@ function Catalog() {
           const photo = categoryPhoto(name);
           return <div key={name} className="catalog-category-item">
             <button type="button" aria-label={displayCategoryName(name)} title={displayCategoryName(name)} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}>
-              {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={displayCategoryName(name)} loading="lazy" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
+              {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={displayCategoryName(name)} loading="lazy" decoding="async" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
             </button>
             <span className="catalog-category-count">{categoryCounts.counts.get(name) ?? 0} Itens</span>
           </div>;
@@ -332,7 +335,7 @@ function Catalog() {
       <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">3 - SELECIONE O VEÍCULO</p>
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
         {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
-          <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+          <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" decoding="async" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
           <span>{brand.name}</span>
           
         </button><span className="text-[11px] font-bold text-[#102a52]">{brand.count} peças</span></div>)}
