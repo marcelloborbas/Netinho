@@ -2,6 +2,7 @@ import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Trash2, Minus, Plus, X, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -255,12 +256,8 @@ function OrderPage() {
 
   return (
     <div className="space-y-5">
-      {confirmOpen && (
-        <div className="fixed inset-0 z-[6000] isolate overflow-y-auto overscroll-contain bg-[#0862bd] p-0" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          {/* A tela do celular pode ser mais alta que 9:16. A própria arte continua no fundo, sem uma faixa escura separada. */}
-          <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-            <div className="absolute -inset-8 bg-cover bg-center blur-2xl" style={{ backgroundImage: 'url("/images/lia-confirmacao-pedido-nova.webp?v=20261030-nova")' }} />
-          </div>
+      {confirmOpen && createPortal(
+        <div className="fixed inset-0 z-[99999] isolate overflow-y-auto overscroll-contain bg-[#0862bd] p-0" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
           <div className="relative mx-auto w-full max-w-[600px] overflow-hidden" style={{ aspectRatio: "9 / 16" }}>
             <img src="/images/lia-confirmacao-pedido-nova.webp?v=20261030-nova" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
@@ -281,7 +278,7 @@ function OrderPage() {
             <button type="button" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#7dd3fc] disabled:cursor-wait"/>
           </div>
         </div>
-      )}
+      , document.body)}
       <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
         <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
           {review ? "Revisar pedido" : "Pedido"}
