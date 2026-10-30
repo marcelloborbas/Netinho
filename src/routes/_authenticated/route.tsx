@@ -11,7 +11,6 @@ import {
   Contact,
   Settings,
 } from "lucide-react";
-import { BrandHeader } from "@/components/BrandHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 
 import { brl } from "@/lib/brand";
@@ -69,31 +68,6 @@ function AppShell() {
   }
   return (
     <div className={fullScreenEmptyOrder ? "min-h-[100dvh] bg-[#d9f1ff] pb-20" : pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
-      {!fullScreenEmptyOrder && <BrandHeader />}
-      {!fullScreenEmptyOrder && <div className="app-navigation-bar">
-        <nav aria-label="Navegação da área" className="flex items-center gap-1">
-            {nav.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                activeOptions={{ exact: true }}
-                className="nav-link"
-                activeProps={{ className: "nav-link active" }}
-              >
-                {n.label}
-              </Link>
-            ))}
-            {access?.level === 1 && (
-              <Link to="/admin" className="nav-link">
-                Administração
-              </Link>
-            )}
-        </nav>
-        <button onClick={logout} className="app-navigation-logout" aria-label="Sair da conta">
-          <LogOut size={18} /> Sair
-        </button>
-      </div>
-      }
       <main className={fullScreenEmptyOrder ? "w-full min-h-[100dvh] p-0" : pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
         <Outlet />
       </main>
