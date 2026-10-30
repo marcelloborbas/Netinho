@@ -81,9 +81,23 @@ const volkswagenModelImages: Record<string, string> = {
   up: "/images/veiculos/volkswagen/up.webp",
 };
 
+const fiatModelImages: Record<string, string> = {
+  uno: "/images/veiculos/fiat/uno.webp",
+  palio: "/images/veiculos/fiat/palio.webp",
+  siena: "/images/veiculos/fiat/siena.webp",
+  strada: "/images/veiculos/fiat/strada.webp",
+  argo: "/images/veiculos/fiat/argo.webp",
+  mobi: "/images/veiculos/fiat/mobi.webp",
+  toro: "/images/veiculos/fiat/toro.webp",
+  cronos: "/images/veiculos/fiat/cronos.webp",
+  punto: "/images/veiculos/fiat/punto.webp",
+  "doblò": "/images/veiculos/fiat/doblo.webp",
+  fiorino: "/images/veiculos/fiat/fiorino.webp",
+};
+
 function VehicleModelPicture({name}:{name:string}) {
   const key=name.trim().toLowerCase();
-  const photo=volkswagenModelImages[key] ?? vehicleModelPhotos[key];
+  const photo=volkswagenModelImages[key] ?? fiatModelImages[key] ?? vehicleModelPhotos[key];
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
   return photo&&!failed ? <img src={photo} alt={`Foto ilustrativa do modelo ${name}`} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)} className="h-full w-full rounded-lg bg-white object-contain" /> : <VehicleModelIllustration name={name}/>;
