@@ -72,16 +72,16 @@ function Home() {
   if (!entryApproved) return null;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="flex w-full flex-1 flex-col items-center gap-3 px-0 pt-3 pb-24 sm:gap-5 sm:pt-6">
-        <section className="relative mx-auto w-[calc(100%-24px)] max-w-3xl overflow-hidden rounded-[24px] border border-[#d5e1ee] bg-[#102e54] bg-[url('/images/fundo-saudacao.webp')] bg-cover bg-center px-5 py-5 text-left text-white shadow-[0_12px_26px_rgba(5,30,65,0.24)] sm:px-8 sm:py-7" aria-label="Boas-vindas ao Netinho">
+      <main className="flex w-full flex-1 flex-col items-center gap-4 px-3 pt-4 pb-24 sm:gap-6 sm:px-6 sm:pt-7">
+        <section className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-[24px] border border-[#d5e1ee] bg-[#102e54] bg-[url('/images/fundo-saudacao.webp')] bg-cover bg-center px-5 py-6 text-left text-white shadow-[0_12px_26px_rgba(5,30,65,0.24)] sm:px-8 sm:py-8" aria-label="Boas-vindas ao Netinho">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#071d3bd9] via-[#102e54a8] to-[#102e541a]" aria-hidden="true" />
 
           <div className="relative flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#f8d878]"><Sparkles size={15} /> Netinho Auto Parts</div>
-          <h1 className="relative mt-2 text-[clamp(1.5rem,5.8vw,2.3rem)] font-black leading-[1.15] tracking-tight">{salutation}, Sr. {userName || "usuário"}!</h1>
+          <h1 className="relative mt-3 text-[clamp(1.5rem,5.8vw,2.3rem)] font-black leading-[1.2] tracking-tight">{salutation}, Sr. {userName || "usuário"}!</h1>
           <p className="relative mt-2 text-[13px] font-semibold text-[#dce9f8] sm:text-base">É bom tê-lo conosco. Que seu dia seja abençoado!</p>
           <div className="relative mt-4 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#f2bb2d] to-transparent" />
         </section>
-        <section className="w-full min-w-0" aria-label="Imagens de produtos em rotação automática">
+        <section className="w-full min-w-0 max-w-3xl" aria-label="Imagens de produtos em rotação automática">
           <HomePartsCarousel />
         </section>
       </main>
