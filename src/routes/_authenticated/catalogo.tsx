@@ -256,10 +256,10 @@ function Catalog() {
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
-    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-4 px-2 pt-4 pb-28 sm:px-6 sm:pt-6 sm:pb-32">
-      <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-[22px] border-[3px] border-[#d4af37] bg-gradient-to-b from-[#153d72] to-[#061d3b] px-3 py-4 text-center shadow-[0_5px_12px_rgba(8,35,75,0.2)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
-        <div className="flex flex-col items-center gap-1"><h1 className="w-full text-center text-[clamp(1.35rem,5.5vw,2.25rem)] font-black uppercase leading-tight tracking-wide text-[#ffe28a] drop-shadow-[0_2px_2px_rgba(0,0,0,0.45)] sm:text-[36px]">CATÁLOGOS DE PEÇAS</h1><p className="text-center text-[10px] font-bold uppercase tracking-wider text-white sm:text-xs">Encontre a peça certa para seu cliente</p></div>
-      </header>
+    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-4 px-2 pt-2 pb-28 sm:px-6 sm:pt-4 sm:pb-32">
+      <div className="mx-auto w-full overflow-hidden rounded-2xl shadow-[0_5px_20px_rgba(0,48,105,0.25)]" aria-label="Catálogo de peças">
+        <img src="/images/logo%20catalogo%20de%20pe%C3%A7as.webp" alt="Catálogo de Peças" className="block h-auto w-full object-contain" loading="eager" decoding="async" />
+      </div>
 
       <section className="space-y-3 rounded-[22px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-3 shadow-lg sm:p-4" aria-label="Pesquisar catálogo">
         <div className="w-full" role="search">
@@ -333,7 +333,7 @@ function Catalog() {
         })}
       </nav>
       <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">3</span>SELECIONE A MARCA DA MONTADORA</p>
-      <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
+      <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-xl bg-gradient-to-r from-[#f7fbff] via-white to-[#edf5ff] px-2 py-3 [scrollbar-width:thin]">
         {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 snap-start flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex min-h-[76px] min-w-[88px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 px-3 py-2 text-xs font-bold shadow-sm transition-colors ${vehicleBrand === brand.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52] ring-2 ring-[#d4af37]/30" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" decoding="async" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
           <span>{brand.name}</span>
@@ -342,9 +342,13 @@ function Catalog() {
       </nav>
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
         <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>SELECIONE O MODELO DO VEÍCULO</p>
-        {availableVehicleModels.length ? <div className="flex flex-wrap gap-2">
-          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`min-h-11 rounded-xl border-2 px-3 py-2 text-xs font-bold shadow-sm transition-colors ${vehicleModel === model.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
-            {model.name} <span className="opacity-65">({model.count})</span>
+        {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
+          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[144px] min-w-[124px] max-w-[148px] shrink-0 snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#e9f3ff] p-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
+            <span className="flex h-[83px] w-full items-center justify-center rounded-xl bg-gradient-to-b from-[#f7fbff] to-[#dcebf9] text-[#174477]">
+              <CarFront size={60} strokeWidth={1.25} aria-hidden="true" className="drop-shadow-[0_3px_2px_rgba(14,55,99,0.2)] transition-transform duration-200 group-hover:scale-110"/>
+            </span>
+            <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
+            <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>
           </button>)}
         </div> : <p className="text-xs text-[#102a52]">Nenhum modelo identificado nas aplicações cadastradas para esta marca.</p>}
       </section>}
