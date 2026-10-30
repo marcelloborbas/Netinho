@@ -59,6 +59,20 @@ const vehicleModels: Record<string, string[]> = {
 };
 const mentionsModel = (application: string, model: string) =>
   new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
+/** Fotografias identificadas por modelo, com origem no Wikimedia Commons. */
+const vehicleModelPhotos: Record<string, string> = {
+  gol: "https://commons.wikimedia.org/wiki/Special:FilePath/VW_Gol_2009_front.jpg?width=420",
+  saveiro: "https://commons.wikimedia.org/wiki/Special:FilePath/Volkswagen_Saveiro_1.6_Power_2022.jpg?width=420",
+  voyage: "https://commons.wikimedia.org/wiki/Special:FilePath/2011_gol_1.6_trendline_sedan.jpg?width=420",
+};
+function VehicleModelPicture({name}:{name:string}) {
+  const key=name.trim().toLowerCase();
+  const photo=vehicleModelPhotos[key];
+  const [failed,setFailed]=useState(false);
+  useEffect(()=>setFailed(false),[photo]);
+  return photo&&!failed ? <img src={photo} alt={`Foto ilustrativa do modelo ${name}`} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)} className="h-full w-full object-contain mix-blend-multiply" /> : <VehicleModelIllustration name={name}/>;
+}
+
 /** Miniaturas vetoriais locais, com silhuetas e cores próprias por modelo. */
 function VehicleModelIllustration({ name }: { name: string }) {
   const pickup = /saveiro|strada|montana|oroch|toro|s10|hilux|ranger|amarok|frontier/i.test(name);
@@ -376,7 +390,7 @@ function Catalog() {
         {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
           {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[144px] min-w-[144px] max-w-[164px] shrink-0 snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#e9f3ff] p-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
             <span className="flex h-[88px] w-full items-center justify-center rounded-xl bg-gradient-to-b from-white to-[#eef4fa] text-[#174477]">
-              <VehicleModelIllustration name={model.name} />
+              <VehicleModelPicture name={model.name} />
             </span>
             <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
             <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>
