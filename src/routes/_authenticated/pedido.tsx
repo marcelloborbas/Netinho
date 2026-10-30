@@ -230,8 +230,8 @@ function OrderPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           Pesquise produtos e adicione ao pedido.
         </p>
-        <Button asChild className="mt-5 bg-gradient-red">
-          <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }}>Selecionar cliente e peças</Link>
+        <Button asChild className="mt-6 h-20 min-h-20 w-full max-w-lg rounded-2xl border-2 border-white bg-[#15803d] px-6 text-xl font-black uppercase tracking-wide text-white shadow-[0_7px_0_#14532d,0_12px_22px_#14532d44] transition-all hover:-translate-y-1 hover:bg-[#16a34a] hover:text-white active:translate-y-1 active:shadow-[0_2px_0_#14532d] sm:h-24 sm:min-h-24 sm:text-2xl">
+          <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }}>FAZER PEDIDO</Link>
         </Button>
       </div>
     );
