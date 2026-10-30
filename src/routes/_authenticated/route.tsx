@@ -68,7 +68,7 @@ function AppShell() {
     navigate({ to: "/auth" });
   }
   return (
-    <div className={fullScreenEmptyOrder ? "min-h-[100dvh] bg-[#d9f1ff]" : pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
+    <div className={fullScreenEmptyOrder ? "min-h-[100dvh] bg-[#d9f1ff] pb-20" : pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
       {!fullScreenEmptyOrder && <BrandHeader />}
       {!fullScreenEmptyOrder && <div className="app-navigation-bar">
         <nav aria-label="Navegação da área" className="flex items-center gap-1">
@@ -111,7 +111,7 @@ function AppShell() {
           <b className="shrink-0 whitespace-nowrap text-lg font-black text-[#FFED00] drop-shadow-[0_0_5px_rgba(255,237,0,0.45)] sm:text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-      {!fullScreenEmptyOrder && <PublicFooter />}
+      <PublicFooter />
     </div>
   );
 }
