@@ -2845,7 +2845,7 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 .welcome-auth-stage .welcome-auth-art {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   transform: none !important;
 }
