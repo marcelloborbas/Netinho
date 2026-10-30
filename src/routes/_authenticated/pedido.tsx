@@ -256,36 +256,34 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       {confirmOpen && (
-        <div className="fixed inset-0 z-[6000] flex items-center justify-center bg-[#06172e]/85 px-3 py-4 backdrop-blur-[3px]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="relative z-[2] flex max-h-[min(90dvh,760px)] w-full max-w-lg flex-col overflow-hidden rounded-[26px] border-[3px] border-[#d4af37] bg-white shadow-[0_20px_70px_#0007]">
-            <div className="relative shrink-0 bg-gradient-to-br from-[#102a52] to-[#17609b] px-5 pb-5 pt-5 text-center text-white">
-              <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="absolute right-3 top-3 rounded-full border border-white/40 bg-white/15 p-2 text-white hover:bg-white/25"><X size={21}/></button>
-              <div className="mx-auto mb-3 flex max-w-sm items-center gap-3 rounded-2xl border border-[#facc15]/70 bg-white/10 p-3 text-left shadow-lg">
-                <img src="/images/lia-confirma%20pedido.webp" alt="LIA, assistente da Netinho" loading="lazy" decoding="async" className="h-20 w-20 shrink-0 rounded-xl object-contain sm:h-24 sm:w-24" />
-                <div>
-                  <p className="text-sm font-black uppercase tracking-wide text-[#facc15]">LIA informa</p>
-                  <p className="mt-1 text-base font-semibold leading-snug text-white">Confira o cliente, o pagamento e o valor. Tudo certo? É só enviar seu pedido!</p>
+        <div className="fixed inset-0 z-[6000] flex items-center justify-center bg-[#06172e]/90 px-3 py-3 backdrop-blur-[3px]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+          <div className="relative max-h-[94dvh] w-full max-w-[460px] overflow-y-auto rounded-[24px] border-2 border-[#d4af37] bg-[#102a52] shadow-[0_20px_70px_#0009]">
+            <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
+              <img
+                src="/images/lia-confirmacao-pedido.webp"
+                alt="LIA apresenta a confirmação do pedido"
+                className="absolute inset-0 h-full w-full object-fill"
+                decoding="async"
+              />
+              <h2 id="lia-confirm-title" className="sr-only">Tudo pronto para enviar? Confira seu pedido.</h2>
+              <button type="button" aria-label="Fechar confirmação e revisar pedido" onClick={closeConfirmation} className="absolute right-[3%] top-[2%] z-20 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#102a52] text-white shadow-md hover:bg-[#174e83]"><X size={22}/></button>
+              {/* A arte é ilustrativa: este painel cobre os dados fictícios e exibe os dados reais do pedido. */}
+              <section aria-label="Resumo real do pedido" className="absolute left-[9%] right-[9%] top-[47%] z-10 rounded-xl border-2 border-[#d4af37] bg-[#f7fbff] px-3 py-3 text-[#102a52] shadow-lg sm:px-4">
+                <p className="text-center text-sm font-black uppercase tracking-wide sm:text-base">Resumo do pedido</p>
+                <div className="mt-2 space-y-1 text-xs font-semibold sm:text-sm">
+                  <p className="break-words"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
+                  <p className="break-words"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
+                  <p><strong>Peças:</strong> {d.items.length}</p>
                 </div>
-              </div>
-              <h2 id="lia-confirm-title" className="text-2xl font-black uppercase tracking-wide sm:text-3xl">Tudo pronto para enviar?</h2>
-              <p className="mt-2 text-base font-semibold text-[#e1f4ff]">Confira os dados do pedido antes de concluir sua venda!</p>
-            </div>
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-6">
-              <div className="rounded-2xl border border-[#b8d9f2] bg-[#f0f8ff] p-4 text-[#102a52]">
-                <p className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wide"><CheckCircle2 size={19} className="text-[#16845b]"/> Resumo do pedido</p>
-                <p className="break-words text-base"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
-                <p className="mt-2 text-base"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
-                <p className="mt-2 text-base"><strong>Peças:</strong> {d.items.length}</p>
-                <div className="mt-3 rounded-xl bg-[#b91c1c] px-4 py-3 text-center text-white">
-                  <p className="text-xs font-bold uppercase tracking-wide">Valor total do pedido</p>
-                  <p className="text-2xl font-black">{brl(t.net)}</p>
+                <div className="mt-2 rounded-lg bg-[#b91c1c] px-2 py-2 text-center text-white">
+                  <p className="text-[10px] font-bold uppercase tracking-wide sm:text-xs">Valor total do pedido</p>
+                  <p className="text-xl font-black tabular-nums sm:text-2xl">{brl(t.net)}</p>
                 </div>
+              </section>
+              <div className="absolute bottom-[4.5%] left-[5%] right-[5%] z-20 grid grid-cols-2 gap-[3%]">
+                <button type="button" onClick={closeConfirmation} className="flex min-h-12 items-center justify-center rounded-xl border-2 border-[#d4af37] bg-gradient-to-b from-[#ffe69a] to-[#d4a532] px-1 py-2 text-xs font-black uppercase text-[#102a52] shadow-[0_4px_0_#8b661a] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 sm:text-sm">Revisar Pedido</button>
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }} className="flex min-h-12 items-center justify-center rounded-xl border-2 border-white bg-gradient-to-b from-[#8de6ff] to-[#26a8ed] px-1 py-2 text-xs font-black uppercase text-[#07345d] shadow-[0_4px_0_#12608e] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-60 sm:text-sm">{busy ? "Enviando..." : "Enviar Pedido"}</button>
               </div>
-              <p className="text-center text-sm font-semibold text-[#102a52]">Que Deus abençoe seu dia e suas vendas!</p>
-            </div>
-            <div className="grid shrink-0 grid-cols-2 gap-3 border-t border-slate-200 bg-white px-4 py-4 sm:px-6">
-              <Button type="button" className="h-16 rounded-xl border-2 border-[#d4af37] bg-gradient-to-b from-[#f7d777] to-[#d4a532] px-2 text-sm font-black text-[#102a52] shadow-[0_5px_0_#9a751f] transition-transform hover:-translate-y-0.5 hover:from-[#ffe9a0] hover:to-[#e9bc4c] active:translate-y-0.5 sm:text-base" onClick={closeConfirmation}>Corrigir Pedido</Button>
-              <Button type="button" className="h-16 rounded-xl border-2 border-white bg-gradient-to-b from-[#91e6ff] to-[#2fb7f3] px-2 text-sm font-black text-[#07345d] shadow-[0_5px_0_#1374aa] transition-transform hover:-translate-y-0.5 hover:from-[#b3efff] hover:to-[#58ccff] active:translate-y-0.5 sm:text-base" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
             </div>
           </div>
         </div>
