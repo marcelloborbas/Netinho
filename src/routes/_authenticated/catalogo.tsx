@@ -59,23 +59,34 @@ const vehicleModels: Record<string, string[]> = {
 };
 const mentionsModel = (application: string, model: string) =>
   new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
-/** Ilustração vetorial local: não depende de fotos externas nem inventa ano/modelo. */
+/** Miniaturas vetoriais locais, com silhuetas e cores próprias por modelo. */
 function VehicleModelIllustration({ name }: { name: string }) {
   const pickup = /saveiro|strada|montana|oroch|toro|s10|hilux|ranger|amarok|frontier/i.test(name);
   const suv = /tracker|creta|tucson|duster|renegade|compass|commander|ecosport|kicks|hr-v|t-cross|nivus|2008|3008/i.test(name);
-  const sedan = /voyage|virtus|prisma|classic|cruze|corolla|civic|city|versa|sentra|logan|siena|cronos|fusion|jetta/i.test(name);
-  const roof = pickup ? "M45 45 L62 26 Q65 23 72 23 L100 23 Q105 24 108 28 L120 45" : suv ? "M37 46 L54 24 Q57 20 64 20 L119 20 Q126 21 131 27 L143 46" : sedan ? "M34 46 L57 29 Q63 25 70 25 L112 25 Q121 25 128 32 L140 46" : "M37 46 L57 27 Q61 23 69 23 L111 23 Q117 24 123 30 L137 46";
-  const rear = pickup ? "M120 45 L178 45 L178 60" : "M140 46 L174 50 L181 59";
-  return <svg viewBox="0 0 210 90" role="img" aria-label={`Ilustração do veículo ${name}`} className="h-full w-full drop-shadow-[0_5px_3px_rgba(22,40,65,0.22)]">
-    <defs><linearGradient id="car-silver" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0%" stopColor="#fff"/><stop offset="50%" stopColor="#cbd3dc"/><stop offset="100%" stopColor="#7e8c9b"/></linearGradient><linearGradient id="car-glass" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#294b68"/><stop offset="100%" stopColor="#9db2c2"/></linearGradient></defs>
-    <ellipse cx="105" cy="74" rx="91" ry="8" fill="#587087" opacity=".18"/>
-    <path d={`M22 58 L29 48 L37 46 ${roof} ${rear} L187 63 L186 70 L22 70 Z`} fill="url(#car-silver)" stroke="#546171" strokeWidth="1.8"/>
-    <path d={pickup ? "M49 44 L65 29 L99 29 L112 44 Z" : suv ? "M45 44 L59 26 L118 26 L133 44 Z" : sedan ? "M45 44 L61 31 L113 31 L131 44 Z" : "M45 44 L61 29 L109 29 L128 44 Z"} fill="url(#car-glass)" stroke="#62778b" strokeWidth="1.4"/>
-    <path d="M86 28 L87 44 M125 45 L125 64" stroke="#627181" strokeWidth="1.5"/>
-    <path d="M29 57 L42 55 M166 55 L181 58" stroke="#fff4d4" strokeWidth="3" strokeLinecap="round"/>
-    <path d="M27 65 L184 65" stroke="#8995a3" strokeWidth="1.4"/>
-    <circle cx="59" cy="69" r="13" fill="#242d39"/><circle cx="59" cy="69" r="7" fill="#dfe5eb" stroke="#778596" strokeWidth="2"/>
-    <circle cx="156" cy="69" r="13" fill="#242d39"/><circle cx="156" cy="69" r="7" fill="#dfe5eb" stroke="#778596" strokeWidth="2"/>
+  const sedan = /voyage|virtus|prisma|classic|cruze|corolla|civic|city|versa|sentra|logan|siena|cronos|fusion|jetta|astra/i.test(name);
+  const compact = /celta|corsa|gol|uno|mobi|kwid|ka|up|fox|palio|polo/i.test(name);
+  const palette: Record<string, string> = { Gol:"#c2c7cc", Saveiro:"#e3e6e9", Voyage:"#838e98", Amarok:"#c4cbd1", Polo:"#f0f1f3", Astra:"#9da9b8", Celta:"#e2e7ec", Corsa:"#aebac7", Onix:"#d3d8dd", Uno:"#cfdee8", Palio:"#b9c6cf", Strada:"#d6dce2", Corolla:"#d7dce0", HB20:"#cbd4dc", Fiesta:"#bdc8d3" };
+  const paint = palette[name] ?? ["#c4cbd2","#d7dce1","#a8b6c5","#e0e4e8"][Array.from(name).reduce((sum,c)=>sum+c.charCodeAt(0),0)%4];
+  const cab = pickup ? "M47 47 L64 26 Q67 23 74 23 L104 23 Q109 24 112 29 L121 47" : suv ? "M35 47 L53 24 Q56 20 64 20 L119 20 Q126 21 133 28 L145 47" : sedan ? "M36 47 L58 29 Q63 25 70 25 L111 25 Q120 25 129 33 L142 47" : "M39 47 L59 26 Q63 22 71 22 L112 22 Q118 23 125 31 L138 47";
+  const glazing = pickup ? "M51 44 L67 29 L102 29 L114 44 Z" : suv ? "M44 44 L59 26 L119 26 L135 44 Z" : sedan ? "M46 44 L62 31 L113 31 L132 44 Z" : "M48 44 L64 28 L110 28 L128 44 Z";
+  const tail = pickup ? "M121 47 L182 47 L185 64" : suv ? "M145 47 L178 53 L183 64" : sedan ? "M142 47 L178 53 L183 64" : "M138 47 L175 52 L183 64";
+  const rearWheel = pickup ? 157 : suv ? 157 : sedan ? 157 : compact ? 151 : 156;
+  const uid = name.toLowerCase().replace(/[^a-z0-9]/g,"");
+  return <svg viewBox="0 0 210 92" role="img" aria-label={`Miniatura ilustrada de ${name}`} className="h-full w-full transition-transform duration-200 group-hover:scale-105">
+    <defs>
+      <linearGradient id={`paint-${uid}`} x1="0" y1="0" x2=".3" y2="1"><stop offset="0%" stopColor="#fff"/><stop offset="48%" stopColor={paint}/><stop offset="100%" stopColor="#778492"/></linearGradient>
+      <linearGradient id={`glass-${uid}`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="#213c56"/><stop offset="100%" stopColor="#9cb3c7"/></linearGradient>
+    </defs>
+    <ellipse cx="105" cy="77" rx="90" ry="7" fill="#566d85" opacity=".17"/>
+    <path d={`M19 64 L27 52 L39 47 ${cab} ${tail} L187 69 L184 74 L23 74 L18 70 Z`} fill={`url(#paint-${uid})`} stroke="#526171" strokeWidth="1.8"/>
+    <path d={glazing} fill={`url(#glass-${uid})`} stroke="#617689" strokeWidth="1.3"/>
+    <path d={pickup ? "M88 29 L88 44 M119 48 L119 65" : "M88 28 L88 44 M128 48 L128 65"} stroke="#65788b" strokeWidth="1.6"/>
+    <path d="M28 59 L41 57" stroke="#fff3c6" strokeWidth="3.5" strokeLinecap="round"/>
+    <path d="M174 59 L184 62" stroke="#b94444" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M27 68 L182 68" stroke="#8995a3" strokeWidth="1.3"/>
+    <path d="M96 52 L112 52 M100 54 L107 54" stroke="#5c6d7e" strokeWidth="1.2" strokeLinecap="round"/>
+    <circle cx="58" cy="72" r="13" fill="#202a35" stroke="#536170" strokeWidth="1"/><circle cx="58" cy="72" r="7.5" fill="#e6ebf0" stroke="#8190a0" strokeWidth="2"/><circle cx="58" cy="72" r="2.5" fill="#8e9eaf"/>
+    <circle cx={rearWheel} cy="72" r="13" fill="#202a35" stroke="#536170" strokeWidth="1"/><circle cx={rearWheel} cy="72" r="7.5" fill="#e6ebf0" stroke="#8190a0" strokeWidth="2"/><circle cx={rearWheel} cy="72" r="2.5" fill="#8e9eaf"/>
   </svg>;
 }
 
@@ -364,7 +375,7 @@ function Catalog() {
         <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>SELECIONE O MODELO DO VEÍCULO</p>
         {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
           {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[144px] min-w-[144px] max-w-[164px] shrink-0 snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#e9f3ff] p-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
-            <span className="flex h-[83px] w-full items-center justify-center rounded-xl bg-gradient-to-b from-[#f7fbff] to-[#dcebf9] text-[#174477]">
+            <span className="flex h-[88px] w-full items-center justify-center rounded-xl bg-gradient-to-b from-white to-[#eef4fa] text-[#174477]">
               <VehicleModelIllustration name={model.name} />
             </span>
             <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
