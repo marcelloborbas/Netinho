@@ -256,8 +256,12 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       {confirmOpen && (
-        <div className="fixed inset-0 z-[6000] overflow-y-auto overscroll-contain bg-[#0862bd] p-0" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="relative mx-auto w-full max-w-[600px] overflow-hidden bg-[#0862bd]" style={{ aspectRatio: "9 / 16" }}>
+        <div className="fixed inset-0 z-[6000] isolate overflow-y-auto overscroll-contain bg-[#0862bd] p-0" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+          {/* A tela do celular pode ser mais alta que 9:16. A própria arte continua no fundo, sem uma faixa escura separada. */}
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+            <div className="absolute -inset-8 bg-cover bg-center blur-2xl" style={{ backgroundImage: 'url("/images/lia-confirmacao-pedido-nova.webp?v=20261030-nova")' }} />
+          </div>
+          <div className="relative mx-auto w-full max-w-[600px] overflow-hidden" style={{ aspectRatio: "9 / 16" }}>
             <img src="/images/lia-confirmacao-pedido-nova.webp?v=20261030-nova" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
