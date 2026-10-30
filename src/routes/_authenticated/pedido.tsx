@@ -261,7 +261,7 @@ function OrderPage() {
           <div className="relative mx-auto aspect-[9/20] w-[max(100vw,45dvh)] shrink-0 overflow-hidden sm:w-full sm:max-w-[600px] sm:aspect-[9/16]">
             <picture>
               <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2" />
-              <img src="/images/lia-confirmacao-pedido-mobile.webp?v=b2af2f61" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-fill" decoding="async"/>
+              <img src="/images/lia-confirmacao-pedido-final.webp?v=40bf8e1a" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
             </picture>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
