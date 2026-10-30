@@ -261,8 +261,7 @@ function OrderPage() {
             <img src="/images/lia-confirmacao-pedido.webp" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-fill" decoding="async"/>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
-            <section aria-label="Resumo do pedido" className="absolute left-[13%] right-[13%] top-[44%] bottom-[25%] z-10 flex flex-col justify-center overflow-y-auto rounded-xl border border-[#d4af37] bg-[#f7fbff] px-[4%] py-2 text-[#102a52] shadow-lg">
-              <p className="text-center text-sm font-black uppercase tracking-wide">Resumo do pedido</p>
+            <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[44%] bottom-[25%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
               <div className="mt-2 space-y-1 text-xs font-semibold sm:text-sm">
                 <p className="break-words"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
                 <p className="break-words"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
