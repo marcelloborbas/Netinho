@@ -162,7 +162,7 @@ function OrderPage() {
           <img
             src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a"
             alt="Pedido enviado com sucesso! Parabéns pela venda. Acesse Minhas Vendas para acompanhar seus pedidos."
-            className="block h-auto w-full"
+            className="block h-[100dvh] w-full object-fill"
             draggable={false}
           />
           <Link
@@ -243,10 +243,10 @@ function OrderPage() {
 
   if (d.items.length === 0) {
     return (
-      <main className="mx-auto w-full max-w-[520px] px-2 pb-24 sm:px-4" aria-label="Fazer pedido">
-        <div className="relative w-full overflow-hidden rounded-2xl">
+      <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">
+        <div className="relative min-h-[100dvh] w-full overflow-hidden">
           <img
-            src="/images/lia-fazer-pedido.webp"
+            src="/images/lia-fazer-pedido.webp?v=85885b95"
             alt="LIA convida você a pesquisar produtos e adicioná-los ao pedido. É rápido, fácil e seguro!"
             className="block h-auto w-full"
             decoding="async"
@@ -256,7 +256,7 @@ function OrderPage() {
             search={{ modo: "venda" }}
             aria-label="Fazer pedido: abrir catálogo de peças"
             title="Fazer pedido"
-            className="absolute bottom-[1.5%] left-[3%] h-[14%] w-[94%] cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
+            className="absolute bottom-[4%] left-[3%] h-[12%] w-[94%] cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
           >
             <span className="sr-only">Fazer pedido</span>
           </Link>
