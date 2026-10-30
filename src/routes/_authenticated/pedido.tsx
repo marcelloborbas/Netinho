@@ -223,6 +223,22 @@ function OrderPage() {
     );
   }
 
+  // Enquanto o pedido é registrado e o e-mail é enviado, exibir somente o progresso.
+  // Nunca apresentar a confirmação antes da resposta do servidor.
+  if (busy) {
+    return (
+      <main className="flex min-h-[65dvh] items-center justify-center px-4" role="status" aria-live="polite" aria-busy="true">
+        <div className="w-full max-w-xl text-center">
+          <div className="mx-auto flex min-h-28 w-full items-center justify-center gap-4 rounded-3xl border-2 border-white bg-gradient-to-b from-[#78dcff] to-[#168bd1] px-6 py-6 text-xl font-black uppercase tracking-wide text-white shadow-[0_9px_0_#0c5b92,0_18px_32px_#0b396344] sm:min-h-36 sm:text-2xl">
+            <span className="inline-block h-9 w-9 shrink-0 animate-spin rounded-full border-4 border-white/40 border-t-white motion-reduce:animate-none" aria-hidden="true"/>
+            <span>Enviando o pedido...</span>
+          </div>
+          <p className="mt-6 text-base font-semibold text-[#102a52]">Aguarde a confirmação. Não é necessário clicar novamente.</p>
+        </div>
+      </main>
+    );
+  }
+
   if (d.items.length === 0) {
     return (
       <div className="surface-card p-8 text-center">
