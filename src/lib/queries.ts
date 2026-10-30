@@ -56,6 +56,9 @@ export const productsQuery = queryOptions({
 
 export const customersQuery = queryOptions({
   queryKey: ["customers"],
+  staleTime: 60_000,
+  gcTime: 10 * 60_000,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const { data, error } = await supabase
       .from("customers")
@@ -71,6 +74,9 @@ export const customersQuery = queryOptions({
 
 export const ordersQuery = queryOptions({
   queryKey: ["orders"],
+  staleTime: 30_000,
+  gcTime: 10 * 60_000,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const { data, error } = await supabase
       .from("orders")
