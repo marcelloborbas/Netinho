@@ -180,7 +180,8 @@ function OrderPage() {
   }
 
   if (sentResult) {
-    const successful = sentResult === "sent";
+    // "sent" já retornou na tela de comemoração acima; este bloco cobre apenas a falha.
+    const successful = false;
     return (
       <main className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-[28px] border-2 border-[#d4af37] bg-gradient-to-b from-[#102a52] via-[#123c70] to-[#eaf7ff] shadow-2xl" role="status" aria-live="polite">
         {successful && <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">

@@ -12,20 +12,21 @@ const AUDIO_CUES: Record<string, { starts: number[]; end: number }> = {
 };
 
 function activeOffset(text: string, audio: HTMLAudioElement, progress: number) {
-  const filename = decodeURIComponent(audio.currentSrc || audio.src).split("?")[0].split("/").pop() ?? "";
+  const filename = decodeURIComponent(audio.currentSrc || audio.src).split("?")[0]?.split("/").pop() ?? "";
   const cue = AUDIO_CUES[filename];
   if (!cue) return Math.floor(text.length * progress);
   const paragraphs = [...text.matchAll(/\S[^]*?(?=\n\s*\n|$)/g)];
   if (paragraphs.length !== cue.starts.length) return Math.floor(text.length * progress);
   const time = audio.currentTime;
   let index = 0;
-  for (let i = 1; i < cue.starts.length; i++) if (time >= cue.starts[i]) index = i;
-  const start = cue.starts[index];
+  for (let i = 1; i < cue.starts.length; i++) if (time >= (cue.starts[i] ?? Infinity)) index = i;
+  const start = cue.starts[index] ?? time;
   const end = cue.starts[index + 1] ?? cue.end;
   const paragraph = paragraphs[index];
+  if (!paragraph) return Math.floor(text.length * progress);
   const ratio = Math.max(0, Math.min(0.999, (time - start) / Math.max(0.1, end - start)));
   // Distribuição por palavras dentro da frase, não por caracteres do áudio inteiro.
-  const words = [...paragraph[0].matchAll(/\S+/g)];
+  const words = [...(paragraph[0] ?? "").matchAll(/\S+/g)];
   const word = words[Math.min(words.length - 1, Math.floor(words.length * ratio))];
   return (paragraph.index ?? 0) + (word?.index ?? 0);
 }
