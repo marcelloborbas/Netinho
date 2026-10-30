@@ -1,5 +1,5 @@
 import { customerMinimum } from "@/lib/customer-classes";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -43,6 +43,12 @@ function OrderPage() {
   const selectedCustomer = customers?.find((x) => x.id === d.customerId);
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const router = useRouter();
+  useEffect(() => {
+    if (d.items.length !== 0) return;
+    // Antecipar o carregamento da rota do catálogo enquanto a arte é exibida.
+    void router.preloadRoute({ to: "/catalogo", search: { modo: "venda" } }).catch(() => {});
+  }, [router, d.items.length]);
   const [review, setReview] = useState(false);
   const [busy, setBusy] = useState(false);
   const submissionLock = useRef(false);
@@ -255,6 +261,8 @@ function OrderPage() {
           <Link
             to="/catalogo"
             search={{ modo: "venda" }}
+            preload="render"
+            preloadDelay={0}
             aria-label="Fazer pedido: abrir catálogo de peças"
             title="Fazer pedido"
             className="absolute bottom-[8%] left-[3%] z-30 h-[13%] w-[94%] touch-manipulation cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
