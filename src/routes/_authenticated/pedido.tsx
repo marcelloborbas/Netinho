@@ -246,7 +246,7 @@ function OrderPage() {
       <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">
         <div className="relative min-h-[100dvh] w-full overflow-hidden">
           <img
-            src="/images/lia-fazer-pedido.webp?v=85885b95"
+            src="/images/lia-fazer-pedido.webp?v=0a07bc6f"
             alt="LIA convida você a pesquisar produtos e adicioná-los ao pedido. É rápido, fácil e seguro!"
             className="block h-auto w-full"
             decoding="async"
