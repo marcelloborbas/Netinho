@@ -93,6 +93,7 @@ function AppShell() {
           <LogOut size={18} /> Sair
         </button>
       </div>
+      }
       <main className={fullScreenEmptyOrder ? "w-full min-h-[100dvh] p-0" : pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
         <Outlet />
       </main>
