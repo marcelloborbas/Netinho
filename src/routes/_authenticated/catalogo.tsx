@@ -256,27 +256,27 @@ function Catalog() {
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
-    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-5 px-3 pt-12 pb-28 sm:px-6 sm:pt-14 sm:pb-32">
-      <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-2xl border-2 border-[#d4af37] px-4 py-4 text-center shadow-[0_0_0_1px_rgba(212,175,55,0.15)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
-        <h1 className="w-full text-center text-[27px] font-black uppercase leading-tight tracking-wide text-[#102a52] sm:text-[36px]" style={{ textAlign: "center" }}>CATÁLOGOS DE PEÇAS</h1>
+    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-4 px-2 pt-4 pb-28 sm:px-6 sm:pt-6 sm:pb-32">
+      <header className="catalog-showcase-heading mx-auto flex w-full items-center justify-center rounded-[22px] border-[3px] border-[#d4af37] bg-gradient-to-b from-[#153d72] to-[#061d3b] px-3 py-4 text-center shadow-[0_5px_12px_rgba(8,35,75,0.2)]" style={{ borderColor: "#d4af37", textAlign: "center" }}>
+        <h1 className="w-full text-center text-[clamp(1.35rem,5.5vw,2.25rem)] font-black uppercase leading-tight tracking-wide text-white sm:text-[36px]" style={{ textAlign: "center" }}>CATÁLOGOS DE PEÇAS</h1>
       </header>
 
-      <section className="space-y-4 rounded-2xl border-2 border-[#102a52] bg-white p-4 shadow-lg" aria-label="Pesquisar catálogo">
+      <section className="space-y-3 rounded-[22px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-3 shadow-lg sm:p-4" aria-label="Pesquisar catálogo">
         <div className="w-full" role="search">
           <div className="relative w-full min-w-0">
-            <Search className="absolute left-3 top-3.5 text-[#174e9b]" size={20} aria-hidden="true" />
+            <Search className="absolute left-3 top-4 text-[#1675d1]" size={20} aria-hidden="true" />
             <input id="catalog-search" aria-label="Buscar peças" value={searchInput}
               onChange={(e) => { const value = e.target.value; setSearchInput(value); setQ(value.trim()); setPage(1); }}
               placeholder="Busque pelo código, pela peça ou pelo veículo..."
-              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-12 w-full rounded-xl border-2 border-[#102a52] pl-10 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-14 w-full rounded-xl border-2 border-[#8dbbe5] pl-11 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
             {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-3.5 text-[#102a52]"><X size={20}/></button>}
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
                         <div className="relative">
               <button type="button" aria-label="Filtros do catálogo" aria-expanded={filterOpen} onClick={() => setFilterOpen((open) => !open)}
-                className="flex items-center gap-1 rounded-lg border-2 border-[#102a52] bg-white px-2.5 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
+                className="flex min-h-11 items-center gap-1 rounded-xl border-2 border-[#8fc9ff] bg-white px-3 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
                 <Filter size={19} /><span className="text-xs font-bold">Filtros</span>
               </button>
               {filterOpen && <div className="absolute left-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-[#416c93] bg-[#09213c] p-1 shadow-xl" role="group" aria-label="Ordenar e filtrar peças">
@@ -286,13 +286,13 @@ function Catalog() {
               </div>}
             </div>
           </div>
-          <button type="button" onClick={() => { reset(); setFilterOpen(false); }} className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#102a52] bg-white px-3 py-2 text-xs font-bold text-[#102a52] hover:bg-[#eaf2ff]" aria-label="Limpar filtros do catálogo"><X size={17} aria-hidden="true" />Limpar filtros</button>
+          <button type="button" onClick={() => { reset(); setFilterOpen(false); }} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border-2 border-[#8fc9ff] bg-white px-3 py-2 text-xs font-bold text-[#102a52] hover:bg-[#eaf2ff]" aria-label="Limpar filtros do catálogo"><X size={17} aria-hidden="true" />Limpar filtros</button>
         </div>
       </section>
 
-      <section className="mt-5" aria-label="Buscar peças por representação">
+      <section className="mt-4" aria-label="Buscar peças por representação">
         <p className="mb-2 text-sm font-extrabold uppercase tracking-widest text-[#102a52]">1 - SELECIONE O CATÁLOGO</p>
-        <nav className="grid grid-cols-4 items-stretch gap-2" aria-label="Filtro por representação">
+        <nav className="grid grid-cols-4 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
             const selected = manufacturer === brand;
@@ -306,9 +306,9 @@ function Catalog() {
                 aria-label={brand === "all" ? "Todas as representações" : brand === "JCREI" ? "JC REI — em breve" : `${brand}${pending ? " — em breve" : ""}`}
                 title={pending ? "Em breve — representação em negociação" : brand === "all" ? "Todas as representações" : "Peças FCO"}
                 onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`flex min-w-0 min-h-[62px] flex-col items-center justify-center gap-0.5 rounded-xl border-2 px-1 py-2 text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
+                className={`flex min-w-0 min-h-[72px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 py-2 shadow-sm text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
               >
-                {logo ? <img src={logo} alt={brand === "JCREI" ? "JC REI" : brand} loading="lazy" decoding="async" className={`h-8 w-full max-w-[82px] object-contain ${pending ? "grayscale opacity-65" : ""}`} /> : <span className="text-xs font-extrabold sm:text-sm">TODOS</span>}
+                {logo ? <img src={logo} alt={brand === "JCREI" ? "JC REI" : brand} loading="lazy" decoding="async" className={`h-9 w-full max-w-[82px] object-contain ${pending ? "grayscale opacity-65" : ""}`} /> : <span className="text-xs font-extrabold sm:text-sm">TODOS</span>}
                 {pending && <span className="text-[10px] font-bold leading-tight text-[#102a52]">Em breve</span>}
               </button>
             );
@@ -316,7 +316,7 @@ function Catalog() {
         </nav>
       </section>
 
-      <p className="mb-2 mt-5 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">2 - ESCOLHA A CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-wide text-[#102a52]">2 - ESCOLHA A CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
@@ -332,9 +332,9 @@ function Catalog() {
           </div>;
         })}
       </nav>
-      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-widest text-[#facc15]">3 - SELECIONE O VEÍCULO</p>
-      <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full gap-2 overflow-x-auto pb-2">
-        {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex shrink-0 flex-col items-center gap-1 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${vehicleBrand === brand.name ? "border-[#facc15] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
+      <p className="mb-2 mt-4 text-sm font-extrabold uppercase tracking-wide text-[#102a52]">3 - SELECIONE O VEÍCULO</p>
+      <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
+        {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 snap-start flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex min-h-[76px] min-w-[88px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 px-3 py-2 text-xs font-bold shadow-sm transition-colors ${vehicleBrand === brand.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52] ring-2 ring-[#d4af37]/30" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" decoding="async" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
           <span>{brand.name}</span>
           
