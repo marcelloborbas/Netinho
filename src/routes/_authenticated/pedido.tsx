@@ -257,7 +257,7 @@ function OrderPage() {
     <div className="space-y-5">
       {confirmOpen && (
         <div className="fixed inset-0 z-[6000] flex items-center justify-center bg-[#06172e]/90 p-2 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="relative w-full max-w-[420px] shrink-0 overflow-hidden rounded-xl shadow-[0_20px_70px_#0009]" style={{ aspectRatio: "9 / 16", width: "min(100%, 54dvh, 420px)" }}>
+          <div className="relative w-full max-w-[min(100vw,calc(100dvh*9/16))] shrink-0 overflow-hidden rounded-xl shadow-[0_20px_70px_#0009]" style={{ aspectRatio: "9 / 16", width: "min(calc(100vw - 16px), calc(100dvh * 9 / 16 - 16px))" }}>
             <img src="/images/lia-confirmacao-pedido.webp" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
