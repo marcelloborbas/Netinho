@@ -260,7 +260,13 @@ function OrderPage() {
           <div className="relative z-[2] flex max-h-[min(90dvh,760px)] w-full max-w-lg flex-col overflow-hidden rounded-[26px] border-[3px] border-[#d4af37] bg-white shadow-[0_20px_70px_#0007]">
             <div className="relative shrink-0 bg-gradient-to-br from-[#102a52] to-[#17609b] px-5 pb-5 pt-5 text-center text-white">
               <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="absolute right-3 top-3 rounded-full border border-white/40 bg-white/15 p-2 text-white hover:bg-white/25"><X size={21}/></button>
-              <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#facc15] bg-white/15 shadow-[0_0_20px_#facc1540]"><ClipboardCheck size={31} className="text-[#facc15]"/></div>
+              <div className="mx-auto mb-3 flex max-w-sm items-center gap-3 rounded-2xl border border-[#facc15]/70 bg-white/10 p-3 text-left shadow-lg">
+                <img src="/images/lia-confirma%20pedido.webp" alt="LIA, assistente da Netinho" loading="lazy" decoding="async" className="h-20 w-20 shrink-0 rounded-xl object-contain sm:h-24 sm:w-24" />
+                <div>
+                  <p className="text-sm font-black uppercase tracking-wide text-[#facc15]">LIA informa</p>
+                  <p className="mt-1 text-base font-semibold leading-snug text-white">Confira o cliente, o pagamento e o valor. Tudo certo? É só enviar seu pedido!</p>
+                </div>
+              </div>
               <h2 id="lia-confirm-title" className="text-2xl font-black uppercase tracking-wide sm:text-3xl">Tudo pronto para enviar?</h2>
               <p className="mt-2 text-base font-semibold text-[#e1f4ff]">Confira os dados do pedido antes de concluir sua venda!</p>
             </div>
@@ -278,8 +284,8 @@ function OrderPage() {
               <p className="text-center text-sm font-semibold text-[#102a52]">Que Deus abençoe seu dia e suas vendas!</p>
             </div>
             <div className="grid shrink-0 grid-cols-2 gap-3 border-t border-slate-200 bg-white px-4 py-4 sm:px-6">
-              <Button type="button" className="h-14 rounded-xl border-2 border-[#d98b27] bg-[#fff2d7] px-2 text-sm font-black text-[#7d3c0a] shadow-sm hover:bg-[#ffe2a3] sm:text-base" onClick={closeConfirmation}>Corrigir Pedido</Button>
-              <Button type="button" className="h-14 rounded-xl border-2 border-white bg-gradient-to-b from-[#91e6ff] to-[#2fb7f3] px-2 text-sm font-black text-[#07345d] shadow-[0_5px_0_#1374aa] transition-transform hover:-translate-y-0.5 hover:from-[#b3efff] hover:to-[#58ccff] active:translate-y-0.5 sm:text-base" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
+              <Button type="button" className="h-16 rounded-xl border-2 border-[#d4af37] bg-gradient-to-b from-[#f7d777] to-[#d4a532] px-2 text-sm font-black text-[#102a52] shadow-[0_5px_0_#9a751f] transition-transform hover:-translate-y-0.5 hover:from-[#ffe9a0] hover:to-[#e9bc4c] active:translate-y-0.5 sm:text-base" onClick={closeConfirmation}>Corrigir Pedido</Button>
+              <Button type="button" className="h-16 rounded-xl border-2 border-white bg-gradient-to-b from-[#91e6ff] to-[#2fb7f3] px-2 text-sm font-black text-[#07345d] shadow-[0_5px_0_#1374aa] transition-transform hover:-translate-y-0.5 hover:from-[#b3efff] hover:to-[#58ccff] active:translate-y-0.5 sm:text-base" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
             </div>
           </div>
         </div>
