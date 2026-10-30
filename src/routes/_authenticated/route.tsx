@@ -40,6 +40,7 @@ function AppShell() {
   // Read the location once: hooks must never be called conditionally.
   const pathname = useLocation().pathname;
   const hideFooter = ["/admin", "/admin-gestao", "/clientes", "/pedidos"].includes(pathname);
+  const fullScreenEmptyOrder = pathname === "/pedido" && draft.items.length === 0;
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: access } = useQuery({ ...accessQuery, enabled: !!Route.useRouteContext().user, retry: false });
@@ -67,9 +68,9 @@ function AppShell() {
     navigate({ to: "/auth" });
   }
   return (
-    <div className={pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
-      <BrandHeader />
-      <div className="app-navigation-bar">
+    <div className={fullScreenEmptyOrder ? "min-h-[100dvh] bg-[#d9f1ff]" : pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
+      {!fullScreenEmptyOrder && <BrandHeader />}
+      {!fullScreenEmptyOrder && <div className="app-navigation-bar">
         <nav aria-label="Navegação da área" className="flex items-center gap-1">
             {nav.map((n) => (
               <Link
@@ -92,7 +93,7 @@ function AppShell() {
           <LogOut size={18} /> Sair
         </button>
       </div>
-      <main className={pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
+      <main className={fullScreenEmptyOrder ? "w-full min-h-[100dvh] p-0" : pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
         <Outlet />
       </main>
       {canSell && draft.items.length > 0 && (
@@ -109,7 +110,7 @@ function AppShell() {
           <b className="shrink-0 whitespace-nowrap text-lg font-black text-[#FFED00] drop-shadow-[0_0_5px_rgba(255,237,0,0.45)] sm:text-xl">{brl(draftTotals(draft).net)}</b>
         </Link>
       )}
-      <PublicFooter />
+      {!fullScreenEmptyOrder && <PublicFooter />}
     </div>
   );
 }
