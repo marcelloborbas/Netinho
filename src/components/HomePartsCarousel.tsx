@@ -24,11 +24,11 @@ export function HomePartsCarousel() {
 
       <div className="w-full">
         <div className="w-full">
-          <div className="relative w-full" style={{ aspectRatio: "1 / 1" }}>
+          <div className="grid w-full items-start">
             {parts.map((part, i) => (i === index || i === (index + 1) % parts.length) && (
               <img key={part.image} src={part.image} alt={part.title}
                 aria-hidden={i !== index}
-                className={`absolute inset-0 block h-full w-full object-contain transition-opacity duration-300 ease-linear ${i === index ? "opacity-100" : "opacity-0"}`}
+                className={`col-start-1 row-start-1 block h-auto w-full object-contain transition-opacity duration-300 ease-linear ${i === index ? "opacity-100" : "opacity-0"}`}
                 loading={i === index ? "eager" : "lazy"} fetchPriority={i === index ? "high" : "low"} decoding="async" />
             ))}
           </div>
