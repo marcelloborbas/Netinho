@@ -59,6 +59,26 @@ const vehicleModels: Record<string, string[]> = {
 };
 const mentionsModel = (application: string, model: string) =>
   new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
+/** Ilustração vetorial local: não depende de fotos externas nem inventa ano/modelo. */
+function VehicleModelIllustration({ name }: { name: string }) {
+  const pickup = /saveiro|strada|montana|oroch|toro|s10|hilux|ranger|amarok|frontier/i.test(name);
+  const suv = /tracker|creta|tucson|duster|renegade|compass|commander|ecosport|kicks|hr-v|t-cross|nivus|2008|3008/i.test(name);
+  const sedan = /voyage|virtus|prisma|classic|cruze|corolla|civic|city|versa|sentra|logan|siena|cronos|fusion|jetta/i.test(name);
+  const roof = pickup ? "M45 45 L62 26 Q65 23 72 23 L100 23 Q105 24 108 28 L120 45" : suv ? "M37 46 L54 24 Q57 20 64 20 L119 20 Q126 21 131 27 L143 46" : sedan ? "M34 46 L57 29 Q63 25 70 25 L112 25 Q121 25 128 32 L140 46" : "M37 46 L57 27 Q61 23 69 23 L111 23 Q117 24 123 30 L137 46";
+  const rear = pickup ? "M120 45 L178 45 L178 60" : "M140 46 L174 50 L181 59";
+  return <svg viewBox="0 0 210 90" role="img" aria-label={`Ilustração do veículo ${name}`} className="h-full w-full drop-shadow-[0_5px_3px_rgba(22,40,65,0.22)]">
+    <defs><linearGradient id="car-silver" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0%" stopColor="#fff"/><stop offset="50%" stopColor="#cbd3dc"/><stop offset="100%" stopColor="#7e8c9b"/></linearGradient><linearGradient id="car-glass" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#294b68"/><stop offset="100%" stopColor="#9db2c2"/></linearGradient></defs>
+    <ellipse cx="105" cy="74" rx="91" ry="8" fill="#587087" opacity=".18"/>
+    <path d={`M22 58 L29 48 L37 46 ${roof} ${rear} L187 63 L186 70 L22 70 Z`} fill="url(#car-silver)" stroke="#546171" strokeWidth="1.8"/>
+    <path d={pickup ? "M49 44 L65 29 L99 29 L112 44 Z" : suv ? "M45 44 L59 26 L118 26 L133 44 Z" : sedan ? "M45 44 L61 31 L113 31 L131 44 Z" : "M45 44 L61 29 L109 29 L128 44 Z"} fill="url(#car-glass)" stroke="#62778b" strokeWidth="1.4"/>
+    <path d="M86 28 L87 44 M125 45 L125 64" stroke="#627181" strokeWidth="1.5"/>
+    <path d="M29 57 L42 55 M166 55 L181 58" stroke="#fff4d4" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M27 65 L184 65" stroke="#8995a3" strokeWidth="1.4"/>
+    <circle cx="59" cy="69" r="13" fill="#242d39"/><circle cx="59" cy="69" r="7" fill="#dfe5eb" stroke="#778596" strokeWidth="2"/>
+    <circle cx="156" cy="69" r="13" fill="#242d39"/><circle cx="156" cy="69" r="7" fill="#dfe5eb" stroke="#778596" strokeWidth="2"/>
+  </svg>;
+}
+
 function VehicleBrandIcons({ application }: { application?: string | null }) {
   if (!application) return null;
   const matches = vehicleBrands.filter((brand) => brand.pattern.test(application));
@@ -343,9 +363,9 @@ function Catalog() {
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
         <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>SELECIONE O MODELO DO VEÍCULO</p>
         {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
-          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[144px] min-w-[124px] max-w-[148px] shrink-0 snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#e9f3ff] p-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
+          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[144px] min-w-[144px] max-w-[164px] shrink-0 snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#e9f3ff] p-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
             <span className="flex h-[83px] w-full items-center justify-center rounded-xl bg-gradient-to-b from-[#f7fbff] to-[#dcebf9] text-[#174477]">
-              <CarFront size={60} strokeWidth={1.25} aria-hidden="true" className="drop-shadow-[0_3px_2px_rgba(14,55,99,0.2)] transition-transform duration-200 group-hover:scale-110"/>
+              <VehicleModelIllustration name={model.name} />
             </span>
             <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
             <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>
