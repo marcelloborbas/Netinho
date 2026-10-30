@@ -2,7 +2,7 @@ import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Trash2, Minus, Plus, RotateCcw, Volume2, X, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
+import { Trash2, Minus, Plus, X, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
@@ -48,8 +48,6 @@ function OrderPage() {
   const [sendError, setSendError] = useState("");
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmAudioError, setConfirmAudioError] = useState(false);
-  const confirmAudio = useRef<HTMLAudioElement | null>(null);
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
     const footer = document.querySelector<HTMLElement>(".mobile-nav");
@@ -61,7 +59,6 @@ function OrderPage() {
     window.addEventListener("resize", update);
     return () => { observer.disconnect(); window.removeEventListener("resize", update); };
   }, []);
-  useEffect(() => () => { confirmAudio.current?.pause(); }, []);
   function buttonSound() {
     try {
       const AudioContextClass = window.AudioContext;
@@ -80,25 +77,14 @@ function OrderPage() {
       oscillator.onended = () => { void ctx.close(); };
     } catch { /* áudio opcional */ }
   }
-  function playConfirmation() {
-    confirmAudio.current?.pause();
-    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261028-2");
-    confirmAudio.current = audio;
-    audio.oncanplay = () => setConfirmAudioError(false);
-    audio.onerror = () => setConfirmAudioError(true);
-    void audio.play().catch(() => setConfirmAudioError(true));
-  }
   function openConfirmation() {
     if (!d.customerId) { toast.error("Selecione o cliente."); return; }
     if (!d.items.length || busy) return;
     buttonSound();
     setReview(true);
     setConfirmOpen(true);
-    playConfirmation();
   }
   function closeConfirmation() {
-    confirmAudio.current?.pause();
-    confirmAudio.current = null;
     setConfirmOpen(false);
     setReview(false);
     buttonSound();
@@ -273,17 +259,11 @@ function OrderPage() {
                   <p className="text-2xl font-black">{brl(t.net)}</p>
                 </div>
               </div>
-              <div className="rounded-xl border-l-4 border-[#d4af37] bg-[#fff9e9] px-4 py-3 text-[#102a52]">
-                <p className="text-sm font-bold">A LIA está aqui para ajudar!</p>
-                <p className="mt-1 text-sm leading-relaxed">Se estiver tudo certinho, envie o pedido. Precisa mudar algo? Escolha Corrigir Pedido.</p>
-                <button type="button" onClick={() => { buttonSound(); playConfirmation(); }} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-[#102a52] bg-white px-4 text-sm font-black text-[#102a52] transition-transform active:scale-95"><RotateCcw size={17}/> Ouvir orientação da LIA <Volume2 size={17}/></button>
-                {confirmAudioError && <p className="mt-2 text-xs font-semibold text-amber-800">A gravação da LIA ainda não está disponível neste endereço.</p>}
-              </div>
               <p className="text-center text-sm font-semibold text-[#102a52]">Que Deus abençoe seu dia e suas vendas!</p>
             </div>
             <div className="grid shrink-0 grid-cols-2 gap-3 border-t border-slate-200 bg-white px-4 py-4 sm:px-6">
               <Button type="button" className="h-14 rounded-xl border-2 border-[#d98b27] bg-[#fff2d7] px-2 text-sm font-black text-[#7d3c0a] shadow-sm hover:bg-[#ffe2a3] sm:text-base" onClick={closeConfirmation}>Corrigir Pedido</Button>
-              <Button type="button" className="h-14 rounded-xl border-2 border-white bg-gradient-to-b from-[#91e6ff] to-[#2fb7f3] px-2 text-sm font-black text-[#07345d] shadow-[0_5px_0_#1374aa] transition-transform hover:-translate-y-0.5 hover:from-[#b3efff] hover:to-[#58ccff] active:translate-y-0.5 sm:text-base" disabled={busy} onClick={() => { buttonSound(); confirmAudio.current?.pause(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
+              <Button type="button" className="h-14 rounded-xl border-2 border-white bg-gradient-to-b from-[#91e6ff] to-[#2fb7f3] px-2 text-sm font-black text-[#07345d] shadow-[0_5px_0_#1374aa] transition-transform hover:-translate-y-0.5 hover:from-[#b3efff] hover:to-[#58ccff] active:translate-y-0.5 sm:text-base" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }}>{busy ? "Enviando..." : "Enviar Pedido"}</Button>
             </div>
           </div>
         </div>
