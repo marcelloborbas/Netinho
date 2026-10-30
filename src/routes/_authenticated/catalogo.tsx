@@ -67,9 +67,23 @@ const vehicleModelPhotos: Record<string, string> = {
   amarok: "https://www.volkswagen.co.nz/app/nz/media/customiser/Amarok/Amarok%20Style%20V6/18%20inch%20Amadora%20Alloys/Frozen%20White/PR%5B3%5D-Amarok%20Style%20Amador_images_56005_AVP2D_A_2_000_AD_1.jpg?bgcolor=fff&height=400&mode=crop&width=700",
   polo: "https://assets.nexuspointapex.co.uk/resize/2048/tenant_d9013b5a-4990-4f3e-beec-4e1fc85990eb/media/9931395/volkswagen-polo-10-tsi-match-euro-6-ss-5dr-8a42cd2f9ce7facd019cec7ec346259c-69b6617b1b0a4.jpg",
 };
+const volkswagenModelImages: Record<string, string> = {
+  gol: "/images/veiculos/volkswagen/gol.webp",
+  voyage: "/images/veiculos/volkswagen/voyage.webp",
+  polo: "/images/veiculos/volkswagen/polo.webp",
+  fox: "/images/veiculos/volkswagen/fox.webp",
+  saveiro: "/images/veiculos/volkswagen/saveiro.webp",
+  golf: "/images/veiculos/volkswagen/golf.webp",
+  jetta: "/images/veiculos/volkswagen/jetta.webp",
+  virtus: "/images/veiculos/volkswagen/virtus.webp",
+  "t-cross": "/images/veiculos/volkswagen/t-cross.webp",
+  nivus: "/images/veiculos/volkswagen/nivus.webp",
+  up: "/images/veiculos/volkswagen/up.webp",
+};
+
 function VehicleModelPicture({name}:{name:string}) {
   const key=name.trim().toLowerCase();
-  const photo=vehicleModelPhotos[key];
+  const photo=volkswagenModelImages[key] ?? vehicleModelPhotos[key];
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
   return photo&&!failed ? <img src={photo} alt={`Foto ilustrativa do modelo ${name}`} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)} className="h-full w-full rounded-lg bg-white object-contain" /> : <VehicleModelIllustration name={name}/>;
