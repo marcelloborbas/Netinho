@@ -243,15 +243,25 @@ function OrderPage() {
 
   if (d.items.length === 0) {
     return (
-      <div className="surface-card p-8 text-center">
-        <h1 className="text-2xl font-bold uppercase">Pedido vazio</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Pesquise produtos e adicione ao pedido.
-        </p>
-        <Button asChild className="mt-6 h-20 min-h-20 w-full max-w-lg rounded-2xl border-2 border-white bg-[#15803d] px-6 text-xl font-black uppercase tracking-wide text-white shadow-[0_7px_0_#14532d,0_12px_22px_#14532d44] transition-all hover:-translate-y-1 hover:bg-[#16a34a] hover:text-white active:translate-y-1 active:shadow-[0_2px_0_#14532d] sm:h-24 sm:min-h-24 sm:text-2xl">
-          <Link to="/catalogo" search={{ modo: "venda" }}>FAZER PEDIDO</Link>
-        </Button>
-      </div>
+      <main className="mx-auto w-full max-w-[520px] px-2 pb-24 sm:px-4" aria-label="Fazer pedido">
+        <div className="relative w-full overflow-hidden rounded-2xl">
+          <img
+            src="/images/lia-fazer-pedido.webp"
+            alt="LIA convida você a pesquisar produtos e adicioná-los ao pedido. É rápido, fácil e seguro!"
+            className="block h-auto w-full"
+            decoding="async"
+          />
+          <Link
+            to="/catalogo"
+            search={{ modo: "venda" }}
+            aria-label="Fazer pedido: abrir catálogo de peças"
+            title="Fazer pedido"
+            className="absolute bottom-[1.5%] left-[3%] h-[14%] w-[94%] cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
+          >
+            <span className="sr-only">Fazer pedido</span>
+          </Link>
+        </div>
+      </main>
     );
   }
 
