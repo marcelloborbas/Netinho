@@ -160,7 +160,7 @@ function OrderPage() {
       <main className="mx-auto w-full max-w-[835px] px-1 pb-6" role="status" aria-label="Pedido enviado com sucesso">
         <div className="relative mx-auto w-full overflow-hidden rounded-2xl shadow-2xl">
           <img
-            src="/images/confirma%C3%A7%C3%A3o%20de%20envio.webp"
+            src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a"
             alt="Pedido enviado com sucesso! Parabéns pela venda. Acesse Minhas Vendas para acompanhar seus pedidos."
             className="block h-auto w-full"
             draggable={false}
