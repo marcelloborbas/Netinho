@@ -1151,8 +1151,8 @@ a {
  .catalog-preview-actions{width:100%;justify-content:flex-start}
  .catalog-preview-frame{height:58vh;min-height:340px}
  .catalog-brand-option,.catalog-preview-download{min-height:36px;padding:7px 10px;font-size:11px}
- .home-page{height:100svh;min-height:100svh;overflow:hidden;padding-bottom:0}
- .home-page main{display:flex;min-height:0;flex:1;flex-direction:column;overflow:hidden;padding:8px 12px 6px}
+ .home-page{height:auto;min-height:100svh;overflow-x:hidden;overflow-y:visible;padding-bottom:0}
+ .home-page main{display:flex;min-height:0;flex:1;flex-direction:column;overflow:visible;padding:8px 12px 6px}
  .home-greeting-row{flex:0 0 auto;flex-direction:column;justify-content:center;gap:6px;margin-top:auto;text-align:center}
  .home-greeting-row h1{margin:0;color:#fff;font-size:clamp(22px,6.3vw,26px);font-weight:800;line-height:1.12;text-shadow:0 2px 14px #2877d180}
  .home-attribution-badge{min-height:23px;padding:3px 8px;font-size:9px;opacity:.8}
