@@ -245,11 +245,11 @@ function OrderPage() {
   if (d.items.length === 0) {
     return (
       <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">
-        <div className="relative min-h-[100dvh] w-full overflow-hidden">
+        <div className="relative h-[100dvh] w-full overflow-hidden">
           <img
             src="/images/lia-fazer-pedido.webp?v=0a07bc6f"
             alt="LIA convida você a pesquisar produtos e adicioná-los ao pedido. É rápido, fácil e seguro!"
-            className="block h-auto w-full"
+            className="block h-full w-full object-fill"
             decoding="async"
           />
           <Link
@@ -257,7 +257,7 @@ function OrderPage() {
             search={{ modo: "venda" }}
             aria-label="Fazer pedido: abrir catálogo de peças"
             title="Fazer pedido"
-            className="absolute bottom-[4%] left-[3%] h-[12%] w-[94%] cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
+            className="absolute bottom-[8%] left-[3%] z-30 h-[13%] w-[94%] touch-manipulation cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
           >
             <span className="sr-only">Fazer pedido</span>
           </Link>
