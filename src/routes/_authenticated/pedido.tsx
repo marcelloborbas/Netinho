@@ -259,10 +259,7 @@ function OrderPage() {
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] isolate flex items-center justify-center overflow-hidden bg-[#0862bd] p-0 sm:block sm:overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
           <div className="relative mx-auto aspect-[9/20] w-[max(100vw,45dvh)] shrink-0 overflow-hidden sm:w-full sm:max-w-[600px] sm:aspect-[9/16]">
-            <picture>
-              <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2" />
-              <img src="/images/lia-confirmacao-pedido-final.webp?v=40bf8e1a" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
-            </picture>
+            <img src="/images/lia-confirmacao-pedido-web.webp?v=875902f2" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
             <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[44%] bottom-[25%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
