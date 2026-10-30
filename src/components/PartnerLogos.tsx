@@ -24,7 +24,7 @@ export function PartnerLogos({
         <div key={s.brand} className={s.brand === "HD" || s.brand === "JCREI" ? "flex flex-col items-center" : "flex flex-col items-center"}>
           {s.brand === "HD" || s.brand === "JCREI" ? (
             <span className="partner-logo cursor-not-allowed opacity-65 grayscale" aria-label={`${s.name} — em breve`} aria-disabled="true">
-              <img src={s.image} alt={s.name} />
+              <img src={s.image} alt={s.name} loading="lazy" decoding="async" />
             </span>
           ) : downloads && compact ? (
             <CatalogDownload brand={s.brand} iconOnly image={s.image} name={s.name} className="partner-logo" />
@@ -35,11 +35,11 @@ export function PartnerLogos({
               className="partner-logo"
               aria-label={`Ver catálogo ${s.name}`}
             >
-              <img src={s.image} alt={compact ? "" : s.name} />
+              <img src={s.image} alt={compact ? "" : s.name} loading="lazy" decoding="async" />
             </Link>
           ) : (
             <span className="partner-logo">
-              <img src={s.image} alt={s.name} />
+              <img src={s.image} alt={s.name} loading="lazy" decoding="async" />
             </span>
           )}
           {(s.brand === "HD" || s.brand === "JCREI") && <span className="partner-coming-soon block w-full text-center text-xs font-extrabold text-zinc-400">Em breve</span>}
