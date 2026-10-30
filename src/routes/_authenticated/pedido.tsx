@@ -256,30 +256,37 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       {confirmOpen && (
-        <div className="fixed inset-0 z-[6000] flex items-center justify-center bg-[#06172e]/90 p-2 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="relative max-h-[96dvh] w-full max-w-[420px] overflow-y-auto rounded-2xl border-2 border-[#d4af37] bg-[#102a52] shadow-2xl">
-            <div className="relative w-full" style={{ aspectRatio: "941 / 1672" }}>
-              <img src="/images/lia-confirmacao-pedido.webp" alt="LIA orienta: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
-              <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
-              {/* Área de dados substituída por conteúdo real, cobrindo completamente os exemplos da arte. */}
-              <section aria-label="Resumo atualizado do pedido" className="absolute left-[8%] right-[8%] top-[46%] bottom-[23%] z-10 flex flex-col justify-center overflow-auto rounded-xl border-2 border-[#d4af37] bg-[#f5faff] px-[4%] py-2 text-[#102a52] shadow-md">
-                <p className="text-center text-sm font-black uppercase tracking-wide sm:text-base">Resumo do pedido</p>
-                <div className="mt-2 space-y-1 text-xs font-semibold sm:text-sm">
+        <div className="fixed inset-0 z-[6000] flex items-center justify-center bg-[#06172e]/90 px-3 py-3 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+          <div className="flex max-h-[94dvh] w-full max-w-lg flex-col overflow-hidden rounded-[26px] border-[3px] border-[#d4af37] bg-white shadow-[0_20px_70px_#0009]">
+            <header className="relative shrink-0 bg-gradient-to-br from-[#102a52] to-[#17609b] px-4 pb-5 pt-5 text-white sm:px-6">
+              <button type="button" aria-label="Fechar confirmação" onClick={closeConfirmation} className="absolute right-3 top-3 z-10 rounded-full border border-white/40 bg-white/15 p-2 text-white hover:bg-white/25"><X size={21}/></button>
+              <div className="flex items-center gap-3 pr-6">
+                <img src="/images/lia-confirma%20pedido.webp" alt="LIA, assistente da Netinho" decoding="async" className="h-24 w-24 shrink-0 object-contain sm:h-28 sm:w-28" />
+                <div>
+                  <p className="text-sm font-black uppercase tracking-wider text-[#facc15]">LIA informa</p>
+                  <p className="mt-1 text-base font-bold leading-snug sm:text-lg">Está tudo pronto? Confira os dados do pedido antes de enviar.</p>
+                </div>
+              </div>
+              <h2 id="lia-confirm-title" className="mt-3 text-center text-xl font-black uppercase tracking-wide sm:text-2xl">Confirme seu pedido</h2>
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto bg-[#f6faff] px-4 py-4 sm:px-6">
+              <section aria-label="Resumo do pedido" className="rounded-2xl border-2 border-[#d4af37] bg-white p-4 text-[#102a52] shadow-md">
+                <p className="mb-3 flex items-center justify-center gap-2 text-base font-black uppercase tracking-wide sm:text-lg"><ClipboardCheck size={21} className="text-[#17609b]"/> Resumo do pedido</p>
+                <div className="space-y-2 text-sm sm:text-base">
                   <p className="break-words"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
                   <p className="break-words"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
                   <p><strong>Peças:</strong> {d.items.length}</p>
                 </div>
-                <div className="mt-3 rounded-lg bg-[#b91c1c] px-2 py-2 text-center text-white">
-                  <p className="text-[10px] font-bold uppercase sm:text-xs">Valor total do pedido</p>
-                  <p className="text-xl font-black tabular-nums sm:text-2xl">{brl(t.net)}</p>
+                <div className="mt-4 rounded-xl bg-[#b91c1c] px-3 py-3 text-center text-white">
+                  <p className="text-xs font-bold uppercase tracking-wide">Valor total do pedido</p>
+                  <p className="mt-1 text-2xl font-black tabular-nums sm:text-3xl">{brl(t.net)}</p>
                 </div>
               </section>
-              {/* Botões verdadeiros ocupam as posições dos botões desenhados na imagem. */}
-              <div className="absolute bottom-[5%] left-[6%] right-[6%] z-20 grid grid-cols-2 gap-[4%]">
-                <button type="button" onClick={closeConfirmation} className="min-h-12 rounded-xl border-2 border-[#d4af37] bg-gradient-to-b from-[#ffe69a] to-[#d4a532] px-1 py-2 text-xs font-black uppercase text-[#102a52] shadow-[0_4px_0_#8b661a] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 sm:text-sm">Revisar Pedido</button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }} className="min-h-12 rounded-xl border-2 border-white bg-gradient-to-b from-[#8de6ff] to-[#26a8ed] px-1 py-2 text-xs font-black uppercase text-[#07345d] shadow-[0_4px_0_#12608e] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-60 sm:text-sm">{busy ? "Enviando..." : "Enviar Pedido"}</button>
-              </div>
             </div>
+            <footer className="grid shrink-0 grid-cols-2 gap-3 border-t border-[#d4af37] bg-white px-4 py-4 sm:px-6">
+              <button type="button" onClick={closeConfirmation} className="min-h-16 rounded-xl border-2 border-[#d4af37] bg-gradient-to-b from-[#ffe69a] to-[#d4a532] px-2 text-sm font-black uppercase text-[#102a52] shadow-[0_5px_0_#8b661a] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 sm:text-base">Revisar Pedido</button>
+              <button type="button" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }} className="min-h-16 rounded-xl border-2 border-white bg-gradient-to-b from-[#8de6ff] to-[#26a8ed] px-2 text-sm font-black uppercase text-[#07345d] shadow-[0_5px_0_#12608e] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:opacity-60 sm:text-base">{busy ? "Enviando..." : "Enviar Pedido"}</button>
+            </footer>
           </div>
         </div>
       )}
