@@ -332,7 +332,7 @@ function Catalog() {
           </div>;
         })}
       </nav>
-      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">3</span>SELECIONE O VEÍCULO</p>
+      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">3</span>SELECIONE A MARCA DA MONTADORA</p>
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
         {availableVehicleBrands.map((brand) => <div key={brand.name} className="flex shrink-0 snap-start flex-col items-center gap-1"><button type="button" title={`Ver peças para ${brand.name}`} aria-label={`Ver peças para ${brand.name}`} aria-pressed={vehicleBrand === brand.name} onClick={() => { setVehicleBrand(vehicleBrand === brand.name ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }} className={`flex min-h-[76px] min-w-[88px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 px-3 py-2 text-xs font-bold shadow-sm transition-colors ${vehicleBrand === brand.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52] ring-2 ring-[#d4af37]/30" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
           <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" decoding="async" className="h-9 w-9 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
@@ -341,7 +341,7 @@ function Catalog() {
         </button><span className="text-[11px] font-bold text-[#102a52]">{brand.count} peças</span></div>)}
       </nav>
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
-        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>SELECIONE O MODELO</p>
+        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>SELECIONE O MODELO DO VEÍCULO</p>
         {availableVehicleModels.length ? <div className="flex flex-wrap gap-2">
           {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`min-h-11 rounded-xl border-2 px-3 py-2 text-xs font-bold shadow-sm transition-colors ${vehicleModel === model.name ? "border-[#d4af37] bg-[#fff3bd] text-[#102a52]" : "border-[#9fb2ca] bg-white text-[#102a52]"}`}>
             {model.name} <span className="opacity-65">({model.count})</span>
