@@ -517,7 +517,7 @@ function OrderPage() {
         </div>
       </section>
 
-      {review ? (
+      {review && (
         <>
           <p className="rounded-xl border p-4 text-sm">
             Confira os dados abaixo antes de registrar. Na próxima tela você poderá preparar o envio
@@ -536,27 +536,6 @@ function OrderPage() {
             </Button>
           </div>
         </>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Button
-            variant="secondary"
-            className="h-12 text-base font-semibold"
-            onClick={() => {
-              if (!d.customerId) {
-                toast.error("Selecione o cliente.");
-                return;
-              }
-              openConfirmation();
-            }}
-          >
-            Revisar pedido
-          </Button>
-          <Button asChild variant="outline" className="h-12">
-            <Link to="/catalogo" search={{ modo: "venda" }}>
-              Continuar comprando
-            </Link>
-          </Button>
-        </div>
       )}
     </div>
   );
