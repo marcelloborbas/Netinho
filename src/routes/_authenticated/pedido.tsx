@@ -156,9 +156,9 @@ function OrderPage() {
   // Tela de comemoração aprovada: arte já armazenada no repositório.
   // A área do botão desenhado na arte recebe um link real e acessível.
   if (sentResult === "sent") {
-    return (
-      <main className="mx-auto w-full max-w-[835px] px-1 pb-6" role="status" aria-label="Pedido enviado com sucesso">
-        <div className="relative mx-auto w-full overflow-hidden rounded-2xl shadow-2xl">
+    return createPortal(
+      <main className="fixed inset-0 z-[99999] overflow-y-auto overscroll-contain bg-[#0862bd]" role="status" aria-label="Pedido enviado com sucesso">
+        <div className="relative mx-auto w-full max-w-[600px] overflow-hidden">
           <img
             src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a"
             alt="Pedido enviado com sucesso! Parabéns pela venda. Acesse Minhas Vendas para acompanhar seus pedidos."
@@ -169,12 +169,13 @@ function OrderPage() {
             to="/pedidos"
             aria-label="Ir para Minhas Vendas"
             title="Ir para Minhas Vendas"
-            className="absolute left-[9%] top-[79%] h-[10%] w-[82%] cursor-pointer rounded-2xl outline-offset-4 focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
+            className="absolute left-[9%] bottom-[5%] h-[11%] w-[82%] cursor-pointer rounded-2xl outline-offset-4 focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
           >
             <span className="sr-only">Ir para Minhas Vendas</span>
           </Link>
         </div>
-      </main>
+      </main>,
+      document.body
     );
   }
 
