@@ -101,7 +101,7 @@ function Home() {
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
         <section className="relative isolate min-h-[235px] overflow-hidden bg-[#092b52] sm:min-h-[340px]" aria-label="Boas-vindas">
           <img src="/images/netinho-cabecalho-arte-aprovada.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-contain object-center" onError={e => { e.currentTarget.src="/images/fundo-saudacao.webp"; }} />
-          <img src="/images/Logo%20Netinho.webp" alt="" aria-hidden="true" className="absolute left-3 top-3 z-10 w-[clamp(56px,13vw,95px)] h-auto object-contain opacity-50 brightness-150 saturate-50" />
+
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#03152be8] via-[#062345a6] to-transparent" />
 
           <div className="relative flex min-h-[235px] flex-col justify-end px-4 pb-3 pt-2 sm:min-h-[340px] sm:px-8 sm:pb-6">
@@ -141,9 +141,9 @@ function Home() {
             type="button"
             title={`Consultar peças ${brand.name}`}
             onClick={() => void navigate({to:"/catalogo"})}
-            className="group relative flex min-w-0 flex-col items-center overflow-hidden rounded-xl border-2 border-[#2389c9] bg-gradient-to-b from-[#08659c] via-[#062a58] to-[#03132d] p-1.5 text-center text-white shadow-[inset_0_1px_12px_#36baff66] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c]"
+            className="group relative flex min-w-0 items-stretch overflow-hidden rounded-xl border-2 border-[#2389c9] bg-[#062a58] p-0 text-center text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c]"
           >
-            <img src={brand.image} alt={brand.name} className="aspect-[4/5] w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
+            <img src={brand.image} alt={brand.name} className="block aspect-[4/5] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
           </button>)}
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Peças e quantidades">
