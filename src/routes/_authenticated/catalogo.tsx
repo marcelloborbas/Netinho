@@ -419,7 +419,7 @@ function Catalog() {
           </div>;
         })}
       </nav>
-      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">3</span>SELECIONE A MARCA DA MONTADORA</p>
+      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">3</span>MONTADORA</p>
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-xl bg-gradient-to-r from-[#f7fbff] via-white to-[#edf5ff] px-2 py-3 [scrollbar-width:thin]">
         {availableVehicleBrands.map((brand) => {
           const selected = vehicleBrand === brand.name;
@@ -444,12 +444,9 @@ function Catalog() {
         })}
       </nav>
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
-        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>SELECIONE O MODELO DO VEÍCULO</p>
+        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>VEÍCULO</p>
         {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
-          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[154px] min-w-[150px] max-w-[174px] shrink-0 snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#f4f8fd] p-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
-            <span className="flex h-[94px] w-full items-center justify-center rounded-xl bg-white text-[#174477]">
-              <VehicleModelPicture name={model.name} />
-            </span>
+          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[74px] min-w-[116px] max-w-[160px] shrink-0 snap-start flex-col items-center justify-center gap-1 overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#f4f8fd] px-3 py-3 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
             <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
             <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>
           </button>)}
