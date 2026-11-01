@@ -84,13 +84,16 @@ function AuthPage() {
     enabled: signedIn && !previewMode,
   });
   useEffect(() => {
-    if (signedIn && access && !recovery && !previewMode) {
-      saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
-      // Login confirmado: encaminhar automaticamente à página inicial.
-      window.sessionStorage.setItem("netinho-entry-approved", "1");
-      void navigate({ to: "/", replace: true });
-    }
-  }, [signedIn, access, recovery, navigate, previewMode]);
+    if (!signedIn || recovery || previewMode) return;
+    // A sessão autenticada basta para mostrar a página inicial.
+    // As permissões continuam sendo consultadas e validadas separadamente;
+    // não bloqueamos a navegação inicial esperando a RPC access_context.
+    window.sessionStorage.setItem("netinho-entry-approved", "1");
+    void navigate({ to: "/", replace: true });
+  }, [signedIn, recovery, navigate, previewMode]);
+  useEffect(() => {
+    if (signedIn && access) saveProfile(access, access.can_sell ? "Representante Comercial" : "Visitante");
+  }, [signedIn, access]);
   useEffect(() => {
     // Keep the preview shell mounted after OAuth, then show the signed-in app in its frame.
     let active = true;
