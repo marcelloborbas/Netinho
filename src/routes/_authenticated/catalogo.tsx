@@ -62,6 +62,12 @@ const vehicleModels: Record<string, string[]> = {
   Peugeot: ["206", "207", "208", "307", "308", "2008", "3008"],
   "Citroën": ["C3", "C4", "Aircross", "Berlingo"],
   Jeep: ["Renegade", "Compass", "Commander"],
+  Mitsubishi: ["L200", "Pajero", "Outlander", "ASX"],
+  BMW: ["Série 1", "Série 3", "X1", "X3", "X5"],
+  "Mercedes-Benz": ["Classe A", "Classe C", "Sprinter", "GLA", "GLC"],
+  Kia: ["Picanto", "Cerato", "Sportage", "Sorento"],
+  "Land Rover": ["Discovery", "Defender", "Evoque"],
+  Volvo: ["XC40", "XC60", "XC90"],
 };
 const mentionsModel = (application: string, model: string) =>
   new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
