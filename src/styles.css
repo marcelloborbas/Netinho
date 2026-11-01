@@ -4520,65 +4520,82 @@ html body .welcome-auth-stage .welcome-auth-art {
   clip-path: none !important;
 }
 
-/* Padrao de proporcoes da pagina inicial (mobile):
-   saudacao 30%, carrossel 25%, montadoras 15%, pecas 15%,
-   rodape 10%, respiros 5% da altura visivel. */
+/* Página inicial mobile: um único bloco de layout, sem sobreposições sucessivas. */
 @media (max-width: 639px) and (min-height: 600px) {
   html body .home-page {
     height: 100dvh !important;
     min-height: 100dvh !important;
     overflow: hidden !important;
+    background: #071d3b !important;
   }
   html body .home-page > main {
     display: grid !important;
-    flex: none !important;
+    flex: 0 0 90dvh !important;
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: 30dvh 25dvh 15dvh 15dvh !important;
+    gap: 1.25dvh 0 !important;
     align-content: start !important;
-    row-gap: 1.25dvh !important;
     width: 100% !important;
     height: 90dvh !important;
     min-height: 0 !important;
-    padding: 0.625dvh 0 !important;
+    padding: .625dvh 0 !important;
+    overflow: hidden !important;
+    background: linear-gradient(180deg,#06152e,#092d59,#07549a) !important;
+  }
+  html body .home-page > main::before,
+  html body .home-page > main::after { content: none !important; display: none !important; }
+  html body .home-page > main > section {
+    height: 100% !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    margin-block: 0 !important;
     overflow: hidden !important;
   }
-  html body .home-page > main > section {
-    min-width: 0 !important;
-    min-height: 0 !important;
+  html body .home-page > main > section:first-child {
+    background: #092b52 !important;
+  }
+  html body .home-page > main > section:first-child > img {
+    width: 100% !important;
     height: 100% !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+    object-fit: cover !important;
+    object-position: center !important;
   }
   html body .home-page > main > section:first-child > div:last-child {
-    min-height: 0 !important;
     height: 100% !important;
-    padding-top: 19dvh !important;
-    padding-bottom: 1dvh !important;
+    min-height: 0 !important;
+    padding: 4px 12px 9px !important;
     justify-content: flex-end !important;
   }
   html body .home-page > main > section:first-child > div:last-child h1 {
-    font-size: clamp(20px, 5.5vw, 30px) !important;
+    font-size: clamp(25px, 7vw, 34px) !important;
+    line-height: 1.07 !important;
   }
   html body .home-page > main > section:first-child > div:last-child p {
-    font-size: clamp(10px, 2.9vw, 14px) !important;
-    line-height: 1.2 !important;
+    font-size: clamp(13px, 3.8vw, 17px) !important;
+    line-height: 1.16 !important;
   }
   html body .home-page > main > section:first-child > div:last-child span {
-    font-size: 10px !important;
-    padding-top: 2px !important;
-    padding-bottom: 2px !important;
+    font-size: 12px !important;
+    padding-block: 2px !important;
   }
-  html body .home-page > main > section:nth-child(2) .home-cover-anchor,
-  html body .home-page > main > section:nth-child(2) .home-cover-anchor > div,
-  html body .home-page > main > section:nth-child(2) .home-cover-anchor > div > div,
-  html body .home-page > main > section:nth-child(2) .home-cover-anchor > div > div > div {
-    height: 100% !important;
-    min-height: 0 !important;
+  html body .home-page > main > section:nth-child(2) {
+    background: #061a36 !important;
+    border-color: #2589c7 !important;
   }
-  html body .home-page > main > section:nth-child(2) .home-cover-anchor img {
+  html body .home-page .home-cover-anchor {
+    position: relative !important;
     height: 100% !important;
     width: 100% !important;
-    object-fit: contain !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    background: #061a36 !important;
+  }
+  html body .home-page .home-cover-anchor > div:first-child {
+    position: absolute !important;
+    inset: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    background-color: #061a36 !important;
   }
   html body .home-page > main > section:nth-child(3),
   html body .home-page > main > section:nth-child(4) {
@@ -4587,100 +4604,41 @@ html body .welcome-auth-stage .welcome-auth-art {
   }
   html body .home-page > main > section:nth-child(3) > button,
   html body .home-page > main > section:nth-child(4) > button {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
     height: 100% !important;
     min-height: 0 !important;
     padding: 3px !important;
-    justify-content: space-between !important;
+    overflow: hidden !important;
   }
-  html body .home-page > main > section:nth-child(3) > button > span:first-child {
-    height: min(8dvh, 75px) !important;
-  }
-  html body .home-page > main > section:nth-child(3) > button > span:nth-child(2) {
-    height: 23px !important;
-    min-height: 23px !important;
-    margin-top: -5px !important;
-  }
+  html body .home-page > main > section:nth-child(3) > button > span:first-child,
   html body .home-page > main > section:nth-child(4) > button > span:first-child {
-    aspect-ratio: auto !important;
-    height: min(8dvh, 75px) !important;
-  }
-  html body .home-page > main > section:nth-child(4) > button > span:nth-child(2) {
+    flex: 1 1 0 !important;
+    height: auto !important;
     min-height: 0 !important;
   }
-  html body .home-page > .mobile-nav {
-    position: relative !important;
-    flex: none !important;
+  html body .home-page > main > section:nth-child(4) > button > span:last-child {
+    flex: 0 0 auto !important;
+  }
+  html body .home-page > nav.mobile-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
     height: 10dvh !important;
     min-height: 0 !important;
-    bottom: auto !important;
+    z-index: 60 !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
   }
-  html body .home-page > .mobile-nav > a,
-  html body .home-page > .mobile-nav > button {
-    min-height: 0 !important;
+  html body .home-page > nav.mobile-nav > a,
+  html body .home-page > nav.mobile-nav > button {
     height: 100% !important;
+    min-height: 0 !important;
+    padding-block: 2px !important;
   }
 }
-/* Em telas muito baixas, manter a navegacao e permitir rolagem em vez de esconder conteudo. */
-@media (max-width: 639px) and (max-height: 599px) {
-  html body .home-page { overflow-y: auto !important; }
-}
-
-/* Refinamento solicitado: capa inteira, textos legiveis, carrossel sem oval
-   e rodape ocupando exatamente 10% da altura do celular. */
-@media (max-width:639px) and (min-height:600px) {
- html body .home-page > main > section:first-child {background:#092b52 !important;}
- html body .home-page > main > section:first-child > img {
-   object-fit:contain !important; object-position:center center !important;
-   background:#092b52 !important;
- }
- html body .home-page > main > section:first-child > div:last-child {
-   padding: 2px 12px 7px !important;
-   justify-content:flex-end !important;
-   height:100% !important;
- }
- html body .home-page > main > section:first-child > div:last-child h1 {
-   font-size:clamp(24px,7vw,34px) !important;
-   line-height:1.05 !important;
- }
- html body .home-page > main > section:first-child > div:last-child p {
-   font-size:clamp(13px,3.7vw,17px) !important;
-   line-height:1.15 !important;
- }
- html body .home-page > main > section:first-child > div:last-child span {
-   font-size:12px !important;
- }
- html body .home-page > main > section:nth-child(2) .home-cover-anchor {
-   width:100% !important; height:100% !important; overflow:hidden !important;
-   border-radius:0 !important; background:#061a36 !important;
- }
- html body .home-page > main > section:nth-child(2) .home-cover-anchor > div {
-   height:100% !important; width:100% !important; background:#061a36 !important;
- }
- html body .home-page > main > section:nth-child(2) .home-cover-anchor img {
-   width:100% !important; height:100% !important; object-fit:contain !important;
- }
- html body .home-page > main > section:nth-child(3) > button,
- html body .home-page > main > section:nth-child(4) > button {
-   display:flex !important; flex-direction:column !important;
-   overflow:hidden !important; min-height:0 !important;
- }
- html body .home-page > main > section:nth-child(3) > button > span:first-child,
- html body .home-page > main > section:nth-child(4) > button > span:first-child {
-   flex:1 1 0 !important; min-height:0 !important; height:auto !important;
- }
- html body .home-page > main > section:nth-child(4) > button > span:last-child {
-   flex:0 0 auto !important; min-height:0 !important;
- }
- html body .home-page > nav.mobile-nav {
-   position:fixed !important; left:0 !important; right:0 !important;
-   bottom:0 !important; top:auto !important;
-   height:10dvh !important; min-height:0 !important;
-   z-index:60 !important;
- }
- html body .home-page > nav.mobile-nav > a,
- html body .home-page > nav.mobile-nav > button {
-   min-height:0 !important; height:100% !important;
-   padding-block:2px !important;
- }
+@media (max-width:639px) and (max-height:599px) {
+  html body .home-page { min-height:100dvh !important; height:auto !important; overflow-y:auto !important; }
 }
