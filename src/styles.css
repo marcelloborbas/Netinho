@@ -4488,8 +4488,8 @@ html body .lia-speech-text .lia-spoken-word-active {
   html body .lia-speech-text .lia-spoken-word-active { transition: none !important; }
 }
 
-/* Login em retrato: mostrar a arte completa, sem recortes ou zoom.
-   Sobrescreve regras legadas de cover, transform e dimensoes fixas. */
+/* Login: imagem ocupa toda a área disponível, sem faixas vazias.
+   O enquadramento cover pode cortar discretamente as bordas em telas estreitas. */
 html body .welcome-auth-stage {
   display: block !important;
   width: 100% !important;
@@ -4514,7 +4514,7 @@ html body .welcome-auth-stage .welcome-auth-art {
   height: 100% !important;
   max-width: none !important;
   max-height: none !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   object-position: center center !important;
   transform: none !important;
   clip-path: none !important;
