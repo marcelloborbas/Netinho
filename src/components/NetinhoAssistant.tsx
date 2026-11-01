@@ -135,7 +135,7 @@ export function NetinhoAssistant() {
   const greeting = pathname === "/" ? "Veja como é fácil!\n\nEm sua foto você consulta seu status, seu perfil, solicita ajuda ou sai da conta.\n\nPara realizar vendas, é necessário ter o status de Vendedor ou Representante. Caso não o tenha, solicite sua habilitação.\n\nAqui você consulta as novidades e promoções!\n\nAtalhos do menu inferior, é para facilitar a navegação.\n\nTudo simples, rápido e prático!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speechRefLatest = useRef<() => void>(() => {});
   const speak = () => {
-    const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261029-2" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261029-5" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261029-3" : /\/pedidos\/relatorio\/?$/.test(pathname) ? "/audio/lia/lia-relatorio%20do%20usuario.mp3?v=20261029-1" : /pedido|vendas/.test(pathname) ? "/audio/lia/lia-conclui%20pedido.mp3?v=20261029-1" : null;
+    const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261101-1" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261101-1" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261101-1" : /\/pedidos\/relatorio\/?$/.test(pathname) ? "/audio/lia/lia-relatorio%20do%20usuario.mp3?v=20261101-1" : /pedido|vendas/.test(pathname) ? "/audio/lia/lia-conclui%20pedido.mp3?v=20261101-1" : null;
     // Parar qualquer locução anterior antes de iniciar a orientação desta página.
     loginAudioRef.current?.pause();
     loginAudioRef.current = null;
