@@ -33,8 +33,26 @@ function Home() {
   useEffect(() => {
     if (!entryApproved) void navigate({ to: "/auth", replace: true });
   }, [entryApproved, navigate]);
-  const { data: access } = useQuery({ ...accessQuery, enabled: entryApproved, retry: false, refetchInterval: entryApproved ? 60000 : false });
-  const { data: catalogProducts } = useQuery({ ...productsQuery, enabled: entryApproved });
+  const { data: access } = useQuery({ ...accessQuery, enabled: entryApproved, retry: false });
+  // O catálogo completo não deve disputar rede/CPU com a primeira pintura da página.
+  // As quantidades continuam vindo dos produtos reais, mas são buscadas após a interface aparecer.
+  const [loadCounts, setLoadCounts] = useState(false);
+  useEffect(() => {
+    if (!entryApproved) return;
+    let idleId: number | undefined;
+    const timer = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        idleId = window.requestIdleCallback(() => setLoadCounts(true), { timeout: 2500 });
+      } else {
+        setLoadCounts(true);
+      }
+    }, 1200);
+    return () => {
+      window.clearTimeout(timer);
+      if (idleId !== undefined && "cancelIdleCallback" in window) window.cancelIdleCallback(idleId);
+    };
+  }, [entryApproved]);
+  const { data: catalogProducts } = useQuery({ ...productsQuery, enabled: entryApproved && loadCounts });
   const countFor = (term: string) => catalogProducts?.filter(p => (p.categories?.name || "").toLocaleLowerCase("pt-BR").includes(term.toLocaleLowerCase("pt-BR"))).length;
   const previousLevel = useRef<string | null>(null);
   useEffect(() => {
