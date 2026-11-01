@@ -56,7 +56,7 @@ function AuthPage() {
   const [emailLoginOpen, setEmailLoginOpen] = useState(false);
   const [liaOpen, setLiaOpen] = useState(false);
   const [liaSpeaking, setLiaSpeaking] = useState(false);
-  const liaText = "Olá! Seja muito bem-vindo!\n\nÉ uma imensa alegria em ter você conosco!\n\nEntre com sua conta do Google ou clique no envelope para receber seu link por e-mail.\n\nQuer praticidade? Baixe o atalho, aguarde a instalação e acesse pelo ícone na tela do seu celular.\n\nConte comigo para ajudar você em cada etapa!\n\nE não se esqueça:\n\nJesus te ama! Que Deus o abençoe em sua caminhada!";
+  const liaText = "Bem-vindo à Netinho Auto Parts!\n\nEntre pelo Google ou receba seu acesso por e-mail.\n\nClique em Baixar App para acessar diretamente pelo celular!\n\nSe precisa de ajuda, clique na sua foto no rodapé e selecione a Ajuda da página onde estiver.\n\nQue Deus abençoe seu dia e seus negócios!";
   const liaAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
     const audio = new Audio("/audio/lia/lia-login.mp3");
