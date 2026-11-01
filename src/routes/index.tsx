@@ -81,7 +81,8 @@ function Home() {
         <section className="relative isolate min-h-[235px] overflow-hidden bg-[#092b52] sm:min-h-[340px]" aria-label="Boas-vindas">
           <img src="/images/netinho-cabecalho-arte-aprovada.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" onError={e => { e.currentTarget.src="/images/fundo-saudacao.webp"; }} />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#03152be8] via-[#062345a6] to-transparent" />
-          <div className="relative flex min-h-[235px] flex-col justify-end px-4 pb-6 pt-12 sm:min-h-[340px] sm:px-8 sm:pb-10">
+          <div className="absolute left-3 top-3 z-10 sm:left-6 sm:top-5"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="h-auto w-[92px] max-w-[26vw] object-contain drop-shadow-[0_3px_9px_rgba(0,0,0,.7)] sm:w-[150px]" /></div>
+          <div className="relative flex min-h-[235px] flex-col justify-end px-4 pb-6 pt-24 sm:min-h-[340px] sm:px-8 sm:pb-10 sm:pt-28">
             <p className="text-base font-bold text-white drop-shadow-lg sm:text-xl">{salutation},</p>
             <h1 className="max-w-[18ch] text-[clamp(1.8rem,7vw,3.5rem)] font-black leading-tight text-[#ffd13e] drop-shadow-[0_2px_5px_#06152e]">Sr. {userName || "usuário"}!</h1>
             <span className="mt-1 inline-flex w-fit rounded-full border border-[#f6c94d]/70 bg-[#051d39]/75 px-3 py-1 text-xs font-bold text-[#ffe18c]">{status}</span>
