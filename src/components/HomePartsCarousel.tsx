@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const parts = [
   { title: "Bomba de direção hidráulica", image: "/images/carrossel/carrossel-1.webp", search: "bomba direção hidráulica" },
@@ -34,6 +35,11 @@ export function HomePartsCarousel() {
           </div>
 
         </div>
+      </div>
+      <button type="button" aria-label="Imagem anterior" onClick={() => setIndex(i => (i - 1 + parts.length) % parts.length)} className="absolute left-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#d8ad59] bg-[#09264bdc] text-white shadow-lg hover:bg-[#174b83]"><ChevronLeft size={22}/></button>
+      <button type="button" aria-label="Próxima imagem" onClick={() => setIndex(i => (i + 1) % parts.length)} className="absolute right-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#d8ad59] bg-[#09264bdc] text-white shadow-lg hover:bg-[#174b83]"><ChevronRight size={22}/></button>
+      <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5 rounded-full bg-[#071e3bba] px-3 py-2" aria-label="Selecionar imagem">
+        {parts.map((part,i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i+1}: ${part.title}`} aria-current={i===index ? "true" : undefined} onClick={() => setIndex(i)} className={`h-2 rounded-full transition-all ${i===index ? "w-5 bg-[#f3c75d]" : "w-2 bg-white/70 hover:bg-white"}`}/>)}
       </div>
     </section>
   );
