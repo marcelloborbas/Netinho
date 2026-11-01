@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles, ShieldCheck, ChevronRight } from "lucide-react";
+import { Sparkles, ShieldCheck, ChevronRight, CarFront } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
@@ -94,8 +94,8 @@ function Home() {
             {[
               {name:"Volkswagen", image:"/images/veiculos/volkswagen/polo.webp"},
               {name:"Fiat", image:"/images/veiculos/fiat/argo.webp"},
-              {name:"Chevrolet", image:"/images/veiculos/chevrolet/onix.webp"},
-              {name:"Ford", image:"/images/veiculos/ford/ka.webp"},
+              {name:"Chevrolet", image:""},
+              {name:"Ford", image:""},
             ].map((brand) => (
               <button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#c8d9ea] bg-white p-2 text-center shadow-sm transition-transform hover:-translate-y-0.5">
                 <span className="flex h-[92px] w-full items-center justify-center rounded-xl bg-[#f2f6fb]">
