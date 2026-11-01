@@ -101,14 +101,15 @@ function Home() {
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
         <section className="relative isolate min-h-[235px] overflow-hidden bg-[#092b52] sm:min-h-[340px]" aria-label="Boas-vindas">
           <img src="/images/netinho-cabecalho-arte-aprovada.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-contain object-center" onError={e => { e.currentTarget.src="/images/fundo-saudacao.webp"; }} />
+          <img src="/images/Logo%20Netinho.webp" alt="" aria-hidden="true" className="absolute left-3 top-3 z-10 w-[clamp(80px,23vw,145px)] opacity-50 brightness-150 saturate-50" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#03152be8] via-[#062345a6] to-transparent" />
 
           <div className="relative flex min-h-[235px] flex-col justify-end px-4 pb-3 pt-2 sm:min-h-[340px] sm:px-8 sm:pb-6">
-            <p className="text-xl font-extrabold text-white drop-shadow-lg sm:text-2xl">{salutation},</p>
-            <h1 className="max-w-[18ch] text-[clamp(2.2rem,8vw,3.8rem)] font-black leading-tight text-[#ffd13e] drop-shadow-[0_2px_5px_#06152e]">Sr. {userName || "usuário"}!</h1>
+            <p className="text-[clamp(1.4rem,5vw,2rem)] font-extrabold text-white drop-shadow-lg">{salutation},</p>
+            <h1 className="max-w-[18ch] text-[clamp(2.5rem,9vw,4rem)] font-black leading-tight text-[#ffd13e] drop-shadow-[0_2px_5px_#06152e]">Sr. {userName || "usuário"}!</h1>
             <span className="mt-1 inline-flex w-fit rounded-full border border-[#f6c94d]/70 bg-[#051d39]/75 px-3 py-1 text-xs font-bold text-[#ffe18c]">{status}</span>
-            <p className="mt-2 text-sm font-semibold text-white drop-shadow-lg sm:text-lg">É bom tê-lo conosco.</p>
-            <p className="text-base font-bold text-white drop-shadow-lg sm:text-xl">Que seu dia seja abençoado!</p>
+            <p className="mt-2 text-[clamp(1rem,3.8vw,1.3rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
+            <p className="text-[clamp(1rem,3.8vw,1.3rem)] font-bold text-white drop-shadow-lg">Que seu dia seja abençoado!</p>
             <span className="mt-3 h-[3px] w-20 rounded-full bg-[#ffd43b]" />
           </div>
         </section>
@@ -155,8 +156,8 @@ function Home() {
             {name:"Atuador de Embreagem",image:"/images/categorias/Atuador de Embreagem.webp",term:"atuador"},
             {name:"Bobina de Ignição",image:"/images/categorias/Bobina de Ignição.webp",term:"bobina"},
             {name:"Rolamento de Roda",image:"/images/categorias/Rolamento de Roda.webp",term:"rolamento de roda"},
-          ].map(part=><button key={part.name} type="button" aria-label={part.name} onClick={() => void navigate({to:"/catalogo"})} className="flex min-w-0 flex-col overflow-hidden rounded-xl bg-white p-1 text-center text-[#08264a] shadow-[0_3px_10px_#02183155]">
-            <span className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-lg bg-white"><img src={part.image} alt={part.name} loading="lazy" className="h-full w-full object-contain"/></span>
+          ].map(part=><button key={part.name} type="button" aria-label={part.name} onClick={() => void navigate({to:"/catalogo"})} className="flex min-w-0 flex-col overflow-hidden rounded-xl bg-white p-0 text-center text-[#08264a] shadow-[0_3px_10px_#02183155]">
+            <span className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-white"><img src={part.image} alt={part.name} loading="lazy" className="h-full w-full object-cover"/></span>
             <span className="block w-full rounded-full bg-[#ffd33c] py-0.5 text-[10px] font-extrabold">{countFor(part.term) === undefined ? "— peças" : `${countFor(part.term)} peças`}</span>
           </button>)}
         </section>
