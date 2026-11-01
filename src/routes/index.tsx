@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles, ShieldCheck, ChevronRight, CarFront } from "lucide-react";
+import { Sparkles, ShieldCheck, ChevronRight, CarFront, ArrowRight, Wrench, Gauge, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
@@ -72,23 +72,33 @@ function Home() {
   if (!entryApproved) return null;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="flex w-full flex-1 flex-col items-center gap-4 bg-[#edf3fa] px-3 pt-3 pb-28 sm:gap-6 sm:px-6 sm:pt-6">
-        <section className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-[26px] border border-[#d8b65c]/60 bg-[#102e54] bg-[url('/images/fundo-saudacao.webp')] bg-cover bg-center px-5 py-8 text-left text-white shadow-[0_12px_26px_rgba(5,30,65,0.20)] sm:px-9 sm:py-12" aria-label="Boas-vindas ao Netinho">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#061a35ed] via-[#0c2b52bb] to-[#102e5440]" aria-hidden="true" />
-          <div className="relative flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#f8d878]"><Sparkles size={15} /> Seja bem-vindo</div>
-          <h1 className="relative mt-3 max-w-[24ch] text-[clamp(1.65rem,6vw,2.7rem)] font-black leading-[1.17] tracking-tight">{salutation}, Sr. {userName || "usuário"}!</h1>
-          <p className="relative mt-3 max-w-[32ch] text-[14px] font-semibold leading-relaxed text-[#f2e9cf] sm:text-lg">É bom tê-lo conosco.<br/>Que seu dia seja abençoado!</p>
-          <div className="relative mt-5 h-[3px] w-28 rounded-full bg-gradient-to-r from-[#f2bb2d] to-transparent" />
+      <main className="relative flex w-full flex-1 flex-col items-center gap-4 overflow-x-hidden bg-gradient-to-b from-[#06172f] via-[#09264c] to-[#061a35] px-3 pb-28 pt-3 text-white sm:gap-6 sm:px-6 sm:pt-6">
+        <section className="relative isolate mx-auto min-h-[260px] w-full max-w-3xl overflow-hidden rounded-[26px] border border-[#b98b3e]/70 bg-[#102e54] bg-[url('/images/fundo-saudacao.webp')] bg-cover bg-center shadow-[0_12px_32px_rgba(0,0,0,.38)] sm:min-h-[340px]" aria-label="Boas-vindas">
+          <div className="absolute inset-0 -z-0 bg-gradient-to-r from-[#061529f5] via-[#09274ed8] to-[#061b3570]" />
+          <div className="relative flex min-h-[260px] flex-col justify-center px-6 py-9 sm:min-h-[340px] sm:px-10">
+            <span className="mb-3 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.2em] text-[#f6cc67]"><Sparkles size={15}/> Seja bem-vindo</span>
+            <h1 className="max-w-[22ch] text-[clamp(1.8rem,6.5vw,3rem)] font-black leading-tight drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</h1>
+            <p className="mt-3 text-base font-semibold text-[#f7e9c7] sm:text-xl">É bom tê-lo conosco.</p>
+            <p className="mt-1 text-base font-semibold text-[#f7e9c7] sm:text-xl">Que seu dia seja abençoado!</p>
+            <div className="mt-5 h-[3px] w-36 rounded-full bg-gradient-to-r from-[#e6ac40] to-transparent"/>
+          </div>
         </section>
-
-        <section className="w-full min-w-0 max-w-3xl overflow-hidden rounded-[24px] border border-[#d4dfec] bg-white shadow-[0_10px_24px_rgba(5,30,65,0.12)]" aria-label="Imagens de produtos em rotação automática">
-          <HomePartsCarousel />
+        <section className="w-full max-w-3xl" aria-label="Destaques e novidades">
+          <div className="mb-3 flex items-center justify-between gap-2 px-1">
+            <h2 className="text-lg font-black text-[#f5d37c] sm:text-2xl">Peças em destaque</h2>
+            <span className="text-xs font-medium text-[#cbd8eb]">Qualidade para seu veículo</span>
+          </div>
+          <div className="overflow-hidden rounded-[25px] border-2 border-[#b88b44] bg-gradient-to-br from-[#f6f8fc] to-[#d9e5f3] shadow-[0_14px_32px_rgba(0,0,0,.28)]">
+            <HomePartsCarousel />
+            <button type="button" onClick={() => void navigate({to:"/catalogo"})} className="flex w-full items-center justify-between bg-gradient-to-r from-[#d6a44d] via-[#f3d37c] to-[#d6a44d] px-5 py-3 text-left text-sm font-black text-[#09264b] transition hover:brightness-110">
+              Explore nosso catálogo <ArrowRight size={20}/>
+            </button>
+          </div>
         </section>
-
-        <section className="w-full max-w-3xl" aria-label="Marcas de veículos">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-black tracking-tight text-[#102e54] sm:text-xl">Encontre peças para seu veículo</h2>
-            <button type="button" onClick={() => void navigate({to:"/catalogo"})} className="flex shrink-0 items-center gap-1 text-xs font-bold text-[#174b83]">Catálogo <ChevronRight size={16}/></button>
+        <section className="w-full max-w-3xl" aria-label="Montadoras">
+          <div className="mb-3 flex items-end justify-between gap-2 px-1">
+            <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-[#e4b35b]">Escolha sua montadora</p><h2 className="text-xl font-black sm:text-2xl">Encontre a peça certa</h2></div>
+            <button type="button" onClick={() => void navigate({to:"/catalogo"})} className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-[#f5d37c]">Ver catálogo <ChevronRight size={16}/></button>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
@@ -96,24 +106,33 @@ function Home() {
               {name:"Fiat", image:"/images/veiculos/fiat/argo.webp"},
               {name:"Chevrolet", image:""},
               {name:"Ford", image:""},
-            ].map((brand) => (
-              <button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#c8d9ea] bg-white p-2 text-center shadow-sm transition-transform hover:-translate-y-0.5">
-                <span className="flex h-[92px] w-full items-center justify-center rounded-xl bg-[#f2f6fb]">
-                  <img src={brand.image} alt={`Veículo ${brand.name}`} loading="lazy" className="h-full w-full object-contain" onError={(e)=>{e.currentTarget.style.display="none";}} />
-                </span>
-                <span className="mt-2 text-sm font-extrabold text-[#102e54]">{brand.name}</span>
-              </button>
-            ))}
+            ].map(brand => <button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="group overflow-hidden rounded-[20px] border border-[#bd934e] bg-gradient-to-b from-[#184478] to-[#071d3c] p-2 shadow-[0_8px_18px_rgba(0,0,0,.3)] transition hover:-translate-y-1 hover:border-[#f6d37c]">
+              <span className="flex h-24 items-center justify-center overflow-hidden rounded-[14px] bg-gradient-to-b from-[#e7edf6] to-[#b8c8dc]">
+                {brand.image ? <img src={brand.image} alt={brand.name} loading="lazy" className="h-full w-full object-contain" onError={e => {e.currentTarget.style.display="none";}}/> : <CarFront size={51} className="text-[#214e7d]"/>}
+              </span>
+              <span className="mt-2 block text-sm font-black text-[#f7d582]">{brand.name}</span>
+            </button>)}
           </div>
         </section>
-
-        <section className="flex w-full max-w-3xl items-center gap-4 rounded-[22px] border border-[#d8b65c]/50 bg-gradient-to-r from-[#071e3e] via-[#123b6b] to-[#0b2b50] px-5 py-5 text-white shadow-lg sm:px-7" aria-label="Compromisso de qualidade">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#e9c46b]/50 bg-[#e9c46b]/10"><ShieldCheck size={31} className="text-[#f1c65b]"/></span>
-          <div>
-            <h2 className="text-base font-black sm:text-xl">Seu veículo em boas mãos!</h2>
-            <p className="mt-1 text-xs leading-relaxed text-[#e1ebf6] sm:text-sm">Explore nosso catálogo de peças e encontre o que precisa para atender seus clientes.</p>
+        <section className="w-full max-w-3xl" aria-label="Linhas de peças">
+          <div className="mb-3 px-1"><p className="text-[10px] font-bold uppercase tracking-[.18em] text-[#e4b35b]">Tudo para seu veículo</p><h2 className="text-xl font-black sm:text-2xl">Conheça nossas peças</h2></div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              {name:"Direção",image:"/images/categorias/Bomba de direção.webp",icon:Gauge},
+              {name:"Embreagem",image:"/images/categorias/Atuador de Embreagem.webp",icon:Wrench},
+              {name:"Ignição",image:"/images/categorias/Bobina de Ignição.webp",icon:Zap},
+              {name:"Rolamentos",image:"/images/categorias/Rolamento de Roda.webp",icon:ShieldCheck},
+            ].map(part => <button key={part.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="overflow-hidden rounded-[19px] border border-[#b98d46] bg-gradient-to-b from-[#133c6c] to-[#071d3a] p-2 text-left shadow-lg transition hover:-translate-y-1">
+              <span className="flex h-24 items-center justify-center overflow-hidden rounded-[13px] bg-[#f5f7fb]"><img src={part.image} alt={part.name} loading="lazy" className="h-full w-full object-contain" onError={e=>{e.currentTarget.style.display="none";}}/></span>
+              <span className="mt-2 flex items-center justify-between gap-1 text-xs font-extrabold text-[#f7d582] sm:text-sm">{part.name}<ChevronRight size={15}/></span>
+            </button>)}
           </div>
         </section>
+        <button type="button" onClick={() => void navigate({to:"/catalogo"})} className="flex w-full max-w-3xl items-center gap-4 rounded-[23px] border border-[#d9ab58] bg-gradient-to-r from-[#0d315f] to-[#174e83] px-5 py-5 text-left shadow-xl transition hover:brightness-110">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#f3ce75]/60 bg-[#f3ce75]/10"><ShieldCheck size={32} className="text-[#f5d37c]"/></span>
+          <span className="flex-1"><strong className="block text-base font-black text-[#f7d582] sm:text-xl">Seu veículo em boas mãos!</strong><span className="mt-1 block text-xs leading-relaxed text-[#e1eaf6] sm:text-sm">Qualidade, confiança e peças para cada necessidade.</span></span>
+          <ChevronRight size={22} className="shrink-0 text-[#f7d582]"/>
+        </button>
       </main>
       <PublicFooter />
     </div>
