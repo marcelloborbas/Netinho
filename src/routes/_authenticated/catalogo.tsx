@@ -423,11 +423,6 @@ function Catalog() {
       <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-xl bg-gradient-to-r from-[#f7fbff] via-white to-[#edf5ff] px-2 py-3 [scrollbar-width:thin]">
         {availableVehicleBrands.map((brand) => {
           const selected = vehicleBrand === brand.name;
-          const preview = brand.slug === "volkswagen"
-            ? "/images/veiculos/volkswagen/polo.webp"
-            : brand.slug === "fiat"
-              ? "/images/veiculos/fiat/argo.webp"
-              : null;
           return <button
             key={brand.name}
             type="button"
@@ -437,13 +432,14 @@ function Catalog() {
             onClick={() => { setVehicleBrand(selected ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}
             className={`group relative flex h-[158px] w-[112px] shrink-0 snap-start flex-col items-center overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-[#08659c] via-[#062a58] to-[#03132d] px-2 pb-2 pt-2 text-center text-white shadow-[inset_0_2px_16px_#30aaff55] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_17px_#ffd23c99,inset_0_2px_16px_#30aaff55] focus-visible:outline-none focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] ${selected ? "border-[#ffd23c] shadow-[0_0_18px_#ffd23caa,inset_0_2px_16px_#30aaff55]" : "border-[#2389c9]"}`}
           >
-            <span aria-hidden="true" className="pointer-events-none absolute inset-x-5 top-0 h-1 rounded-b-full bg-[#55d8ff] shadow-[0_0_13px_#5ddfff]" />
-            <span className="flex h-[66px] w-full items-center justify-center overflow-hidden">
-              {preview ? <img src={preview} alt="" loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_5px_#0009] transition-transform duration-300 group-hover:scale-105" /> : <CarFront aria-hidden="true" className="h-12 w-12 text-[#d8ecff] drop-shadow-[0_0_8px_#55bdff]" />}
-            </span>
-            <img src={`https://cdn.simpleicons.org/${brand.slug}/white`} alt="" aria-hidden="true" loading="lazy" decoding="async" className="mt-0.5 h-7 w-10 object-contain" onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
-            <span className="mt-1 min-h-[17px] text-[11px] font-extrabold leading-tight">{brand.name}</span>
-            <span className="mt-auto w-full rounded-full border border-[#2676a6] bg-[#062444] px-1 py-0.5 text-[10px] font-bold text-[#dcefff]">{brand.count} peças</span>
+            <img
+              src={`/images/montadoras/${brand.slug === "mercedes" ? "mercedes-benz" : brand.slug}.webp`}
+              alt={brand.name}
+              loading="lazy"
+              decoding="async"
+              className="h-[112px] w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="mt-auto pt-1 text-[10px] font-bold text-[#e8f4ff]">{brand.count} peças</span>
           </button>;
         })}
       </nav>
