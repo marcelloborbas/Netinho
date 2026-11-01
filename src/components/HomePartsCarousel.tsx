@@ -8,6 +8,8 @@ const parts = [
   { title: "Rolamentos de embreagem", image: "/images/carrossel/carrossel-5.webp", search: "rolamento embreagem" },
   { title: "Peças automotivas FCO", image: "/images/carrossel/carrossel-6.webp", search: "FCO" },
   { title: "Linha de peças automotivas", image: "/images/carrossel/carrossel-7.webp", search: "FCO" },
+  { title: "Novidades em peças automotivas", image: "/images/carrossel/carrossel-8.webp", search: "peças" },
+  { title: "Promoções e novidades", image: "/images/carrossel/carrossel-9.webp", search: "peças" },
 ];
 
 export function HomePartsCarousel() {
