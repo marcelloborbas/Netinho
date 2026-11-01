@@ -55,6 +55,9 @@ function OrderPage() {
   const [sendError, setSendError] = useState("");
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const confirmAudioRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => () => { confirmAudioRef.current?.pause(); confirmAudioRef.current = null; }, []);
+  function stopConfirmAudio() { confirmAudioRef.current?.pause(); confirmAudioRef.current = null; }
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
     const footer = document.querySelector<HTMLElement>(".mobile-nav");
@@ -89,9 +92,14 @@ function OrderPage() {
     if (!d.items.length || busy) return;
     buttonSound();
     setReview(true);
+    stopConfirmAudio();
+    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261101-1");
+    confirmAudioRef.current = audio;
+    void audio.play().catch(() => { /* Reprodução pode depender das permissões do navegador. */ });
     setConfirmOpen(true);
   }
   function closeConfirmation() {
+    stopConfirmAudio();
     setConfirmOpen(false);
     setReview(false);
     buttonSound();
@@ -296,7 +304,7 @@ function OrderPage() {
             </section>
             {/* Áreas invisíveis: os botões da imagem são os únicos visíveis e recebem as ações reais. */}
             <button type="button" onClick={closeConfirmation} aria-label="Corrigir Pedido" title="Corrigir Pedido" className="absolute bottom-[7%] left-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"/>
-            <button type="button" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#7dd3fc] disabled:cursor-wait"/>
+            <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#7dd3fc] disabled:cursor-wait"/>
           </div>
         </div>
       , document.body)}
