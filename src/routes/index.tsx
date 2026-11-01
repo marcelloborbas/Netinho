@@ -96,13 +96,17 @@ function Home() {
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Montadoras">
           {[
-            {name:"Volkswagen",image:"/images/veiculos/volkswagen/polo.webp"},
-            {name:"Fiat",image:"/images/veiculos/fiat/argo.webp"},
-            {name:"Chevrolet",image:""},
-            {name:"Ford",image:""},
-          ].map((brand,i)=><button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className={`min-w-0 overflow-hidden rounded-xl border bg-gradient-to-b from-[#07528c] via-[#072c5b] to-[#031832] px-1 pb-2 pt-1.5 text-center shadow-[inset_0_1px_8px_#2099f366] transition hover:brightness-125 ${i===0?"border-[#ffd23c] shadow-[0_0_12px_#ffd23c]":"border-[#3b8ac2]"}`}>
-              <span className="flex aspect-[1.3] items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#206da6] to-[#062446]">{brand.image?<img src={brand.image} alt="" className="h-full w-full object-contain" loading="lazy"/>:<CarFront className="h-10 w-10 text-[#b8d6f2]"/>}</span>
-              <span className="mt-1 block truncate text-[10px] font-bold leading-tight text-white sm:text-sm">{brand.name}</span>
+            {name:"Volkswagen",image:"/images/veiculos/volkswagen/polo.webp",emblem:"VW"},
+            {name:"Fiat",image:"/images/veiculos/fiat/argo.webp",emblem:"FIAT"},
+            {name:"Chevrolet",image:"",emblem:"✚"},
+            {name:"Ford",image:"",emblem:"Ford"},
+          ].map((brand,i)=><button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className={`relative flex min-w-0 flex-col items-center overflow-hidden rounded-[13px] border bg-gradient-to-b from-[#0065a9] via-[#062c5a] to-[#03132e] px-1 pb-3 pt-2 text-center shadow-[inset_0_1px_12px_#36baff66] transition hover:brightness-125 ${i===0?"border-[#ffd23c] ring-2 ring-[#ffd23c] shadow-[0_0_16px_#ffd23c]":"border-[#2389c9]"}`}>
+              <span className="flex h-[clamp(50px,16vw,110px)] w-full items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#147bb5] via-[#075084] to-[#041c42]">
+                {brand.image ? <img src={brand.image} alt="" className="h-full w-full object-contain" loading="lazy"/> : <CarFront className="h-10 w-10 text-[#e5f2ff]" />}
+              </span>
+              <span className="relative -mt-2 flex h-8 min-w-8 items-center justify-center rounded-full border-2 border-[#d7eaff] bg-gradient-to-b from-[#145c9a] to-[#04132c] px-1 text-[9px] font-black italic text-white shadow-[0_2px_8px_#0009] sm:h-10 sm:min-w-10 sm:text-xs">{brand.emblem}</span>
+              <span className="mt-1 block w-full truncate text-[10px] font-bold leading-tight text-white sm:text-sm">{brand.name}</span>
+              <span className="mt-0.5 text-[9px] text-[#d6eaff] sm:text-xs">Ver peças</span>
             </button>)}
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Categorias de peças">
@@ -110,11 +114,11 @@ function Home() {
             {name:"Freios",image:"/images/categorias/Rolamento de Roda.webp"},
             {name:"Atuador de Embreagem",image:"/images/categorias/Atuador de Embreagem.webp"},
             {name:"Bobina de Ignição",image:"/images/categorias/Bobina de Ignição.webp"},
-            {name:"Direção",image:"/images/categorias/Bomba de direção.webp"},
-          ].map(part=><button key={part.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="flex min-w-0 flex-col overflow-hidden rounded-xl bg-gradient-to-b from-white to-[#d6ebff] p-1 text-center text-[#08264a] shadow-[0_3px_10px_#02183155] transition hover:brightness-105">
-            <span className="flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-white"><img src={part.image} alt="" loading="lazy" className="h-full w-full object-contain"/></span>
-            <span className="flex min-h-[2.5em] flex-1 items-center justify-center text-[9px] font-extrabold leading-tight sm:text-sm">{part.name}</span>
-            <span className="mt-1 block w-full rounded-full bg-gradient-to-b from-[#ffe56e] to-[#ffc325] py-1 text-[9px] font-extrabold sm:text-xs">Ver peças</span>
+            {name:"Alternador",image:""},
+          ].map(part=><button key={part.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="flex min-w-0 flex-col overflow-hidden rounded-[12px] bg-gradient-to-b from-white to-[#d9edff] p-1.5 text-center text-[#08264a] shadow-[0_3px_10px_#02183155] transition hover:brightness-105">
+            <span className="flex aspect-[1.15] w-full items-center justify-center overflow-hidden rounded-lg bg-white">{part.image?<img src={part.image} alt="" loading="lazy" className="h-full w-full object-contain"/>:<Zap size={35} className="text-[#173d6a]"/>}</span>
+            <span className="flex min-h-[3em] flex-1 items-center justify-center text-[9px] font-extrabold leading-tight sm:text-sm">{part.name}</span>
+            <span className="mt-1 block w-full rounded-full bg-gradient-to-b from-[#ffe56e] to-[#ffc325] py-1 text-[9px] font-extrabold sm:text-xs">Ver itens</span>
           </button>)}
         </section>
       </main>
