@@ -41,6 +41,12 @@ const vehicleBrands: VehicleBrand[] = [
   { name: "Peugeot", pattern: /\bpeugeot\b/i, slug: "peugeot", color: "000000" },
   { name: "Citroën", pattern: /\bcitro[eë]n\b/i, slug: "citroen", color: "AC1926" },
   { name: "Jeep", pattern: /\bjeep\b|\b(renegade|compass)\b/i, slug: "jeep", color: "000000" },
+  { name: "Mitsubishi", pattern: /\bmitsubishi\b|\b(l200|pajero|outlander|asx)\b/i, slug: "mitsubishi", color: "E60012" },
+  { name: "BMW", pattern: /\bbmw\b/i, slug: "bmw", color: "0066B1" },
+  { name: "Mercedes-Benz", pattern: /\bmercedes(?:-benz)?\b|\bsprinter\b/i, slug: "mercedes", color: "FFFFFF" },
+  { name: "Kia", pattern: /\bkia\b|\b(sportage|cerato|sorento|picanto)\b/i, slug: "kia", color: "BB162B" },
+  { name: "Land Rover", pattern: /\bland\s?rover\b|\b(discovery|defender|evoque)\b/i, slug: "landrover", color: "005A2B" },
+  { name: "Volvo", pattern: /\bvolvo\b|\b(xc40|xc60|xc90)\b/i, slug: "volvo", color: "003057" },
 ];
 // Modelos exibidos apenas quando citados explicitamente na aplicação da peça.
 const vehicleModels: Record<string, string[]> = {
