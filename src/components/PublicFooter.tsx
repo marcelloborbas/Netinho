@@ -48,6 +48,7 @@ export function PublicFooter() {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => sync(session));
     return () => { mounted = false; data.subscription.unsubscribe(); };
   }, []);
+  const status = access?.level === 1 || access?.attribution === "Administrador" ? "Administrador" : access?.attribution === "Representante" ? "Representante" : access?.attribution === "Vendedor" || access?.can_sell ? "Vendedor" : "Visitante";
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const prepareCatalog = () => {
@@ -73,7 +74,7 @@ export function PublicFooter() {
   return <>
     {menuOpen && <button type="button" aria-label="Fechar menu do usuário" className="fixed inset-0 z-[90] bg-black/20" onClick={() => setMenuOpen(false)} />}
     {menuOpen && <div role="menu" aria-label="Opções do usuário" className="fixed bottom-[76px] right-2 z-[100] w-56 max-w-[calc(100vw-16px)] rounded-2xl border-2 border-[#d4af37] bg-white p-2 text-[#102a52] shadow-2xl">
-      <div className="border-b border-slate-200 px-3 py-2 text-sm font-bold">{user?.name ?? "Visitante"}</div>
+      <div className="border-b border-slate-200 px-3 py-2"><div className="text-xs text-slate-500">Nome de usuário</div><div className="text-sm font-bold break-words">{user?.name ?? "Visitante"}</div><div className="mt-2 text-xs text-slate-500">Status</div><div className="text-sm font-semibold text-[#102a52]">{status}</div></div>
       <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={19}/> Ajuda</button>
       {access?.level === 1 && <Link role="menuitem" to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Settings size={19}/> Administração</Link>}
       {user && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); clickSound(); void logout(); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-red-700 hover:bg-red-50"><LogOut size={19}/> Sair</button>}
