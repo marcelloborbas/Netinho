@@ -69,6 +69,11 @@ function Home() {
     return first && !["usuário", "usuario", "visitante", "sr.", "sr"].includes(first.toLowerCase()) ? first : "";
   };
   const userName = validName(accountName) || validName(access?.name || "") || validName(savedName);
+  const status = access?.level === 1 || access?.attribution === "Administrador"
+    ? "Administrador"
+    : access?.attribution === "Representante" ? "Representante"
+    : access?.attribution === "Vendedor" ? "Vendedor"
+    : access?.can_sell ? "Vendedor" : "Visitante";
   if (!entryApproved) return null;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
@@ -78,6 +83,7 @@ function Home() {
           <div className="relative flex min-h-[260px] flex-col justify-center px-6 py-9 sm:min-h-[340px] sm:px-10">
             <span className="mb-3 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.2em] text-[#f6cc67]"><Sparkles size={15}/> Seja bem-vindo</span>
             <h1 className="max-w-[22ch] text-[clamp(1.8rem,6.5vw,3rem)] font-black leading-tight drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</h1>
+            <span className="mt-2 inline-flex w-fit rounded-full border border-[#f5d37c] bg-[#071e3b]/80 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#f5d37c]">{status}</span>
             <p className="mt-3 text-base font-semibold text-[#f7e9c7] sm:text-xl">É bom tê-lo conosco.</p>
             <p className="mt-1 text-base font-semibold text-[#f7e9c7] sm:text-xl">Que seu dia seja abençoado!</p>
             <div className="mt-5 h-[3px] w-36 rounded-full bg-gradient-to-r from-[#e6ac40] to-transparent"/>
