@@ -277,10 +277,11 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       {confirmOpen && createPortal(
-        <div className="fixed inset-0 z-[99999] isolate flex items-center justify-center overflow-hidden bg-[#0862bd] p-0 sm:block sm:overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+        <div className="fixed inset-0 z-[99999] isolate flex items-center justify-center overflow-hidden bg-[#0862bd] p-0 sm:block sm:overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title" aria-describedby="lia-confirm-locucao">
           <div className="relative mx-auto aspect-[9/20] w-[max(100vw,45dvh)] shrink-0 overflow-hidden sm:w-full sm:max-w-[600px] sm:aspect-[9/16]">
             <img src="/images/lia-confirmacao-pedido-web.webp?v=875902f2" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="absolute inset-0 h-full w-full object-contain" decoding="async"/>
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
+            <p id="lia-confirm-locucao" className="sr-only whitespace-pre-line">{"Estamos quase finalizando!\\n\\nAntes de enviar, confira atentamente os dados do seu pedido.\\n\\nSe estiver tudo correto, clique em Enviar Pedido.\\n\\nCaso precise fazer alguma alteração, selecione Corrigir Pedido.\\n\\nA Netinho Auto Parts agradece sua confiança e preferência!\\n\\nQue Deus abençoe você, sua família e seus negócios!"}</p>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
             <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[44%] bottom-[25%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
               <div className="mt-2 space-y-1 text-xs font-semibold sm:text-sm">
@@ -294,7 +295,7 @@ function OrderPage() {
               </div>
             </section>
             {/* Áreas invisíveis: os botões da imagem são os únicos visíveis e recebem as ações reais. */}
-            <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[7%] left-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"/>
+            <button type="button" onClick={closeConfirmation} aria-label="Corrigir Pedido" title="Corrigir Pedido" className="absolute bottom-[7%] left-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"/>
             <button type="button" disabled={busy} onClick={() => { buttonSound(); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#7dd3fc] disabled:cursor-wait"/>
           </div>
         </div>
