@@ -103,7 +103,7 @@ function Home() {
             {name:"Fiat",image:"/images/veiculos/fiat/argo.webp",emblem:"FIAT"},
             {name:"Chevrolet",image:"",emblem:"✚"},
             {name:"Ford",image:"",emblem:"Ford"},
-          ].map((brand,i)=><button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className={`relative flex min-w-0 flex-col items-center overflow-hidden rounded-xl border bg-gradient-to-b from-[#0065a9] via-[#062c5a] to-[#03132e] p-1 text-center shadow-[inset_0_1px_12px_#36baff66] ${i===0?"border-[#ffd23c] ring-1 ring-[#ffd23c]":"border-[#2389c9]"}`}>
+          ].map((brand)=><button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className={`relative flex min-w-0 flex-col items-center overflow-hidden rounded-xl border bg-gradient-to-b from-[#0065a9] via-[#062c5a] to-[#03132e] p-1 text-center shadow-[inset_0_1px_12px_#36baff66] border-[#2389c9] transition-all duration-300 ease-out hover:border-[#ffd23c] hover:ring-2 hover:ring-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c] active:shadow-[0_0_18px_#ffca32aa]`}>
               <span className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#147bb5] to-[#041c42]">
                 {brand.image ? <img src={brand.image} alt="" className="h-full w-full object-contain" loading="lazy"/> : <CarFront className="h-9 w-9 text-[#e5f2ff]" />}
               </span>
