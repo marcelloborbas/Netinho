@@ -378,7 +378,7 @@ function Catalog() {
       </section>
 
       <section className="mt-4" aria-label="Buscar peças por representação">
-        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>SELECIONE O CATÁLOGO</p>
+        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
         <nav className="grid grid-cols-4 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
@@ -403,7 +403,7 @@ function Catalog() {
         </nav>
       </section>
 
-      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">2</span>ESCOLHA A CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">2</span>CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
