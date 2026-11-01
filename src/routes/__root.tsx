@@ -9,9 +9,9 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
-import { NetinhoAssistant } from "@/components/NetinhoAssistant";
+const NetinhoAssistant = lazy(() => import("@/components/NetinhoAssistant").then(m => ({ default: m.NetinhoAssistant })));
 import { supabase } from "@/integrations/supabase/client";
 import { draftActions } from "@/lib/order-store";
 import appCss from "../styles.css?url";
@@ -194,7 +194,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-      <NetinhoAssistant />
+      <Suspense fallback={null}><NetinhoAssistant /></Suspense>
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
