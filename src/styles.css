@@ -4487,3 +4487,35 @@ html body .lia-speech-text .lia-spoken-word-active {
 @media (prefers-reduced-motion: reduce) {
   html body .lia-speech-text .lia-spoken-word-active { transition: none !important; }
 }
+
+/* Login em retrato: mostrar a arte completa, sem recortes ou zoom.
+   Sobrescreve regras legadas de cover, transform e dimensoes fixas. */
+html body .welcome-auth-stage {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  background: #041b4b !important;
+}
+html body .welcome-auth-stage > .welcome-art-frame {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
+}
+html body .welcome-auth-stage .welcome-auth-art {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  clip-path: none !important;
+}
