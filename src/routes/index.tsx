@@ -118,24 +118,24 @@ function Home() {
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Montadoras">
           {[
-            {name:"Volkswagen",slug:"volkswagen",image:"/images/veiculos/volkswagen/polo.webp"},
-            {name:"Fiat",slug:"fiat",image:"/images/veiculos/fiat/argo.webp"},
-            {name:"Chevrolet",slug:"chevrolet",image:""},
-            {name:"Ford",slug:"ford",image:""},
-            {name:"Renault",slug:"renault",image:""},
-            {name:"Hyundai",slug:"hyundai",image:""},
-            {name:"Toyota",slug:"toyota",image:""},
-            {name:"Honda",slug:"honda",image:""},
-            {name:"Nissan",slug:"nissan",image:""},
-            {name:"Peugeot",slug:"peugeot",image:""},
-            {name:"Citroën",slug:"citroen",image:""},
-            {name:"Jeep",slug:"jeep",image:""},
-            {name:"Mitsubishi",slug:"mitsubishi",image:""},
-            {name:"BMW",slug:"bmw",image:""},
-            {name:"Mercedes-Benz",slug:"mercedes",image:""},
-            {name:"Kia",slug:"kia",image:""},
-            {name:"Land Rover",slug:"landrover",image:""},
-            {name:"Volvo",slug:"volvo",image:""},
+            {name:"Volkswagen",slug:"volkswagen",image:"/images/montadoras/volkswagen.webp"},
+            {name:"Fiat",slug:"fiat",image:"/images/montadoras/fiat.webp"},
+            {name:"Chevrolet",slug:"chevrolet",image:"/images/montadoras/chevrolet.webp"},
+            {name:"Ford",slug:"ford",image:"/images/montadoras/ford.webp"},
+            {name:"Renault",slug:"renault",image:"/images/montadoras/renault.webp"},
+            {name:"Hyundai",slug:"hyundai",image:"/images/montadoras/hyundai.webp"},
+            {name:"Toyota",slug:"toyota",image:"/images/montadoras/toyota.webp"},
+            {name:"Honda",slug:"honda",image:"/images/montadoras/honda.webp"},
+            {name:"Nissan",slug:"nissan",image:"/images/montadoras/nissan.webp"},
+            {name:"Peugeot",slug:"peugeot",image:"/images/montadoras/peugeot.webp"},
+            {name:"Citroën",slug:"citroen",image:"/images/montadoras/citroen.webp"},
+            {name:"Jeep",slug:"jeep",image:"/images/montadoras/jeep.webp"},
+            {name:"Mitsubishi",slug:"mitsubishi",image:"/images/montadoras/mitsubishi.webp"},
+            {name:"BMW",slug:"bmw",image:"/images/montadoras/bmw.webp"},
+            {name:"Mercedes-Benz",slug:"mercedes",image:"/images/montadoras/mercedes-benz.webp"},
+            {name:"Kia",slug:"kia",image:"/images/montadoras/kia.webp"},
+            {name:"Land Rover",slug:"landrover",image:"/images/montadoras/landrover.webp"},
+            {name:"Volvo",slug:"volvo",image:"/images/montadoras/volvo.webp"},
           ].map((brand) => <button
             key={brand.name}
             type="button"
@@ -143,11 +143,7 @@ function Home() {
             onClick={() => void navigate({to:"/catalogo"})}
             className="group relative flex min-w-0 flex-col items-center overflow-hidden rounded-xl border-2 border-[#2389c9] bg-gradient-to-b from-[#08659c] via-[#062a58] to-[#03132d] p-1.5 text-center text-white shadow-[inset_0_1px_12px_#36baff66] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c]"
           >
-            <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#147bb5] to-[#041c42] sm:h-20">
-              {brand.image ? <img src={brand.image} alt="" className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" /> : <CarFront aria-hidden="true" className="h-9 w-9 text-[#e5f2ff] sm:h-12 sm:w-12" />}
-            </span>
-            <img src={`https://cdn.simpleicons.org/${brand.slug}/white`} alt="" aria-hidden="true" loading="lazy" className="mt-1 h-6 w-8 object-contain" onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
-            <span className="mt-1 min-h-[28px] text-[10px] font-extrabold leading-tight sm:text-xs">{brand.name}</span>
+            <img src={brand.image} alt={brand.name} className="aspect-[4/5] w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
           </button>)}
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Peças e quantidades">
