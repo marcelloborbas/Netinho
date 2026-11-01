@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ShieldCheck, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
@@ -72,17 +72,47 @@ function Home() {
   if (!entryApproved) return null;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="flex w-full flex-1 flex-col items-center gap-4 px-3 pt-4 pb-24 sm:gap-6 sm:px-6 sm:pt-7">
-        <section className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-[24px] border border-[#d5e1ee] bg-[#102e54] bg-[url('/images/fundo-saudacao.webp')] bg-cover bg-center px-5 py-6 text-left text-white shadow-[0_12px_26px_rgba(5,30,65,0.24)] sm:px-8 sm:py-8" aria-label="Boas-vindas ao Netinho">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#071d3bd9] via-[#102e54a8] to-[#102e541a]" aria-hidden="true" />
-
-          <div className="relative flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#f8d878]"><Sparkles size={15} /> Netinho Auto Parts</div>
-          <h1 className="relative mt-3 text-[clamp(1.5rem,5.8vw,2.3rem)] font-black leading-[1.2] tracking-tight">{salutation}, Sr. {userName || "usuário"}!</h1>
-          <p className="relative mt-2 text-[13px] font-semibold text-[#dce9f8] sm:text-base">É bom tê-lo conosco. Que seu dia seja abençoado!</p>
-          <div className="relative mt-4 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#f2bb2d] to-transparent" />
+      <main className="flex w-full flex-1 flex-col items-center gap-4 bg-[#edf3fa] px-3 pt-3 pb-28 sm:gap-6 sm:px-6 sm:pt-6">
+        <section className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-[26px] border border-[#d8b65c]/60 bg-[#102e54] bg-[url('/images/fundo-saudacao.webp')] bg-cover bg-center px-5 py-8 text-left text-white shadow-[0_12px_26px_rgba(5,30,65,0.20)] sm:px-9 sm:py-12" aria-label="Boas-vindas ao Netinho">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#061a35ed] via-[#0c2b52bb] to-[#102e5440]" aria-hidden="true" />
+          <div className="relative flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#f8d878]"><Sparkles size={15} /> Seja bem-vindo</div>
+          <h1 className="relative mt-3 max-w-[24ch] text-[clamp(1.65rem,6vw,2.7rem)] font-black leading-[1.17] tracking-tight">{salutation}, Sr. {userName || "usuário"}!</h1>
+          <p className="relative mt-3 max-w-[32ch] text-[14px] font-semibold leading-relaxed text-[#f2e9cf] sm:text-lg">É bom tê-lo conosco.<br/>Que seu dia seja abençoado!</p>
+          <div className="relative mt-5 h-[3px] w-28 rounded-full bg-gradient-to-r from-[#f2bb2d] to-transparent" />
         </section>
-        <section className="w-full min-w-0 max-w-3xl" aria-label="Imagens de produtos em rotação automática">
+
+        <section className="w-full min-w-0 max-w-3xl overflow-hidden rounded-[24px] border border-[#d4dfec] bg-white shadow-[0_10px_24px_rgba(5,30,65,0.12)]" aria-label="Imagens de produtos em rotação automática">
           <HomePartsCarousel />
+        </section>
+
+        <section className="w-full max-w-3xl" aria-label="Marcas de veículos">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-black tracking-tight text-[#102e54] sm:text-xl">Encontre peças para seu veículo</h2>
+            <button type="button" onClick={() => void navigate({to:"/catalogo"})} className="flex shrink-0 items-center gap-1 text-xs font-bold text-[#174b83]">Catálogo <ChevronRight size={16}/></button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              {name:"Volkswagen", image:"/images/veiculos/volkswagen/polo.webp"},
+              {name:"Fiat", image:"/images/veiculos/fiat/argo.webp"},
+              {name:"Chevrolet", image:"/images/veiculos/chevrolet/onix.webp"},
+              {name:"Ford", image:"/images/veiculos/ford/ka.webp"},
+            ].map((brand) => (
+              <button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#c8d9ea] bg-white p-2 text-center shadow-sm transition-transform hover:-translate-y-0.5">
+                <span className="flex h-[92px] w-full items-center justify-center rounded-xl bg-[#f2f6fb]">
+                  <img src={brand.image} alt={`Veículo ${brand.name}`} loading="lazy" className="h-full w-full object-contain" onError={(e)=>{e.currentTarget.style.display="none";}} />
+                </span>
+                <span className="mt-2 text-sm font-extrabold text-[#102e54]">{brand.name}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="flex w-full max-w-3xl items-center gap-4 rounded-[22px] border border-[#d8b65c]/50 bg-gradient-to-r from-[#071e3e] via-[#123b6b] to-[#0b2b50] px-5 py-5 text-white shadow-lg sm:px-7" aria-label="Compromisso de qualidade">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#e9c46b]/50 bg-[#e9c46b]/10"><ShieldCheck size={31} className="text-[#f1c65b]"/></span>
+          <div>
+            <h2 className="text-base font-black sm:text-xl">Seu veículo em boas mãos!</h2>
+            <p className="mt-1 text-xs leading-relaxed text-[#e1ebf6] sm:text-sm">Explore nosso catálogo de peças e encontre o que precisa para atender seus clientes.</p>
+          </div>
         </section>
       </main>
       <PublicFooter />
