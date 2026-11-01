@@ -59,7 +59,7 @@ function AuthPage() {
   const liaText = "Bem-vindo à Netinho Auto Parts!\n\nEntre pelo Google ou receba seu acesso por e-mail.\n\nClique em Baixar App para acessar diretamente pelo celular!\n\nSe precisa de ajuda, clique na sua foto no rodapé e selecione a Ajuda da página onde estiver.\n\nQue Deus abençoe seu dia e seus negócios!";
   const liaAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
-    const audio = new Audio("/audio/lia/lia-login.mp3");
+    const audio = new Audio("/audio/lia/lia-login.mp3?v=20261101-1");
     audio.preload = "none";
     audio.onended = () => setLiaSpeaking(false);
     audio.onerror = () => { setLiaSpeaking(false); toast.error("Não foi possível reproduzir a fala da LIA."); };
