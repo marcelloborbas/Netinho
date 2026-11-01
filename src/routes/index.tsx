@@ -117,16 +117,37 @@ function Home() {
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Montadoras">
           {[
-            {name:"Volkswagen",image:"/images/veiculos/volkswagen/polo.webp",emblem:"VW"},
-            {name:"Fiat",image:"/images/veiculos/fiat/argo.webp",emblem:"FIAT"},
-            {name:"Chevrolet",image:"",emblem:"✚"},
-            {name:"Ford",image:"",emblem:"Ford"},
-          ].map((brand)=><button key={brand.name} type="button" onClick={() => void navigate({to:"/catalogo"})} className={`relative flex min-w-0 flex-col items-center overflow-hidden rounded-xl border bg-gradient-to-b from-[#0065a9] via-[#062c5a] to-[#03132e] p-1 text-center shadow-[inset_0_1px_12px_#36baff66] border-[#2389c9] transition-all duration-300 ease-out hover:border-[#ffd23c] hover:ring-2 hover:ring-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c] active:shadow-[0_0_18px_#ffca32aa]`}>
-              <span className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#147bb5] to-[#041c42]">
-                {brand.image ? <img src={brand.image} alt="" className="h-full w-full object-contain" loading="lazy"/> : <CarFront className="h-9 w-9 text-[#e5f2ff]" />}
-              </span>
-              <span className="flex min-h-0 items-center gap-1 text-[10px] font-extrabold text-white"><span className="rounded-full border border-white/80 bg-[#08376b] px-1 text-[9px]">{brand.emblem}</span>{brand.name}</span>
-            </button>)}
+            {name:"Volkswagen",slug:"volkswagen",image:"/images/veiculos/volkswagen/polo.webp"},
+            {name:"Fiat",slug:"fiat",image:"/images/veiculos/fiat/argo.webp"},
+            {name:"Chevrolet",slug:"chevrolet",image:""},
+            {name:"Ford",slug:"ford",image:""},
+            {name:"Renault",slug:"renault",image:""},
+            {name:"Hyundai",slug:"hyundai",image:""},
+            {name:"Toyota",slug:"toyota",image:""},
+            {name:"Honda",slug:"honda",image:""},
+            {name:"Nissan",slug:"nissan",image:""},
+            {name:"Peugeot",slug:"peugeot",image:""},
+            {name:"Citroën",slug:"citroen",image:""},
+            {name:"Jeep",slug:"jeep",image:""},
+            {name:"Mitsubishi",slug:"mitsubishi",image:""},
+            {name:"BMW",slug:"bmw",image:""},
+            {name:"Mercedes-Benz",slug:"mercedes",image:""},
+            {name:"Kia",slug:"kia",image:""},
+            {name:"Land Rover",slug:"landrover",image:""},
+            {name:"Volvo",slug:"volvo",image:""},
+          ].map((brand) => <button
+            key={brand.name}
+            type="button"
+            title={`Consultar peças ${brand.name}`}
+            onClick={() => void navigate({to:"/catalogo"})}
+            className="group relative flex min-w-0 flex-col items-center overflow-hidden rounded-xl border-2 border-[#2389c9] bg-gradient-to-b from-[#08659c] via-[#062a58] to-[#03132d] p-1.5 text-center text-white shadow-[inset_0_1px_12px_#36baff66] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c]"
+          >
+            <span className="flex h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#147bb5] to-[#041c42] sm:h-20">
+              {brand.image ? <img src={brand.image} alt="" className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" /> : <CarFront aria-hidden="true" className="h-9 w-9 text-[#e5f2ff] sm:h-12 sm:w-12" />}
+            </span>
+            <img src={`https://cdn.simpleicons.org/${brand.slug}/white`} alt="" aria-hidden="true" loading="lazy" className="mt-1 h-6 w-8 object-contain" onError={(event) => { event.currentTarget.style.visibility = "hidden"; }} />
+            <span className="mt-1 min-h-[28px] text-[10px] font-extrabold leading-tight sm:text-xs">{brand.name}</span>
+          </button>)}
         </section>
         <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Peças e quantidades">
           {[
