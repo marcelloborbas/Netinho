@@ -97,56 +97,57 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
-  return <main className="mx-auto w-full max-w-4xl space-y-4 bg-gradient-to-b from-[#f0f7ff] to-white px-2.5 pt-0 pb-32 text-[#092454] sm:px-5">
+  return <main className="mx-auto w-full max-w-4xl space-y-2 bg-gradient-to-b from-[#f0f7ff] to-white px-2 pt-0 pb-24 text-[#092454] sm:px-5">
     {!embedded && <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>}
-    <header className="overflow-hidden rounded-b-[20px] bg-[#073c82]">
-      <img src="/images/vendas-cabeçalho.webp" alt="Netinho Auto Parts — Minhas Vendas. LIA apresenta o relatório e a evolução das vendas." className="block h-auto w-full" decoding="async" />
+    <header className="mx-auto w-full max-w-[580px] overflow-hidden rounded-b-[16px] bg-[#073c82]">
+      <img src="/images/vendas-cabeçalho.webp" alt="Netinho Auto Parts — Minhas Vendas. LIA apresenta o relatório e a evolução das vendas." className="block h-auto max-h-[27dvh] w-full object-contain object-top" decoding="async" />
     </header>
-    <section className="grid grid-cols-2 gap-2 rounded-[20px] border border-[#c4d6ee] bg-white p-3 shadow-md sm:grid-cols-3">
+    <section className="grid grid-cols-2 gap-2 rounded-[16px] border border-[#c4d6ee] bg-white p-2 shadow-sm sm:grid-cols-3">
       <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Mês</span>
-        <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
+        <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-9 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
           {MONTHS.map((name, i) => <option key={name} value={i+1}>{name}</option>)}
         </select>
       </label>
       <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Ano</span>
-        <select aria-label="Selecionar ano" value={year} onChange={e => { setYear(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
+        <select aria-label="Selecionar ano" value={year} onChange={e => { setYear(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-9 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
       </label>
       <label className="col-span-2 text-sm font-extrabold text-[#102a52] sm:col-span-1" htmlFor="cliente-relatorio"><span className="flex items-center gap-2"><Users size={20}/> Cliente</span>
-        <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-12 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
+        <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-9 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
           <option value="todos">Todos os clientes ({customers.length})</option>
           {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
         </select>
       </label>
     </section>
-    <div className="grid grid-cols-2 gap-2" id="indicadores-vendas">
-    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
+    <div className="grid grid-cols-2 gap-1.5" id="indicadores-vendas">
+    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-2 py-2 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
       <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
       <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
       <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
     </section>
-    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
+    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] p-2 text-white shadow-[0_4px_15px_#092b5a44]">
       <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
       <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
       <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
       <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
     </section>
-    </div>    <section id="evolucao-vendas" aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] text-white">
+    </div>
+    <section id="evolucao-vendas" aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] text-white">
       <div className="flex items-center gap-2">
         <BarChart3 className="shrink-0 text-[#ffd42a]" size={30}/>
         <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas</h2><p className="text-xs text-[#d7e8ff]">Seu desempenho nos últimos seis meses</p></div>
       </div>
       {historyError ? <p role="alert" className="mt-4 text-sm">Não foi possível consultar o histórico de vendas.</p> :
       historyLoading ? <p role="status" className="mt-4 text-sm">Carregando evolução...</p> :
-      <div className="mt-3 grid h-48 grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-60 sm:gap-3">
+      <div className="mt-2 grid h-[min(20dvh,165px)] grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-60 sm:gap-3">
         {history.map((item, index) => <div key={`${item.year}-${item.month}`} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
           <span className="max-w-full truncate text-[10px] font-extrabold tabular-nums sm:text-xs" title={brl(item.total)}>{item.total >= 1000 ? `R$ ${(item.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k` : `R$ ${Math.round(item.total)}`}</span>
           <div className={`w-full max-w-16 rounded-t-md border border-white/40 shadow-[0_0_10px_#28baff77] ${index === history.length-1 ? "bg-gradient-to-t from-[#d48a00] to-[#ffed25]" : index % 2 ? "bg-gradient-to-t from-[#dc7500] to-[#ffae20]" : "bg-gradient-to-t from-[#065ac0] to-[#1cc7ff]"}`} style={{height: `${Math.max(item.total > 0 ? 7 : 2, (item.total/chartMax)*100)}%`}} title={`${MONTHS[item.month-1]} de ${item.year}: ${brl(item.total)}`}/>
           <span className="text-[10px] font-bold sm:text-xs">{item.label}</span>
         </div>)}
       </div>}
-      <div className="mt-4 flex items-center justify-between gap-2 rounded-2xl border-2 border-[#ffda34] bg-[#041a42]/70 p-3">
+      <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border-2 border-[#ffda34] bg-[#041a42]/70 p-2">
         <span className="text-sm font-black uppercase sm:text-lg">Desempenho</span>
         <span className={`text-xl font-black tabular-nums ${growth == null ? "text-white" : growth >= 0 ? "text-[#6eff6e]" : "text-[#ffb3b3]"}`}>{historyLoading || historyError || growth == null ? "—" : `${growth > 0 ? "+" : ""}${growth.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</span>
         <span className="max-w-24 text-right text-[10px] leading-tight text-[#dceaff]">Em relação ao mês anterior</span>
@@ -155,10 +156,10 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </section>
 
     <nav aria-label="Consultas do relatório" className="grid grid-cols-2 gap-2">
-      <a href="#detalhamento-vendas" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><Users size={19}/> Vendas por Cliente</a>
+      <a href="#indicadores-vendas" className="flex min-h-10 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><Users size={19}/> Vendas por Cliente</a>
       <a href="#evolucao-vendas" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><CalendarDays size={19}/> Vendas por Mês</a>
     </nav>
-    <section className="overflow-hidden rounded-[25px] border-[3px] border-[#ffce27] bg-white shadow-[0_4px_0_#aa6900,0_5px_18px_#00265780]">
+    <section className="hidden">
       <h2 className="flex items-center gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
       <div className="grid grid-cols-1 gap-1.5 p-3 text-[#102a52]">
         <div className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-[#d5eaff] px-4 py-2"><ShoppingCart className="shrink-0 text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Total de pedidos</p><strong className="text-xl tabular-nums">{visibleCount}</strong></div>
@@ -169,30 +170,5 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
-    <details id="detalhamento-vendas" className="scroll-mt-24 space-y-3 rounded-[22px] border-[3px] border-[#ffce27] bg-white p-3 text-[#102a52] shadow-[0_4px_14px_#00265755]"><summary className="cursor-pointer rounded-xl border-2 border-[#ffce27] bg-gradient-to-b from-[#135ba7] to-[#041b42] px-4 py-4 text-base font-black uppercase text-white shadow-md transition-colors hover:from-[#1c71c9] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#ffdc34]">Detalhamento das vendas por cliente</summary><div className="space-y-3 pt-3 text-[#102a52]"><h2 className="rounded-xl bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white">Vendas por cliente</h2>
-    {visibleCustomers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <h2 className="min-w-0 flex-1 break-words text-lg font-black">{customer.name}</h2>
-        <strong className="rounded-lg bg-[#102a52] px-3 py-2 text-white">{brl(customer.total)}</strong>
-      </div>
-      <p className="mb-3 mt-1 text-sm font-semibold">{customer.orders.length} pedido(s)</p>
-      <div className="divide-y divide-slate-200">
-        {customer.orders.map(order => <div key={order.id} className="py-3">
-          <Link to="/pedidos/$id" params={{ id: order.id }} className="flex min-h-11 items-center justify-between gap-2 text-sm hover:underline">
-            <span className="flex items-center gap-2"><FileText size={16}/> Nº {order.number} · {formatDate(order.created_at)}</span>
-            <strong>{brl(Number(order.total || 0))}</strong>
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#b91c1c] px-4 py-3 text-white shadow-sm" aria-label={`Comissão estimada do pedido ${order.number}`}>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wide">Sua comissão nesta venda</p>
-              <p className="mt-0.5 text-xs font-medium text-red-100">{commissionError ? "Não foi possível consultar a taxa" : commissionRate == null ? "Aguardando definição pela Administração" : `Estimativa · ${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
-            </div>
-            <strong className="text-xl font-black tabular-nums">{commissionRate == null || commissionError ? "—" : brl(Math.round(Number(order.total || 0) * Number(commissionRate)) / 100)}</strong>
-          </div>
-        </div>)}
-      </div>
-    </section>)}
-    </div></details>
-    <p className="rounded-lg bg-[#041d46] px-3 py-3 text-sm font-medium leading-relaxed text-white">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
   </main>;
 }
