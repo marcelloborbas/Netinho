@@ -82,11 +82,11 @@ export function PublicFooter() {
     </div>}
     <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-[#215c9b] !bg-gradient-to-b !from-[#092b57] !via-[#061c3b] !to-[#031126] !shadow-[0_-5px_22px_rgba(0,58,132,0.24)]" style={{ gridTemplateColumns: "repeat(5, minmax(0, 1fr))" }}>
       {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} preload="intent" onMouseEnter={to === "/catalogo" ? prepareCatalog : undefined} onFocus={to === "/catalogo" ? prepareCatalog : undefined} onTouchStart={to === "/catalogo" ? prepareCatalog : undefined} onClick={clickSound} aria-current={pathname === to ? "page" : undefined} className={`group relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold transition-all duration-200 hover:bg-[#174e9b]/30 hover:text-[#ffdc55] ${pathname === to ? "text-[#ffdc55]" : "text-white"}`}>
-        <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className={pathname === to ? "drop-shadow-[0_0_7px_rgba(255,211,56,0.6)]" : ""}/>{label}
+        {label === "Vendas" ? <img src="/images/vendas-icone.webp" alt="" aria-hidden="true" className="h-[25px] w-[30px] rounded-sm object-contain" /> : <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className="text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]" />}{label}
         {pathname === to && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#ffd43b] shadow-[0_0_9px_2px_rgba(255,212,59,0.65)]"/>}
       </Link>)}
       <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold text-white hover:text-[#ffdc55]">
-        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-9 w-9 rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={29} className="rounded-full border border-[#ffd43b] p-1"/>}
+        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-9 w-9 rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={29} className="rounded-full border border-[#ffd43b] p-1 text-[#ffd43b]"/>}
         <span>Usuário</span>
       </button>
     </nav>
