@@ -91,21 +91,18 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const previousTotal = history.length > 1 ? history[history.length - 2].total : 0;
   const currentTotal = history.length ? history[history.length - 1].total : 0;
   const growth = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : null;
-  const recentOrders = useMemo(() => data.filter(order => order.kind !== "orcamento" && order.status !== "cancelled")
-    .filter(order => selectedClient === "todos" || (() => { const snapshot = (order.customer_snapshot ?? {}) as {id?: string; document?: string; trade_name?: string; company_name?: string}; const name = (snapshot.trade_name || snapshot.company_name || "Cliente não identificado").trim(); return (snapshot.id || snapshot.document || name.toLocaleLowerCase("pt-BR")) === selectedClient; })())
-    .slice(0, 3), [data, selectedClient]);
+
   const visibleCustomers = selectedClient === "todos" ? customers : customers.filter(c => c.key === selectedClient);
   const visibleTotal = visibleCustomers.reduce((sum, c) => sum + c.total, 0);
   const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
-  return <main className="mx-auto w-full max-w-4xl space-y-3 bg-[radial-gradient(ellipse_at_20%_10%,#12b8ff_0%,#0071ce_42%,#004caa_100%)] px-2.5 pt-3 pb-32 sm:px-5">
+  return <main className="mx-auto w-full max-w-4xl space-y-4 bg-gradient-to-b from-[#f0f7ff] to-white px-2.5 pt-0 pb-32 text-[#092454] sm:px-5">
     {!embedded && <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>}
-    <header className="rounded-[38px] border-[4px] border-[#ffdc34] bg-gradient-to-b from-[#0d58a9] via-[#062b66] to-[#00153b] px-3 py-5 text-center text-white shadow-[0_4px_0_#ab6e00,0_0_20px_#ffdd49b0]">
-      <h1 className="flex items-center justify-center gap-2 text-[clamp(1.55rem,6.3vw,3rem)] font-black uppercase leading-tight tracking-tight"><TrendingUp className="shrink-0 text-[#ffda35]" size={30}/> Relatório de <span className="text-[#ffd43a]">Vendas</span></h1>
-
+    <header className="overflow-hidden rounded-b-[20px] bg-[#073c82]">
+      <img src="/images/vendas-cabeçalho.webp" alt="Netinho Auto Parts — Minhas Vendas. LIA apresenta o relatório e a evolução das vendas." className="block h-auto w-full" decoding="async" />
     </header>
-    <section className="grid grid-cols-2 gap-2 rounded-[24px] border-[3px] border-[#ffcb28] bg-gradient-to-b from-white to-[#f1f8ff] p-3 shadow-[0_4px_0_#ab6e00,0_4px_18px_#003b7c77]">
+    <section className="grid grid-cols-2 gap-2 rounded-[20px] border border-[#c4d6ee] bg-white p-3 shadow-md sm:grid-cols-3">
       <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Mês</span>
         <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
           {MONTHS.map((name, i) => <option key={name} value={i+1}>{name}</option>)}
@@ -116,14 +113,26 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
       </label>
-      <label className="col-span-2 text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio"><span className="flex items-center gap-2"><Users size={20}/> Cliente</span>
+      <label className="col-span-2 text-sm font-extrabold text-[#102a52] sm:col-span-1" htmlFor="cliente-relatorio"><span className="flex items-center gap-2"><Users size={20}/> Cliente</span>
         <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-12 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
           <option value="todos">Todos os clientes ({customers.length})</option>
           {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
         </select>
       </label>
     </section>
-    <section aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] text-white shadow-[0_5px_20px_#0a438244]">
+    <div className="grid grid-cols-2 gap-2" id="indicadores-vendas">
+    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
+      <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
+      <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
+      <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
+    </section>
+    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
+      <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
+      <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
+      <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
+      <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
+    </section>
+    </div>    <section id="evolucao-vendas" aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] text-white">
       <div className="flex items-center gap-2">
         <BarChart3 className="shrink-0 text-[#ffd42a]" size={30}/>
         <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas</h2><p className="text-xs text-[#d7e8ff]">Seu desempenho nos últimos seis meses</p></div>
@@ -144,28 +153,11 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
       </div>
       <p className="sr-only">Histórico pessoal dos pedidos, excluindo orçamentos e cancelamentos. Valores sujeitos a atualização.</p>
     </section>
-    <div className="grid grid-cols-2 gap-2" id="indicadores-vendas">
-    <section className="rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
-      <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
-      <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
-      <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
-    </section>
-    <section className="rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
-      <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
-      <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
-      <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
-      <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
-    </section>
-    </div>
-    <section className="overflow-hidden rounded-[25px] border-[3px] border-[#ffce27] bg-white shadow-[0_4px_0_#aa6900,0_5px_18px_#00265780]">
-      <h2 className="flex items-center justify-between gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-xl border-2 border-[#fff1a3] bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-sm font-black normal-case text-[#102a52] shadow-md transition-transform active:scale-95">Ver todos</a></h2>
-      {recentOrders.length === 0 ? <p className="p-4 text-sm text-[#102a52]">Nenhum pedido no período selecionado.</p> : <div className="divide-y divide-[#d8e6f7]">
-        {recentOrders.map(order => <Link key={order.id} to="/pedidos/$id" params={{id:order.id}} className="flex min-h-16 items-center justify-between gap-2 border-b border-[#d8e6f7] px-4 py-3 text-[#102a52] hover:bg-[#edf6ff]">
-          <div className="min-w-0"><p className="text-sm font-black">Pedido Nº {order.number}</p><p className="truncate text-xs">{((order.customer_snapshot ?? {}) as {trade_name?: string; company_name?: string}).trade_name || ((order.customer_snapshot ?? {}) as {company_name?: string}).company_name || "Cliente não identificado"}</p><p className="text-[11px] text-[#536c86]">{formatDate(order.created_at)} · {order.status}</p></div>
-          <strong className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe34b] to-[#e9a800] px-2 py-2 text-xs text-[#102a52] shadow-sm sm:text-sm">{brl(Number(order.total || 0))}</strong>
-        </Link>)}
-      </div>}
-    </section>
+
+    <nav aria-label="Consultas do relatório" className="grid grid-cols-2 gap-2">
+      <a href="#detalhamento-vendas" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><Users size={19}/> Vendas por Cliente</a>
+      <a href="#evolucao-vendas" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><CalendarDays size={19}/> Vendas por Mês</a>
+    </nav>
     <section className="overflow-hidden rounded-[25px] border-[3px] border-[#ffce27] bg-white shadow-[0_4px_0_#aa6900,0_5px_18px_#00265780]">
       <h2 className="flex items-center gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
       <div className="grid grid-cols-1 gap-1.5 p-3 text-[#102a52]">
