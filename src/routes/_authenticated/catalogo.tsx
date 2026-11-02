@@ -50,7 +50,7 @@ const vehicleBrands: VehicleBrand[] = [
 ];
 // Modelos exibidos apenas quando citados explicitamente na aplicação da peça.
 const vehicleModels: Record<string, string[]> = {
-  Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up"],
+  Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up", "Amarok", "Fusca", "Kombi", "Parati", "Passat", "Polo GTS", "Quantum"],
   Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino"],
   Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra"],
   Ford: ["Ka", "Fiesta", "Focus", "EcoSport", "Ranger", "Fusion"],
@@ -72,47 +72,14 @@ const vehicleModels: Record<string, string[]> = {
 const mentionsModel = (application: string, model: string) =>
   new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
 /** Fotografias identificadas por modelo, com origem no Wikimedia Commons. */
-const vehicleModelPhotos: Record<string, string> = {
-  gol: "https://cdn.motor1.com/images/mgl/YAAopq/s1/volkswagen-gol-1.0-2023.jpg",
-  saveiro: "https://www.pngmart.com/files/22/Volkswagen-Saveiro-PNG.png",
-  voyage: "https://images.tcdn.com.br/img/img_prod/1329068/vidro_parabrisa_volkswagen_gol_g5_g6_g7_voyage_g5_2009_2023_105_8_df1c475c552368dc29ad7234d3547476.png",
-  amarok: "https://www.volkswagen.co.nz/app/nz/media/customiser/Amarok/Amarok%20Style%20V6/18%20inch%20Amadora%20Alloys/Frozen%20White/PR%5B3%5D-Amarok%20Style%20Amador_images_56005_AVP2D_A_2_000_AD_1.jpg?bgcolor=fff&height=400&mode=crop&width=700",
-  polo: "https://assets.nexuspointapex.co.uk/resize/2048/tenant_d9013b5a-4990-4f3e-beec-4e1fc85990eb/media/9931395/volkswagen-polo-10-tsi-match-euro-6-ss-5dr-8a42cd2f9ce7facd019cec7ec346259c-69b6617b1b0a4.jpg",
-};
-const volkswagenModelImages: Record<string, string> = {
-  gol: "/images/veiculos/volkswagen/gol.webp",
-  voyage: "/images/veiculos/volkswagen/voyage.webp",
-  polo: "/images/veiculos/volkswagen/polo.webp",
-  fox: "/images/veiculos/volkswagen/fox.webp",
-  saveiro: "/images/veiculos/volkswagen/saveiro.webp",
-  golf: "/images/veiculos/volkswagen/golf.webp",
-  jetta: "/images/veiculos/volkswagen/jetta.webp",
-  virtus: "/images/veiculos/volkswagen/virtus.webp",
-  "t-cross": "/images/veiculos/volkswagen/t-cross.webp",
-  nivus: "/images/veiculos/volkswagen/nivus.webp",
-  up: "/images/veiculos/volkswagen/up.webp",
-};
-
-const fiatModelImages: Record<string, string> = {
-  uno: "/images/veiculos/fiat/uno.webp",
-  palio: "/images/veiculos/fiat/palio.webp",
-  siena: "/images/veiculos/fiat/siena.webp",
-  strada: "/images/veiculos/fiat/strada.webp",
-  argo: "/images/veiculos/fiat/argo.webp",
-  mobi: "/images/veiculos/fiat/mobi.webp",
-  toro: "/images/veiculos/fiat/toro.webp",
-  cronos: "/images/veiculos/fiat/cronos.webp",
-  punto: "/images/veiculos/fiat/punto.webp",
-  "doblò": "/images/veiculos/fiat/doblo.webp",
-  fiorino: "/images/veiculos/fiat/fiorino.webp",
-};
-
-function VehicleModelPicture({name}:{name:string}) {
-  const key=name.trim().toLowerCase();
-  const photo=volkswagenModelImages[key] ?? fiatModelImages[key] ?? vehicleModelPhotos[key];
+const modelFilename = (name: string) => name.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
+function VehicleModelPicture({name,brand}:{name:string;brand:string}) {
+  const slug = vehicleBrands.find(item => item.name === brand)?.slug;
+  const filename = name === "Up" ? "UP" : modelFilename(name);
+  const photo = slug ? `/images/veiculos/${slug}/${filename}.webp` : null;
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
-  return photo&&!failed ? <img src={photo} alt={`Foto ilustrativa do modelo ${name}`} loading="lazy" referrerPolicy="no-referrer" onError={()=>setFailed(true)} className="h-full w-full rounded-lg bg-white object-contain" /> : <VehicleModelIllustration name={name}/>;
+  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-20 w-full object-contain transition-transform duration-200 group-hover:scale-105" /> : <div className="h-20 w-full"><VehicleModelIllustration name={name}/></div>;
 }
 
 /** Miniaturas vetoriais locais, com silhuetas e cores próprias por modelo. */
@@ -447,6 +414,7 @@ function Catalog() {
         <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>VEÍCULO</p>
         {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
           {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[74px] min-w-[116px] max-w-[160px] shrink-0 snap-start flex-col items-center justify-center gap-1 overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#f4f8fd] px-3 py-3 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
+            <VehicleModelPicture name={model.name} brand={vehicleBrand} />
             <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
             <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>
           </button>)}
