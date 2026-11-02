@@ -99,18 +99,18 @@ function Home() {
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
-        <section className="relative isolate min-h-[305px] overflow-hidden bg-[#092b52] sm:min-h-[410px]" aria-label="Boas-vindas">
-          <img src="/images/netinho-cabecalho-arte-aprovada.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-contain object-center" onError={e => { e.currentTarget.src="/images/fundo-saudacao.webp"; }} />
+        <section className="relative isolate min-h-[325px] overflow-hidden bg-[#092b52] sm:min-h-[440px]" aria-label="Boas-vindas">
+          <img src="/images/fundo-saudacao.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" onError={e => { e.currentTarget.style.display = "none"; }} />
 
-          <img src="/images/logo-netinho-tons.webp" alt="" aria-hidden="true" className="pointer-events-none absolute left-3 top-3 z-10 w-[5px] max-w-[5%] object-contain opacity-30 grayscale sm:left-6 sm:top-5 sm:w-[8px]" onError={event => { event.currentTarget.style.display = "none"; }} />
+          <img src="/images/logo-netinho-tons.webp" alt="" aria-hidden="true" className="pointer-events-none absolute left-3 top-3 z-10 w-[72px] max-w-[22%] object-contain opacity-30 grayscale sm:left-6 sm:top-5 sm:w-[100px]" onError={event => { event.currentTarget.style.display = "none"; }} />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#03152be8] via-[#062345a6] to-transparent" />
 
-          <div className="relative flex min-h-[305px] flex-col justify-end px-4 pb-4 pt-16 sm:min-h-[410px] sm:px-8 sm:pb-6">
-            <p className="text-[clamp(2rem,8vw,4.5rem)] font-extrabold text-white drop-shadow-lg">{salutation},</p>
-            <h1 className="max-w-[18ch] text-[clamp(2.5rem,12vw,6rem)] font-black leading-tight text-[#ffd13e] drop-shadow-[0_2px_5px_#06152e]">Sr. {userName || "usuário"}!</h1>
+          <div className="relative flex min-h-[325px] flex-col justify-end px-4 pb-4 pt-16 sm:min-h-[410px] sm:px-8 sm:pb-6">
+            <p className="text-[clamp(2.25rem,9vw,4.5rem)] font-extrabold text-white drop-shadow-lg">{salutation},</p>
+            <h1 className="max-w-[18ch] text-[clamp(2.65rem,12.5vw,6rem)] font-black leading-tight text-[#ffd13e] drop-shadow-[0_2px_5px_#06152e]">Sr. {userName || "usuário"}!</h1>
             <span className="mt-1 inline-flex w-fit rounded-full border border-[#f6c94d]/70 bg-[#051d39]/75 px-3 py-1 text-xs font-bold text-[#ffe18c]">{status}</span>
-            <p className="mt-2 text-[clamp(1.5rem,6vw,3rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
-            <p className="text-[clamp(1.5rem,6vw,3rem)] font-bold text-white drop-shadow-lg">Que seu dia seja abençoado!</p>
+            <p className="mt-2 text-[clamp(1.65rem,6.6vw,3rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
+            <p className="text-[clamp(1.65rem,6.6vw,3rem)] font-bold text-white drop-shadow-lg">Que seu dia seja abençoado!</p>
             <span className="mt-3 h-[3px] w-20 rounded-full bg-[#ffd43b]" />
           </div>
         </section>
