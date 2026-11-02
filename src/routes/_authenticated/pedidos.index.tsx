@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { MonthlySalesReport } from "./pedidos.relatorio";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ordersQuery } from "@/lib/queries";
@@ -18,8 +19,18 @@ export const Route = createFileRoute("/_authenticated/pedidos/")({
       { property: "og:description", content: "Histórico de pedidos enviados." },
     ],
   }),
-  component: Orders,
+  component: SalesHome,
 });
+
+function SalesHome() {
+  return <>
+    <MonthlySalesReport />
+    <details className="mx-auto mb-28 w-full max-w-4xl px-3">
+      <summary className="cursor-pointer rounded-xl border-2 border-[#d4af37] bg-[#082f68] px-4 py-3 text-center font-bold text-white">Gerenciar pedidos e orçamentos</summary>
+      <Orders />
+    </details>
+  </>;
+}
 
 function Orders() {
   const { data, isLoading } = useQuery(ordersQuery);
