@@ -116,26 +116,24 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
       </label>
+      <label className="col-span-2 text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio">Cliente
+        <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-blue-300 bg-white px-3 text-base font-semibold text-[#102a52]">
+          <option value="todos">Todos os clientes ({customers.length})</option>
+          {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
+        </select>
+      </label>
     </section>
-    <section className="rounded-2xl border-2 border-[#d4af37] bg-white p-3 shadow-sm">
-      <label className="block text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio">Cliente</label>
-      <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-2 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-3 text-base font-semibold text-[#102a52]">
-        <option value="todos">Todos os clientes ({customers.length})</option>
-        {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
-      </select>
-
+    <div className="grid grid-cols-2 gap-2">
+    <section className="rounded-2xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ef1313] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
+      <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
+      <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
+      <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
     </section>
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-    <section className="rounded-2xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ef1313] to-[#a90000] px-4 py-5 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
-      <p className="text-sm font-extrabold uppercase">Total de vendas · {MONTHS[month-1]} de {year}</p>
-      <p className="mt-1 text-3xl font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
-      <p className="mt-2 text-sm font-semibold">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
-    </section>
-    <section className="rounded-2xl border-2 border-[#d4af37] bg-gradient-to-b from-[#0d4d93] to-[#062450] p-4 text-white shadow-[0_4px_15px_#092b5a44]">
-      <p className="font-black uppercase">Sua comissão estimada</p>
-      <p className="mt-1 text-sm font-semibold">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
-      <p className="mt-2 text-2xl font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
-      <p className="mt-1 text-xs text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
+    <section className="rounded-2xl border-2 border-[#d4af37] bg-gradient-to-b from-[#0d4d93] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
+      <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
+      <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
+      <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
+      <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
     </section>
     </div>
     <section aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#0c4b91] via-[#082f6d] to-[#061c46] p-4 text-white shadow-[0_5px_20px_#0a438244]">
