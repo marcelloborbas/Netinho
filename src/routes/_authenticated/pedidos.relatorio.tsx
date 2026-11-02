@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { brl } from "@/lib/brand";
-import { ArrowLeft, FileText, TrendingUp, BarChart3, ShoppingCart, Users, Coins, ClipboardList } from "lucide-react";
+import { ArrowLeft, FileText, TrendingUp, BarChart3, ShoppingCart, Users, Coins, ClipboardList, CalendarDays, CircleCheck, Percent } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/pedidos/relatorio")({
   head: () => ({ meta: [{ title: "Relatório mensal de vendas | Netinho Auto Parts" }] }),
@@ -80,10 +80,10 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     return {year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, label: MONTHS[date.getUTCMonth()].slice(0, 3)};
   }), [year, month]);
   const {data: history = [], isLoading: historyLoading, isError: historyError} = useQuery({
-    queryKey: ["my-sales-history", year, month],
+    queryKey: ["my-sales-history", year, month, selectedClient],
     queryFn: async () => Promise.all(historyMonths.map(async (period) => {
       const orders = await loadMonth(period.year, period.month);
-      const valid = orders.filter(o => o.kind !== "orcamento" && o.status !== "cancelled");
+      const valid = orders.filter(o => { if (o.kind === "orcamento" || o.status === "cancelled") return false; if (selectedClient === "todos") return true; const snap = (o.customer_snapshot ?? {}) as {id?:string; document?:string; trade_name?:string; company_name?:string}; const name = (snap.trade_name || snap.company_name || "Cliente não identificado").trim(); return (snap.id || snap.document || name.toLocaleLowerCase("pt-BR")) === selectedClient; });
       return {...period, total: valid.reduce((sum, order) => sum + Number(order.total || 0), 0)};
     })),
   });
@@ -99,65 +99,65 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
-  return <main className="mx-auto w-full max-w-4xl space-y-3 bg-gradient-to-b from-[#0068b8] via-[#00a7f0] to-[#0075c9] px-3 pt-3 pb-28 sm:px-5">
+  return <main className="mx-auto w-full max-w-4xl space-y-3 bg-[radial-gradient(ellipse_at_20%_10%,#12b8ff_0%,#0071ce_42%,#004caa_100%)] px-2.5 pt-3 pb-32 sm:px-5">
     {!embedded && <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>}
-    <header className="rounded-[30px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#0d4b95] via-[#05265b] to-[#001536] px-3 py-4 shadow-[0_0_18px_#ffdd49b0] text-center text-white shadow-[0_0_18px_#f7b51b77]">
-      <h1 className="flex items-center justify-center gap-2 text-2xl font-black uppercase tracking-tight sm:text-3xl"><TrendingUp className="shrink-0 text-[#ffda35]" size={30}/> Relatório de <span className="text-[#ffd43a]">Vendas</span></h1>
-      <p className="mt-1 text-xs font-semibold text-[#e5f2ff]">Acompanhe seus pedidos, valores e comissões.</p>
+    <header className="rounded-[38px] border-[4px] border-[#ffdc34] bg-gradient-to-b from-[#0d58a9] via-[#062b66] to-[#00153b] px-3 py-5 text-center text-white shadow-[0_4px_0_#ab6e00,0_0_20px_#ffdd49b0]">
+      <h1 className="flex items-center justify-center gap-2 text-[clamp(1.55rem,6.3vw,3rem)] font-black uppercase leading-tight tracking-tight"><TrendingUp className="shrink-0 text-[#ffda35]" size={30}/> Relatório de <span className="text-[#ffd43a]">Vendas</span></h1>
+
     </header>
-    <section className="grid grid-cols-2 gap-2 rounded-2xl border-2 border-[#d4af37] bg-white p-3 shadow-[0_4px_15px_#092b5a20]">
-      <label className="text-sm font-bold text-[#102a52]">Mês
+    <section className="grid grid-cols-2 gap-2 rounded-[24px] border-[3px] border-[#ffcb28] bg-gradient-to-b from-white to-[#f1f8ff] p-3 shadow-[0_4px_0_#ab6e00,0_4px_18px_#003b7c77]">
+      <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Mês</span>
         <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
           {MONTHS.map((name, i) => <option key={name} value={i+1}>{name}</option>)}
         </select>
       </label>
-      <label className="text-sm font-bold text-[#102a52]">Ano
+      <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Ano</span>
         <select aria-label="Selecionar ano" value={year} onChange={e => { setYear(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
       </label>
-      <label className="col-span-2 text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio">Cliente
+      <label className="col-span-2 text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio"><span className="flex items-center gap-2"><Users size={20}/> Cliente</span>
         <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-blue-300 bg-white px-3 text-base font-semibold text-[#102a52]">
           <option value="todos">Todos os clientes ({customers.length})</option>
           {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
         </select>
       </label>
     </section>
-    <section aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#084d96] via-[#052c69] to-[#03183e] p-4 text-white shadow-[0_5px_20px_#0a438244]">
+    <section aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] text-white shadow-[0_5px_20px_#0a438244]">
       <div className="flex items-center gap-2">
         <BarChart3 className="shrink-0 text-[#ffd42a]" size={30}/>
         <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas</h2><p className="text-xs text-[#d7e8ff]">Seu desempenho nos últimos seis meses</p></div>
       </div>
       {historyError ? <p role="alert" className="mt-4 text-sm">Não foi possível consultar o histórico de vendas.</p> :
       historyLoading ? <p role="status" className="mt-4 text-sm">Carregando evolução...</p> :
-      <div className="mt-3 grid h-44 grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-48 sm:gap-3">
+      <div className="mt-3 grid h-48 grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-60 sm:gap-3">
         {history.map((item, index) => <div key={`${item.year}-${item.month}`} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
-          <span className="max-w-full truncate text-[9px] font-extrabold tabular-nums sm:text-xs" title={brl(item.total)}>{item.total >= 1000 ? `R$ ${(item.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k` : `R$ ${Math.round(item.total)}`}</span>
+          <span className="max-w-full truncate text-[10px] font-extrabold tabular-nums sm:text-xs" title={brl(item.total)}>{item.total >= 1000 ? `R$ ${(item.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k` : `R$ ${Math.round(item.total)}`}</span>
           <div className={`w-full max-w-16 rounded-t-md border border-white/40 shadow-[0_0_10px_#28baff77] ${index === history.length-1 ? "bg-gradient-to-t from-[#d48a00] to-[#ffed25]" : index % 2 ? "bg-gradient-to-t from-[#dc7500] to-[#ffae20]" : "bg-gradient-to-t from-[#065ac0] to-[#1cc7ff]"}`} style={{height: `${Math.max(item.total > 0 ? 7 : 2, (item.total/chartMax)*100)}%`}} title={`${MONTHS[item.month-1]} de ${item.year}: ${brl(item.total)}`}/>
           <span className="text-[10px] font-bold sm:text-xs">{item.label}</span>
         </div>)}
       </div>}
-      <div className="mt-4 flex items-center justify-between gap-2 rounded-xl border border-[#6ac3ff] bg-[#041a42]/70 p-3">
-        <span className="text-xs font-black uppercase sm:text-sm">Desempenho mensal</span>
+      <div className="mt-4 flex items-center justify-between gap-2 rounded-2xl border-2 border-[#ffda34] bg-[#041a42]/70 p-3">
+        <span className="text-sm font-black uppercase sm:text-lg">Desempenho</span>
         <span className={`text-xl font-black tabular-nums ${growth == null ? "text-white" : growth >= 0 ? "text-[#6eff6e]" : "text-[#ffb3b3]"}`}>{historyLoading || historyError || growth == null ? "—" : `${growth > 0 ? "+" : ""}${growth.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</span>
         <span className="max-w-24 text-right text-[10px] leading-tight text-[#dceaff]">Em relação ao mês anterior</span>
       </div>
-      <p className="mt-2 text-[10px] text-[#c5dcfa]">Histórico pessoal dos pedidos, excluindo orçamentos e cancelamentos. Valores sujeitos a atualização.</p>
+      <p className="sr-only">Histórico pessoal dos pedidos, excluindo orçamentos e cancelamentos. Valores sujeitos a atualização.</p>
     </section>
     <div className="grid grid-cols-2 gap-2" id="indicadores-vendas">
-    <section className="rounded-2xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ef1313] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
+    <section className="rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
       <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
       <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
       <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
     </section>
-    <section className="rounded-2xl border-2 border-[#d4af37] bg-gradient-to-b from-[#0d4d93] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
+    <section className="rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
       <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
       <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
       <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
       <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
     </section>
     </div>
-    <section className="overflow-hidden rounded-[24px] border-[3px] border-[#ffd44a] bg-white shadow-[0_3px_12px_#003b7c66]">
+    <section className="overflow-hidden rounded-[25px] border-[3px] border-[#ffce27] bg-white shadow-[0_4px_0_#aa6900,0_5px_18px_#00265780]">
       <h2 className="flex items-center justify-between gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-xs font-black normal-case text-[#102a52]">Ver todos</a></h2>
       {recentOrders.length === 0 ? <p className="p-4 text-sm text-[#102a52]">Nenhum pedido no período selecionado.</p> : <div className="divide-y divide-[#d8e6f7]">
         {recentOrders.map(order => <Link key={order.id} to="/pedidos/$id" params={{id:order.id}} className="flex min-h-16 items-center justify-between gap-2 border-b border-[#d8e6f7] px-4 py-3 text-[#102a52] hover:bg-[#edf6ff]">
@@ -166,18 +166,18 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
         </Link>)}
       </div>}
     </section>
-    <section className="overflow-hidden rounded-2xl border-2 border-[#d4af37] bg-white shadow-sm">
+    <section className="overflow-hidden rounded-[25px] border-[3px] border-[#ffce27] bg-white shadow-[0_4px_0_#aa6900,0_5px_18px_#00265780]">
       <h2 className="flex items-center gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
       <div className="grid grid-cols-1 gap-1.5 p-3 text-[#102a52]">
         <div className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-[#d5eaff] px-4 py-2"><ShoppingCart className="shrink-0 text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Total de pedidos</p><strong className="text-xl tabular-nums">{visibleCount}</strong></div>
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><Users className="mx-auto text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Total de clientes</p><strong className="text-xl tabular-nums">{visibleCustomers.length}</strong></div>
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><BarChart3 className="mx-auto text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Valor total das vendas</p><strong className="text-base font-black tabular-nums">{brl(visibleTotal)}</strong></div>
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><Coins className="mx-auto text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Comissão estimada</p><strong className="text-base font-black tabular-nums">{commissionRate == null || commissionError ? "—" : brl(Math.round(visibleTotal*Number(commissionRate))/100)}</strong></div>
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-[#d5eaff] px-4 py-2"><Users className="shrink-0 text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Total de clientes</p><strong className="text-xl tabular-nums">{visibleCustomers.length}</strong></div>
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-[#d5eaff] px-4 py-2"><BarChart3 className="shrink-0 text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Valor total das vendas</p><strong className="text-base font-black tabular-nums">{brl(visibleTotal)}</strong></div>
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-[#d5eaff] px-4 py-2"><Coins className="shrink-0 text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Comissão estimada</p><strong className="text-base font-black tabular-nums">{commissionRate == null || commissionError ? "—" : brl(Math.round(visibleTotal*Number(commissionRate))/100)}</strong></div>
       </div>
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
-    <div id="detalhamento-vendas" className="scroll-mt-24 space-y-3"><h2 className="rounded-xl bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white">Vendas por cliente</h2>
+    <details id="detalhamento-vendas" className="scroll-mt-24 space-y-3 rounded-xl bg-white p-2"><summary className="cursor-pointer rounded-xl bg-[#082f68] px-4 py-3 font-black uppercase text-white">Detalhamento das vendas por cliente</summary><div className="space-y-3 pt-3"><h2 className="rounded-xl bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white">Vendas por cliente</h2>
     {visibleCustomers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 break-words text-lg font-black">{customer.name}</h2>
@@ -200,7 +200,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
         </div>)}
       </div>
     </section>)}
-    </div>
-    <p className="text-xs text-slate-600">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
+    </div></details>
+    <p className="text-xs text-white">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
   </main>;
 }
