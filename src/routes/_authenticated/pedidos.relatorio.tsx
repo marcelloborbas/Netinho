@@ -107,7 +107,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </header>
     <section className="grid grid-cols-2 gap-2 rounded-[24px] border-[3px] border-[#ffcb28] bg-gradient-to-b from-white to-[#f1f8ff] p-3 shadow-[0_4px_0_#ab6e00,0_4px_18px_#003b7c77]">
       <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Mês</span>
-        <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
+        <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
           {MONTHS.map((name, i) => <option key={name} value={i+1}>{name}</option>)}
         </select>
       </label>
@@ -117,7 +117,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
         </select>
       </label>
       <label className="col-span-2 text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio"><span className="flex items-center gap-2"><Users size={20}/> Cliente</span>
-        <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-blue-300 bg-white px-3 text-base font-semibold text-[#102a52]">
+        <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-1 min-h-12 w-full rounded-xl border-2 border-[#79a9d9] bg-white px-3 text-base font-bold text-[#102a52] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffcb28]">
           <option value="todos">Todos os clientes ({customers.length})</option>
           {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
         </select>
@@ -158,7 +158,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </section>
     </div>
     <section className="overflow-hidden rounded-[25px] border-[3px] border-[#ffce27] bg-white shadow-[0_4px_0_#aa6900,0_5px_18px_#00265780]">
-      <h2 className="flex items-center justify-between gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-xs font-black normal-case text-[#102a52]">Ver todos</a></h2>
+      <h2 className="flex items-center justify-between gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-xl border-2 border-[#fff1a3] bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-sm font-black normal-case text-[#102a52] shadow-md transition-transform active:scale-95">Ver todos</a></h2>
       {recentOrders.length === 0 ? <p className="p-4 text-sm text-[#102a52]">Nenhum pedido no período selecionado.</p> : <div className="divide-y divide-[#d8e6f7]">
         {recentOrders.map(order => <Link key={order.id} to="/pedidos/$id" params={{id:order.id}} className="flex min-h-16 items-center justify-between gap-2 border-b border-[#d8e6f7] px-4 py-3 text-[#102a52] hover:bg-[#edf6ff]">
           <div className="min-w-0"><p className="text-sm font-black">Pedido Nº {order.number}</p><p className="truncate text-xs">{((order.customer_snapshot ?? {}) as {trade_name?: string; company_name?: string}).trade_name || ((order.customer_snapshot ?? {}) as {company_name?: string}).company_name || "Cliente não identificado"}</p><p className="text-[11px] text-[#536c86]">{formatDate(order.created_at)} · {order.status}</p></div>
@@ -177,7 +177,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
-    <details id="detalhamento-vendas" className="scroll-mt-24 space-y-3 rounded-xl bg-white p-2"><summary className="cursor-pointer rounded-xl bg-[#082f68] px-4 py-3 font-black uppercase text-white">Detalhamento das vendas por cliente</summary><div className="space-y-3 pt-3"><h2 className="rounded-xl bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white">Vendas por cliente</h2>
+    <details id="detalhamento-vendas" className="scroll-mt-24 space-y-3 rounded-[22px] border-[3px] border-[#ffce27] bg-white p-3 text-[#102a52] shadow-[0_4px_14px_#00265755]"><summary className="cursor-pointer rounded-xl border-2 border-[#ffce27] bg-gradient-to-b from-[#135ba7] to-[#041b42] px-4 py-4 text-base font-black uppercase text-white shadow-md transition-colors hover:from-[#1c71c9] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#ffdc34]">Detalhamento das vendas por cliente</summary><div className="space-y-3 pt-3 text-[#102a52]"><h2 className="rounded-xl bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white">Vendas por cliente</h2>
     {visibleCustomers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 break-words text-lg font-black">{customer.name}</h2>
@@ -201,6 +201,6 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
       </div>
     </section>)}
     </div></details>
-    <p className="text-xs text-white">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
+    <p className="rounded-lg bg-[#041d46] px-3 py-3 text-sm font-medium leading-relaxed text-white">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
   </main>;
 }
