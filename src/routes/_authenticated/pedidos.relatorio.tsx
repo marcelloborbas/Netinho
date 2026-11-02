@@ -49,7 +49,7 @@ async function loadMonth(year: number, month: number): Promise<OrderRow[]> {
   });
 }
 
-function MonthlySalesReport() {
+export function MonthlySalesReport() {
   const today = new Date();
   const brasil = brazilMonth(today);
   const [year, setYear] = useState(Number(brasil.slice(0, 4)));
@@ -100,7 +100,7 @@ function MonthlySalesReport() {
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
   return <main className="mx-auto w-full max-w-4xl space-y-4 px-3 pb-24 sm:px-5">
-    <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>
+    <Link to="/" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Início</Link>
     <header className="rounded-[28px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#104e96] via-[#082d67] to-[#061a3d] px-3 py-5 text-center text-white shadow-[0_0_18px_#f7b51b77]">
       <h1 className="flex items-center justify-center gap-2 text-2xl font-black uppercase tracking-tight sm:text-3xl"><TrendingUp className="shrink-0 text-[#ffda35]" size={30}/> Minhas <span className="text-[#ffd43a]">Vendas</span></h1>
       <p className="mt-1 text-xs font-semibold text-[#e5f2ff]">Acompanhe seus pedidos, valores e comissões.</p>
