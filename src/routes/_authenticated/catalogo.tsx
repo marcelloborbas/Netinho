@@ -31,7 +31,7 @@ type VehicleBrand = { name: string; pattern: RegExp; slug: string; color: string
 const vehicleBrands: VehicleBrand[] = [
   { name: "Volkswagen", pattern: /\bvolkswagen\b|\bvw\b|\bgol\b|\bfox\b|\bpolo\b|\bvoyage\b|\bsaveiro\b/i, slug: "volkswagen", color: "001E50" },
   { name: "Fiat", pattern: /\bfiat\b|\bpalio\b|\buno\b|\bstrada\b|\bargo\b|\bmobi\b/i, slug: "fiat", color: "941711" },
-  { name: "Chevrolet", pattern: /\bchevrolet\b|\bchevy\b|\b(onix|ônix|corsa|celta|prisma|spin|s10)\b/i, slug: "chevrolet", color: "D1A24A" },
+  { name: "Chevrolet", pattern: /\bchevrolet\b|\bchevy\b|\b(onix|ônix|corsa|celta|prisma|spin|s10|classic|cruze|tracker|montana|astra|agile|blazer|camaro|captiva|cobalt|equinox|meriva|omega|sonic|vectra|zafira)\b/i, slug: "chevrolet", color: "D1A24A" },
   { name: "Ford", pattern: /\bford\b|\b(ka|fiesta|ecosport|focus|ranger)\b/i, slug: "ford", color: "002E6B" },
   { name: "Renault", pattern: /\brenault\b|\b(sandero|logan|duster|kwid)\b/i, slug: "renault", color: "FFCC33" },
   { name: "Toyota", pattern: /\btoyota\b|\b(corolla|hilux|etios|yaris)\b/i, slug: "toyota", color: "EB0A1E" },
@@ -52,7 +52,7 @@ const vehicleBrands: VehicleBrand[] = [
 const vehicleModels: Record<string, string[]> = {
   Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up", "Amarok", "Fusca", "Kombi", "Parati", "Passat", "Polo GTS", "Quantum"],
   Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino", "Idea", "Bravo", "Linea", "500", "Fastback", "Pulse"],
-  Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra"],
+  Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra", "Agile", "Blazer", "Camaro", "Captiva", "Cobalt", "Equinox", "Meriva", "Omega", "Sonic", "Vectra", "Zafira"],
   Ford: ["Ka", "Fiesta", "Focus", "EcoSport", "Ranger", "Fusion"],
   Renault: ["Kwid", "Sandero", "Logan", "Duster", "Oroch", "Clio", "Kangoo"],
   Hyundai: ["HB20", "Creta", "Tucson", "i30"],
