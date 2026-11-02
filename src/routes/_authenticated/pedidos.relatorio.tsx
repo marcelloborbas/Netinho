@@ -93,16 +93,16 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const growth = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : null;
   const recentOrders = useMemo(() => data.filter(order => order.kind !== "orcamento" && order.status !== "cancelled")
     .filter(order => selectedClient === "todos" || (() => { const snapshot = (order.customer_snapshot ?? {}) as {id?: string; document?: string; trade_name?: string; company_name?: string}; const name = (snapshot.trade_name || snapshot.company_name || "Cliente não identificado").trim(); return (snapshot.id || snapshot.document || name.toLocaleLowerCase("pt-BR")) === selectedClient; })())
-    .slice(0, 4), [data, selectedClient]);
+    .slice(0, 3), [data, selectedClient]);
   const visibleCustomers = selectedClient === "todos" ? customers : customers.filter(c => c.key === selectedClient);
   const visibleTotal = visibleCustomers.reduce((sum, c) => sum + c.total, 0);
   const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
-  return <main className="mx-auto w-full max-w-4xl space-y-3 px-3 pb-28 sm:px-5">
+  return <main className="mx-auto w-full max-w-4xl space-y-3 bg-gradient-to-b from-[#0068b8] via-[#00a7f0] to-[#0075c9] px-3 pt-3 pb-28 sm:px-5">
     {!embedded && <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>}
-    <header className="rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#104e96] via-[#082d67] to-[#061a3d] px-3 py-4 text-center text-white shadow-[0_0_18px_#f7b51b77]">
-      <h1 className="flex items-center justify-center gap-2 text-2xl font-black uppercase tracking-tight sm:text-3xl"><TrendingUp className="shrink-0 text-[#ffda35]" size={30}/> Minhas <span className="text-[#ffd43a]">Vendas</span></h1>
+    <header className="rounded-[30px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#0d4b95] via-[#05265b] to-[#001536] px-3 py-4 shadow-[0_0_18px_#ffdd49b0] text-center text-white shadow-[0_0_18px_#f7b51b77]">
+      <h1 className="flex items-center justify-center gap-2 text-2xl font-black uppercase tracking-tight sm:text-3xl"><TrendingUp className="shrink-0 text-[#ffda35]" size={30}/> Relatório de <span className="text-[#ffd43a]">Vendas</span></h1>
       <p className="mt-1 text-xs font-semibold text-[#e5f2ff]">Acompanhe seus pedidos, valores e comissões.</p>
     </header>
     <section className="grid grid-cols-2 gap-2 rounded-2xl border-2 border-[#d4af37] bg-white p-3 shadow-[0_4px_15px_#092b5a20]">
@@ -123,27 +123,14 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
         </select>
       </label>
     </section>
-    <div className="grid grid-cols-2 gap-2">
-    <section className="rounded-2xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ef1313] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
-      <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
-      <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
-      <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
-    </section>
-    <section className="rounded-2xl border-2 border-[#d4af37] bg-gradient-to-b from-[#0d4d93] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
-      <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
-      <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
-      <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
-      <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
-    </section>
-    </div>
-    <section aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#0c4b91] via-[#082f6d] to-[#061c46] p-4 text-white shadow-[0_5px_20px_#0a438244]">
+    <section aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[24px] border-[3px] border-[#ffd44a] bg-gradient-to-b from-[#084d96] via-[#052c69] to-[#03183e] p-4 text-white shadow-[0_5px_20px_#0a438244]">
       <div className="flex items-center gap-2">
         <BarChart3 className="shrink-0 text-[#ffd42a]" size={30}/>
         <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas</h2><p className="text-xs text-[#d7e8ff]">Seu desempenho nos últimos seis meses</p></div>
       </div>
       {historyError ? <p role="alert" className="mt-4 text-sm">Não foi possível consultar o histórico de vendas.</p> :
       historyLoading ? <p role="status" className="mt-4 text-sm">Carregando evolução...</p> :
-      <div className="mt-3 grid h-36 grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-48 sm:gap-3">
+      <div className="mt-3 grid h-44 grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-48 sm:gap-3">
         {history.map((item, index) => <div key={`${item.year}-${item.month}`} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
           <span className="max-w-full truncate text-[9px] font-extrabold tabular-nums sm:text-xs" title={brl(item.total)}>{item.total >= 1000 ? `R$ ${(item.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k` : `R$ ${Math.round(item.total)}`}</span>
           <div className={`w-full max-w-16 rounded-t-md border border-white/40 shadow-[0_0_10px_#28baff77] ${index === history.length-1 ? "bg-gradient-to-t from-[#d48a00] to-[#ffed25]" : index % 2 ? "bg-gradient-to-t from-[#dc7500] to-[#ffae20]" : "bg-gradient-to-t from-[#065ac0] to-[#1cc7ff]"}`} style={{height: `${Math.max(item.total > 0 ? 7 : 2, (item.total/chartMax)*100)}%`}} title={`${MONTHS[item.month-1]} de ${item.year}: ${brl(item.total)}`}/>
@@ -157,22 +144,35 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
       </div>
       <p className="mt-2 text-[10px] text-[#c5dcfa]">Histórico pessoal dos pedidos, excluindo orçamentos e cancelamentos. Valores sujeitos a atualização.</p>
     </section>
-    <section className="overflow-hidden rounded-2xl border-2 border-[#d4af37] bg-white shadow-sm">
-      <h2 className="flex items-center justify-between gap-2 bg-[#082f68] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-xs font-black normal-case text-[#102a52]">Ver todos</a></h2>
+    <div className="grid grid-cols-2 gap-2" id="indicadores-vendas">
+    <section className="rounded-2xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ef1313] to-[#a90000] px-2 py-3 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
+      <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
+      <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
+      <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
+    </section>
+    <section className="rounded-2xl border-2 border-[#d4af37] bg-gradient-to-b from-[#0d4d93] to-[#062450] p-2.5 text-white shadow-[0_4px_15px_#092b5a44]">
+      <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
+      <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
+      <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
+      <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
+    </section>
+    </div>
+    <section className="overflow-hidden rounded-[24px] border-[3px] border-[#ffd44a] bg-white shadow-[0_3px_12px_#003b7c66]">
+      <h2 className="flex items-center justify-between gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-xs font-black normal-case text-[#102a52]">Ver todos</a></h2>
       {recentOrders.length === 0 ? <p className="p-4 text-sm text-[#102a52]">Nenhum pedido no período selecionado.</p> : <div className="divide-y divide-[#d8e6f7]">
-        {recentOrders.map(order => <Link key={order.id} to="/pedidos/$id" params={{id:order.id}} className="flex min-h-16 items-center justify-between gap-2 px-4 py-3 text-[#102a52] hover:bg-[#edf6ff]">
+        {recentOrders.map(order => <Link key={order.id} to="/pedidos/$id" params={{id:order.id}} className="flex min-h-16 items-center justify-between gap-2 border-b border-[#d8e6f7] px-4 py-3 text-[#102a52] hover:bg-[#edf6ff]">
           <div className="min-w-0"><p className="text-sm font-black">Pedido Nº {order.number}</p><p className="truncate text-xs">{((order.customer_snapshot ?? {}) as {trade_name?: string; company_name?: string}).trade_name || ((order.customer_snapshot ?? {}) as {company_name?: string}).company_name || "Cliente não identificado"}</p><p className="text-[11px] text-[#536c86]">{formatDate(order.created_at)} · {order.status}</p></div>
-          <strong className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe34b] to-[#e9a800] px-2 py-2 text-xs text-[#102a52] sm:text-sm">{brl(Number(order.total || 0))}</strong>
+          <strong className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe34b] to-[#e9a800] px-2 py-2 text-xs text-[#102a52] shadow-sm sm:text-sm">{brl(Number(order.total || 0))}</strong>
         </Link>)}
       </div>}
     </section>
     <section className="overflow-hidden rounded-2xl border-2 border-[#d4af37] bg-white shadow-sm">
-      <h2 className="flex items-center gap-2 bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
-      <div className="grid grid-cols-2 gap-2 p-3 text-center text-[#102a52]">
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><ShoppingCart className="mx-auto text-[#0753a3]" size={22}/><p className="text-xs font-bold">Pedidos</p><strong className="text-xl">{visibleCount}</strong></div>
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><Users className="mx-auto text-[#0753a3]" size={22}/><p className="text-xs font-bold">Clientes</p><strong className="text-xl">{visibleCustomers.length}</strong></div>
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><BarChart3 className="mx-auto text-[#0753a3]" size={22}/><p className="text-xs font-bold">Vendas</p><strong className="text-sm">{brl(visibleTotal)}</strong></div>
-        <div className="rounded-xl bg-[#e7f2ff] p-3"><Coins className="mx-auto text-[#0753a3]" size={22}/><p className="text-xs font-bold">Comissão estimada</p><strong className="text-sm">{commissionRate == null || commissionError ? "—" : brl(Math.round(visibleTotal*Number(commissionRate))/100)}</strong></div>
+      <h2 className="flex items-center gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
+      <div className="grid grid-cols-1 gap-1.5 p-3 text-[#102a52]">
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-[#d5eaff] px-4 py-2"><ShoppingCart className="shrink-0 text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Total de pedidos</p><strong className="text-xl tabular-nums">{visibleCount}</strong></div>
+        <div className="rounded-xl bg-[#e7f2ff] p-3"><Users className="mx-auto text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Total de clientes</p><strong className="text-xl tabular-nums">{visibleCustomers.length}</strong></div>
+        <div className="rounded-xl bg-[#e7f2ff] p-3"><BarChart3 className="mx-auto text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Valor total das vendas</p><strong className="text-base font-black tabular-nums">{brl(visibleTotal)}</strong></div>
+        <div className="rounded-xl bg-[#e7f2ff] p-3"><Coins className="mx-auto text-[#0753a3]" size={22}/><p className="flex-1 text-sm font-bold">Comissão estimada</p><strong className="text-base font-black tabular-nums">{commissionRate == null || commissionError ? "—" : brl(Math.round(visibleTotal*Number(commissionRate))/100)}</strong></div>
       </div>
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
