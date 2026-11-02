@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Trash2, Minus, Plus, X, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
+import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
@@ -269,13 +269,11 @@ function OrderPage() {
           <Link
             to="/catalogo"
             search={{ modo: "venda" }}
-            preload="render"
-            preloadDelay={0}
-            aria-label="Fazer pedido: abrir catálogo de peças"
-            title="Fazer pedido"
-            className="absolute bottom-[8%] left-[3%] z-30 h-[13%] w-[94%] touch-manipulation cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
+            aria-label="Fazer seu pedido: abrir catálogo de peças"
+            title="Fazer seu pedido"
+            className="absolute bottom-[7%] left-[4%] z-50 flex h-[15%] w-[92%] touch-manipulation cursor-pointer items-center justify-center rounded-2xl border-2 border-[#fff4a0] bg-gradient-to-b from-[#19d94c] via-[#009d31] to-[#006820] px-3 text-center text-[clamp(1.15rem,5vw,1.7rem)] font-black uppercase text-white shadow-[0_0_16px_#4bff79,0_5px_0_#004b22] transition-transform active:scale-[.98] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
           >
-            <span className="sr-only">Fazer pedido</span>
+            <ShoppingCart className="mr-2 h-7 w-7 shrink-0" aria-hidden="true"/> FAÇA SEU PEDIDO <ArrowRight className="ml-2 h-7 w-7 shrink-0" aria-hidden="true"/>
           </Link>
         </div>
       </main>
