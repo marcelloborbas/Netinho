@@ -291,15 +291,15 @@ function OrderPage() {
             <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
             <p id="lia-confirm-locucao" className="sr-only whitespace-pre-line">{"Estamos quase finalizando!\\n\\nAntes de enviar, confira atentamente os dados do seu pedido.\\n\\nSe estiver tudo correto, clique em Enviar Pedido.\\n\\nCaso precise fazer alguma alteração, selecione Corrigir Pedido.\\n\\nA Netinho Auto Parts agradece sua confiança e preferência!\\n\\nQue Deus abençoe você, sua família e seus negócios!"}</p>
             {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
-            <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[44%] bottom-[25%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
-              <div className="mt-2 space-y-1 text-xs font-semibold sm:text-sm">
+            <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[42%] bottom-[22%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
+              <div className="mt-2 space-y-2 text-[22px] font-semibold leading-tight sm:text-[28px]">
                 <p className="break-words"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
                 <p className="break-words"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
                 <p><strong>Peças:</strong> {d.items.length}</p>
               </div>
               <div className="mt-3 rounded-lg bg-[#b91c1c] px-2 py-2 text-center text-white">
-                <p className="text-[10px] font-bold uppercase tracking-wide">Valor total do pedido</p>
-                <p className="text-xl font-black tabular-nums">{brl(t.net)}</p>
+                <p className="text-[20px] font-bold uppercase leading-tight tracking-wide">Valor total do pedido</p>
+                <p className="text-[40px] font-black tabular-nums leading-tight sm:text-[48px]">{brl(t.net)}</p>
               </div>
             </section>
             {/* Áreas invisíveis: os botões da imagem são os únicos visíveis e recebem as ações reais. */}
