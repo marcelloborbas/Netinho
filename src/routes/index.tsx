@@ -102,7 +102,7 @@ function Home() {
         <section className="relative isolate min-h-[305px] overflow-hidden bg-[#092b52] sm:min-h-[410px]" aria-label="Boas-vindas">
           <img src="/images/netinho-cabecalho-arte-aprovada.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-contain object-center" onError={e => { e.currentTarget.src="/images/fundo-saudacao.webp"; }} />
 
-          <img src="/images/logo-netinho-tons.webp" alt="" aria-hidden="true" className="pointer-events-none absolute left-3 top-3 z-10 w-24 max-w-[30%] object-contain opacity-30 grayscale sm:left-6 sm:top-5 sm:w-36" onError={event => { event.currentTarget.style.display = "none"; }} />
+          <img src="/images/logo-netinho-tons.webp" alt="" aria-hidden="true" className="pointer-events-none absolute left-3 top-3 z-10 w-[14px] max-w-[15%] object-contain opacity-30 grayscale sm:left-6 sm:top-5 sm:w-[22px]" onError={event => { event.currentTarget.style.display = "none"; }} />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#03152be8] via-[#062345a6] to-transparent" />
 
           <div className="relative flex min-h-[305px] flex-col justify-end px-4 pb-4 pt-16 sm:min-h-[410px] sm:px-8 sm:pb-6">
