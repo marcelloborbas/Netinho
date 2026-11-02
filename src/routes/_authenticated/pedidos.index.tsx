@@ -23,13 +23,7 @@ export const Route = createFileRoute("/_authenticated/pedidos/")({
 });
 
 function SalesHome() {
-  return <>
-    <MonthlySalesReport embedded />
-    <details className="mx-auto mb-28 w-full max-w-4xl px-3">
-      <summary className="cursor-pointer rounded-xl border-2 border-[#d4af37] bg-[#082f68] px-4 py-3 text-center font-bold text-white">Gerenciar pedidos e orçamentos</summary>
-      <Orders />
-    </details>
-  </>;
+  return <MonthlySalesReport embedded />;
 }
 
 function Orders() {
