@@ -60,10 +60,8 @@ function MonthlySalesReport() {
     queryFn: () => loadMonth(year, month),
   });
   const {data:commissionRate, isError:commissionError}=useQuery({queryKey:["my-sales-commission"],queryFn:async()=>{const {data:auth,error:authError}=await supabase.auth.getUser();if(authError||!auth.user)throw authError??new Error("Sem login");const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",auth.user.id).maybeSingle();if(error)throw error;return (data as {rate:number}|null)?.rate??null;}});
-  const { customers, total, count } = useMemo(() => {
+  const { customers } = useMemo(() => {
     const groups = new Map<string, { name: string; total: number; orders: OrderRow[] }>();
-    let total = 0;
-    let count = 0;
     for (const order of data) {
       if (order.kind === "orcamento" || order.status === "cancelled") continue;
       const snapshot = (order.customer_snapshot ?? {}) as { id?: string; company_name?: string; trade_name?: string; document?: string };
@@ -74,10 +72,8 @@ function MonthlySalesReport() {
       group.total += value;
       group.orders.push(order);
       groups.set(key, group);
-      total += value;
-      count++;
     }
-    return { customers: [...groups.values()].sort((a,b) => b.total - a.total || a.name.localeCompare(b.name)), total, count };
+    return { customers: [...groups.entries()].map(([key, group]) => ({...group, key})).sort((a,b) => b.total - a.total || a.name.localeCompare(b.name)) };
   }, [data]);
   const historyMonths = useMemo(() => Array.from({length: 6}, (_, index) => {
     const date = new Date(Date.UTC(year, month - 1 - (5 - index), 15));
@@ -96,9 +92,9 @@ function MonthlySalesReport() {
   const currentTotal = history.length ? history[history.length - 1].total : 0;
   const growth = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : null;
   const recentOrders = useMemo(() => data.filter(order => order.kind !== "orcamento" && order.status !== "cancelled")
-    .filter(order => selectedClient === "todos" || ((order.customer_snapshot ?? {}) as {trade_name?: string; company_name?: string}).trade_name === selectedClient || ((order.customer_snapshot ?? {}) as {company_name?: string}).company_name === selectedClient)
+    .filter(order => selectedClient === "todos" || (() => { const snapshot = (order.customer_snapshot ?? {}) as {id?: string; document?: string; trade_name?: string; company_name?: string}; const name = (snapshot.trade_name || snapshot.company_name || "Cliente não identificado").trim(); return (snapshot.id || snapshot.document || name.toLocaleLowerCase("pt-BR")) === selectedClient; })())
     .slice(0, 4), [data, selectedClient]);
-  const visibleCustomers = selectedClient === "todos" ? customers : customers.filter(c => c.name === selectedClient);
+  const visibleCustomers = selectedClient === "todos" ? customers : customers.filter(c => c.key === selectedClient);
   const visibleTotal = visibleCustomers.reduce((sum, c) => sum + c.total, 0);
   const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
@@ -111,12 +107,12 @@ function MonthlySalesReport() {
     </header>
     <section className="grid grid-cols-2 gap-3 rounded-2xl border-2 border-[#d4af37] bg-white p-4 shadow-[0_4px_15px_#092b5a20]">
       <label className="text-sm font-bold text-[#102a52]">Mês
-        <select aria-label="Selecionar mês" value={month} onChange={e => setMonth(Number(e.target.value))} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
+        <select aria-label="Selecionar mês" value={month} onChange={e => { setMonth(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
           {MONTHS.map((name, i) => <option key={name} value={i+1}>{name}</option>)}
         </select>
       </label>
       <label className="text-sm font-bold text-[#102a52]">Ano
-        <select aria-label="Selecionar ano" value={year} onChange={e => setYear(Number(e.target.value))} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
+        <select aria-label="Selecionar ano" value={year} onChange={e => { setYear(Number(e.target.value)); setSelectedClient("todos"); }} className="mt-1 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-2 text-base">
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
       </label>
@@ -125,7 +121,7 @@ function MonthlySalesReport() {
       <label className="block text-sm font-extrabold text-[#102a52]" htmlFor="cliente-relatorio">Cliente</label>
       <select id="cliente-relatorio" value={selectedClient} onChange={e => setSelectedClient(e.target.value)} className="mt-2 min-h-12 w-full rounded-lg border border-blue-300 bg-white px-3 text-base font-semibold text-[#102a52]">
         <option value="todos">Todos os clientes ({customers.length})</option>
-        {customers.map((customer, i) => <option key={i} value={customer.name}>{customer.name}</option>)}
+        {customers.map(customer => <option key={customer.key} value={customer.key}>{customer.name}</option>)}
       </select>
       <p className="mt-2 text-xs text-slate-600">Selecione um cliente para ver somente os pedidos e o total dele no mês escolhido.</p>
     </section>
@@ -136,7 +132,7 @@ function MonthlySalesReport() {
       </div>
       {historyError ? <p role="alert" className="mt-4 text-sm">Não foi possível consultar o histórico de vendas.</p> :
       historyLoading ? <p role="status" className="mt-4 text-sm">Carregando evolução...</p> :
-      <div className="mt-5 grid h-44 grid-cols-6 items-end gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-56 sm:gap-3">
+      <div className="mt-5 grid h-44 grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-56 sm:gap-3">
         {history.map((item, index) => <div key={`${item.year}-${item.month}`} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
           <span className="max-w-full truncate text-[9px] font-extrabold tabular-nums sm:text-xs" title={brl(item.total)}>{item.total >= 1000 ? `R$ ${(item.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k` : `R$ ${Math.round(item.total)}`}</span>
           <div className={`w-full max-w-16 rounded-t-md border border-white/40 shadow-[0_0_10px_#28baff77] ${index === history.length-1 ? "bg-gradient-to-t from-[#d48a00] to-[#ffed25]" : index % 2 ? "bg-gradient-to-t from-[#dc7500] to-[#ffae20]" : "bg-gradient-to-t from-[#065ac0] to-[#1cc7ff]"}`} style={{height: `${Math.max(item.total > 0 ? 7 : 2, (item.total/chartMax)*100)}%`}} title={`${MONTHS[item.month-1]} de ${item.year}: ${brl(item.total)}`}/>
@@ -145,7 +141,7 @@ function MonthlySalesReport() {
       </div>}
       <div className="mt-4 flex items-center justify-between gap-2 rounded-xl border border-[#6ac3ff] bg-[#041a42]/70 p-3">
         <span className="text-xs font-black uppercase sm:text-sm">Desempenho mensal</span>
-        <span className={`text-xl font-black tabular-nums ${growth == null ? "text-white" : growth >= 0 ? "text-[#6eff6e]" : "text-[#ffb3b3]"}`}>{growth == null ? "—" : `${growth > 0 ? "+" : ""}${growth.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</span>
+        <span className={`text-xl font-black tabular-nums ${growth == null ? "text-white" : growth >= 0 ? "text-[#6eff6e]" : "text-[#ffb3b3]"}`}>{historyLoading || historyError || growth == null ? "—" : `${growth > 0 ? "+" : ""}${growth.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</span>
         <span className="max-w-24 text-right text-[10px] leading-tight text-[#dceaff]">Em relação ao mês anterior</span>
       </div>
       <p className="mt-2 text-[10px] text-[#c5dcfa]">Histórico pessoal dos pedidos, excluindo orçamentos e cancelamentos. Valores sujeitos a atualização.</p>
@@ -153,8 +149,8 @@ function MonthlySalesReport() {
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
     <section className="rounded-2xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ef1313] to-[#a90000] px-4 py-5 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
       <p className="text-sm font-extrabold uppercase">Total de vendas · {MONTHS[month-1]} de {year}</p>
-      <p className="mt-1 text-3xl font-black">{isLoading ? "Carregando..." : brl(visibleTotal)}</p>
-      <p className="mt-2 text-sm font-semibold">{visibleCount} pedidos · {visibleCustomers.length} clientes</p>
+      <p className="mt-1 text-3xl font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
+      <p className="mt-2 text-sm font-semibold">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
     </section>
     <section className="rounded-2xl border-2 border-[#d4af37] bg-gradient-to-b from-[#0d4d93] to-[#062450] p-4 text-white shadow-[0_4px_15px_#092b5a44]">
       <p className="font-black uppercase">Sua comissão estimada</p>
@@ -164,7 +160,7 @@ function MonthlySalesReport() {
     </section>
     </div>
     <section className="overflow-hidden rounded-2xl border-2 border-[#d4af37] bg-white shadow-sm">
-      <h2 className="flex items-center gap-2 bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</h2>
+      <h2 className="flex items-center justify-between gap-2 bg-[#082f68] px-4 py-3 text-base font-black uppercase text-white sm:text-lg"><span className="flex items-center gap-2"><ClipboardList size={22} className="text-[#ffdb38]"/> Últimos pedidos</span><a href="#detalhamento-vendas" className="shrink-0 rounded-lg bg-gradient-to-b from-[#ffe854] to-[#edb000] px-3 py-2 text-xs font-black normal-case text-[#102a52]">Ver todos</a></h2>
       {recentOrders.length === 0 ? <p className="p-4 text-sm text-[#102a52]">Nenhum pedido no período selecionado.</p> : <div className="divide-y divide-[#d8e6f7]">
         {recentOrders.map(order => <Link key={order.id} to="/pedidos/$id" params={{id:order.id}} className="flex min-h-16 items-center justify-between gap-2 px-4 py-3 text-[#102a52] hover:bg-[#edf6ff]">
           <div className="min-w-0"><p className="text-sm font-black">Pedido Nº {order.number}</p><p className="truncate text-xs">{((order.customer_snapshot ?? {}) as {trade_name?: string; company_name?: string}).trade_name || ((order.customer_snapshot ?? {}) as {company_name?: string}).company_name || "Cliente não identificado"}</p><p className="text-[11px] text-[#536c86]">{formatDate(order.created_at)} · {order.status}</p></div>
@@ -183,6 +179,7 @@ function MonthlySalesReport() {
     </section>
     {isError && <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-4 text-red-800">Não foi possível carregar os pedidos. <button type="button" onClick={() => void refetch()} className="font-bold underline">Tentar novamente</button></div>}
     {!isLoading && !isError && customers.length === 0 && <p className="rounded-xl border bg-white p-5 text-center">Nenhuma venda encontrada neste mês.</p>}
+    <div id="detalhamento-vendas" className="scroll-mt-24 space-y-3"><h2 className="rounded-xl bg-[#082f68] px-4 py-3 text-lg font-black uppercase text-white">Vendas por cliente</h2>
     {visibleCustomers.map((customer, index) => <section key={`${customer.name}-${index}`} className="rounded-xl border-2 border-[#102a52] bg-white p-4 text-[#102a52]">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="min-w-0 flex-1 break-words text-lg font-black">{customer.name}</h2>
@@ -205,6 +202,7 @@ function MonthlySalesReport() {
         </div>)}
       </div>
     </section>)}
+    </div>
     <p className="text-xs text-slate-600">Relatório dos pedidos realizados por sua conta. Exclui orçamentos e pedidos cancelados; inclui pedidos ainda não faturados.</p>
   </main>;
 }
