@@ -30,10 +30,10 @@ export function HomePartsCarousel() {
   return (
     <section className="home-cover-anchor relative mx-auto w-full max-w-3xl overflow-hidden" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
-      <div className="relative w-full overflow-hidden bg-[#061a36]">
-        <img src={parts[index].image} alt={parts[index].title} decoding="async" fetchPriority={index === 0 ? "high" : "auto"} className="block h-auto w-full object-contain object-center" />
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#061a36]">
+        <img src={parts[index].image} alt={parts[index].title} decoding="async" fetchPriority={index === 0 ? "high" : "auto"} className="block h-full w-full object-contain object-center" />
       </div>
-      <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-[#071e3b99] px-2 py-1" aria-label="Selecionar imagem">
+      <div className="absolute bottom-1.5 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-[#071e3bcc] px-2 py-1" aria-label="Selecionar imagem">
         {parts.map((part,i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i+1}: ${part.title}`} aria-current={i===index ? "true" : undefined} onClick={() => setIndex(i)} className={`h-2 rounded-full transition-all ${i===index ? "w-5 bg-[#f3c75d]" : "w-2 bg-white/70 hover:bg-white"}`}/>)}
       </div>
     </section>
