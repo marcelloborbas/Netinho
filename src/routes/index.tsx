@@ -100,9 +100,9 @@ function Home() {
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
         <section className="relative isolate min-h-[325px] overflow-hidden bg-[#092b52] sm:min-h-[440px]" aria-label="Boas-vindas">
-          <img src="/images/fundo-saudacao.webp" alt="" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" onError={e => { e.currentTarget.style.display = "none"; }} />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_85%_15%,#17649a_0%,#0a365f_36%,#061b35_78%)]" />
 
-          <img src="/images/logo-netinho-tons.webp" alt="" aria-hidden="true" className="pointer-events-none absolute left-3 top-3 z-10 w-[72px] max-w-[22%] object-contain opacity-30 grayscale sm:left-6 sm:top-5 sm:w-[100px]" onError={event => { event.currentTarget.style.display = "none"; }} />
+          <img src="/images/logo-netinho-tons.webp" alt="" aria-hidden="true" className="pointer-events-none absolute left-3 top-3 z-10 w-[72px] max-w-[22%] h-auto object-contain opacity-30 grayscale sm:left-6 sm:top-5 sm:w-[96px]" onError={event => { event.currentTarget.style.display = "none"; }} />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#03152be8] via-[#062345a6] to-transparent" />
 
           <div className="relative flex min-h-[325px] flex-col justify-end px-4 pb-4 pt-16 sm:min-h-[410px] sm:px-8 sm:pb-6">
