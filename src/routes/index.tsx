@@ -99,15 +99,15 @@ function Home() {
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
-        <section className="relative isolate overflow-hidden bg-[#071e3c]" aria-label="Boas-vindas">
-          <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão, automóvel e logotipo Netinho Auto Parts" className="block h-auto w-full object-contain" decoding="async" fetchPriority="high" onError={event => { event.currentTarget.style.display = "none"; }} />
-          <div className="relative bg-gradient-to-b from-[#082c55] to-[#041a34] px-4 pb-5 pt-3 text-white sm:absolute sm:inset-0 sm:flex sm:flex-col sm:justify-end sm:bg-gradient-to-r sm:from-[#03152bee] sm:via-[#06234577] sm:to-transparent sm:px-8 sm:pb-6">
-            <p className="text-[clamp(1.35rem,5vw,2.6rem)] font-extrabold text-white drop-shadow-lg">{salutation},</p>
-            <h1 className="max-w-[18ch] text-[clamp(2rem,8vw,4rem)] font-black leading-tight text-[#ffd13e] drop-shadow-[0_2px_5px_#06152e]">Sr. {userName || "usuário"}!</h1>
-            <span className="mt-1 inline-flex w-fit rounded-full border border-[#f6c94d]/70 bg-[#051d39]/75 px-3 py-1 text-xs font-bold text-[#ffe18c]">{status}</span>
-            <p className="mt-2 text-[clamp(1.1rem,3.8vw,2rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
-            <p className="text-[clamp(1.1rem,3.8vw,2rem)] font-bold text-white drop-shadow-lg">Que seu dia seja abençoado!</p>
-            <span className="mt-3 h-[3px] w-20 rounded-full bg-[#ffd43b]" />
+        <section className="relative isolate min-h-[220px] overflow-hidden bg-[#071e3c] sm:min-h-[320px]" aria-label="Boas-vindas">
+          <img src="/images/fundo-saudacao-novo.webp?v=20261102-3" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#03152bd9] via-[#0623458a] to-transparent" />
+          <img src="/images/logo-netinho-tons.webp" alt="Netinho Auto Parts" className="absolute left-3 top-3 z-10 w-[clamp(76px,19vw,142px)] object-contain opacity-30" decoding="async" />
+          <div className="relative z-10 flex min-h-[220px] flex-col justify-end px-4 pb-4 pt-16 text-white sm:min-h-[320px] sm:px-8 sm:pb-6">
+            <p className="text-[clamp(1.1rem,4vw,2rem)] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
+            <p className="mt-1 text-[clamp(1.05rem,3.7vw,1.8rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
+            <p className="text-[clamp(1.05rem,3.7vw,1.8rem)] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
+            <span className="mt-2 w-fit rounded-full border border-[#f6c94d]/70 bg-[#051d39]/75 px-3 py-1 text-[11px] font-bold text-[#ffe18c]">{status}</span>
           </div>
         </section>
         <section className="mx-2 overflow-hidden rounded-[14px] border border-[#5aafe9] bg-[#061b39] shadow-[0_0_14px_#40a9ff66] sm:mx-4" aria-label="Promoções em destaque">
