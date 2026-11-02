@@ -51,7 +51,7 @@ const vehicleBrands: VehicleBrand[] = [
 // Modelos exibidos apenas quando citados explicitamente na aplicação da peça.
 const vehicleModels: Record<string, string[]> = {
   Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up", "Amarok", "Fusca", "Kombi", "Parati", "Passat", "Polo GTS", "Quantum"],
-  Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino"],
+  Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino", "Idea", "Bravo", "Linea", "500", "Fastback", "Pulse"],
   Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra"],
   Ford: ["Ka", "Fiesta", "Focus", "EcoSport", "Ranger", "Fusion"],
   Renault: ["Kwid", "Sandero", "Logan", "Duster", "Oroch", "Clio", "Kangoo"],
