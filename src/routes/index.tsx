@@ -102,6 +102,7 @@ function Home() {
         <section className="relative isolate min-h-[330px] overflow-hidden bg-[#071e3c] sm:min-h-[460px]" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#03152bd9] via-[#0623458a] to-transparent" />
+          <img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="absolute left-3 top-3 z-20 w-[clamp(105px,26vw,205px)] h-auto object-contain drop-shadow-[0_3px_8px_rgba(0,0,0,0.55)] sm:left-6 sm:top-5" decoding="async" />
           <div className="relative z-10 flex min-h-[330px] flex-col justify-end px-4 pb-4 pt-16 text-white sm:min-h-[460px] sm:px-8 sm:pb-6">
             <p className="text-[clamp(3.2625rem,12.15vw,5.85rem)] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
             <p className="mt-1 text-[clamp(2.925rem,10.575vw,4.95rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
