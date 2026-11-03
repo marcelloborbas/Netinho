@@ -50,33 +50,34 @@ const vehicleBrands: VehicleBrand[] = [
 ];
 // Modelos exibidos apenas quando citados explicitamente na aplicação da peça.
 const vehicleModels: Record<string, string[]> = {
-  Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up", "Amarok", "Fusca", "Kombi", "Parati", "Passat", "Polo GTS", "Quantum"],
-  Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino", "Idea", "Bravo", "Linea", "500", "Fastback", "Pulse"],
-  Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra", "Agile", "Blazer", "Camaro", "Captiva", "Cobalt", "Equinox", "Meriva", "Omega", "Sonic", "Vectra", "Zafira"],
-  Ford: ["Ka", "Fiesta", "Focus", "EcoSport", "Ranger", "Fusion", "Bronco", "Edge", "Escort", "Mustang", "Territory", "Maverick", "F-150", "Courier"],
-  Renault: ["Kwid", "Sandero", "Logan", "Duster", "Oroch", "Clio", "Kangoo"],
-  Hyundai: ["HB20", "Creta", "Tucson", "i30"],
-  Toyota: ["Corolla", "Etios", "Hilux", "Yaris"],
-  Honda: ["Civic", "Fit", "City", "HR-V"],
-  Nissan: ["Kicks", "Versa", "Sentra", "March", "Frontier"],
-  Peugeot: ["206", "207", "208", "307", "308", "2008", "3008"],
+  Volkswagen: ["Gol", "Voyage", "Polo", "Fox", "Saveiro", "Golf", "Jetta", "Virtus", "T-Cross", "Nivus", "Up", "Amarok", "Fusca", "Kombi", "Parati", "Passat", "Polo GTS", "Quantum", "Taos", "Tera", "Tiguan", "Touareg", "Santana"],
+  Fiat: ["Uno", "Palio", "Siena", "Strada", "Argo", "Mobi", "Toro", "Cronos", "Punto", "Doblò", "Fiorino", "Idea", "Bravo", "Linea", "500", "Fastback", "Pulse", "Ducato", "Grand Siena", "Palio Weekend", "Uno Novo", "Brava", "Marea"],
+  Chevrolet: ["Onix", "Prisma", "Corsa", "Celta", "Classic", "Cruze", "S10", "Spin", "Tracker", "Montana", "Astra", "Agile", "Blazer", "Camaro", "Captiva", "Cobalt", "Equinox", "Meriva", "Omega", "Sonic", "Vectra", "Zafira", "Trailblazer", "Silverado", "Malibu", "Corsa SW", "Corsa Pickup", "Onix Plus"],
+  Ford: ["Ka", "Fiesta", "Focus", "EcoSport", "Ranger", "Fusion", "Bronco", "Edge", "Escort", "Mustang", "Territory", "Maverick", "F-150", "Courier", "Transit", "Pampa", "Corcel", "Belina", "Explorer", "F-250"],
+  Renault: ["Kwid", "Sandero", "Logan", "Duster", "Oroch", "Clio", "Kangoo", "Captur", "Kardian", "Fluence", "Megane", "Scenic", "Trafic"],
+  Hyundai: ["HB20", "Creta", "Tucson", "i30", "Azera", "Elantra", "Santa Fé", "HB20S", "ix35"],
+  Toyota: ["Corolla", "Etios", "Hilux", "Yaris", "Corolla Cross", "SW4", "RAV4", "Prado"],
+  Honda: ["Civic", "Fit", "City", "HR-V", "Accord", "CR-V", "WR-V", "BR-V", "ZR-V"],
+  Nissan: ["Kicks", "Versa", "Sentra", "March", "Frontier", "Altima", "Pathfinder", "X-Trail"],
+  Peugeot: ["206", "207", "208", "307", "308", "2008", "3008", "Partner", "408"],
   "Citroën": ["C3", "C4", "Aircross", "Berlingo"],
-  Jeep: ["Renegade", "Compass", "Commander"],
-  Mitsubishi: ["L200", "Pajero", "Outlander", "ASX"],
+  Jeep: ["Renegade", "Compass", "Commander", "Wrangler", "Gladiator"],
+  Mitsubishi: ["L200", "Pajero", "Outlander", "ASX", "Eclipse Cross"],
   BMW: ["Série 1", "Série 3", "X1", "X3", "X5"],
   "Mercedes-Benz": ["Classe A", "Classe C", "Sprinter", "GLA", "GLC"],
-  Kia: ["Picanto", "Cerato", "Sportage", "Sorento"],
+  Kia: ["Picanto", "Cerato", "Sportage", "Sorento", "Rio"],
   "Land Rover": ["Discovery", "Defender", "Evoque"],
   Volvo: ["XC40", "XC60", "XC90"],
 };
 const mentionsModel = (application: string, model: string) =>
   new RegExp(`(^|[^\\p{L}\\p{N}])${model}(?=$|[^\\p{L}\\p{N}])`, "iu").test(application);
 /** Fotografias identificadas por modelo, com origem no Wikimedia Commons. */
-const modelFilename = (name: string) => name.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
+const vehicleImageFiles: Record<string, Record<string,string>> = {"chevrolet":{"catalogochevroletembranco":"Catálogo Chevrolet em Branco.webp","colagemdeveiculoschevroletbrancos":"Colagem de Veículos Chevrolet Brancos.webp","agile":"agile.webp","astra":"astra.webp","blazer":"blazer.webp","camaro":"camaro.webp","capitiva":"capitiva.webp","celta":"celta.webp","classic":"classic.webp","cobalt":"cobalt.webp","corsaclassic":"corsa classic.webp","corsajoy":"corsa joy.webp","corsapickup":"corsa pickup.webp","corsasw":"corsa sw.webp","corsa":"corsa.webp","cruze":"cruze.webp","equinox":"equinox.webp","malibu":"malibu.webp","meriva":"meriva.webp","montana":"montana.webp","omega":"omega.webp","onixplus":"onix plus.webp","onix":"onix.webp","prisma":"prisma.webp","s10":"s10.webp","silverado":"silverado.webp","sonic":"sonic.webp","spin":"spin.webp","tracker":"tracker.webp","trailblazer":"trailblazer.webp","vectra":"vectra.webp","zafira":"zafira.webp"},"citroen":{"aircross":"aircross.webp","berlingo":"berlingo.webp","c3":"c3.webp","c4cactus":"c4 cactus.webp","c4":"c4.webp"},"fiat":{"500":"500.webp","argo":"argo.webp","brava":"brava.webp","bravo":"bravo.webp","cronos":"cronos.webp","doblo":"doblo.webp","ducato":"ducato.webp","fastback":"fastback.webp","fiat":"fiat.webp","fiorinonova":"fiorino nova.webp","fiorino":"fiorino.webp","grandsiena":"grand siena.webp","idea":"idea.webp","journey":"journey.webp","linea":"linea.webp","marea":"marea.webp","mobi":"mobi.webp","palionovo":"palio novo.webp","palioweekendadventure":"palio weekend adventure.webp","palioweekend":"palio weekend.webp","palio":"palio.webp","pickupfiorino":"pickup fiorino.webp","pulse":"pulse.webp","punto":"punto.webp","siena":"siena.webp","strada":"strada.webp","tempra":"tempra.webp","toro":"toro.webp","unonovo":"uno novo.webp","uno":"uno.webp"},"ford":{"belina":"belina.webp","bronco":"bronco.webp","corcel":"corcel.webp","courier":"courier.webp","courrier":"courrier.webp","delrei":"delrei.webp","ecosport":"ecosport.webp","edge":"edge.webp","escort":"escort.webp","explorer":"explorer.webp","f150":"f150.webp","f250":"f250.webp","f350":"f350.webp","f4000":"f4000.webp","fiesta":"fiesta.webp","focus":"focus.webp","fusion":"fusion.webp","ka":"ka.webp","maverick":"maverick.webp","pampa":"pampa.webp","ranger":"ranger.webp","transit":"transit.webp"},"honda":{"accord":"accord.webp","brv":"brv.webp","city":"city.webp","civic":"civic.webp","crv":"crv.webp","fit":"fit.webp","hrv":"hrv.webp","ridgeline":"ridgeline.webp","wrv":"wrv.webp","zrv":"zrv.webp"},"hyundai":{"azera":"azera.webp","creta":"creta.webp","elantra":"elantra.webp","hb20":"hb20.webp","hb20s":"hb20s.webp","i30":"i30.webp","ix35":"ix35.webp","santafe":"santa-fé.webp","tucson":"tucson.webp"},"jeep":{"commander":"commander.webp","compass":"compass.webp","gladiator":"gladiator.webp","renegade":"renegade.webp","wrangler":"wrangler.webp"},"kia":{"cerato":"cerato.webp","picanto":"picanto.webp","rio":"rio.webp","sorento":"sorento.webp","sportage":"sportage.webp"},"mercedes":{"sprinter":"Sprinter.webp","asx":"asx.webp","eclipsecross":"eclipse cross.webp","l200":"l200.webp","outlander":"outlander.webp","pajero":"pajero.webp"},"mitsubishi":{"asx":"asx.webp","eclipsecross":"eclipse cross.webp","l200":"l200.webp","outlander":"outlander.webp","pajero":"pajero.webp"},"nissan":{"altima":"altima.webp","frontier":"frontier.webp","kicks":"kicks.webp","march":"march.webp","pathfinder":"pathfinder.webp","sentra":"sentra.webp","versa":"versa.webp","xtrail":"x-trail.webp"},"peugeot":{"206":"206.webp","207":"207.webp","208":"208.webp","307":"307.webp","308":"308.webp","408":"408.webp","2008":"2008.webp","3008":"3008.webp","partner":"partner.webp"},"renault":{"captur":"captur.webp","cliosedan":"clio sedan.webp","clio":"clio.webp","duster":"duster.webp","fluence":"fluence.webp","kangoo":"kangoo.webp","kardian":"kardian.webp","kwid":"kwid.webp","logan":"logan.webp","master":"master.webp","megane":"megane.webp","oroch":"oroch.webp","sanderostepway":"sandero stepway.webp","sandero":"sandero.webp","scenic":"scenic.webp","trafic":"trafic.webp","vanmaster":"van master.webp"},"toyota":{"corollacross":"corolla cross.webp","corolla":"corolla.webp","etios":"etios.webp","hillux":"hillux.webp","hilux":"hilux.webp","prado":"prado.webp","rav4":"rav4.webp","sw4":"sw4.webp","yaris":"yaris.webp"},"volkswagen":{"up":"UP.webp","amarok":"amarok.webp","fox":"fox.webp","fusca":"fusca.webp","gol":"gol.webp","golf":"golf.webp","jetta":"jetta.webp","kombi":"kombi.webp","nivus":"nivus.webp","parati":"parati.webp","passat":"passat.webp","pologts":"polo-gts.webp","polo":"polo.webp","quantum":"quantum.webp","santana":"santana.webp","saveiro":"saveiro.webp","taos":"taos.webp","tcross":"tcross.webp","tera":"tera.webp","tiguan":"tiguan.webp","touareg":"touareg.webp","virtus":"virtus.webp","voyage":"voyage.webp"}};
+const modelFilename = (name: string) => name.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 function VehicleModelPicture({name,brand}:{name:string;brand:string}) {
   const slug = vehicleBrands.find(item => item.name === brand)?.slug;
-  const filename = name === "Up" ? "UP" : modelFilename(name);
-  const photo = slug ? `/images/veiculos/${slug}/${filename}.webp` : null;
+  const filename = slug ? vehicleImageFiles[slug]?.[modelFilename(name)] : undefined;
+  const photo = slug && filename ? `/images/veiculos/${slug}/${encodeURIComponent(filename)}` : null;
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
   return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-12 w-full object-contain transition-transform duration-200 group-hover:scale-105" /> : <div className="h-12 w-full"><VehicleModelIllustration name={name}/></div>;
