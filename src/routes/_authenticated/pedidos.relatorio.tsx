@@ -55,6 +55,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const [year, setYear] = useState(Number(brasil.slice(0, 4)));
   const [month, setMonth] = useState(Number(brasil.slice(5, 7)));
   const [selectedClient, setSelectedClient] = useState("todos");
+  const [activeReport, setActiveReport] = useState<"cliente" | "mes">("cliente");
   const { data = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["sales-monthly-report", year, month],
     queryFn: () => loadMonth(year, month),
@@ -97,10 +98,10 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const visibleCount = visibleCustomers.reduce((sum, c) => sum + c.orders.length, 0);
   const years = Array.from({ length: 8 }, (_, i) => Number(brasil.slice(0,4)) - i);
   if (!years.includes(year)) years.unshift(year);
-  return <main className="mx-auto w-full max-w-4xl space-y-2 bg-gradient-to-b from-[#f0f7ff] to-white px-2 pt-0 pb-24 text-[#092454] sm:px-5">
+  return <main className="w-full min-w-0 space-y-2 bg-gradient-to-b from-[#f0f7ff] to-white px-1 pt-0 pb-5 text-[#092454] sm:px-3 lg:px-5">
     {!embedded && <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>}
-    <header className="mx-auto w-full max-w-[580px] overflow-hidden rounded-b-[16px] bg-[#073c82]">
-      <img src="/images/vendas-cabeçalho.webp" alt="Netinho Auto Parts — Minhas Vendas. LIA apresenta o relatório e a evolução das vendas." className="block h-auto max-h-[27dvh] w-full object-contain object-top" decoding="async" />
+    <header className="w-full overflow-hidden rounded-b-[16px] bg-[#073c82]">
+      <img src="/images/vendas-cabeçalho.webp" alt="Netinho Auto Parts — Minhas Vendas. LIA apresenta o relatório e a evolução das vendas." className="block h-auto max-h-[19dvh] w-full object-contain object-top sm:max-h-[23dvh]" decoding="async" />
     </header>
     <section className="grid grid-cols-2 gap-2 rounded-[16px] border border-[#c4d6ee] bg-white p-2 shadow-sm sm:grid-cols-3">
       <label className="text-base font-black text-[#102a52]"><span className="flex items-center gap-2"><CalendarDays size={20}/> Mês</span>
@@ -121,17 +122,14 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
       </label>
     </section>
     <div className="grid grid-cols-2 gap-1.5" id="indicadores-vendas">
-    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-2 py-2 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
-      <p className="text-[10px] font-extrabold uppercase sm:text-sm">Total de vendas · {MONTHS[month-1]} de {year}</p>
-      <p className="mt-1 text-[clamp(1.15rem,5vw,2rem)] font-black text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
-      <p className="mt-1 text-[10px] font-semibold sm:text-sm">{isLoading || isError ? "Consultando pedidos..." : `${visibleCount} pedidos · ${visibleCustomers.length} clientes`}</p>
-    </section>
-    <section className="rounded-[20px] border-2 border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] p-2 text-white shadow-[0_4px_15px_#092b5a44]">
-      <p className="text-[10px] font-black uppercase sm:text-sm">Sua comissão estimada</p>
-      <p className="mt-1 text-[10px] font-semibold sm:text-xs">Taxa cadastrada: {commissionError ? "Indisponível" : commissionRate == null ? "Não definida pela Administração" : `${Number(commissionRate).toLocaleString("pt-BR")}%`}</p>
-      <p className="mt-1 text-[clamp(1.1rem,5vw,2rem)] font-black">{commissionRate == null || commissionError || isLoading ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
-      <p className="mt-1 text-[9px] leading-tight text-[#d8e9ff]">Estimativa sobre os pedidos do período selecionado; não representa comissão paga. Confirme a regra de apuração e o faturamento com a Administração.</p>
-    </section>
+      <section className="flex min-w-0 flex-col items-center justify-center rounded-xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#ff351a] via-[#e00000] to-[#a90000] px-1.5 py-2 text-center text-white shadow-[0_4px_15px_#a9000044]" aria-live="polite">
+        <p className="text-[10px] font-extrabold uppercase leading-tight sm:text-sm">Vendas do Período</p>
+        <p className="mt-1 break-all text-[clamp(1rem,4.7vw,2rem)] font-black leading-tight tabular-nums text-[#ffe346]">{isLoading ? "Carregando..." : isError ? "—" : brl(visibleTotal)}</p>
+      </section>
+      <section className="flex min-w-0 flex-col items-center justify-center rounded-xl border-2 border-[#ffd44a] bg-gradient-to-b from-[#1264b3] via-[#0a3c7c] to-[#062450] px-1.5 py-2 text-center text-white shadow-[0_4px_15px_#092b5a44]" aria-live="polite">
+        <p className="text-[10px] font-extrabold uppercase leading-tight sm:text-sm">Comissão Estimada do Período</p>
+        <p className="mt-1 break-all text-[clamp(1rem,4.7vw,2rem)] font-black leading-tight tabular-nums text-[#ffe346]">{commissionRate == null || commissionError || isLoading || isError ? "—" : brl(Math.round(visibleTotal * Number(commissionRate)) / 100)}</p>
+      </section>
     </div>
     <section id="evolucao-vendas" aria-label="Evolução das vendas pessoais" className="overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] text-white">
       <div className="flex items-center gap-2">
@@ -156,9 +154,52 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </section>
 
     <nav aria-label="Consultas do relatório" className="grid grid-cols-2 gap-2">
-      <a href="#indicadores-vendas" className="flex min-h-10 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><Users size={19}/> Vendas por Cliente</a>
-      <a href="#evolucao-vendas" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-sm font-black text-white shadow-md"><CalendarDays size={19}/> Vendas por Mês</a>
+      <button type="button" aria-pressed={activeReport === "cliente"} aria-controls="detalhamento-vendas" onClick={() => setActiveReport("cliente")} className={activeReport === "cliente" ? "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-[#ffdf48] shadow-md sm:text-sm" : "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-white shadow-md sm:text-sm"}><Users size={19}/> Vendas por Cliente</button>
+      <button type="button" aria-pressed={activeReport === "mes"} aria-controls="detalhamento-vendas" onClick={() => setActiveReport("mes")} className={activeReport === "mes" ? "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-[#ffdf48] shadow-md sm:text-sm" : "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-white shadow-md sm:text-sm"}><CalendarDays size={19}/> Vendas por Mês</button>
     </nav>
+    <section id="detalhamento-vendas" aria-live="polite" className="min-w-0 overflow-hidden rounded-xl border-2 border-[#d7b14d] bg-white shadow-sm">
+      {activeReport === "cliente" ? (
+        <>
+          <h3 className="bg-[#092b61] px-3 py-2 text-base font-black text-white">Vendas por Cliente — {MONTHS[month - 1]} de {year}</h3>
+          {isLoading ? <p className="p-3">Carregando vendas por cliente...</p> : isError ? <p className="p-3 text-red-700">Não foi possível consultar as vendas por cliente.</p> : visibleCustomers.length === 0 ? <p className="p-3">Nenhuma venda encontrada para os filtros selecionados.</p> : (
+            <ul className="divide-y divide-[#d5e2f4]">
+              {visibleCustomers.map(customer => (
+                <li key={customer.key} className="space-y-2 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="break-words font-extrabold text-[#092b61]">{customer.name}</p>
+                      <p className="text-xs text-[#39577a]">{customer.orders.length} pedido(s)</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black tabular-nums text-[#a51515]">{brl(customer.total)}</p>
+                      {commissionRate != null && !commissionError && <p className="text-xs font-semibold text-[#174e9b]">Comissão estimada: {brl(Math.round(customer.total * Number(commissionRate)) / 100)}</p>}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {customer.orders.map(order => <Link key={order.id} to="/pedidos/$id" params={{ id: order.id }} className="rounded-lg border border-[#b9cfea] bg-[#f0f6ff] px-2 py-1 text-xs font-bold text-[#123b74] hover:bg-[#daeaff]">Pedido nº {order.number} · {brl(Number(order.total || 0))}</Link>)}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      ) : (
+        <>
+          <h3 className="bg-[#092b61] px-3 py-2 text-base font-black text-white">Vendas por Mês — últimos seis meses</h3>
+          {historyLoading ? <p className="p-3">Carregando vendas mensais...</p> : historyError ? <p className="p-3 text-red-700">Não foi possível consultar as vendas mensais.</p> : (
+            <ul className="divide-y divide-[#d5e2f4]">
+              {history.map(period => (
+                <li key={period.year + "-" + period.month} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                  <span className="font-bold text-[#123b74]">{MONTHS[period.month - 1]} de {period.year}</span>
+                  <strong className="shrink-0 tabular-nums text-[#a51515]">{brl(period.total)}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="px-3 py-2 text-xs text-[#39577a]">Valores conforme o cliente selecionado e o mês/ano de referência.</p>
+        </>
+      )}
+    </section>
     <section className="hidden">
       <h2 className="flex items-center gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
       <div className="grid grid-cols-1 gap-1.5 p-3 text-[#102a52]">
