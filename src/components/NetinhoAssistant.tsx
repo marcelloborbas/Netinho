@@ -134,6 +134,7 @@ export function NetinhoAssistant() {
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = pathname === "/" ? "Vamos lá!\n\nClicando em sua foto você consulta seu status, seu perfil, e solicita ajuda, ou sai da conta.\n\nPara realizar vendas, é necessário ter o status de Vendedor ou Representante.\n\nAtalhos do menu inferior, é para facilitar sua navegação.\n\nSimples, rápido e prático!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speechRefLatest = useRef<() => void>(() => {});
+  const helpRequestInProgress = useRef(false);
   const speak = () => {
     const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261101-1" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261103-2" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261103-2" : /\/pedidos\/relatorio\/?$/.test(pathname) ? "/audio/lia/lia-minhas%20vendas.mp3?v=20261103-1" : /pedido|vendas/.test(pathname) ? "/audio/lia/lia-fazer%20pedido.mp3?v=20261103-1" : null;
     // Parar qualquer locução anterior antes de iniciar a orientação desta página.
@@ -162,9 +163,20 @@ export function NetinhoAssistant() {
     };
     if (!audioPath) { readText(); return; }
     const audio = new Audio(audioPath);
+    audio.loop = false; // A locução deve tocar uma única vez por solicitação do usuário.
+    audio.autoplay = false;
     loginAudioRef.current = audio;
     setActiveAudio(audio);
-    audio.onended = () => { if (loginAudioRef.current === audio) setSpeaking(false); };
+    audio.onended = () => {
+      if (loginAudioRef.current !== audio) return;
+      audio.pause();
+      audio.onended = null;
+      audio.onerror = null;
+      loginAudioRef.current = null;
+      setActiveAudio(null);
+      setSpeaking(false);
+      setBoundaryIndex(null);
+    };
     audio.onerror = () => { if (loginAudioRef.current === audio) { loginAudioRef.current = null; setActiveAudio(null); readText(); } };
     void audio.play().then(() => {
       if (loginAudioRef.current === audio) setSpeaking(true);
@@ -178,6 +190,10 @@ export function NetinhoAssistant() {
   useEffect(() => {
     if (isAuth) return;
     const showHelp = () => {
+      // Ignora disparos duplicados do mesmo clique no menu Ajuda.
+      if (helpRequestInProgress.current) return;
+      helpRequestInProgress.current = true;
+      window.requestAnimationFrame(() => { helpRequestInProgress.current = false; });
       setOpen(true);
       speechRefLatest.current();
     };
