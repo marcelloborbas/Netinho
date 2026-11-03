@@ -79,7 +79,7 @@ function VehicleModelPicture({name,brand}:{name:string;brand:string}) {
   const photo = slug ? `/images/veiculos/${slug}/${filename}.webp` : null;
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
-  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-20 w-full object-contain transition-transform duration-200 group-hover:scale-105" /> : <div className="h-20 w-full"><VehicleModelIllustration name={name}/></div>;
+  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-12 w-full object-contain transition-transform duration-200 group-hover:scale-105" /> : <div className="h-12 w-full"><VehicleModelIllustration name={name}/></div>;
 }
 
 /** Miniaturas vetoriais locais, com silhuetas e cores próprias por modelo. */
@@ -310,20 +310,16 @@ function Catalog() {
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
-    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-4 px-2 pt-2 pb-28 sm:px-6 sm:pt-4 sm:pb-32">
-      <div className="mx-auto w-full overflow-hidden rounded-2xl shadow-[0_5px_20px_rgba(0,48,105,0.25)]" aria-label="Catálogo de peças">
-        <img src="/images/logo%20catalogo%20de%20pe%C3%A7as.webp" alt="Catálogo de Peças" className="block h-auto w-full object-contain" loading="eager" decoding="async" />
-      </div>
-
-      <section className="space-y-3 rounded-[22px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-3 shadow-lg sm:p-4" aria-label="Pesquisar catálogo">
+    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 px-2 pt-1 pb-28 sm:px-6 sm:pt-4 sm:pb-32">
+      <section className="space-y-2 rounded-[16px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-2 shadow-lg sm:p-3" aria-label="Pesquisar catálogo">
         <div className="w-full" role="search">
           <div className="relative w-full min-w-0">
-            <Search className="absolute left-3 top-4 text-[#1675d1]" size={20} aria-hidden="true" />
+            <Search className="absolute left-3 top-3 text-[#1675d1]" size={20} aria-hidden="true" />
             <input id="catalog-search" aria-label="Buscar peças" value={searchInput}
               onChange={(e) => { const value = e.target.value; setSearchInput(value); setQ(value.trim()); setPage(1); }}
               placeholder="Busque pelo código, pela peça ou pelo veículo..."
-              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-14 w-full rounded-xl border-2 border-[#8dbbe5] pl-11 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
-            {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-3.5 text-[#102a52]"><X size={20}/></button>}
+              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-11 w-full rounded-xl border-2 border-[#8dbbe5] pl-11 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+            {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-2.5 text-[#102a52]"><X size={20}/></button>}
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -344,8 +340,8 @@ function Catalog() {
         </div>
       </section>
 
-      <section className="mt-4" aria-label="Buscar peças por representação">
-        <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
+      <section className="mt-2" aria-label="Buscar peças por representação">
+        <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
         <nav className="grid grid-cols-4 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
           {(["all", "FCO", "HD", "JCREI"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
@@ -360,9 +356,9 @@ function Catalog() {
                 aria-label={brand === "all" ? "Todas as representações" : brand === "JCREI" ? "JC REI — em breve" : `${brand}${pending ? " — em breve" : ""}`}
                 title={pending ? "Em breve — representação em negociação" : brand === "all" ? "Todas as representações" : "Peças FCO"}
                 onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`flex min-w-0 min-h-[72px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 py-2 shadow-sm text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
+                className={`flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl border-2 px-1 py-1 shadow-sm text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
               >
-                {logo ? <img src={logo} alt={brand === "JCREI" ? "JC REI" : brand} loading="lazy" decoding="async" className={`h-9 w-full max-w-[82px] object-contain ${pending ? "grayscale opacity-65" : ""}`} /> : <span className="text-xs font-extrabold sm:text-sm">TODOS</span>}
+                {logo ? <img src={logo} alt={brand === "JCREI" ? "JC REI" : brand} loading="lazy" decoding="async" className={`h-7 w-full max-w-[72px] object-contain ${pending ? "grayscale opacity-65" : ""}`} /> : <span className="text-xs font-extrabold sm:text-sm">TODOS</span>}
                 {pending && <span className="text-[10px] font-bold leading-tight text-[#102a52]">Em breve</span>}
               </button>
             );
@@ -370,7 +366,7 @@ function Catalog() {
         </nav>
       </section>
 
-      <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">2</span>CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
+      <p className="mb-2 mt-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">2</span>CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
           <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
@@ -387,7 +383,7 @@ function Catalog() {
         })}
       </nav>
       <p className="mb-3 mt-5 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">3</span>MONTADORA</p>
-      <nav aria-label="Filtrar peças por montadora" className="mb-4 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-xl bg-gradient-to-r from-[#f7fbff] via-white to-[#edf5ff] px-2 py-3 [scrollbar-width:thin]">
+      <nav aria-label="Filtrar peças por montadora" className="mb-2 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-xl bg-gradient-to-r from-[#f7fbff] via-white to-[#edf5ff] px-2 py-2 [scrollbar-width:thin]">
         {availableVehicleBrands.map((brand) => {
           const selected = vehicleBrand === brand.name;
           return <button
@@ -397,14 +393,14 @@ function Catalog() {
             aria-label={`Ver ${brand.count} peças para ${brand.name}`}
             aria-pressed={selected}
             onClick={() => { setVehicleBrand(selected ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}
-            className={`group relative flex h-[158px] w-[112px] shrink-0 snap-start flex-col items-center overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-[#08659c] via-[#062a58] to-[#03132d] px-2 pb-2 pt-2 text-center text-white shadow-[inset_0_2px_16px_#30aaff55] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_17px_#ffd23c99,inset_0_2px_16px_#30aaff55] focus-visible:outline-none focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] ${selected ? "border-[#ffd23c] shadow-[0_0_18px_#ffd23caa,inset_0_2px_16px_#30aaff55]" : "border-[#2389c9]"}`}
+            className={`group relative flex h-[105px] w-[86px] shrink-0 snap-start flex-col items-center overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-[#08659c] via-[#062a58] to-[#03132d] px-2 pb-2 pt-2 text-center text-white shadow-[inset_0_2px_16px_#30aaff55] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_17px_#ffd23c99,inset_0_2px_16px_#30aaff55] focus-visible:outline-none focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] ${selected ? "border-[#ffd23c] shadow-[0_0_18px_#ffd23caa,inset_0_2px_16px_#30aaff55]" : "border-[#2389c9]"}`}
           >
             <img
               src={`/images/montadoras/${brand.slug === "mercedes" ? "mercedes-benz" : brand.slug}.webp`}
               alt={brand.name}
               loading="lazy"
               decoding="async"
-              className="h-[112px] w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-[72px] w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <span className="mt-auto pt-1 text-[10px] font-bold text-[#e8f4ff]">{brand.count} peças</span>
           </button>;
@@ -413,7 +409,7 @@ function Catalog() {
       {vehicleBrand !== "all" && <section aria-label="Modelos dos veículos" className="mb-4">
         <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>VEÍCULO</p>
         {availableVehicleModels.length ? <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
-          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[74px] min-w-[116px] max-w-[160px] shrink-0 snap-start flex-col items-center justify-center gap-1 overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#f4f8fd] px-3 py-3 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
+          {availableVehicleModels.map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { setVehicleModel(vehicleModel === model.name ? "all" : model.name); setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[60px] min-w-[92px] max-w-[120px] shrink-0 snap-start flex-col items-center justify-center gap-1 overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#f4f8fd] px-2 py-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
             <VehicleModelPicture name={model.name} brand={vehicleBrand} />
             <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
             <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>
