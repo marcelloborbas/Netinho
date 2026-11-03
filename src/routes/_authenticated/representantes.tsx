@@ -66,6 +66,6 @@ function Page() {
       </article>)}
       {!matches.length && !isNetinhoLocal && <a className="inline-flex rounded-lg bg-green-700 px-4 py-3 font-bold text-white" href={`https://wa.me/5515992458492?text=${encodeURIComponent(`Olá! Preciso de representante para ${city}/${state}.`)}`} target="_blank" rel="noreferrer">Solicitar indicação à Netinho</a>}
     </div>}
-    {access?.level === 1 && <Link to="/admin-gestao" hash="representantes" className="inline-flex rounded-lg border border-amber-400 px-4 py-3 text-sm font-bold text-[#102a52]">Administrar representantes e regiões</Link>}
+    {access?.level === 1 && <Link to="/pessoas" hash="representantes" className="inline-flex rounded-lg border border-amber-400 px-4 py-3 text-sm font-bold text-[#102a52]">Administrar representantes e regiões</Link>}
   </section>;
 }
