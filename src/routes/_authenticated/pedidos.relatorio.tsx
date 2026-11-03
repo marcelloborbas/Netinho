@@ -78,7 +78,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   }, [data]);
   const historyMonths = useMemo(() => Array.from({length: 6}, (_, index) => {
     const date = new Date(Date.UTC(year, month - 1 - (5 - index), 15));
-    return {year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, label: MONTHS[date.getUTCMonth()].slice(0, 3)};
+    return {year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, label: (MONTHS[date.getUTCMonth()] ?? "").slice(0, 3)};
   }), [year, month]);
   const {data: history = [], isLoading: historyLoading, isError: historyError} = useQuery({
     queryKey: ["my-sales-history", year, month, selectedClient],
@@ -89,8 +89,8 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     })),
   });
   const chartMax = Math.max(1, ...history.map(item => item.total));
-  const previousTotal = history.length > 1 ? history[history.length - 2].total : 0;
-  const currentTotal = history.length ? history[history.length - 1].total : 0;
+  const previousTotal = history.length > 1 ? (history[history.length - 2]?.total ?? 0) : 0;
+  const currentTotal = history.length ? (history[history.length - 1]?.total ?? 0) : 0;
   const growth = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : null;
 
   const visibleCustomers = selectedClient === "todos" ? customers : customers.filter(c => c.key === selectedClient);
