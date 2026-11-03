@@ -48,19 +48,19 @@ function Admin() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between gap-3"><Link to="/admin" className="rounded-lg border bg-white px-3 py-2 font-bold">← Voltar</Link><Link to="/pessoas" className="rounded-lg border bg-white px-3 py-2 font-bold">Avançar →</Link></div><h1 className="text-3xl font-bold uppercase">Gestão do site</h1>
+      <div className="flex justify-between gap-3"><Link to="/" className="rounded-lg border bg-white px-3 py-2 font-bold text-[#102a52]">← Início</Link></div><h1 className="text-3xl font-bold uppercase text-[#102a52]">Administração — Gestão do site</h1><p className="rounded-xl border border-blue-200 bg-white p-3 text-sm text-[#102a52]">Central de administração: edite produtos, preços, estoque, comissões e representantes nesta tela. Para cadastros com formulários próprios, use os acessos organizados abaixo. Somente administradores autorizados podem salvar alterações.</p>
       <nav aria-label="Gestão do site" className="surface-card grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
-        <Link to="/pessoas" hash="representantes" className="action-card">Editar representantes e mapas</Link>
+        <a href="#representantes" className="action-card">Representantes — cadastrar e editar</a>
         <Link to="/vendedores" className="action-card">Vendedores</Link>
         <Link to="/clientes" className="action-card">Clientes</Link>
         <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
         <Link to="/pedidos" className="action-card">Pedidos</Link>
-        <Link to="/pessoas" hash="representantes" className="action-card">Cadastros de representantes</Link>
+        <a href="#comissoes" className="action-card">Comissões</a>
         <Link to="/pessoas" className="action-card">Pessoas e permissões</Link>
-        <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
+        <a href="#produtos" className="action-card">Produtos, estoque e preços</a>\n        <Link to="/transportadoras" className="action-card">Transportadoras</Link>
       </nav>
-      <details className="rounded-xl border border-slate-300 bg-white p-3 text-slate-900"><summary className="cursor-pointer font-bold text-[#102a52]">Comissões de fornecedores</summary><div className="mt-3"><SupplierCommissions /></div></details>
-      <RepresentativesAdmin />
+      <details id="comissoes" className="rounded-xl border border-slate-300 bg-white p-3 text-slate-900"><summary className="cursor-pointer font-bold text-[#102a52]">Comissões de fornecedores</summary><div className="mt-3"><SupplierCommissions /></div></details>
+      <section id="representantes" className="scroll-mt-4"><RepresentativesAdmin /></section>
 
       <details id="produtos" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900"><summary className="cursor-pointer text-xl font-bold text-[#102a52]">Produtos, estoque e preços</summary><div className="mt-4 space-y-3">
       <Input
