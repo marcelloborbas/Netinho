@@ -103,9 +103,9 @@ function Home() {
           <img src="/images/sauda%C3%A7%C3%A3o.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#03152bd9] via-[#0623458a] to-transparent" />
           <div className="relative z-10 flex min-h-[220px] flex-col justify-end px-4 pb-4 pt-16 text-white sm:min-h-[320px] sm:px-8 sm:pb-6">
-            <p className="text-[clamp(1.45rem,5.4vw,2.6rem)] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
-            <p className="mt-1 text-[clamp(1.3rem,4.7vw,2.2rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
-            <p className="text-[clamp(1.3rem,4.7vw,2.2rem)] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
+            <p className="text-[clamp(2.175rem,8.1vw,3.9rem)] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
+            <p className="mt-1 text-[clamp(1.95rem,7.05vw,3.3rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
+            <p className="text-[clamp(1.95rem,7.05vw,3.3rem)] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
           </div>
         </section>
         <section className="mx-2 overflow-hidden rounded-[14px] border border-[#5aafe9] bg-[#061b39] shadow-[0_0_14px_#40a9ff66] sm:mx-4" aria-label="Promoções em destaque">
