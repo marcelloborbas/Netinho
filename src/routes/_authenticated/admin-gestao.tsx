@@ -50,12 +50,12 @@ function Admin() {
     <div className="space-y-4">
       <div className="flex justify-between gap-3"><Link to="/admin" className="rounded-lg border bg-white px-3 py-2 font-bold">← Voltar</Link><Link to="/pessoas" className="rounded-lg border bg-white px-3 py-2 font-bold">Avançar →</Link></div><h1 className="text-3xl font-bold uppercase">Gestão do site</h1>
       <nav aria-label="Gestão do site" className="surface-card grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
-        <Link to="/representantes" className="action-card">Representantes e mapas</Link>
+        <Link to="/pessoas" hash="representantes" className="action-card">Editar representantes e mapas</Link>
         <Link to="/vendedores" className="action-card">Vendedores</Link>
         <Link to="/clientes" className="action-card">Clientes</Link>
         <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
         <Link to="/pedidos" className="action-card">Pedidos</Link>
-        <a href="#representantes" className="action-card">Cadastrar representantes</a>
+        <Link to="/pessoas" hash="representantes" className="action-card">Cadastros de representantes</Link>
         <Link to="/pessoas" className="action-card">Pessoas e permissões</Link>
         <a href="#produtos" className="action-card">Produtos, estoque e preços</a>
       </nav>
