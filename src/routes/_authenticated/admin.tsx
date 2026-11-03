@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ClipboardList, Contact, Package, Settings2, UserRoundCog, Truck, ShieldCheck, ArrowLeft, UserCheck, UserPlus, Search, MapPinned, AlertCircle } from "lucide-react";
+import { ClipboardList, Contact, Package, Settings2, UserRoundCog, Truck, ShieldCheck, ArrowLeft, UserCheck, UserPlus, Search, MapPinned, AlertCircle, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Administração – NETINHO" }] }),
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 const options = [
-  { to: "/representantes", label: "Buscar representante", icon: MapPinned },
+  { to: "/pessoas", label: "RH – Pessoas e representantes", icon: UserCheck },
   { to: "/vendedores", label: "Vendedores", icon: Contact },
   { to: "/clientes", label: "Clientes", icon: UserRoundCog },
   { to: "/transportadoras", label: "Transportadoras", icon: Truck },
@@ -54,6 +54,7 @@ function AdminDashboard() {
             <ClipboardList size={28} className="shrink-0"/><span><strong className="block text-base">Pedidos</strong><small className="block text-sm text-slate-700">Acompanhar solicitações</small></span>
           </Link>
         </div>
+        <Link to="/pessoas" hash="representantes" className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-4 py-3 text-center font-extrabold text-white"><Pencil size={20}/> Editar representantes</Link>
         <p className="text-xs text-slate-700">Pedidos de acesso recebidos por WhatsApp ainda são conferidos manualmente. Atribuir um perfil visual não substitui a autorização de vendas.</p>
       </section>
       <nav aria-label="Avançar na administração" className="flex justify-end"><Link to="/pessoas" className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-bold text-[#102a52]">Avançar →</Link></nav>
