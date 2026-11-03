@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Trash2, Pencil, X, UserPlus, ArrowLeft } from "lucide-react";
@@ -18,8 +18,8 @@ function Pessoas() {
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const qc=useQueryClient();
  const [adding,setAdding]=useState(false);
- const searchParams = useSearch({ from: "/_authenticated/pessoas", strict: false }) as { perfil?: string };
- const [filterRole,setFilterRole]=useState<Role | "Todos">(() => searchParams.perfil === "Representante" ? "Representante" : "Todos");
+ const location = useLocation();
+ const [filterRole,setFilterRole]=useState<Role | "Todos">(() => location.hash === "#representantes" ? "Representante" : "Todos");
  const [searchText,setSearchText]=useState("");
  const [editing,setEditing]=useState<string|null>(null);
  const [newName,setNewName]=useState("");
