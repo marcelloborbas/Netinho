@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { ClipboardList, Contact, Package, Settings2, UserRoundCog, Truck, ShieldCheck, ArrowLeft, UserCheck, UserPlus, Search, MapPinned, AlertCircle, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -36,6 +36,12 @@ const permissions = [
 ] as const;
 
 function AdminDashboard() {
+  // Centraliza a administração em uma única tela de gestão.
+  return <Navigate to="/admin-gestao" replace />;
+}
+
+/* Painel anterior mantido temporariamente como referência.
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 sm:gap-5">
       <header className="relative mx-auto flex w-full max-w-2xl items-center justify-center gap-3 rounded-2xl border-2 border-amber-400/75 bg-gradient-to-br from-[#163e75] via-[#102a52] to-[#07172f] px-12 py-4 text-center shadow-[0_10px_32px_rgba(0,0,0,.4)]">
@@ -97,3 +103,4 @@ function AdminDashboard() {
     </div>
   );
 }
+\n*/\n
