@@ -4642,3 +4642,22 @@ html body .welcome-auth-stage .welcome-auth-art {
 @media (max-width:639px) and (max-height:599px) {
   html body .home-page { min-height:100dvh !important; height:auto !important; overflow-y:auto !important; }
 }
+
+
+/* Catálogo compacto: mais etapas visíveis em telas pequenas, sem cortar imagens. */
+.catalog-showcase .catalog-category-filters { gap: 6px; padding-bottom: 5px; }
+.catalog-showcase .catalog-category-filters .catalog-category-item {
+  flex: 0 0 82px;
+  width: 82px;
+  min-width: 82px;
+  gap: 3px;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button {
+  height: 78px !important;
+  min-height: 78px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > .catalog-category-count {
+  font-size: 11px !important;
+}
