@@ -26,13 +26,13 @@ const shareMeta = [
   '<meta property="og:title" content="Netinho Auto Parts" />',
   '<meta property="og:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
   '<meta property="og:url" content="https://www.netinhoautoparts.live/" />',
-  '<meta property="og:image" content="https://www.netinhoautoparts.live/favicon.png" />',
+  '<meta property="og:image" content="https://www.netinhoautoparts.live/images/netinho-compartilhar.png" />',
   '<meta property="og:image:type" content="image/png" />',
   '<meta property="og:image:alt" content="Logo Netinho Auto Parts" />',
   '<meta name="twitter:card" content="summary_large_image" />',
   '<meta name="twitter:title" content="Netinho Auto Parts" />',
   '<meta name="twitter:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
-  '<meta name="twitter:image" content="https://www.netinhoautoparts.live/favicon.png" />',
+  '<meta name="twitter:image" content="https://www.netinhoautoparts.live/images/netinho-compartilhar.png" />',
 ].join("\n");
 
 async function ensureShareMetadata(request: Request, response: Response): Promise<Response> {
