@@ -7,6 +7,7 @@ import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCh
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
+import { PublicFooter } from "@/components/PublicFooter";
 import { customersQuery } from "@/lib/queries";
 import { draftActions, draftTotals, lineNet, useDraft } from "@/lib/order-store";
 import { BRAND, PAYMENT_TERMS, brl, termLabel, type PaymentTerm } from "@/lib/brand";
@@ -93,11 +94,7 @@ function OrderPage() {
     buttonSound();
     setReview(true);
     stopConfirmAudio();
-    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261103-3");
-    audio.loop = false;
-    audio.onended = () => { if (confirmAudioRef.current === audio) confirmAudioRef.current = null; };
-    confirmAudioRef.current = audio;
-    void audio.play().catch(() => { /* Reprodução pode depender das permissões do navegador. */ });
+    // A confirmação é silenciosa. A LIA só fala após o clique explícito em Ajuda.
     setConfirmOpen(true);
   }
   function closeConfirmation() {
@@ -173,24 +170,15 @@ function OrderPage() {
   // A área do botão desenhado na arte recebe um link real e acessível.
   if (sentResult === "sent") {
     return createPortal(
-      <main className="fixed inset-0 z-[99999] overflow-y-auto overscroll-contain bg-[#0862bd]" role="status" aria-label="Pedido enviado com sucesso">
-        <div className="relative mx-auto w-full max-w-[600px] overflow-hidden">
-          <img
-            src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a"
-            alt="Pedido enviado com sucesso! Parabéns pela venda. Acesse Minhas Vendas para acompanhar seus pedidos."
-            className="block h-[100dvh] w-full object-fill"
-            draggable={false}
-          />
-          <Link
-            to="/pedidos"
-            aria-label="Ir para Minhas Vendas"
-            title="Ir para Minhas Vendas"
-            className="absolute left-[9%] bottom-[5%] h-[11%] w-[82%] cursor-pointer rounded-2xl outline-offset-4 focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"
-          >
-            <span className="sr-only">Ir para Minhas Vendas</span>
-          </Link>
-        </div>
-      </main>,
+      <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]">
+        <main className="min-h-0 flex-1 overflow-y-auto pb-3" role="status" aria-label="Pedido enviado com sucesso">
+          <div className="relative mx-auto w-full max-w-[600px]">
+            <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-auto w-full object-contain" draggable={false} />
+            <Link to="/pedidos" className="mx-3 mt-2 flex min-h-12 items-center justify-center rounded-xl bg-[#1687d9] px-4 py-3 text-center text-base font-black text-white shadow-lg" aria-label="Ir para Minhas Vendas">Ir para Minhas Vendas</Link>
+          </div>
+        </main>
+        <div className="relative z-[100000] h-[76px] shrink-0"><PublicFooter /></div>
+      </div>,
       document.body
     );
   }
@@ -285,29 +273,30 @@ function OrderPage() {
   return (
     <div className="space-y-5">
       {confirmOpen && createPortal(
-        <div className="fixed inset-0 z-[99999] isolate flex items-center justify-center overflow-hidden bg-[#0862bd] p-0 sm:block sm:overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title" aria-describedby="lia-confirm-locucao">
-          <div className="relative mx-auto aspect-[9/20] w-[max(100vw,45dvh)] shrink-0 overflow-hidden sm:w-full sm:max-w-[600px] sm:aspect-[9/16]">
-            <picture className="absolute inset-0 block h-full w-full"><source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2"/><img src="/images/lia-confirmacao-pedido-mobile.webp?v=20261102" alt="LIA: Está tudo pronto? Confira os dados do pedido antes de enviar." className="h-full w-full object-contain" decoding="async"/></picture>
-            <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
-            <p id="lia-confirm-locucao" className="sr-only whitespace-pre-line">{"Estamos quase finalizando!\\n\\nAntes de enviar, confira atentamente os dados do seu pedido.\\n\\nSe estiver tudo correto, clique em Enviar Pedido.\\n\\nCaso precise fazer alguma alteração, selecione Corrigir Pedido.\\n\\nA Netinho Auto Parts agradece sua confiança e preferência!\\n\\nQue Deus abençoe você, sua família e seus negócios!"}</p>
-            {/* O centro da arte é vazio de propósito: somente o resumo real ocupa este espaço. */}
-            <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[42%] bottom-[22%] z-10 flex flex-col justify-center overflow-y-auto px-[4%] py-2 text-[#102a52]">
-              <div className="mt-2 space-y-2 text-[22px] font-semibold leading-tight sm:text-[28px]">
-                <p className="break-words"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
-                <p className="break-words"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
-                <p><strong>Peças:</strong> {d.items.length}</p>
+        <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="relative mx-auto w-full max-w-[600px]">
+              <picture className="block w-full">
+                <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2"/>
+                <img src="/images/lia-confirmacao-pedido-mobile.webp?v=20261102" alt="Confira os dados do pedido antes de enviar." className="block h-auto w-full object-contain" decoding="async"/>
+              </picture>
+              <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
+              <section aria-label="Dados do pedido" className="mx-3 mt-2 rounded-xl bg-white p-3 text-[#102a52] shadow-lg">
+                <p className="break-words text-base"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
+                <p className="text-base"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
+                <p className="text-base"><strong>Peças:</strong> {d.items.length}</p>
+                <p className="mt-2 rounded-lg bg-[#b91c1c] px-3 py-2 text-center text-lg font-black text-white">Total: {brl(t.net)}</p>
+              </section>
+              <div className="mx-3 my-3 grid grid-cols-2 gap-3" aria-label="Ações de confirmação do pedido">
+                <button type="button" onClick={closeConfirmation} className="min-h-14 rounded-xl border-2 border-white bg-[#e5eef9] px-2 py-3 text-center text-sm font-black text-[#102a52] shadow-lg">Revisar Pedido</button>
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmOpen(false); void finalize(); }} className="min-h-14 rounded-xl border-2 border-white bg-[#1687d9] px-2 py-3 text-center text-sm font-black text-white shadow-lg disabled:opacity-50">Enviar Pedido</button>
               </div>
-              <div className="mt-3 rounded-lg bg-[#b91c1c] px-2 py-2 text-center text-white">
-                <p className="text-[20px] font-bold uppercase leading-tight tracking-wide">Valor total do pedido</p>
-                <p className="text-[40px] font-black tabular-nums leading-tight sm:text-[48px]">{brl(t.net)}</p>
-              </div>
-            </section>
-            {/* Áreas invisíveis: os botões da imagem são os únicos visíveis e recebem as ações reais. */}
-            <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[7%] left-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#facc15]"/>
-            <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[7%] z-20 h-[9%] w-[41%] cursor-pointer rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#7dd3fc] disabled:cursor-wait"/>
+            </div>
           </div>
-        </div>
-      , document.body)}
+          <div className="relative z-[100000] h-[76px] shrink-0"><PublicFooter /></div>
+        </div>,
+        document.body
+      )}
       <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
         <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
           {review ? "Revisar pedido" : "Pedido"}
