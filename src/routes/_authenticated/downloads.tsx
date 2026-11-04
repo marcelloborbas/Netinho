@@ -51,7 +51,7 @@ function DownloadsPage() {
         <a href={fcoCatalog} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-sm font-semibold text-[#0b4b92] underline">Visualizar PDF no navegador</a>
       </section>
       <AdditionalDocument title="Formulário de Pedido / Orçamento" filename="Formulario_Pedido_Netinho.pdf" />
-      <AdditionalDocument title="Ficha Cadastral de Representantes" filename="Ficha_Cadastral_Representantes_da_Netinho.pdf" />
+      <AdditionalDocument title="Ficha Cadastral de Representantes" filename="Ficha_Cadastral_Representantes_ da_Netinho.pdf" />
     </main>
   );
 }
