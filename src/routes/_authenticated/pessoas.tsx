@@ -86,7 +86,7 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
  const [open,setOpen]=useState(editingPage);
 
  const sales=role==="Vendedor"||role==="Representante";
- const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:open||editingPage,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate == null ? "" : String(rate));return rate;}});
+ const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:true,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate == null ? "" : String(rate));return rate;}});
  const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open||editingPage,queryFn:async()=>{
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
@@ -127,7 +127,7 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
-   <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span></span>
+   <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}{(person.site_role==="Vendedor"||person.site_role==="Representante")&&<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commissionData==null?"Comissão: não definida":`Comissão: ${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span></span>
    <span className="shrink-0 text-right text-sm font-bold"><span className="block text-[#102a52]">{person.site_role}</span><span className={person.access_active?"text-green-700":"text-red-700"}>{person.access_active?"Ativo":"Inativo"}</span></span>
   </button>
   <div className="mt-2 flex items-center justify-between gap-2">
@@ -213,7 +213,7 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
  const [active,setActive]=useState(representative.active);
  const qc=useQueryClient();
  const [commissionRate,setCommissionRate]=useState("");
- const {error:commissionError,isLoading:commissionLoading}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:open||editingPage,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate ?? null;}});
+ const {data:commercialCommission,error:commissionError,isLoading:commissionLoading}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:true,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate ?? null;}});
  async function save(){
   if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
@@ -236,7 +236,7 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}</strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
+  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commercialCommission==null?"Comissão: não definida":`Comissão: ${Number(commercialCommission).toLocaleString("pt-BR")}%`}</span></strong><span className="block break-all text-xs text-slate-600">{representative.email}</span></button>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar ficha</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
