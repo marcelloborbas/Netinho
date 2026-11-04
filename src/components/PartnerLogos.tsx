@@ -17,7 +17,7 @@ export function PartnerLogos({
       {(
         [
           { brand: "FCO", name: "FCO Automotive", image: "/images/brands/fco.webp" },
-        ] as const
+        ] as { brand: "FCO" | "HD" | "JCREI"; name: string; image: string }[]
       ).map((s) => (
         <div key={s.brand} className={s.brand === "HD" || s.brand === "JCREI" ? "flex flex-col items-center" : "flex flex-col items-center"}>
           {s.brand === "HD" || s.brand === "JCREI" ? (

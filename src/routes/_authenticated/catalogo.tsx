@@ -344,7 +344,7 @@ function Catalog() {
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
         <nav className="grid grid-cols-1 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
-          {(["FCO"] as const).map((brand) => {
+          {(["FCO"] as ("FCO" | "HD" | "JCREI" | "all")[]).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
             const selected = manufacturer === brand;
             const logo = brand === "FCO" ? "/images/brands/fco.webp" : brand === "HD" ? "/images/brands/hd.png" : brand === "JCREI" ? "/images/brands/Logo.webp" : null;
