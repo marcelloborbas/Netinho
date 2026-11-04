@@ -4700,3 +4700,43 @@ html body .welcome-auth-stage .welcome-auth-art {
     transform: translateX(-50%);
   }
 }
+
+/* Correção definitiva do login desktop: sobrescreve a regra legada
+   html body ... object-fit:cover!important que cortava a arte. */
+@media (min-width: 900px) {
+  html body .welcome-auth-stage {
+    display: block !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+    background: #041b4b !important;
+  }
+  html body .welcome-auth-stage > .welcome-art-frame {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  html body .welcome-auth-stage .welcome-auth-art {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    transform: none !important;
+  }
+  html body .welcome-auth-stage .welcome-auth-actions {
+    left: 50% !important;
+    right: auto !important;
+    bottom: max(18px, env(safe-area-inset-bottom)) !important;
+    width: min(360px, calc(100% - 32px)) !important;
+    transform: translateX(-50%) !important;
+  }
+}
