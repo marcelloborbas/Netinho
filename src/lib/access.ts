@@ -10,7 +10,9 @@ export interface AccessContext {
 }
 export const accessQuery = queryOptions({
   queryKey: ["access"],
-  staleTime: 30_000,
+  staleTime: 2 * 60_000,
+  gcTime: 10 * 60_000,
+  refetchOnWindowFocus: false,
   retry: false,
   queryFn: async ({ signal }): Promise<AccessContext> => {
     const controller = new AbortController();
