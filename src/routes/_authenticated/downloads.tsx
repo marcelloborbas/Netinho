@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, FileText, ArrowLeft, Eye } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/downloads")({
-  head: () => ({ meta: [{ title: "Downloads | Netinho Auto Parts" }] }),
+  head: () => ({ meta: [{ title: "Baixar Docs | Netinho Auto Parts" }] }),
   component: DownloadsPage,
 });
 
@@ -33,7 +33,7 @@ function DownloadsPage() {
   return (
     <main className="mx-auto w-full max-w-2xl space-y-5 pb-24 text-[#102a52]">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-black uppercase">Downloads</h1>
+        <h1 className="text-2xl font-black uppercase">Baixar Docs</h1>
         <Link to="/" className="inline-flex items-center gap-1 rounded-lg border border-[#d4af37] bg-white px-3 py-2 text-sm font-bold"><ArrowLeft size={17}/> Voltar</Link>
       </div>
       <section className="rounded-2xl border-2 border-[#d4af37] bg-white p-5 shadow-lg">
