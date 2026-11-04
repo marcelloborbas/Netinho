@@ -22,6 +22,7 @@ import { Route as AuthenticatedCadastroRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCatalogoRouteImport } from './routes/_authenticated/catalogo'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedDistribuidorasRouteImport } from './routes/_authenticated/distribuidoras'
+import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated/downloads'
 import { Route as AuthenticatedNovoClienteRouteImport } from './routes/_authenticated/novo-cliente'
 import { Route as AuthenticatedPedidoRouteImport } from './routes/_authenticated/pedido'
 import { Route as AuthenticatedPessoasRouteImport } from './routes/_authenticated/pessoas'
@@ -101,6 +102,11 @@ const AuthenticatedDistribuidorasRoute =
     path: '/distribuidoras',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedNovoClienteRoute =
   AuthenticatedNovoClienteRouteImport.update({
     id: '/novo-cliente',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof AuthenticatedCatalogoRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/distribuidoras': typeof AuthenticatedDistribuidorasRoute
+  '/downloads': typeof AuthenticatedDownloadsRoute
   '/novo-cliente': typeof AuthenticatedNovoClienteRoute
   '/pedido': typeof AuthenticatedPedidoRoute
   '/pessoas': typeof AuthenticatedPessoasRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/catalogo': typeof AuthenticatedCatalogoRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/distribuidoras': typeof AuthenticatedDistribuidorasRoute
+  '/downloads': typeof AuthenticatedDownloadsRoute
   '/novo-cliente': typeof AuthenticatedNovoClienteRoute
   '/pedido': typeof AuthenticatedPedidoRoute
   '/pessoas': typeof AuthenticatedPessoasRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/_authenticated/catalogo': typeof AuthenticatedCatalogoRoute
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/distribuidoras': typeof AuthenticatedDistribuidorasRoute
+  '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/_authenticated/novo-cliente': typeof AuthenticatedNovoClienteRoute
   '/_authenticated/pedido': typeof AuthenticatedPedidoRoute
   '/_authenticated/pessoas': typeof AuthenticatedPessoasRoute
@@ -262,6 +271,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/clientes'
     | '/distribuidoras'
+    | '/downloads'
     | '/novo-cliente'
     | '/pedido'
     | '/pessoas'
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/clientes'
     | '/distribuidoras'
+    | '/downloads'
     | '/novo-cliente'
     | '/pedido'
     | '/pessoas'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/_authenticated/catalogo'
     | '/_authenticated/clientes'
     | '/_authenticated/distribuidoras'
+    | '/_authenticated/downloads'
     | '/_authenticated/novo-cliente'
     | '/_authenticated/pedido'
     | '/_authenticated/pessoas'
@@ -433,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDistribuidorasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/downloads': {
+      id: '/_authenticated/downloads'
+      path: '/downloads'
+      fullPath: '/downloads'
+      preLoaderRoute: typeof AuthenticatedDownloadsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/novo-cliente': {
       id: '/_authenticated/novo-cliente'
       path: '/novo-cliente'
@@ -527,6 +546,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCatalogoRoute: typeof AuthenticatedCatalogoRoute
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedDistribuidorasRoute: typeof AuthenticatedDistribuidorasRoute
+  AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
   AuthenticatedNovoClienteRoute: typeof AuthenticatedNovoClienteRoute
   AuthenticatedPedidoRoute: typeof AuthenticatedPedidoRoute
   AuthenticatedPessoasRoute: typeof AuthenticatedPessoasRoute
@@ -547,6 +567,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCatalogoRoute: AuthenticatedCatalogoRoute,
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedDistribuidorasRoute: AuthenticatedDistribuidorasRoute,
+  AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
   AuthenticatedNovoClienteRoute: AuthenticatedNovoClienteRoute,
   AuthenticatedPedidoRoute: AuthenticatedPedidoRoute,
   AuthenticatedPessoasRoute: AuthenticatedPessoasRoute,
