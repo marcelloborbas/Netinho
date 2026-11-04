@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_authenticated/vendedores")({ component: 
 function Vendedores() {
   const { data: access } = useQuery(accessQuery);
   return <section className="surface-card mx-auto max-w-4xl space-y-4 p-6">
-    <h1 className="text-2xl font-bold">Vendedores</h1>
+
     <p className="text-muted-foreground">Gestão de vendedores e representantes comerciais.</p>
     {access?.level === 1 ? <>
       <p>Cadastre e autorize vendedores no painel administrativo. O cadastro individual e a região de atuação são gerenciados junto aos representantes.</p>
