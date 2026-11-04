@@ -73,7 +73,7 @@ function EditRepresentativePage() {
       if (error) throw error;
       const value = (data as {rate: number} | null)?.rate;
       setCommissionRate(value == null ? "" : String(value));
-      return value;
+      return value ?? null;
     },
   });
 
