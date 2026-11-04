@@ -321,7 +321,7 @@ function OrderPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto w-full max-w-[640px] space-y-4 pb-5">
       <style>{`@keyframes netinhoGuidePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(234,179,8,.38); } 50% { box-shadow: 0 0 0 7px rgba(234,179,8,.10); } } .netinho-guided-pulse { animation: netinhoGuidePulse 1.5s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .netinho-guided-pulse { animation: none; } }`}</style>
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
@@ -360,7 +360,7 @@ function OrderPage() {
         </div>,
         document.body
       )}
-      <div className="relative flex items-center justify-center rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-12 py-5 shadow-md">
+      <div className="relative flex items-center justify-center overflow-hidden rounded-[22px] border border-[#e4b941] bg-gradient-to-r from-[#091b36] via-[#143c70] to-[#0b2447] px-14 py-5 shadow-[0_8px_22px_rgba(9,27,54,.22)]">
         <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
           {review ? "Revisar pedido" : "Pedido"}
         </h1>
@@ -376,9 +376,27 @@ function OrderPage() {
         </button>
       </div>
 
-      <section className={`surface-card grid gap-4 rounded-2xl border-2 p-4 shadow-lg sm:grid-cols-2 ${pulseStep === "customer" ? "netinho-guided-pulse border-amber-400 bg-amber-50/80" : "border-[#d4af37] bg-white"}`}>
+      <div className="grid grid-cols-3 gap-2 px-1" aria-label="Etapas do pedido">
+        {[
+          { label: "Cliente", done: !!d.customerId, active: pulseStep === "customer" },
+          { label: "Pagamento", done: paymentChosen, active: pulseStep === "payment" },
+          { label: "Finalizar", done: actionChosen, active: pulseStep === "actions" },
+        ].map((step, index) => (
+          <div key={step.label} className={`flex items-center justify-center gap-1.5 rounded-xl border px-1.5 py-2 text-[11px] font-extrabold sm:text-sm ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : step.active ? "border-[#e5b32d] bg-[#fff5d6] text-[#102a52]" : "border-slate-200 bg-white text-slate-500"}`}>
+            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] ${step.done ? "bg-emerald-700 text-white" : step.active ? "bg-[#102a52] text-white" : "bg-slate-200 text-slate-600"}`}>{step.done ? "✓" : index + 1}</span>
+            {step.label}
+          </div>
+        ))}
+      </div>
+      <section className={`surface-card grid gap-4 rounded-[22px] border-2 p-4 shadow-[0_8px_24px_rgba(16,42,82,.09)] sm:grid-cols-2 ${pulseStep === "customer" ? "netinho-guided-pulse border-amber-400 bg-[#fffdf5]" : "border-[#dce5f0] bg-white"}`}>
         <div className="space-y-1.5 sm:col-span-2">
-          <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 01 · Identificação</p>
+              <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
+            </div>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${d.customerId ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}`}>{d.customerId ? "✓ Selecionado" : "Pendente"}</span>
+          </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label className="text-sm font-bold text-[#102a52]">Selecione o cliente</Label>
@@ -405,7 +423,7 @@ function OrderPage() {
                 });
             }}
           >
-            <SelectTrigger className="h-12 min-w-0 flex-1">
+            <SelectTrigger className="h-12 min-w-0 flex-1 rounded-xl border-[#b7c8de] bg-white text-sm font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
               <SelectValue placeholder="Selecione o cliente" />
             </SelectTrigger>
             <SelectContent>
@@ -417,7 +435,7 @@ function OrderPage() {
               ))}
             </SelectContent>
           </Select>
-          <Link to="/novo-cliente" className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-[#166534] px-2.5 text-center text-xs font-bold leading-tight text-white shadow-sm hover:bg-[#14532d] sm:px-3 sm:text-sm">
+          <Link to="/novo-cliente" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#21834d] to-[#125b35] px-3 text-center text-xs font-extrabold leading-tight text-white shadow-md hover:from-[#166534] hover:to-[#14532d] sm:px-4 sm:text-sm">
             + Novo cliente
           </Link>
           </div>
@@ -443,14 +461,20 @@ function OrderPage() {
         </div>
       </section>
 
-      <section className={`surface-card rounded-2xl border-2 p-4 shadow-lg ${pulseStep === "payment" ? "netinho-guided-pulse border-amber-400 bg-amber-50/80" : "border-[#d4af37] bg-white"}`}>
+      <section className={`surface-card rounded-[22px] border-2 p-4 shadow-[0_8px_24px_rgba(16,42,82,.09)] ${pulseStep === "payment" ? "netinho-guided-pulse border-amber-400 bg-[#fffdf5]" : "border-[#dce5f0] bg-white"}`}>
         <div className="space-y-1.5">
-          <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 02 · Valores</p>
+              <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
+            </div>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${paymentChosen ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}`}>{paymentChosen ? "✓ Confirmada" : "Escolha uma opção"}</span>
+          </div>
           <Select
             value={d.paymentTerm}
             onValueChange={(v) => { setPaymentChosen(true); draftActions.update({ paymentTerm: v as PaymentTerm }); }}
           >
-            <SelectTrigger className="h-12">
+            <SelectTrigger className="mt-2 h-12 rounded-xl border-[#b7c8de] bg-white font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -465,14 +489,21 @@ function OrderPage() {
 
       </section>
 
-      <div className={`grid grid-cols-2 gap-2 rounded-2xl p-2 sm:gap-3 ${pulseStep === "actions" ? "netinho-guided-pulse border-2 border-amber-400 bg-amber-50" : ""}`} aria-label="Ações do pedido">
-        <Button type="button" className="h-auto min-h-12 whitespace-normal border-0 bg-[#ea580c] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#c2410c] sm:text-base" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+      <div className={`grid grid-cols-2 gap-2 rounded-[22px] border-2 p-3 shadow-sm sm:gap-3 ${pulseStep === "actions" ? "netinho-guided-pulse border-amber-400 bg-[#fffdf5]" : "border-[#dce5f0] bg-white"}`} aria-label="Ações do pedido">
+        <div className="col-span-2 flex items-center justify-between pb-1">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 03 · Próximo passo</p>
+            <p className="text-sm font-extrabold text-[#102a52]">O que deseja fazer?</p>
+          </div>
+          <span className="rounded-full bg-[#e9f1fc] px-2.5 py-1 text-xs font-bold text-[#153d6d]">{d.items.length} {d.items.length === 1 ? "peça" : "peças"}</span>
+        </div>
+        <Button type="button" className="h-auto min-h-12 whitespace-normal rounded-xl border-0 bg-[#ea580c] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#c2410c] sm:text-base" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
           Editar pedido
         </Button>
-        <Button asChild className="h-auto min-h-12 whitespace-normal border-0 bg-[#166534] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#14532d] sm:text-base">
+        <Button asChild className="h-auto min-h-12 whitespace-normal rounded-xl border-0 bg-[#166534] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#14532d] sm:text-base">
           <Link to="/catalogo" search={{ modo: "venda" }} onClick={() => { setActionChosen(true); buttonSound(); }}>Continuar comprando</Link>
         </Button>
-        <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-base font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#0c70bc] sm:text-lg" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
+        <Button type="button" className="col-span-2 h-14 whitespace-normal rounded-xl bg-gradient-to-r from-[#0767b6] to-[#1596e5] shadow-[0_5px_14px_rgba(10,100,180,.25)] px-2 py-2 text-center text-base font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#0c70bc] sm:text-lg" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
           Enviar PEDIDO
         </Button>
       </div>
