@@ -73,7 +73,7 @@ function AppShell() {
         <Outlet />
       </main>
       {canSell && draft.items.length > 0 && (
-        <Link to="/pedido" className="order-dock">
+        <Link to="/pedido" className={`order-dock ${pathname === "/pedido" ? "netinho-guided-pulse" : ""}`}>
           <span className="flex min-w-0 flex-1 items-center gap-2 text-white">
             <ShoppingCart size={20} className="shrink-0" />
             <span className="min-w-0 flex-1">
