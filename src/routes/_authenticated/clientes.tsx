@@ -16,6 +16,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/clientes")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://www.netinhoautoparts.live/clientes" },
       { title: "Clientes – NETINHO" },
       { name: "description", content: "Cadastro e seleção de clientes para pedidos." },
       { property: "og:title", content: "Clientes – NETINHO" },

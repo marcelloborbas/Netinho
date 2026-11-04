@@ -6,6 +6,7 @@ import { PublicFooter } from "@/components/PublicFooter";
 export const Route = createFileRoute("/ofertas")({
   head: () => ({
     meta: [
+      { property: "og:url", content: "https://www.netinhoautoparts.live/ofertas" },
       { title: "Ofertas de caixas de direção – NETINHO" },
       { name: "description", content: "Campanha FCO: caixas de direção com preço promocional em 30/45/60 dias." },
       { property: "og:title", content: "Ofertas de caixas de direção – NETINHO" },

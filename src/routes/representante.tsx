@@ -9,6 +9,7 @@ import { ExpandableMap } from "@/components/ExpandableMap";
 export const Route = createFileRoute("/representante")({
   component: RepresentativePage,
   head: () => ({ meta: [
+      { property: "og:url", content: "https://www.netinhoautoparts.live/representante" },
     { title: "Representante Comercial | Netinho Auto Parts" },
     { name: "description", content: "Conheça a região de atendimento do representante comercial Netinho Auto Parts." },
     { property: "og:title", content: "Representante Comercial | Netinho Auto Parts" },

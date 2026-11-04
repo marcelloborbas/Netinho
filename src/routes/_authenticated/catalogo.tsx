@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,10 +20,7 @@ export const Route = createFileRoute("/_authenticated/catalogo")({
     modo: search["modo"] === "consulta" || search["modo"] === "venda" ? search["modo"] : undefined,
     q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : undefined,
   }),
-  head: () => ({ meta: [
-    { title: "Catálogo de Peças FCO e HD | Netinho Auto Parts" },
-    { name: "description", content: "Catálogo de peças FCO e HD com códigos, aplicações, referências e preços disponíveis." },
-  ] }),
+  head: () => pageHead("/catalogo", "Catálogo de Peças FCO e HD | Netinho Auto Parts", "Consulte códigos, aplicações e referências das peças FCO e HD no catálogo da Netinho Auto Parts."),
   component: Catalog,
 });
 

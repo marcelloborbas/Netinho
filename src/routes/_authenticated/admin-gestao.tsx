@@ -12,6 +12,9 @@ import { Switch } from "@/components/ui/switch";
 export const Route = createFileRoute("/_authenticated/admin-gestao")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://www.netinhoautoparts.live/admin-gestao" },
       { title: "Gestão do site – NETINHO" },
       { name: "description", content: "Gestão de produtos, estoque e preços." },
       { property: "og:title", content: "Administração – NETINHO" },

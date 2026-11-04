@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, MapPinned, UserRound } from "lucide-react";
@@ -6,7 +7,7 @@ import { accessQuery } from "@/lib/access";
 
 export const Route = createFileRoute("/_authenticated/cadastro")({
   component: CadastroPage,
-  head: () => ({ meta: [{ title: "Meu Cadastro | Netinho Auto Parts" }] }),
+  head: () => pageHead("/cadastro", "Meu cadastro | Netinho Auto Parts", "Consulte os dados do seu cadastro, perfil de acesso e região de atendimento na Netinho Auto Parts."),
 });
 
 function CadastroPage() {

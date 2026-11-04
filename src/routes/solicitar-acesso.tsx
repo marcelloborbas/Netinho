@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
@@ -7,6 +8,7 @@ import { accessQuery } from "@/lib/access";
 
 const schema = z.object({ perfil: z.enum(["Vendedor", "Representante", "Administrador"]).catch("Vendedor") });
 export const Route = createFileRoute("/solicitar-acesso")({
+  head: () => pageHead("/solicitar-acesso", "Solicitar acesso | Netinho Auto Parts", "Solicite autorização para utilizar os recursos da Netinho Auto Parts e envie seus dados para avaliação da administração."),
   validateSearch: schema,
   component: SolicitarAcesso,
 });
