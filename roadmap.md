@@ -1,7 +1,7 @@
 # Roadmap NETINHO
 
 ## Prévias de compartilhamento em 04/11/2026
-- [ ] Completar metadados específicos das páginas e corrigir a descrição do login, preservando a logo e as permissões.
+- [x] Completar metadados específicos das páginas e corrigir a descrição do login, preservando a logo e as permissões.
 - [ ] Conferir metadados entregues na prévia e registrar o achado SEO como corrigido; sem publicar.
 
 ## Envio de pedidos em 29/10/2026
