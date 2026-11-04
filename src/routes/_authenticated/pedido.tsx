@@ -2,7 +2,7 @@ import { customerMinimum } from "@/lib/customer-classes";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -146,7 +146,11 @@ function OrderPage() {
     }
     if (submissionLock.current || busy || !d.items.length) return;
     submissionLock.current = true;
-    setBusy(true);
+    // Mostra a tela de progresso antes de iniciar chamadas de rede.
+    flushSync(() => {
+      setConfirmOpen(false);
+      setBusy(true);
+    });
     try {
       const { data, error } = await supabase.rpc("create_order", {
         payload: {
@@ -326,7 +330,7 @@ function OrderPage() {
                 <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[5%] left-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
                 </button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[5%] right-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[5%] right-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
                   <span className="sr-only">Enviar Pedido</span>
                 </button>
               </div>
