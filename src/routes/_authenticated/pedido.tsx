@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck } from "lucide-react";
+import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
@@ -56,9 +56,35 @@ function OrderPage() {
   const [sendError, setSendError] = useState("");
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmHelpOpen, setConfirmHelpOpen] = useState(false);
+  const [confirmSpeaking, setConfirmSpeaking] = useState(false);
   const confirmAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => () => { confirmAudioRef.current?.pause(); confirmAudioRef.current = null; }, []);
-  function stopConfirmAudio() { confirmAudioRef.current?.pause(); confirmAudioRef.current = null; }
+  function stopConfirmAudio() {
+    if (confirmAudioRef.current) {
+      confirmAudioRef.current.pause();
+      confirmAudioRef.current.onended = null;
+      confirmAudioRef.current = null;
+    }
+    setConfirmSpeaking(false);
+  }
+  function playConfirmHelp() {
+    stopConfirmAudio();
+    setConfirmHelpOpen(true);
+    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261104-1");
+    audio.loop = false;
+    audio.autoplay = false;
+    confirmAudioRef.current = audio;
+    audio.onended = () => {
+      if (confirmAudioRef.current === audio) {
+        confirmAudioRef.current = null;
+        setConfirmSpeaking(false);
+      }
+    };
+    audio.onerror = () => setConfirmSpeaking(false);
+    setConfirmSpeaking(true);
+    void audio.play().catch(() => setConfirmSpeaking(false));
+  }
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
     const footer = document.querySelector<HTMLElement>(".mobile-nav");
@@ -95,10 +121,12 @@ function OrderPage() {
     setReview(true);
     stopConfirmAudio();
     // A confirmação é silenciosa. A LIA só fala após o clique explícito em Ajuda.
+    setConfirmHelpOpen(false);
     setConfirmOpen(true);
   }
   function closeConfirmation() {
     stopConfirmAudio();
+    setConfirmHelpOpen(false);
     setConfirmOpen(false);
     setReview(false);
     buttonSound();
@@ -295,8 +323,24 @@ function OrderPage() {
                   </div>
                 </section>
               </div>
+              <div className="mx-3 mt-3 rounded-xl bg-white/95 p-3 text-[#102a52]">
+                <button type="button" onClick={() => { if (confirmHelpOpen) { stopConfirmAudio(); setConfirmHelpOpen(false); } else playConfirmHelp(); }} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white">
+                  <Volume2 size={20}/> {confirmHelpOpen ? "Fechar ajuda da LIA" : "Ouvir ajuda da LIA"}
+                </button>
+                {confirmHelpOpen && (
+                  <div className="mt-3 space-y-3 text-base leading-relaxed" aria-live="polite">
+                    <p>Estamos quase finalizando!</p>
+                    <p>Antes de enviar, confira atentamente os dados do seu pedido.</p>
+                    <p>Se estiver tudo correto, clique em Enviar Pedido.</p>
+                    <p>Caso precise fazer alguma alteração, selecione Corrigir Pedido.</p>
+                    <p>A Netinho Auto Parts agradece sua confiança e preferência!</p>
+                    <p>Que Deus abençoe você, sua família e seus negócios!</p>
+                    {confirmSpeaking && <p className="text-sm font-semibold text-[#0862bd]">LIA está falando…</p>}
+                  </div>
+                )}
+              </div>
               <div className="mx-3 my-3 grid grid-cols-2 gap-3" aria-label="Ações de confirmação do pedido">
-                <button type="button" onClick={closeConfirmation} className="min-h-14 rounded-xl border-2 border-white bg-[#e5eef9] px-2 py-3 text-center text-sm font-black text-[#102a52] shadow-lg">Revisar Pedido</button>
+                <button type="button" onClick={closeConfirmation} className="min-h-14 rounded-xl border-2 border-white bg-[#e5eef9] px-2 py-3 text-center text-sm font-black text-[#102a52] shadow-lg">Corrigir Pedido</button>
                 <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmOpen(false); void finalize(); }} className="min-h-14 rounded-xl border-2 border-white bg-[#1687d9] px-2 py-3 text-center text-sm font-black text-white shadow-lg disabled:opacity-50">Enviar Pedido</button>
               </div>
             </div>
