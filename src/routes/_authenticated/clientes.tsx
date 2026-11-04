@@ -70,10 +70,6 @@ function Customers() {
 
   return (
     <div className="customers-showcase space-y-4 sm:space-y-5">
-      <header className="rounded-2xl border border-[#b8cee8] bg-[#edf4ff] px-4 py-5 text-center text-[#102a52] shadow-sm">
-        <h1 className="text-[28px] font-extrabold leading-tight sm:text-[34px]">Clientes</h1>
-        <p className="mt-2 text-sm">Consulte, cadastre e organize seus clientes.</p>
-      </header>
       <section className="space-y-3 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Cadastro e lista de clientes">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p role="status" className="text-sm font-bold text-[#102a52]">{list.length} {list.length === 1 ? "cliente cadastrado" : "clientes cadastrados"}</p>
