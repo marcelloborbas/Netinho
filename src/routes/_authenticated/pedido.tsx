@@ -322,6 +322,13 @@ function OrderPage() {
                     <p className="break-all text-[clamp(17px,6vw,36px)] font-black tabular-nums leading-tight">{brl(t.net)}</p>
                   </div>
                 </section>
+                {/* Áreas clicáveis transparentes sobre os botões desenhados na própria arte. */}
+                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[5%] left-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
+                  <span className="sr-only">Revisar Pedido</span>
+                </button>
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); setConfirmOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[5%] right-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
+                  <span className="sr-only">Enviar Pedido</span>
+                </button>
               </div>
               <div className="mx-3 mt-3 rounded-xl bg-white/95 p-3 text-[#102a52]">
                 <button type="button" onClick={() => { if (confirmHelpOpen) { stopConfirmAudio(); setConfirmHelpOpen(false); } else playConfirmHelp(); }} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white">
@@ -339,10 +346,7 @@ function OrderPage() {
                   </div>
                 )}
               </div>
-              <div className="mx-3 my-3 grid grid-cols-2 gap-3" aria-label="Ações de confirmação do pedido">
-                <button type="button" onClick={closeConfirmation} className="min-h-14 rounded-xl border-2 border-white bg-[#e5eef9] px-2 py-3 text-center text-sm font-black text-[#102a52] shadow-lg">Corrigir Pedido</button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmOpen(false); void finalize(); }} className="min-h-14 rounded-xl border-2 border-white bg-[#1687d9] px-2 py-3 text-center text-sm font-black text-white shadow-lg disabled:opacity-50">Enviar Pedido</button>
-              </div>
+
             </div>
           </div>
           <div className="relative z-[100000] h-[76px] shrink-0"><PublicFooter /></div>
