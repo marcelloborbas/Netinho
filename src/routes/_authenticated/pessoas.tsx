@@ -213,14 +213,18 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
  const [active,setActive]=useState(representative.active);
  const qc=useQueryClient();
  const [commissionRate,setCommissionRate]=useState("");
- const {isError:commissionError}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:open||editingPage,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate;}});
+ const {error:commissionError,isLoading:commissionLoading}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:open||editingPage,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate;}});
  async function save(){
   if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
   const {error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id);
+  if(error){setBusy(false);toast.error("Não foi possível salvar: "+error.message);return;}
+  const rate=commissionRate===""?null:Number(commissionRate);
+  const {error:rateError}=await supabase.rpc("admin_set_commercial_representative_commission" as never,{p_representative:representative.id,p_rate:rate} as never);
   setBusy(false);
-  if(error){toast.error("Não foi possível salvar: "+error.message);return;}
-  toast.success("Representante atualizado.");onSaved();setOpen(false);onClose?.();
+  if(rateError){toast.error("Ficha atualizada, mas comissão não salva: "+rateError.message);return;}
+  await qc.invalidateQueries({queryKey:["commercial-representative-commission",representative.id]});
+  toast.success("Ficha e comissão atualizadas.");onSaved();setOpen(false);onClose?.();
  }
  async function remove(){
   if(!window.confirm(`Excluir DEFINITIVAMENTE o cadastro comercial de ${representative.full_name}? Esta ação não pode ser desfeita.`))return;
@@ -241,7 +245,7 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
   <p className="mt-2 text-xs font-bold text-amber-800">Atribuição: Representante (cadastro comercial)</p>
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Ficha do representante comercial</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
    <h3 className="text-lg font-extrabold">Ficha do representante comercial</h3>
-   <section className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4"><h4 className="text-lg font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={commissionError} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">É necessário aplicar a atualização do banco para editar a comissão.</p>}</section>
+   <section className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4"><h4 className="text-lg font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
    <p className="text-sm"><strong>Atribuição:</strong> Representante comercial</p>
    <RepresentativeDetails name={representative.full_name} email={representative.email} />
    <label className="block text-sm font-bold">Nome<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
