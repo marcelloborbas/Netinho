@@ -213,7 +213,7 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
  const [active,setActive]=useState(representative.active);
  const qc=useQueryClient();
  const [commissionRate,setCommissionRate]=useState("");
- const {error:commissionError,isLoading:commissionLoading}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:open||editingPage,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate;}});
+ const {error:commissionError,isLoading:commissionLoading}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:open||editingPage,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate ?? null;}});
  async function save(){
   if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
