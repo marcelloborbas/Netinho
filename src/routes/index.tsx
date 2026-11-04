@@ -13,8 +13,15 @@ import { PublicFooter } from "@/components/PublicFooter";
 export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({ meta: [
-    { title: "Início | Netinho Auto Parts" },
-    { name: "description", content: "Acesse clientes, vendas, orçamentos, pedidos e campanhas Netinho Auto Parts." },
+    { title: "Netinho Auto Parts" },
+    { name: "description", content: "Catálogo de autopeças, pedidos e atendimento online." },
+    { property: "og:type", content: "website" },
+    { property: "og:title", content: "Netinho Auto Parts" },
+    { property: "og:description", content: "Catálogo de autopeças, pedidos e atendimento online." },
+    { property: "og:url", content: "https://www.netinhoautoparts.live/" },
+    { property: "og:image", content: "https://www.netinhoautoparts.live/favicon.png" },
+    { property: "og:image:type", content: "image/png" },
+    { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Home,
 });
