@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_authenticated/downloads")({
   component: DownloadsPage,
 });
 
-const fcoCatalog = "/downloads/Catalogo_Completo_FCO.pdf";
+const fcoCatalog = "/downloads/Catalogo_Netinho%20Representa%C3%A7%C3%A3o%20FCO.pdf";
 
 function DownloadsPage() {
   return (
@@ -23,7 +23,7 @@ function DownloadsPage() {
             <p className="mt-1 text-sm text-slate-600">Catálogo de peças automotivas em PDF.</p>
           </div>
         </div>
-        <a href={fcoCatalog} download="Catalogo_Completo_FCO.pdf" className="mt-5 flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#102a52] px-4 py-3 text-center text-base font-black text-white shadow-md hover:bg-[#164d8c]">
+        <a href={fcoCatalog} download="Catalogo_Netinho_Representacao_FCO.pdf" className="mt-5 flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#102a52] px-4 py-3 text-center text-base font-black text-white shadow-md hover:bg-[#164d8c]">
           <Download size={23}/> Baixar catálogo FCO
         </a>
         <a href={fcoCatalog} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-sm font-semibold text-[#0b4b92] underline">Visualizar PDF</a>
