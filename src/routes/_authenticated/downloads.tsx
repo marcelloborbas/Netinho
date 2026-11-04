@@ -20,13 +20,14 @@ function DownloadsPage() {
           <FileText className="mt-1 shrink-0 text-[#0b4b92]" size={34}/>
           <div>
             <h2 className="text-xl font-black">Catálogo FCO Automotive</h2>
-            <p className="mt-1 text-sm text-slate-600">Catálogo de peças automotivas em PDF.</p>
+            <p className="mt-1 text-sm text-slate-600">Catálogo de peças automotivas em PDF (aproximadamente 16 MB).</p>
           </div>
         </div>
         <a href={fcoCatalog} download="Catalogo_Netinho_Representacao_FCO.pdf" className="mt-5 flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#102a52] px-4 py-3 text-center text-base font-black text-white shadow-md hover:bg-[#164d8c]">
           <Download size={23}/> Baixar catálogo FCO
         </a>
-        <a href={fcoCatalog} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-sm font-semibold text-[#0b4b92] underline">Visualizar PDF</a>
+        <p className="mt-3 text-center text-xs text-slate-600">No celular, baixar primeiro pode ser mais rápido que abrir o documento inteiro no navegador.</p>
+        <a href={fcoCatalog} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-sm font-semibold text-[#0b4b92] underline">Visualizar PDF no navegador</a>
       </section>
     </main>
   );
