@@ -484,6 +484,35 @@ export type Database = {
         }
         Relationships: []
       }
+      salesperson_commission_rates: {
+        Row: {
+          rate: number
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          rate: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          rate?: number
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesperson_commission_rates_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supplier_commissions: {
         Row: {
           manufacturer: string
@@ -553,6 +582,10 @@ export type Database = {
       }
       admin_set_profile_attribution: {
         Args: { p_attribution: string; p_target_user: string }
+        Returns: undefined
+      }
+      admin_set_salesperson_commission: {
+        Args: { p_rate: number; p_user: string }
         Returns: undefined
       }
       admin_supplier_commissions: { Args: never; Returns: Json }
