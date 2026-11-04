@@ -116,9 +116,7 @@ function Home() {
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
         <section className="relative isolate min-h-[330px] overflow-hidden bg-[#071e3c] sm:min-h-[460px]" aria-label="Boas-vindas">
-          <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#03152bd9] via-[#0623458a] to-transparent" />
-          <img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="absolute left-[6%] top-[4%] z-20 w-[28%] max-w-[230px] h-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]" decoding="async" />
+          <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-contain object-top" decoding="async" fetchPriority="high" />
           <div className="relative z-10 flex min-h-[330px] flex-col justify-end px-4 pb-4 pt-16 text-white sm:min-h-[460px] sm:px-8 sm:pb-6">
             <p className="text-[clamp(3.2625rem,12.15vw,5.85rem)] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
             <p className="mt-1 text-[clamp(2.925rem,10.575vw,4.95rem)] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
