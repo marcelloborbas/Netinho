@@ -160,7 +160,7 @@ function Catalog() {
   const search = Route.useSearch();
   const [q, setQ] = useState(search.q ?? "");
   const [searchInput, setSearchInput] = useState(search.q ?? "");
-  const [manufacturer, setManufacturer] = useState(search.marca === "HD" ? "all" : (search.marca ?? "all"));
+  const [manufacturer, setManufacturer] = useState("FCO");
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
   const [vehicleBrand, setVehicleBrand] = useState("all");
@@ -208,7 +208,7 @@ function Catalog() {
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
-    setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all"));
+    setManufacturer("FCO");
     setQ(search.q ?? "");
     setSearchInput(search.q ?? "");
     setHasSelectedCategory(false);
@@ -306,7 +306,7 @@ function Catalog() {
   const showProducts = hasSelectedCategory || vehicleBrand !== "all" || q.trim().length > 0;
   const pageCount = Math.max(1, Math.ceil(list.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca === "HD" ? "all" : (search.marca ?? "all")); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -343,8 +343,8 @@ function Catalog() {
 
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
-        <nav className="grid grid-cols-2 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
-          {(["all", "FCO"] as const).map((brand) => {
+        <nav className="grid grid-cols-1 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
+          {(["FCO"] as const).map((brand) => {
             const pending = brand === "HD" || brand === "JCREI";
             const selected = manufacturer === brand;
             const logo = brand === "FCO" ? "/images/brands/fco.webp" : brand === "HD" ? "/images/brands/hd.png" : brand === "JCREI" ? "/images/brands/Logo.webp" : null;
