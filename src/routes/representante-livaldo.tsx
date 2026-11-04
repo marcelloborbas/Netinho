@@ -10,6 +10,7 @@ import { ExpandableMap } from "@/components/ExpandableMap";
 export const Route = createFileRoute("/representante-livaldo")({
   component: LivaldoPage,
   head: () => ({ meta: [
+      { property: "og:url", content: "https://www.netinhoautoparts.live/representante-livaldo" },
     { title: "Livaldo Souza Silva — Representante Comercial | Netinho" },
     { name: "description", content: "Consulte a representação comercial de Livaldo Souza Silva e sua área de atuação em Sorocaba e região pela Netinho." },
     { property: "og:title", content: "Livaldo Souza Silva — Representante Comercial | Netinho" },

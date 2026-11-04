@@ -1,9 +1,10 @@
+import { pageHead } from "@/lib/page-head";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, FileText, ArrowLeft, Eye } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/downloads")({
-  head: () => ({ meta: [{ title: "Baixar Docs | Netinho Auto Parts" }] }),
+  head: () => pageHead("/downloads", "Catálogos e documentos | Netinho Auto Parts", "Consulte os catálogos, formulários e documentos disponíveis na sua área da Netinho Auto Parts."),
   component: DownloadsPage,
 });
 

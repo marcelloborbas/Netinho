@@ -1,7 +1,9 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
-export const Route = createFileRoute("/_authenticated/vendedores")({ component: Vendedores });
+export const Route = createFileRoute("/_authenticated/vendedores")({
+  head: () => pageHead("/vendedores", "Vendedores e autorizações | Netinho Auto Parts", "Área de gestão de vendedores, representantes comerciais e autorizações da Netinho Auto Parts."), component: Vendedores });
 function Vendedores() {
   const { data: access } = useQuery(accessQuery);
   return <section className="surface-card mx-auto max-w-4xl space-y-4 p-6">

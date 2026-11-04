@@ -1,5 +1,9 @@
 # Roadmap NETINHO
 
+## Prévias de compartilhamento em 04/11/2026
+- [x] Completar metadados específicos das páginas e corrigir a descrição do login, preservando a logo e as permissões.
+- [x] Conferir HTML das sete páginas públicas e descrição do login na prévia; build OK, sem publicar. Achado SEO corrigido. Testes: 9 passaram e 3 de apresentação/acesso falharam por expectativas existentes fora do escopo.
+
 ## Envio de pedidos em 29/10/2026
 - [x] Verificar autenticação Resend: chave disponível e aceita em chamada inválida sem envio (422); registro DKIM existe. Consulta de domínio bloqueada pela chave restrita a envio.
 - [x] Corrigir confirmação por ID Resend/pedido, anexos PDF/XLSX, logs e bloqueio de duplo clique, sem alterar valores.

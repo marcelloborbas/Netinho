@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -5,7 +6,8 @@ import { MapPin, MessageCircle, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 
-export const Route = createFileRoute("/_authenticated/representantes")({ component: Page });
+export const Route = createFileRoute("/_authenticated/representantes")({
+  head: () => pageHead("/representantes", "Buscar representantes | Netinho Auto Parts", "Localize representantes da Netinho Auto Parts por cidade e estado e consulte suas áreas de atendimento."), component: Page });
 type Representative = { slug: string; full_name: string; region: string; phone: string | null };
 type ServiceArea = { slug: string; service_cities: string | null };
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();

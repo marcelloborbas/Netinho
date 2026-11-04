@@ -19,12 +19,8 @@ export function PartnerLogos({
           { brand: "FCO", name: "FCO Automotive", image: "/images/brands/fco.webp" },
         ] as const
       ).map((s) => (
-        <div key={s.brand} className={s.brand === "HD" || s.brand === "JCREI" ? "flex flex-col items-center" : "flex flex-col items-center"}>
-          {s.brand === "HD" || s.brand === "JCREI" ? (
-            <span className="partner-logo cursor-not-allowed opacity-65 grayscale" aria-label={`${s.name} — em breve`} aria-disabled="true">
-              <img src={s.image} alt={s.name} loading="lazy" decoding="async" />
-            </span>
-          ) : downloads && compact ? (
+        <div key={s.brand} className="flex flex-col items-center">
+          {downloads && compact ? (
             <CatalogDownload brand={s.brand} iconOnly image={s.image} name={s.name} className="partner-logo" />
           ) : linked ? (
             <Link
@@ -40,8 +36,7 @@ export function PartnerLogos({
               <img src={s.image} alt={s.name} loading="lazy" decoding="async" />
             </span>
           )}
-          {(s.brand === "HD" || s.brand === "JCREI") && <span className="partner-coming-soon block w-full text-center text-xs font-extrabold text-zinc-400">Em breve</span>}
-          {s.brand !== "HD" && s.brand !== "JCREI" && !compact && downloads && <CatalogDownload brand={s.brand} />}
+          {!compact && downloads && <CatalogDownload brand={s.brand} />}
         </div>
       ))}
     </div>

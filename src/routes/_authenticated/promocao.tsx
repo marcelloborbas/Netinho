@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowUpRight, BadgePercent, CircleHelp, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,12 +8,7 @@ export const Route = createFileRoute("/_authenticated/promocao")({
   validateSearch: (search: Record<string, unknown>): { codigo?: string | undefined } => ({
     codigo: typeof search["codigo"] === "string" ? search["codigo"].slice(0, 50) : undefined,
   }),
-  head: () => ({
-    meta: [
-      { title: "Consultar promoção | Netinho Auto Parts" },
-      { name: "description", content: "Confira a oferta da campanha e consulte a peça no catálogo." },
-    ],
-  }),
+  head: () => pageHead("/promocao", "Consultar promoção | Netinho Auto Parts", "Confira a oferta selecionada da campanha Netinho Auto Parts e consulte a peça no catálogo."),
   component: PromotionPage,
 });
 

@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,10 +20,7 @@ export const Route = createFileRoute("/_authenticated/catalogo")({
     modo: search["modo"] === "consulta" || search["modo"] === "venda" ? search["modo"] : undefined,
     q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : undefined,
   }),
-  head: () => ({ meta: [
-    { title: "Catálogo de Peças FCO e HD | Netinho Auto Parts" },
-    { name: "description", content: "Catálogo de peças FCO e HD com códigos, aplicações, referências e preços disponíveis." },
-  ] }),
+  head: () => pageHead("/catalogo", "Catálogo de Peças FCO e HD | Netinho Auto Parts", "Consulte códigos, aplicações e referências das peças FCO e HD no catálogo da Netinho Auto Parts."),
   component: Catalog,
 });
 
@@ -345,21 +343,21 @@ function Catalog() {
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
         <nav className="grid grid-cols-1 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
           {(["FCO"] as const).map((brand) => {
-            const pending = brand === "HD" || brand === "JCREI";
+            const pending = false;
             const selected = manufacturer === brand;
-            const logo = brand === "FCO" ? "/images/brands/fco.webp" : brand === "HD" ? "/images/brands/hd.png" : brand === "JCREI" ? "/images/brands/Logo.webp" : null;
+            const logo = "/images/brands/fco.webp";
             return (
               <button
                 key={brand}
                 type="button"
                 disabled={pending}
                 aria-pressed={!pending && selected}
-                aria-label={brand === "all" ? "Todas as representações" : brand === "JCREI" ? "JC REI — em breve" : `${brand}${pending ? " — em breve" : ""}`}
-                title={pending ? "Em breve — representação em negociação" : brand === "all" ? "Todas as representações" : "Peças FCO"}
+                aria-label={brand}
+                title="Peças FCO"
                 onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); }}
                 className={`flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl border-2 px-1 py-1 shadow-sm text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
               >
-                {logo ? <img src={logo} alt={brand === "JCREI" ? "JC REI" : brand} loading="lazy" decoding="async" className={`h-7 w-full max-w-[72px] object-contain ${pending ? "grayscale opacity-65" : ""}`} /> : <span className="text-xs font-extrabold sm:text-sm">TODOS</span>}
+                <img src={logo} alt={brand} loading="lazy" decoding="async" className="h-7 w-full max-w-[72px] object-contain" />
                 {pending && <span className="text-[10px] font-bold leading-tight text-[#102a52]">Em breve</span>}
               </button>
             );

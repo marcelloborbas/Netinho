@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -6,7 +7,7 @@ import { brl } from "@/lib/brand";
 import { ArrowLeft, FileText, TrendingUp, BarChart3, ShoppingCart, Users, Coins, ClipboardList, CalendarDays, CircleCheck, Percent } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/pedidos/relatorio")({
-  head: () => ({ meta: [{ title: "Relatório mensal de vendas | Netinho Auto Parts" }] }),
+  head: () => pageHead("/pedidos/relatorio", "Relatório mensal de vendas | Netinho Auto Parts", "Consulte o relatório mensal de vendas e acompanhe os resultados dos pedidos da Netinho Auto Parts."),
   component: MonthlySalesReport,
 });
 

@@ -23,8 +23,8 @@ async function getServerEntry(): Promise<ServerEntry> {
 const shareMeta = [
   '<meta property="og:type" content="website" />',
   '<meta property="og:site_name" content="Netinho Auto Parts" />',
-  '<meta property="og:title" content="Netinho Auto Parts" />',
-  '<meta property="og:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
+  '<meta property="og:title" content="Catálogo B2B e pedidos de autopeças | Netinho Auto Parts" />',
+  '<meta property="og:description" content="Consulte o catálogo de autopeças da Netinho Auto Parts e acesse sua área para montar e acompanhar pedidos B2B." />',
   '<meta property="og:url" content="https://www.netinhoautoparts.live/" />',
   '<meta property="og:image" content="https://www.netinhoautoparts.live/images/netinho-compartilhar.png?v=20261104-2" />',
   '<meta property="og:image:type" content="image/png" />',
@@ -32,8 +32,8 @@ const shareMeta = [
   '<meta property="og:image:height" content="601" />',
   '<meta property="og:image:alt" content="Logo Netinho Auto Parts" />',
   '<meta name="twitter:card" content="summary_large_image" />',
-  '<meta name="twitter:title" content="Netinho Auto Parts" />',
-  '<meta name="twitter:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
+  '<meta name="twitter:title" content="Catálogo B2B e pedidos de autopeças | Netinho Auto Parts" />',
+  '<meta name="twitter:description" content="Consulte o catálogo de autopeças da Netinho Auto Parts e acesse sua área para montar e acompanhar pedidos B2B." />',
   '<meta name="twitter:image" content="https://www.netinhoautoparts.live/images/netinho-compartilhar.png?v=20261104-2" />',
 ].join("\n");
 

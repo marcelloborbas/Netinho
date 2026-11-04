@@ -1,4 +1,5 @@
+import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-export const Route = createFileRoute("/_authenticated/transportadoras")({head:()=>({meta:[{title:"Frete FOB – NETINHO"}]}),component:Page});
+export const Route = createFileRoute("/_authenticated/transportadoras")({head: () => pageHead("/transportadoras", "Frete FOB | Netinho Auto Parts", "Consulte a modalidade de frete FOB utilizada nos pedidos da Netinho Auto Parts."),component:Page});
 function Page(){return <main className="mx-auto max-w-4xl space-y-4 p-4"><nav className="flex justify-between gap-2"><Link to="/admin" className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-bold text-[#102a52]"><ArrowLeft size={18}/>Voltar</Link><Link to="/pedidos" className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-bold text-[#102a52]">Avançar<ArrowRight size={18}/></Link></nav><section className="rounded-2xl border border-amber-400 bg-[#102a52] p-6 text-center text-white"><p className="mt-3 text-2xl font-extrabold text-amber-300">FOB</p></section></main>}

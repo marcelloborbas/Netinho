@@ -13,6 +13,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/pedidos/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://www.netinhoautoparts.live/pedidos/" },
       { title: "Minhas Vendas – NETINHO" },
       { name: "description", content: "Histórico de pedidos enviados." },
       { property: "og:title", content: "Minhas Vendas – NETINHO" },
