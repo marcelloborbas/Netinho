@@ -93,7 +93,9 @@ function OrderPage() {
     buttonSound();
     setReview(true);
     stopConfirmAudio();
-    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261101-1");
+    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261103-3");
+    audio.loop = false;
+    audio.onended = () => { if (confirmAudioRef.current === audio) confirmAudioRef.current = null; };
     confirmAudioRef.current = audio;
     void audio.play().catch(() => { /* Reprodução pode depender das permissões do navegador. */ });
     setConfirmOpen(true);
