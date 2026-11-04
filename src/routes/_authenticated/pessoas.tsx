@@ -175,11 +175,15 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
    <label className="block text-sm font-bold">Status / perfil de acesso<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
    <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)} className="h-5 w-5"/> Acesso ativo</label>
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
+   <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
+    <h3 className="text-lg font-black">Comissão individual sobre vendas</h3>
+    <label className="block text-sm font-bold">Percentual (%)<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!sales||commissionError} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>
+    {!sales&&<p className="text-sm text-amber-900">Selecione o perfil Vendedor ou Representante para habilitar a comissão.</p>}
+    {commissionError&&<p role="alert" className="text-sm font-bold text-red-700">Não foi possível consultar a comissão. Não salve até corrigir a conexão com o banco.</p>}
+    <p className="text-xs text-slate-600">A comissão é salva junto com a ficha da pessoa.</p>
+   </section>
    {sales&&<div className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3">
     <strong>Área de atuação</strong>
-    <label className="block text-sm font-bold">Comissão individual sobre vendas (%)<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>
-    {commissionError&&<p className="text-sm font-bold text-red-700">Não foi possível consultar a comissão cadastrada. Não salve uma alteração até verificar a migração do banco.</p>}
-    <p className="text-xs text-slate-600">A comissão é definida somente pela Administração. Deixe sem definição quando não houver taxa aprovada.</p>
     <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>setCityBase(e.target.value)} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>setRegion(e.target.value)} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Estado(s) — UF<input value={uf} onChange={e=>setUf(e.target.value)} placeholder="Ex.: SP, MG" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
@@ -233,7 +237,8 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
   </div>
   <p className="mt-2 text-xs font-bold text-amber-800">Atribuição: Representante (cadastro comercial)</p>
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Editar representante</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
-   <h3 className="text-lg font-extrabold">Ficha completa do representante</h3>
+   <h3 className="text-lg font-extrabold">Ficha do representante comercial</h3>
+   <section className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4"><h4 className="text-lg font-black">Comissão individual sobre vendas</h4><p className="mt-2 text-sm">Este é um cadastro comercial sem conta de acesso vinculada. A comissão só pode ser definida na ficha de usuário do vendedor ou representante, para não atribuir valores à pessoa errada.</p></section>
    <p className="text-sm"><strong>Atribuição:</strong> Representante comercial</p>
    <RepresentativeDetails name={representative.full_name} email={representative.email} />
    <label className="block text-sm font-bold">Nome<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
