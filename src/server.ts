@@ -33,7 +33,7 @@ const shareMeta = [
   '<meta name="twitter:title" content="Netinho Auto Parts" />',
   '<meta name="twitter:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
   '<meta name="twitter:image" content="https://netinhoautoparts.live/favicon.png" />',
-].join("\\n");
+].join("\n");
 
 async function ensureShareMetadata(request: Request, response: Response): Promise<Response> {
   const url = new URL(request.url);
@@ -41,12 +41,12 @@ async function ensureShareMetadata(request: Request, response: Response): Promis
   if (!(response.headers.get("content-type") ?? "").includes("text/html")) return response;
 
   const html = await response.text();
-  const headMatch = /<head(?:\\s[^>]*)?>/i.exec(html);
+  const headMatch = /<head(?:\s[^>]*)?>/i.exec(html);
   if (!headMatch) return new Response(html, response);
 
   // Remove apenas metadados de compartilhamento anteriores, evitando duplicidade.
-  const cleanHtml = html.replace(/<meta\\s+[^>]*(?:property=["']og:[^"']+["']|name=["']twitter:[^"']+["'])[^>]*\\/?\\s*>/gi, "");
-  const updatedHtml = cleanHtml.replace(/<head(?:\\s[^>]*)?>/i, (tag) => tag + "\\n" + shareMeta + "\\n");
+  const cleanHtml = html.replace(/<meta\s+[^>]*(?:property=["']og:[^"']+["']|name=["']twitter:[^"']+["'])[^>]*\/?\s*>/gi, "");
+  const updatedHtml = cleanHtml.replace(/<head(?:\s[^>]*)?>/i, (tag) => tag + "\n" + shareMeta + "\n");
   const headers = new Headers(response.headers);
   headers.delete("content-length");
   headers.delete("content-encoding");
