@@ -276,17 +276,25 @@ function OrderPage() {
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
           <div className="min-h-0 flex-1 overflow-y-auto">
             <div className="relative mx-auto w-full max-w-[600px]">
-              <picture className="block w-full">
-                <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2"/>
-                <img src="/images/lia-confirmacao-pedido-mobile.webp?v=20261102" alt="Confira os dados do pedido antes de enviar." className="block h-auto w-full object-contain" decoding="async"/>
-              </picture>
-              <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
-              <section aria-label="Dados do pedido" className="mx-3 mt-2 rounded-xl bg-white p-3 text-[#102a52] shadow-lg">
-                <p className="break-words text-base"><strong>Cliente:</strong> {d.customerName ?? "—"}</p>
-                <p className="text-base"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
-                <p className="text-base"><strong>Peças:</strong> {d.items.length}</p>
-                <p className="mt-2 rounded-lg bg-[#b91c1c] px-3 py-2 text-center text-lg font-black text-white">Total: {brl(t.net)}</p>
-              </section>
+              <div className="relative w-full">
+                <picture className="block w-full">
+                  <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2"/>
+                  <img src="/images/lia-confirmacao-pedido-mobile.webp?v=20261102" alt="Confira os dados do pedido antes de enviar." className="block h-auto w-full object-contain" decoding="async"/>
+                </picture>
+                <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
+                {/* Os dados ficam dentro da área livre da arte, e não abaixo da imagem. */}
+                <section aria-label="Dados do pedido" className="absolute left-[13%] right-[13%] top-[42%] bottom-[22%] z-10 flex flex-col justify-center overflow-y-auto px-[3%] py-1 text-[#102a52]">
+                  <div className="space-y-1 text-[clamp(12px,4.3vw,24px)] font-semibold leading-tight">
+                    <p className="break-words"><strong>Cliente:</strong> {d.customerName ?? selectedCustomer?.trade_name ?? selectedCustomer?.company_name ?? "—"}</p>
+                    <p className="break-words"><strong>Pagamento:</strong> {termLabel(d.paymentTerm)}</p>
+                    <p><strong>Peças:</strong> {d.items.length}</p>
+                  </div>
+                  <div className="mt-2 rounded-lg bg-[#b91c1c] px-2 py-2 text-center text-white">
+                    <p className="text-[clamp(11px,3.3vw,18px)] font-bold uppercase leading-tight">Valor total do pedido</p>
+                    <p className="break-all text-[clamp(17px,6vw,36px)] font-black tabular-nums leading-tight">{brl(t.net)}</p>
+                  </div>
+                </section>
+              </div>
               <div className="mx-3 my-3 grid grid-cols-2 gap-3" aria-label="Ações de confirmação do pedido">
                 <button type="button" onClick={closeConfirmation} className="min-h-14 rounded-xl border-2 border-white bg-[#e5eef9] px-2 py-3 text-center text-sm font-black text-[#102a52] shadow-lg">Revisar Pedido</button>
                 <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmOpen(false); void finalize(); }} className="min-h-14 rounded-xl border-2 border-white bg-[#1687d9] px-2 py-3 text-center text-sm font-black text-white shadow-lg disabled:opacity-50">Enviar Pedido</button>
