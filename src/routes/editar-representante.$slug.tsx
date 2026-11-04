@@ -40,6 +40,8 @@ function EditRepresentativePage() {
   const [phone, setPhone] = useState("");
   const [region, setRegion] = useState("");
   const [busy, setBusy] = useState(false);
+  const [commissionBusy, setCommissionBusy] = useState(false);
+  const [commissionRate, setCommissionRate] = useState("");
   const [details, setDetails] = useState({ cpf: "", rg: "", street_address: "", neighborhood: "", postal_code: "", city: "", state: "", service_cities: "" });
   const setDetail = (key: keyof typeof details, value: string) => setDetails(prev => ({ ...prev, [key]: value }));
   const { data: privateRecord } = useQuery({ queryKey: ["representative-private", slug], enabled: !!profile && me?.isAdmin === true, queryFn: async () => { const { data, error } = await supabase.from("representative_private_details" as never).select("*").eq("slug", slug).maybeSingle(); if (error) throw error; return data as PrivateDetails | null; } });
@@ -52,6 +54,44 @@ function EditRepresentativePage() {
       return response.data as Representative | null;
     },
   });
+
+  const { data: linkedUser, isLoading: linkingUser } = useQuery({
+    queryKey: ["representative-commission-user", slug, record?.email],
+    enabled: !!record?.email && me?.isAdmin === true,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles")
+        .select("id,full_name,email,site_role")
+        .ilike("email", record!.email!.trim()).limit(2);
+      if (error) throw error;
+      return data?.length === 1 ? data[0] : null;
+    },
+  });
+  const { isError: commissionLoadError } = useQuery({
+    queryKey: ["representative-commission-rate", linkedUser?.id],
+    enabled: !!linkedUser?.id && me?.isAdmin === true,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("salesperson_commission_rates" as never)
+        .select("rate").eq("user_id", linkedUser!.id).maybeSingle();
+      if (error) throw error;
+      const value = (data as {rate: number} | null)?.rate;
+      setCommissionRate(value == null ? "" : String(value));
+      return value;
+    },
+  });
+  async function saveCommission() {
+    if (!linkedUser?.id || !me?.isAdmin) return;
+    const value = commissionRate === "" ? null : Number(commissionRate);
+    if (value !== null && (!Number.isFinite(value) || value < 0.5 || value > 3.5 || !Number.isInteger(value * 2))) {
+      toast.error("Escolha uma taxa entre 0,5% e 3,5%, em intervalos de 0,5%."); return;
+    }
+    setCommissionBusy(true);
+    const { error } = await supabase.rpc("admin_set_salesperson_commission" as never,
+      { p_user: linkedUser.id, p_rate: value } as never);
+    setCommissionBusy(false);
+    if (error) { toast.error("Não foi possível salvar a comissão: " + error.message); return; }
+    await qc.invalidateQueries({ queryKey: ["representative-commission-rate", linkedUser.id] });
+    toast.success("Comissão individual atualizada.");
+  }
 
   useEffect(() => {
     setName(record?.full_name ?? profile?.name ?? "");
@@ -115,6 +155,29 @@ function EditRepresentativePage() {
               <p className="mt-1 text-sm text-white">As cidades e o mapa de atuação permanecem no cadastro original. Não é necessário informá-los novamente nesta ficha.</p>
               <Link to={profile.back} className="mt-3 inline-flex rounded-lg border border-amber-400 px-3 py-2 text-sm font-bold text-white">Consultar mapa e localidades</Link>
             </div>
+            <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4 text-[#102a52]">
+              <h2 className="text-lg font-extrabold">Comissão individual sobre vendas</h2>
+              <p className="text-sm">Somente o administrador pode definir a taxa de 0,5% a 3,5%.</p>
+              {linkingUser ? <p className="text-sm">Localizando conta de acesso…</p> : !linkedUser ? (
+                <p className="text-sm font-semibold">Este cadastro comercial ainda não possui uma conta de usuário vinculada pelo e-mail. Vincule primeiro a conta do representante em Administração → Pessoas para definir sua comissão.</p>
+              ) : linkedUser.site_role !== "Representante" && linkedUser.site_role !== "Vendedor" ? (
+                <p className="text-sm font-semibold">A conta encontrada está com perfil {linkedUser.site_role}. Altere para Representante ou Vendedor em Administração → Pessoas antes de definir a comissão.</p>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-xs">Conta vinculada: {linkedUser.full_name} ({linkedUser.email})</p>
+                  {commissionLoadError && <p role="alert" className="text-sm text-red-700">Não foi possível consultar a taxa atual. Verifique a conexão antes de salvar.</p>}
+                  <Label htmlFor="rep-commission">Taxa de comissão (%)</Label>
+                  <select id="rep-commission" value={commissionRate} onChange={e => setCommissionRate(e.target.value)}
+                    className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-base">
+                    <option value="">Sem comissão definida</option>
+                    {[0.5,1,1.5,2,2.5,3,3.5].map(rate => <option key={rate} value={rate}>{rate.toFixed(1).replace(".", ",")}%</option>)}
+                  </select>
+                  <Button type="button" disabled={commissionBusy || commissionLoadError} onClick={() => void saveCommission()} className="w-full bg-[#102a52] text-white">
+                    {commissionBusy ? "Salvando comissão…" : "Salvar comissão"}
+                  </Button>
+                </div>
+              )}
+            </section>
             <p className="text-xs text-muted-foreground">CPF, RG e endereço são dados privados e não aparecem na página pública. A autorização comercial é gerenciada separadamente.</p>
             <Button type="submit" disabled={busy} className="w-full">{busy ? "Salvando..." : "Salvar alterações"}</Button>
           </form>
