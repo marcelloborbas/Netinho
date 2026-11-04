@@ -132,11 +132,11 @@ export function NetinhoAssistant() {
   }, [pathname, isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
   const hint = hints.find((item) => item.match.test(pathname));
-  const greeting = pathname === "/" ? "Vamos lá!\n\nClicando em sua foto você consulta seu status, seu perfil, e solicita ajuda, ou sai da conta.\n\nPara realizar vendas, é necessário ter o status de Vendedor ou Representante.\n\nAtalhos do menu inferior, é para facilitar sua navegação.\n\nSimples, rápido e prático!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
+  const greeting = pathname === "/" ? "Vamos lá!\n\nNa sua foto, você consulta seu perfil, solicita ajuda, baixa catálogos ou sai da conta.\n\nPara vender, é preciso ter o status de Vendedor ou Representante.\n\nE no menu inferior, você encontra os atalhos para navegar!\n\nSimples, rápido e prático!" : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speechRefLatest = useRef<() => void>(() => {});
   const helpRequestInProgress = useRef(false);
   const speak = () => {
-    const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261103-3" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261103-3" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261103-3" : /^\/pedidos(?:\/|$)/.test(pathname) ? "/audio/lia/lia-minhas%20vendas.mp3?v=20261103-3" : /^\/pedido\/?$/.test(pathname) ? "/audio/lia/lia-fazer%20pedido.mp3?v=20261103-3" : null;
+    const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261103-3" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261103-4" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261103-3" : /^\/pedidos(?:\/|$)/.test(pathname) ? "/audio/lia/lia-minhas%20vendas.mp3?v=20261103-3" : /^\/pedido\/?$/.test(pathname) ? "/audio/lia/lia-fazer%20pedido.mp3?v=20261103-3" : null;
     // Parar qualquer locução anterior antes de iniciar a orientação desta página.
     loginAudioRef.current?.pause();
     loginAudioRef.current = null;
