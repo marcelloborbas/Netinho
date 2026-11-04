@@ -102,8 +102,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     {!embedded && <Link to="/pedidos" className="inline-flex min-h-11 items-center gap-2 font-bold text-[#102a52]"><ArrowLeft size={19}/> Minhas Vendas</Link>}
     <header className="w-full overflow-hidden rounded-b-[16px] bg-[#073c82]">
       <div className="relative">
-        <img src="/images/vendas-cabeçalho.webp" alt="Cabeçalho de Minhas Vendas" className="block h-auto w-full object-contain object-center" decoding="async" />
-        <img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="absolute left-[4.5%] top-[2.5%] z-10 w-[24.5%] h-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]" decoding="async" />
+        <img src="/images/lia-cabe%C3%A7alho%20minhas%20vendas.webp" alt="Cabeçalho de Minhas Vendas" className="block h-auto w-full object-contain object-center" decoding="async" />
       </div>
     </header>
     <section className="grid grid-cols-2 gap-2 rounded-[16px] border border-[#c4d6ee] bg-white p-2 shadow-sm sm:grid-cols-3">
