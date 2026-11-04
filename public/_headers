@@ -1,0 +1,9 @@
+# Cache somente arquivos estáticos públicos. Nunca armazenar HTML, API ou dados autenticados.
+/downloads/*.pdf
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/images/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/audio/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/sounds/*
+  Cache-Control: public, max-age=86400
