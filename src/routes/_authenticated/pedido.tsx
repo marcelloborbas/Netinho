@@ -57,6 +57,8 @@ function OrderPage() {
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmHelpOpen, setConfirmHelpOpen] = useState(false);
+  const [paymentChosen, setPaymentChosen] = useState(false);
+  const [actionChosen, setActionChosen] = useState(false);
   const [confirmSpeaking, setConfirmSpeaking] = useState(false);
   const confirmAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => () => { confirmAudioRef.current?.pause(); confirmAudioRef.current = null; }, []);
@@ -70,7 +72,6 @@ function OrderPage() {
   }
   function playConfirmHelp() {
     stopConfirmAudio();
-    setConfirmHelpOpen(true);
     const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261104-1");
     audio.loop = false;
     audio.autoplay = false;
@@ -85,6 +86,22 @@ function OrderPage() {
     setConfirmSpeaking(true);
     void audio.play().catch(() => setConfirmSpeaking(false));
   }
+  const sentSpeechStarted = useRef(false);
+  useEffect(() => {
+    if (sentResult !== "sent") { sentSpeechStarted.current = false; return; }
+    if (sentSpeechStarted.current) return;
+    sentSpeechStarted.current = true;
+    // Ainda não há MP3 específico de "pedido enviado" no repositório.
+    // Usar locução nativa quando disponível, sem repetir ou bloquear a interface.
+    if (!("speechSynthesis" in window)) return;
+    const utterance = new SpeechSynthesisUtterance("Seu pedido já foi enviado para a Netinho! Uma cópia também foi encaminhada para o seu e-mail. Obrigada pela confiança e boas vendas!");
+    utterance.lang = "pt-BR";
+    utterance.rate = 0.95;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    return () => window.speechSynthesis.cancel();
+  }, [sentResult]);
+  const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : !actionChosen ? "actions" : "done";
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
     const footer = document.querySelector<HTMLElement>(".mobile-nav");
@@ -120,9 +137,10 @@ function OrderPage() {
     buttonSound();
     setReview(true);
     stopConfirmAudio();
-    // A confirmação é silenciosa. A LIA só fala após o clique explícito em Ajuda.
     setConfirmHelpOpen(false);
     setConfirmOpen(true);
+    // A locução é iniciada uma única vez após a ação do usuário.
+    playConfirmHelp();
   }
   function closeConfirmation() {
     stopConfirmAudio();
@@ -206,7 +224,7 @@ function OrderPage() {
         <main className="min-h-0 flex-1 overflow-hidden" role="status" aria-label="Pedido enviado com sucesso">
           <div className="relative mx-auto h-full w-full max-w-[600px]">
             <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-full w-full object-fill" draggable={false} />
-            <Link to="/pedidos" className="absolute bottom-[11%] left-[5%] z-20 h-[14%] w-[90%] touch-manipulation rounded-2xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400" aria-label="Ir para Minhas Vendas" title="Ir para Minhas Vendas"><span className="sr-only">Ir para Minhas Vendas</span></Link>
+            <Link to="/pedidos" className="absolute bottom-[12%] left-[3%] z-20 h-[15%] w-[94%] touch-manipulation rounded-2xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400" aria-label="Ir para Minhas Vendas" title="Ir para Minhas Vendas"><span className="sr-only">Ir para Minhas Vendas</span></Link>
           </div>
         </main>
         <div className="relative z-[100000] h-[76px] shrink-0"><PublicFooter /></div>
@@ -266,13 +284,13 @@ function OrderPage() {
   // Nunca apresentar a confirmação antes da resposta do servidor.
   if (busy) {
     return (
-      <main className="flex min-h-[65dvh] items-center justify-center px-4" role="status" aria-live="polite" aria-busy="true">
+      <main className="flex min-h-[75dvh] items-center justify-center bg-gradient-to-b from-[#102a52] via-[#145fa5] to-[#eaf6ff] px-4" role="status" aria-live="polite" aria-busy="true">
         <div className="w-full max-w-xl text-center">
-          <div className="mx-auto flex min-h-28 w-full items-center justify-center gap-4 rounded-3xl border-2 border-white bg-gradient-to-b from-[#78dcff] to-[#168bd1] px-6 py-6 text-xl font-black uppercase tracking-wide text-white shadow-[0_9px_0_#0c5b92,0_18px_32px_#0b396344] sm:min-h-36 sm:text-2xl">
+          <div className="mx-auto flex min-h-28 w-full items-center justify-center gap-4 rounded-3xl border-2 border-[#d4af37] bg-gradient-to-b from-[#3ab5f5] to-[#0755a0] px-6 py-6 text-xl font-black uppercase tracking-wide text-white shadow-[0_9px_0_#0c5b92,0_18px_32px_#0b396344] sm:min-h-36 sm:text-2xl">
             <span className="inline-block h-9 w-9 shrink-0 animate-spin rounded-full border-4 border-white/40 border-t-white motion-reduce:animate-none" aria-hidden="true"/>
             <span>Enviando o pedido...</span>
           </div>
-          <p className="mt-6 text-base font-semibold text-[#102a52]">Aguarde a confirmação. Não é necessário clicar novamente.</p>
+          <p className="mt-6 text-base font-semibold text-white">Aguarde a confirmação. Não é necessário clicar novamente.</p>
         </div>
       </main>
     );
@@ -304,6 +322,7 @@ function OrderPage() {
 
   return (
     <div className="space-y-5">
+      <style>{`@keyframes netinhoGuidePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(234,179,8,.38); } 50% { box-shadow: 0 0 0 7px rgba(234,179,8,.10); } } .netinho-guided-pulse { animation: netinhoGuidePulse 1.5s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .netinho-guided-pulse { animation: none; } }`}</style>
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
           <div className="min-h-0 flex-1 overflow-hidden">
@@ -327,10 +346,10 @@ function OrderPage() {
                   </div>
                 </section>
                 {/* Áreas clicáveis transparentes sobre os botões desenhados na própria arte. */}
-                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[3%] left-[5%] z-20 h-[12%] w-[43%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
+                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[0%] left-[2%] z-20 h-[15%] w-[47%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
                 </button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[3%] right-[5%] z-20 h-[12%] w-[43%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[0%] right-[2%] z-20 h-[15%] w-[47%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
                   <span className="sr-only">Enviar Pedido</span>
                 </button>
               </div>
@@ -349,15 +368,15 @@ function OrderPage() {
           onClick={() => {
             if (confirm("Descartar o pedido?")) draftActions.clear();
           }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 rounded-lg p-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl border-2 border-red-400 bg-red-600 p-2.5 text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
           aria-label="Descartar pedido"
           title="Descartar pedido"
         >
-          <Trash2 className="h-5 w-5" />
+          <Trash2 className="h-7 w-7" />
         </button>
       </div>
 
-      <section className="surface-card grid gap-4 p-4 sm:grid-cols-2">
+      <section className={`surface-card grid gap-4 rounded-2xl border-2 p-4 shadow-lg sm:grid-cols-2 ${pulseStep === "customer" ? "netinho-guided-pulse border-amber-400 bg-amber-50/80" : "border-[#d4af37] bg-white"}`}>
         <div className="space-y-1.5 sm:col-span-2">
           <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -424,12 +443,12 @@ function OrderPage() {
         </div>
       </section>
 
-      <section className="surface-card p-4">
+      <section className={`surface-card rounded-2xl border-2 p-4 shadow-lg ${pulseStep === "payment" ? "netinho-guided-pulse border-amber-400 bg-amber-50/80" : "border-[#d4af37] bg-white"}`}>
         <div className="space-y-1.5">
           <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
           <Select
             value={d.paymentTerm}
-            onValueChange={(v) => draftActions.update({ paymentTerm: v as PaymentTerm })}
+            onValueChange={(v) => { setPaymentChosen(true); draftActions.update({ paymentTerm: v as PaymentTerm }); }}
           >
             <SelectTrigger className="h-12">
               <SelectValue />
@@ -446,14 +465,14 @@ function OrderPage() {
 
       </section>
 
-      <div className="grid grid-cols-2 gap-2 sm:gap-3" aria-label="Ações do pedido">
-        <Button type="button" className="h-auto min-h-12 whitespace-normal border-0 bg-[#ea580c] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#c2410c] sm:text-base" onClick={() => { buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+      <div className={`grid grid-cols-2 gap-2 rounded-2xl p-2 sm:gap-3 ${pulseStep === "actions" ? "netinho-guided-pulse border-2 border-amber-400 bg-amber-50" : ""}`} aria-label="Ações do pedido">
+        <Button type="button" className="h-auto min-h-12 whitespace-normal border-0 bg-[#ea580c] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#c2410c] sm:text-base" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
           Editar pedido
         </Button>
         <Button asChild className="h-auto min-h-12 whitespace-normal border-0 bg-[#166534] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#14532d] sm:text-base">
-          <Link to="/catalogo" search={{ modo: "venda" }} onClick={buttonSound}>Continuar comprando</Link>
+          <Link to="/catalogo" search={{ modo: "venda" }} onClick={() => { setActionChosen(true); buttonSound(); }}>Continuar comprando</Link>
         </Button>
-        <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-base font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#0c70bc] sm:text-lg" disabled={busy || !d.items.length} onClick={openConfirmation}>
+        <Button type="button" className="col-span-2 h-12 whitespace-normal bg-[#1687d9] px-2 py-2 text-center text-base font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#0c70bc] sm:text-lg" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
           Enviar PEDIDO
         </Button>
       </div>
