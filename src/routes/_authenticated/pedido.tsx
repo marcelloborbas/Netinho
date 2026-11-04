@@ -203,10 +203,10 @@ function OrderPage() {
   if (sentResult === "sent") {
     return createPortal(
       <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]">
-        <main className="min-h-0 flex-1 overflow-y-auto pb-3" role="status" aria-label="Pedido enviado com sucesso">
-          <div className="relative mx-auto w-full max-w-[600px]">
-            <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-auto w-full object-contain" draggable={false} />
-            <Link to="/pedidos" className="mx-3 mt-2 flex min-h-12 items-center justify-center rounded-xl bg-[#1687d9] px-4 py-3 text-center text-base font-black text-white shadow-lg" aria-label="Ir para Minhas Vendas">Ir para Minhas Vendas</Link>
+        <main className="min-h-0 flex-1 overflow-hidden" role="status" aria-label="Pedido enviado com sucesso">
+          <div className="relative mx-auto h-full w-full max-w-[600px]">
+            <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-full w-full object-fill" draggable={false} />
+            <Link to="/pedidos" className="absolute bottom-[11%] left-[5%] z-20 h-[14%] w-[90%] touch-manipulation rounded-2xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400" aria-label="Ir para Minhas Vendas" title="Ir para Minhas Vendas"><span className="sr-only">Ir para Minhas Vendas</span></Link>
           </div>
         </main>
         <div className="relative z-[100000] h-[76px] shrink-0"><PublicFooter /></div>
@@ -306,12 +306,12 @@ function OrderPage() {
     <div className="space-y-5">
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <div className="relative mx-auto w-full max-w-[600px]">
-              <div className="relative w-full">
-                <picture className="block w-full">
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <div className="relative mx-auto h-full w-full max-w-[600px]">
+              <div className="relative h-full w-full">
+                <picture className="block h-full w-full">
                   <source media="(min-width: 640px)" srcSet="/images/lia-confirmacao-pedido-web.webp?v=875902f2"/>
-                  <img src="/images/lia-confirmacao-pedido-mobile.webp?v=20261102" alt="Confira os dados do pedido antes de enviar." className="block h-auto w-full object-contain" decoding="async"/>
+                  <img src="/images/lia-confirmacao-pedido-mobile.webp?v=20261102" alt="Confira os dados do pedido antes de enviar." className="block h-full w-full object-fill" decoding="async"/>
                 </picture>
                 <h2 id="lia-confirm-title" className="sr-only">Confirme seu pedido</h2>
                 {/* Os dados ficam dentro da área livre da arte, e não abaixo da imagem. */}
@@ -327,28 +327,12 @@ function OrderPage() {
                   </div>
                 </section>
                 {/* Áreas clicáveis transparentes sobre os botões desenhados na própria arte. */}
-                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[5%] left-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
+                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[3%] left-[5%] z-20 h-[12%] w-[43%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
                 </button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[5%] right-[7%] z-20 h-[12%] w-[41%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[3%] right-[5%] z-20 h-[12%] w-[43%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
                   <span className="sr-only">Enviar Pedido</span>
                 </button>
-              </div>
-              <div className="mx-3 mt-3 rounded-xl bg-white/95 p-3 text-[#102a52]">
-                <button type="button" onClick={() => { if (confirmHelpOpen) { stopConfirmAudio(); setConfirmHelpOpen(false); } else playConfirmHelp(); }} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white">
-                  <Volume2 size={20}/> {confirmHelpOpen ? "Fechar ajuda da LIA" : "Ouvir ajuda da LIA"}
-                </button>
-                {confirmHelpOpen && (
-                  <div className="mt-3 space-y-3 text-base leading-relaxed" aria-live="polite">
-                    <p>Estamos quase finalizando!</p>
-                    <p>Antes de enviar, confira atentamente os dados do seu pedido.</p>
-                    <p>Se estiver tudo correto, clique em Enviar Pedido.</p>
-                    <p>Caso precise fazer alguma alteração, selecione Corrigir Pedido.</p>
-                    <p>A Netinho Auto Parts agradece sua confiança e preferência!</p>
-                    <p>Que Deus abençoe você, sua família e seus negócios!</p>
-                    {confirmSpeaking && <p className="text-sm font-semibold text-[#0862bd]">LIA está falando…</p>}
-                  </div>
-                )}
               </div>
 
             </div>
