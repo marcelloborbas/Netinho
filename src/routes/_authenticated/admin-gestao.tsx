@@ -49,18 +49,40 @@ function Admin() {
   return (
     <div className="space-y-4">
       
-      <nav aria-label="Gestão do site" className="surface-card grid grid-cols-2 gap-3 p-4 sm:grid-cols-3">
-        <a href="#representantes" className="action-card">Representantes — cadastrar e editar</a>
-        <Link to="/vendedores" className="action-card">Vendedores</Link>
-        <Link to="/clientes" className="action-card">Clientes</Link>
-        <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
-        <Link to="/pedidos" className="action-card">Pedidos</Link>
-        <a href="#comissoes" className="action-card">Comissões</a>
-        <Link to="/pessoas" className="action-card">Pessoas e permissões</Link>
-        <a href="#produtos" className="action-card">Produtos, estoque e preços</a>\n        <Link to="/transportadoras" className="action-card">Transportadoras</Link>
-      </nav>
-      <details id="comissoes" className="rounded-xl border border-slate-300 bg-white p-3 text-slate-900"><summary className="cursor-pointer font-bold text-[#102a52]">Comissões de fornecedores</summary><div className="mt-3"><SupplierCommissions /></div></details>
-      <section id="representantes" className="scroll-mt-4"><RepresentativesAdmin /></section>
+      <header className="rounded-2xl bg-[#102a52] p-5 text-white">
+        <h1 className="text-2xl font-black">Administração</h1>
+        <p className="mt-2 text-sm text-white/90">Central de gestão do Netinho Auto Parts. Escolha o que deseja consultar ou editar.</p>
+      </header>
+      <section className="rounded-2xl border-2 border-amber-400 bg-white p-4 text-[#102a52]">
+        <h2 className="text-xl font-extrabold">1. Pessoas, acessos e comissões de vendas</h2>
+        <p className="mt-2 text-sm">Para alterar um vendedor ou representante com login, abra a ficha da pessoa. Nela estão perfil, telefone, cidades, mapa, supervisor e <strong>Comissão individual sobre vendas (%)</strong>.</p>
+        <Link to="/pessoas" className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#102a52] px-4 text-center font-extrabold text-white sm:w-auto">Abrir fichas de pessoas e comissões</Link>
+        <p className="mt-3 text-xs text-slate-600">A comissão é vinculada à conta de usuário. Um representante cadastrado apenas como contato comercial precisa primeiro ter uma conta vinculada.</p>
+      </section>
+      <section className="rounded-2xl border border-slate-300 bg-white p-4 text-[#102a52]">
+        <h2 className="text-lg font-extrabold">2. Pedidos e cadastros comerciais</h2>
+        <nav aria-label="Pedidos e cadastros" className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Link to="/pedidos" className="action-card">Pedidos</Link>
+          <Link to="/clientes" className="action-card">Clientes</Link>
+          <Link to="/vendedores" className="action-card">Vendedores</Link>
+          <Link to="/distribuidoras" className="action-card">Distribuidoras</Link>
+          <Link to="/transportadoras" className="action-card">Transportadoras</Link>
+        </nav>
+      </section>
+      <section className="rounded-2xl border border-slate-300 bg-white p-4 text-[#102a52]">
+        <h2 className="text-lg font-extrabold">3. Produtos, estoque e preços</h2>
+        <p className="mt-1 text-sm">Abra o editor abaixo para localizar e alterar os produtos.</p>
+        <a href="#produtos" className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-[#102a52] px-4 font-bold">Editar produtos</a>
+      </section>
+      <details id="comissoes" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900">
+        <summary className="cursor-pointer font-bold text-[#102a52]">4. Comissões de fornecedores (separadas das comissões de vendas)</summary>
+        <div className="mt-3"><SupplierCommissions /></div>
+      </details>
+      <details id="representantes" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900">
+        <summary className="cursor-pointer font-bold text-[#102a52]">5. Cadastros comerciais de representantes (sem login)</summary>
+        <p className="my-3 text-sm text-slate-600">Esta seção administra contatos e autorizações comerciais. Para comissão de vendas, utilize Pessoas e comissões acima.</p>
+        <RepresentativesAdmin />
+      </details>
 
       <details id="produtos" className="rounded-xl border border-slate-300 bg-white p-4 text-slate-900"><summary className="cursor-pointer text-xl font-bold text-[#102a52]">Produtos, estoque e preços</summary><div className="mt-4 space-y-3">
       <Input
