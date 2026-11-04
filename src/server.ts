@@ -18,6 +18,42 @@ async function getServerEntry(): Promise<ServerEntry> {
   return serverEntryPromise;
 }
 
+// Alguns robôs de prévia não executam JavaScript. Garantimos que os dados
+// Open Graph estejam presentes no HTML entregue pelo servidor na página inicial.
+const shareMeta = [
+  '<meta property="og:type" content="website" />',
+  '<meta property="og:site_name" content="Netinho Auto Parts" />',
+  '<meta property="og:title" content="Netinho Auto Parts" />',
+  '<meta property="og:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
+  '<meta property="og:url" content="https://netinhoautoparts.live/" />',
+  '<meta property="og:image" content="https://netinhoautoparts.live/favicon.png" />',
+  '<meta property="og:image:type" content="image/png" />',
+  '<meta property="og:image:alt" content="Logo Netinho Auto Parts" />',
+  '<meta name="twitter:card" content="summary_large_image" />',
+  '<meta name="twitter:title" content="Netinho Auto Parts" />',
+  '<meta name="twitter:description" content="Catálogo de autopeças, pedidos e atendimento online." />',
+  '<meta name="twitter:image" content="https://netinhoautoparts.live/favicon.png" />',
+].join("\\n");
+
+async function ensureShareMetadata(request: Request, response: Response): Promise<Response> {
+  const url = new URL(request.url);
+  if (url.pathname !== "/" || request.method !== "GET" || !response.ok) return response;
+  if (!(response.headers.get("content-type") ?? "").includes("text/html")) return response;
+
+  const html = await response.text();
+  const headMatch = /<head(?:\\s[^>]*)?>/i.exec(html);
+  if (!headMatch) return new Response(html, response);
+
+  // Remove apenas metadados de compartilhamento anteriores, evitando duplicidade.
+  const cleanHtml = html.replace(/<meta\\s+[^>]*(?:property=["']og:[^"']+["']|name=["']twitter:[^"']+["'])[^>]*\\/?\\s*>/gi, "");
+  const updatedHtml = cleanHtml.replace(/<head(?:\\s[^>]*)?>/i, (tag) => tag + "\\n" + shareMeta + "\\n");
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  headers.delete("content-encoding");
+  headers.set("cache-control", "public, max-age=0, must-revalidate");
+  return new Response(updatedHtml, { status: response.status, statusText: response.statusText, headers });
+}
+
 // h3 swallows in-handler throws into a normal 500 Response with body
 // {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
@@ -49,7 +85,7 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return await ensureShareMetadata(request, await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
