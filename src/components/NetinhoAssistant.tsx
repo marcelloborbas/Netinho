@@ -8,7 +8,7 @@ import { InstallAppButton } from "@/components/InstallAppButton";
 import { createPortal } from "react-dom";
 
 const hints = [
-  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Bem-vindo à Netinho Auto Parts!\n\nEntre pelo Google ou receba seu acesso por e-mail.\n\nClique em Baixar App para acessar diretamente pelo celular!\n\nSe precisa de ajuda, clique na sua foto no rodapé e selecione a Ajuda da página onde estiver.\n\nQue Deus abençoe seu dia e seus negócios!" },
+  { match: /^\/(auth|login)(\/|$)/, title: "COMO ACESSAR O SITE", message: "Bem-vindo à Netinho Auto Parts!\n\nEntre pelo Google ou receba seu acesso por e-mail.\n\nClique em Baixar App para acessar diretamente pelo celular!\n\nSe precisa de ajuda, clique na sua foto no rodapé e selecione a Ajuda da página onde estiver.\n\ne mais, em sua foto você pode baixar catálogos, formulários e documentos, através do ícone de downloads\n\nQue Deus abençoe seu dia e seus negócios!" },
   { match: /^\/$/, title: "Escolha seu perfil", message: "Visitante: consulta informações públicas. Vendedor: atende seus clientes e pedidos. Representante: acompanha sua equipe. Administrador: gerencia o sistema. Para acessar perfis avançados, clique em Solicitar acesso abaixo do perfil desejado. Aguarde a liberação pelo administrador." },
   { match: /catalogo|catálogo/, title: "AJUDA - CATÁLOGO DE PEÇAS", message: "Veja como funciona o Catálogo!\n\nNa lupa você pesquisa pela peça, marca ou modelo do veículo.\n\nAtravés dos filtros, selecione o catálogo, a categoria, a marca e depois o modelo.\n\nAs quantidades disponíveis aparecem abaixo de cada opção.\n\nAgora clique no carrinho para adicioná-la ao pedido!\n\nPronto! agora é com você!" },
   { match: /clientes/, title: "Clientes", message: "Busque o cliente antes de cadastrar. Vendedores acessam sua carteira; representantes acompanham sua equipe, conforme autorização." },
@@ -136,7 +136,7 @@ export function NetinhoAssistant() {
   const speechRefLatest = useRef<() => void>(() => {});
   const helpRequestInProgress = useRef(false);
   const speak = () => {
-    const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261103-3" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261103-4" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261103-3" : /^\/pedidos(?:\/|$)/.test(pathname) ? "/audio/lia/lia-minhas%20vendas.mp3?v=20261103-3" : /^\/pedido\/?$/.test(pathname) ? "/audio/lia/lia-fazer%20pedido.mp3?v=20261103-3" : null;
+    const audioPath = isAuth ? "/audio/lia/lia-login.mp3?v=20261104-1" : pathname === "/" ? "/audio/lia/lia-inicial.mp3?v=20261103-4" : /catalogo|catálogo/.test(pathname) ? "/audio/lia/lia-catalogo.mp3?v=20261103-3" : /^\/pedidos(?:\/|$)/.test(pathname) ? "/audio/lia/lia-minhas%20vendas.mp3?v=20261103-3" : /^\/pedido\/?$/.test(pathname) ? "/audio/lia/lia-fazer%20pedido.mp3?v=20261103-3" : null;
     // Parar qualquer locução anterior antes de iniciar a orientação desta página.
     loginAudioRef.current?.pause();
     loginAudioRef.current = null;
