@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { brl } from "@/lib/brand";
 import { ArrowLeft, FileText, TrendingUp, BarChart3, ShoppingCart, Users, Coins, ClipboardList, CalendarDays, CircleCheck, Percent } from "lucide-react";
@@ -55,7 +55,11 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
   const [year, setYear] = useState(Number(brasil.slice(0, 4)));
   const [month, setMonth] = useState(Number(brasil.slice(5, 7)));
   const [selectedClient, setSelectedClient] = useState("todos");
-  const [activeReport, setActiveReport] = useState<"cliente" | "mes">("cliente");
+  // Ao entrar, mostrar somente o painel principal; detalhes abrem apenas por ação do usuário.
+  const [activeReport, setActiveReport] = useState<"cliente" | "mes" | null>(null);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
   const { data = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["sales-monthly-report", year, month],
     queryFn: () => loadMonth(year, month),
@@ -156,10 +160,10 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     </section>
 
     <nav aria-label="Consultas do relatório" className="grid grid-cols-2 gap-2">
-      <button type="button" aria-pressed={activeReport === "cliente"} aria-controls="detalhamento-vendas" onClick={() => setActiveReport("cliente")} className={activeReport === "cliente" ? "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-[#ffdf48] shadow-md sm:text-sm" : "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-white shadow-md sm:text-sm"}><Users size={19}/> Vendas por Cliente</button>
-      <button type="button" aria-pressed={activeReport === "mes"} aria-controls="detalhamento-vendas" onClick={() => setActiveReport("mes")} className={activeReport === "mes" ? "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-[#ffdf48] shadow-md sm:text-sm" : "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-white shadow-md sm:text-sm"}><CalendarDays size={19}/> Vendas por Mês</button>
+      <button type="button" aria-pressed={activeReport === "cliente"} aria-controls="detalhamento-vendas" onClick={() => setActiveReport(current => current === "cliente" ? null : "cliente")} className={activeReport === "cliente" ? "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-[#ffdf48] shadow-md sm:text-sm" : "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-white shadow-md sm:text-sm"}><Users size={19}/> Vendas por Cliente</button>
+      <button type="button" aria-pressed={activeReport === "mes"} aria-controls="detalhamento-vendas" onClick={() => setActiveReport(current => current === "mes" ? null : "mes")} className={activeReport === "mes" ? "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-[#ffdf48] shadow-md sm:text-sm" : "flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-[#e9b323] bg-[#073b83] px-2 text-center text-xs font-black text-white shadow-md sm:text-sm"}><CalendarDays size={19}/> Vendas por Mês</button>
     </nav>
-    <section id="detalhamento-vendas" aria-live="polite" className="min-w-0 overflow-hidden rounded-xl border-2 border-[#d7b14d] bg-white shadow-sm">
+    {activeReport && <section id="detalhamento-vendas" aria-live="polite" className="min-w-0 overflow-hidden rounded-xl border-2 border-[#d7b14d] bg-white shadow-sm">
       {activeReport === "cliente" ? (
         <>
           <h3 className="bg-[#092b61] px-3 py-2 text-base font-black text-white">Vendas por Cliente — {MONTHS[month - 1]} de {year}</h3>
@@ -201,7 +205,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
           <p className="px-3 py-2 text-xs text-[#39577a]">Valores conforme o cliente selecionado e o mês/ano de referência.</p>
         </>
       )}
-    </section>
+    </section>}
     <section className="hidden">
       <h2 className="flex items-center gap-2 bg-gradient-to-b from-[#0e519a] to-[#06204d] px-4 py-3 text-lg font-black uppercase text-white"><BarChart3 size={22} className="text-[#ffdb38]"/> Resumo do período</h2>
       <div className="grid grid-cols-1 gap-1.5 p-3 text-[#102a52]">
