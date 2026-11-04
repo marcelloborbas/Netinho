@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
     { property: "og:title", content: "Netinho Auto Parts" },
     { property: "og:description", content: "Catálogo de autopeças, pedidos e atendimento online." },
     { property: "og:url", content: "https://www.netinhoautoparts.live/" },
-    { property: "og:image", content: "https://www.netinhoautoparts.live/favicon.png" },
+    { property: "og:image", content: "https://www.netinhoautoparts.live/images/netinho-compartilhar.png" },
     { property: "og:image:type", content: "image/png" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
