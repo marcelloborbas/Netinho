@@ -29,10 +29,26 @@ function Home() {
     return () => window.clearInterval(timer);
   }, []);
   const salutation = hour === null ? "Olá" : hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
-  const entryApproved = typeof window !== "undefined" && window.sessionStorage.getItem("netinho-entry-approved") === "1";
+  // A sessão do Supabase, e não uma flag temporária da aba, determina o acesso.
+  // PWAs iniciados pelo ícone podem abrir em uma nova sessão sem sessionStorage anterior.
+  const [entryApproved, setEntryApproved] = useState(() => typeof window !== "undefined" && window.sessionStorage.getItem("netinho-entry-approved") === "1");
   useEffect(() => {
-    if (!entryApproved) void navigate({ to: "/auth", replace: true });
-  }, [entryApproved, navigate]);
+    let active = true;
+    const timeout = window.setTimeout(() => { if (active) void navigate({ to: "/auth", replace: true }); }, 10000);
+    void supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      window.clearTimeout(timeout);
+      if (data.session?.user) {
+        window.sessionStorage.setItem("netinho-entry-approved", "1");
+        setEntryApproved(true);
+      } else {
+        window.sessionStorage.removeItem("netinho-entry-approved");
+        setEntryApproved(false);
+        void navigate({ to: "/auth", replace: true });
+      }
+    }).catch(() => { if (active) { window.clearTimeout(timeout); void navigate({ to: "/auth", replace: true }); } });
+    return () => { active = false; window.clearTimeout(timeout); };
+  }, [navigate]);
   const { data: access } = useQuery({ ...accessQuery, enabled: entryApproved, retry: false });
   // O catálogo completo não deve disputar rede/CPU com a primeira pintura da página.
   // As quantidades continuam vindo dos produtos reais, mas são buscadas após a interface aparecer.
@@ -95,7 +111,7 @@ function Home() {
     : access?.attribution === "Representante" ? "Representante"
     : access?.attribution === "Vendedor" ? "Vendedor"
     : access?.can_sell ? "Vendedor" : "Visitante";
-  if (!entryApproved) return null;
+  if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[940px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
