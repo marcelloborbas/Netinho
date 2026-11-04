@@ -91,6 +91,9 @@ export const ordersQuery = queryOptions({
 export const orderQuery = (id: string) =>
   queryOptions({
     queryKey: ["order", id],
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const [o, i] = await Promise.all([
         supabase.from("orders").select("*").eq("id", id).single(),
@@ -113,6 +116,9 @@ export const orderQuery = (id: string) =>
 
 export const meQuery = queryOptions({
   queryKey: ["me"],
+  staleTime: 60_000,
+  gcTime: 10 * 60_000,
+  refetchOnWindowFocus: false,
   queryFn: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return null;
