@@ -6,7 +6,7 @@ import { meQuery } from "@/lib/queries";
 const pages = [
  {to:"/admin-gestao",label:"Painel Administrativo"},
  {to:"/pessoas",label:"Pessoas e Comissões"},
- {to:"/pedidos",label:"Pedidos"},
+ {to:"/admin-pedidos",label:"Pedidos"},
  {to:"/clientes",label:"Clientes"},
  {to:"/vendedores",label:"Vendedores"},
  {to:"/distribuidoras",label:"Distribuidoras"},
@@ -16,7 +16,7 @@ export function AdminPageNavigation(){
  const {data:me}=useQuery(meQuery);
  const path=useRouterState({select:s=>s.location.pathname});
  if(!me?.isAdmin)return null;
- const index=pages.findIndex(p=>p.to===path || (p.to==="/pedidos"&&path.startsWith("/pedidos/")));
+ const index=pages.findIndex(p=>p.to===path);
  if(index<0)return null;
  const previous=pages[index-1];
  const next=pages[index+1];
