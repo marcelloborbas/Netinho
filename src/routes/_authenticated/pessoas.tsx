@@ -332,7 +332,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Ficha do representante comercial</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
    <section className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4"><h4 className="text-lg font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
 
-   <RepresentativeDetails name={representative.full_name} email={representative.email} />
+   <RepresentativeDetails name={representative.full_name} email={representative.email} representativeId={representative.id} />
    <label className="block text-sm font-bold">Nome<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
    <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
    <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Status ativo</label>
@@ -342,7 +342,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
  </article>;
 }
 
-function RepresentativeDetails({name,email}:{name:string;email:string}) {
+function RepresentativeDetails({name,email,representativeId}:{name:string;email:string;representativeId:string}) {
  const qc=useQueryClient();
  const [values,setValues]=useState<Record<string,string>>({});
  const [initialized,setInitialized]=useState(false);
@@ -397,11 +397,58 @@ function RepresentativeDetails({name,email}:{name:string;email:string}) {
   <h4 className="font-extrabold">Região e dados cadastrais</h4>
   {isLoading&&<p>Carregando ficha…</p>}
   {error&&<p role="alert" className="text-red-700">Não foi possível consultar a ficha regional.</p>}
-  {!isLoading&&!error&&!record&&<p className="text-xs text-slate-600">Este representante não possui uma ficha regional vinculada. O cadastro comercial permanece editável acima.</p>}
+  {!isLoading&&!error&&!record&&<CommercialDetailsForm representativeId={representativeId} />}
   {record&&initialized&&<>
    {fields.map(field=><label key={field.key} className="block text-sm font-bold">{field.label}<input value={values[field.key]??""} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal"/></label>)}
    <button type="button" disabled={saving} onClick={()=>void saveRegion()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-3 font-bold text-white disabled:opacity-50">{saving?"Salvando dados…":"Salvar dados regionais e cadastrais"}</button>
   </>}
   {map&&<a href={map} target="_blank" rel="noreferrer" className="block rounded-lg border border-blue-200 bg-white p-2"><img src={map} alt={`Mapa de atuação de ${name}`} className="max-h-80 w-full object-contain"/><span className="mt-1 block text-center text-xs font-bold">Ampliar mapa de atuação</span></a>}
  </section>;
+}
+
+function CommercialDetailsForm({representativeId}:{representativeId:string}) {
+ const qc=useQueryClient();
+ const [values,setValues]=useState<Record<string,string>>({});
+ const [busy,setBusy]=useState(false);
+ const [loaded,setLoaded]=useState(false);
+ const fields=[
+  {key:"phone",label:"Telefone"},{key:"street_address",label:"Endereço"},
+  {key:"address_number",label:"Número"},{key:"neighborhood",label:"Bairro"},
+  {key:"postal_code",label:"CEP"},{key:"city",label:"Cidade"},
+  {key:"state",label:"Estado (UF)"},{key:"region",label:"Região de atuação"},
+  {key:"service_cities",label:"Cidades atendidas"},{key:"cpf",label:"CPF"},
+  {key:"rg",label:"RG"},{key:"map_url",label:"Endereço da imagem do mapa"}
+ ] as const;
+ const {data,error,isLoading}=useQuery({
+  queryKey:["commercial-representative-details",representativeId],
+  retry:false,
+  queryFn:async()=>{
+   const {data,error}=await supabase.from("commercial_representative_details" as never).select("*").eq("representative_id",representativeId).maybeSingle();
+   if(error)throw error;
+   return data as Record<string,string>|null;
+  }
+ });
+ useEffect(()=>{
+  if(!isLoading&&!error&&!loaded){
+   setValues(Object.fromEntries(fields.map(f=>[f.key,String(data?.[f.key]??"")])));
+   setLoaded(true);
+  }
+ },[isLoading,error,loaded,data]);
+ async function save(){
+  setBusy(true);
+  const payload={representative_id:representativeId,...Object.fromEntries(fields.map(f=>[f.key,(values[f.key]??"").trim()]))};
+  const {error}=await supabase.from("commercial_representative_details" as never).upsert(payload as never,{onConflict:"representative_id"});
+  setBusy(false);
+  if(error){toast.error("Não foi possível salvar os dados cadastrais: "+error.message);return;}
+  toast.success("Endereço, telefone e região salvos.");
+  await qc.invalidateQueries({queryKey:["commercial-representative-details",representativeId]});
+ }
+ return <div className="space-y-3">
+  {isLoading&&<p>Carregando dados cadastrais…</p>}
+  {error&&<p role="alert" className="text-red-700">A ficha cadastral precisa ser ativada no banco: {error.message}</p>}
+  {!error&&loaded&&<>
+   {fields.map(f=><label key={f.key} className="block text-sm font-bold">{f.label}<input className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal" value={values[f.key]??""} onChange={e=>setValues(v=>({...v,[f.key]:e.target.value}))}/></label>)}
+   <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar endereço e dados cadastrais"}</button>
+  </>}
+ </div>;
 }
