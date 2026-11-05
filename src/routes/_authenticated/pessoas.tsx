@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Pencil, X, UserPlus, ArrowLeft, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -111,6 +111,37 @@ function Pessoas() {
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
+function PersonPhoto({id,name}:{id:string;name:string}) {
+ const [photo,setPhoto]=useState<string|null>(null);
+ const [busy,setBusy]=useState(false);
+ const path=id+"/foto.webp";
+ const url=supabase.storage.from("person-photos").getPublicUrl(path).data.publicUrl;
+ useEffect(()=>{let alive=true;fetch(url,{method:"HEAD"}).then(r=>{if(alive&&r.ok)setPhoto(url+"?v="+Date.now());}).catch(()=>{});return()=>{alive=false;};},[url]);
+ async function choose(file:File|undefined){
+  if(!file)return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){toast.error("Escolha uma foto JPG, PNG ou WebP.");return;}
+  if(file.size>5*1024*1024){toast.error("A foto deve ter até 5 MB.");return;}
+  setBusy(true);
+  try{
+   const bitmap=await createImageBitmap(file);
+   const canvas=document.createElement("canvas");
+   const scale=Math.min(1,640/Math.max(bitmap.width,bitmap.height));
+   canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+   const ctx=canvas.getContext("2d");if(!ctx)throw new Error("Não foi possível processar a foto.");
+   ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+   const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("Falha ao preparar imagem.")),"image/webp",0.85));
+   const {error}=await supabase.storage.from("person-photos").upload(path,blob,{upsert:true,contentType:"image/webp",cacheControl:"60"});
+   if(error)throw error;
+   setPhoto(url+"?v="+Date.now());toast.success("Foto atualizada.");
+  }catch(e){toast.error("Não foi possível salvar a foto: "+(e instanceof Error?e.message:String(e)));}
+  finally{setBusy(false);}
+ }
+ return <label title="Escolher foto" className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]">
+  {photo?<img src={photo} alt={`Foto de ${name}`} className="h-full w-full object-cover"/>:<UserRound size={33}/>}
+  <span className="absolute bottom-0 left-0 right-0 bg-[#102a52]/90 py-0.5 text-center text-[9px] font-bold text-white">{busy?"Enviando…":"Foto +"}</span>
+  <input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} aria-label={`Selecionar foto de ${name}`} className="sr-only" onChange={e=>{void choose(e.target.files?.[0]);e.target.value="";}}/>
+ </label>;
+}
 function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];monthlySales:string;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
  const {data:me}=useQuery(meQuery);
  const qc=useQueryClient();
@@ -177,7 +208,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
       <div className="text-sm font-semibold text-[#102a52]">{person.site_role}</div>
       <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
     </div>
-    <div aria-label="Foto do usuário" className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]"><UserRound size={33}/></div>
+    <PersonPhoto id={person.id} name={person.full_name||"usuário"}/>
   </div>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar ficha</button>
@@ -291,7 +322,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
       <div className="text-sm font-semibold text-[#102a52]">Representante</div>
       <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
     </div>
-    <div aria-label="Foto do representante" className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]"><UserRound size={33}/></div>
+    <PersonPhoto id={representative.id} name={representative.full_name}/>
   </div>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar ficha</button>
