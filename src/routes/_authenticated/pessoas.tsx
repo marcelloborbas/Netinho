@@ -249,10 +249,19 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   </div>
 
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Ficha completa da pessoa</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">
-   <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm"><strong className="block">Ficha de dados — campos editáveis</strong><label className="block font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label><label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label><p><strong>E-mail de acesso:</strong> {person.email} <span className="text-slate-600">(vinculado à conta de login)</span></p></div>
+   <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
+    <h3 className="mb-4 text-base font-black">Identificação e acesso</h3>
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(160px,1fr)_minmax(130px,1fr)]">
+     <label className="block font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+     <label className="block font-bold">Status / perfil<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
+     <label className="block font-bold">Situação<select value={active?"ativo":"inativo"} onChange={e=>setActive(e.target.value==="ativo")} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
+    </div>
+    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+     <label className="block font-bold">E-mail de acesso<input type="email" value={person.email} readOnly className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-600"/><span className="mt-1 block text-xs font-normal text-slate-500">Vinculado à conta de login.</span></label>
+     <label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+    </div>
+   </section>
    <RepresentativeDetails name={person.full_name} email={person.email} />
-   <label className="block text-sm font-bold">Status / perfil de acesso<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
-   <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)} className="h-5 w-5"/> Acesso ativo</label>
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
    <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
     <h3 className="text-lg font-black">Comissão individual sobre vendas</h3>
