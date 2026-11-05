@@ -89,18 +89,32 @@ function OrderPage() {
   }
   const sentSpeechStarted = useRef(false);
   useEffect(() => {
-    if (sentResult !== "sent") { sentSpeechStarted.current = false; return; }
+    if (sentResult !== "sent") {
+      sentSpeechStarted.current = false;
+      return;
+    }
     if (sentSpeechStarted.current) return;
     sentSpeechStarted.current = true;
-    // Ainda não há MP3 específico de "pedido enviado" no repositório.
-    // Usar locução nativa quando disponível, sem repetir ou bloquear a interface.
-    if (!("speechSynthesis" in window)) return;
-    const utterance = new SpeechSynthesisUtterance("Seu pedido já foi enviado para a Netinho! Uma cópia também foi encaminhada para o seu e-mail. Obrigada pela confiança e boas vendas!");
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.95;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-    return () => window.speechSynthesis.cancel();
+
+    const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261105-1");
+    audio.preload = "auto";
+    audio.loop = false;
+    const fallbackSpeech = () => {
+      if (!("speechSynthesis" in window)) return;
+      const utterance = new SpeechSynthesisUtterance("Seu pedido foi enviado com sucesso para a Netinho Auto Parts! Uma cópia também foi encaminhada para o seu e-mail, para que você possa consultá-la sempre que precisar. Agora, é só aguardar! Nossa equipe dará continuidade ao atendimento do seu pedido. Você também poderá acompanhar as informações na página Minhas Vendas. Que Deus abençoe seu dia!");
+      utterance.lang = "pt-BR";
+      utterance.rate = 0.95;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    };
+    audio.onerror = fallbackSpeech;
+    void audio.play().catch(fallbackSpeech);
+    return () => {
+      audio.onerror = null;
+      audio.pause();
+      audio.src = "";
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    };
   }, [sentResult]);
   const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : "actions";
   const [footerOffset, setFooterOffset] = useState(66);
