@@ -1,3 +1,4 @@
+import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { meQuery } from "@/lib/queries";
@@ -21,6 +22,7 @@ function Admin() {
   if (isLoading) return <p className="p-5">Carregando administração…</p>;
   if (!me?.isAdmin) return <p className="surface-card p-5 text-sm">Acesso restrito ao administrador.</p>;
   return <main className="mx-auto w-full max-w-5xl space-y-5 px-3 py-5 pb-28 text-[#102a52] sm:px-6">
+      <AdminPageNavigation/>
     <header className="rounded-[1.6rem] border-2 border-[#d9aa30] bg-gradient-to-br from-[#153e75] to-[#06162e] px-5 py-6 text-center text-white shadow-xl">
       <h1 className="text-2xl font-black sm:text-3xl">Painel Administrativo</h1>
     </header>
