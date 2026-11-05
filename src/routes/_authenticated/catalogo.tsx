@@ -537,7 +537,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0 flex-1 rounded-lg border border-[#d4af37] bg-[#102a52] px-2 py-2 text-[#f4cf60]">
           <span className="block text-[11px] font-bold">Preço à vista</span>
-          <strong className="block break-words text-lg font-black leading-tight sm:text-2xl">{p.price_cash != null ? brl(p.price_cash) : "Sob consulta"}</strong>
+          <strong className="block min-h-[1.5em] break-words text-lg font-black leading-tight !text-[#ffe083] sm:text-2xl" style={{ color: "#ffe083", opacity: 1, visibility: "visible" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) ? brl(Number(p.price_cash)) : "Sob consulta"}</strong>
         </div>
         <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#2588f9] bg-[#0878ed] text-white shadow-sm"><ShoppingCart size={21}/></button>
       </div>
