@@ -57,7 +57,8 @@ function OrderPage() {
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmHelpOpen, setConfirmHelpOpen] = useState(false);
-  const [paymentChosen, setPaymentChosen] = useState(false);
+  // À vista é uma condição válida e já vem selecionada no rascunho.
+  const paymentChosen = PAYMENT_TERMS.some((term) => term.value === d.paymentTerm);
   const [actionChosen, setActionChosen] = useState(false);
   const [confirmSpeaking, setConfirmSpeaking] = useState(false);
   const confirmAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -360,19 +361,23 @@ function OrderPage() {
         </div>,
         document.body
       )}
-      <div className="relative flex items-center justify-center overflow-hidden rounded-[22px] border border-[#e4b941] bg-gradient-to-r from-[#091b36] via-[#143c70] to-[#0b2447] px-14 py-5 shadow-[0_8px_22px_rgba(9,27,54,.22)]">
+      <div className="flex items-center justify-center gap-4 rounded-[22px] border border-[#e4b941] bg-gradient-to-r from-[#091b36] via-[#143c70] to-[#0b2447] px-4 py-4 shadow-[0_8px_22px_rgba(9,27,54,.22)]">
         <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
           {review ? "Revisar pedido" : "Pedido"}
         </h1>
         <button
+          type="button"
           onClick={() => {
-            if (confirm("Descartar o pedido?")) draftActions.clear();
+            if (window.confirm("Deseja excluir este pedido em aberto? Esta ação não pode ser desfeita.")) {
+              draftActions.clear();
+              setReview(false);
+            }
           }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl border-2 border-red-400 bg-red-600 p-2.5 text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
-          aria-label="Descartar pedido"
-          title="Descartar pedido"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-600 text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
+          aria-label="Excluir pedido em aberto"
+          title="Excluir pedido em aberto"
         >
-          <Trash2 className="h-7 w-7" />
+          <Trash2 className="h-6 w-6" />
         </button>
       </div>
 
@@ -472,7 +477,7 @@ function OrderPage() {
           </div>
           <Select
             value={d.paymentTerm}
-            onValueChange={(v) => { setPaymentChosen(true); draftActions.update({ paymentTerm: v as PaymentTerm }); }}
+            onValueChange={(v) => { draftActions.update({ paymentTerm: v as PaymentTerm }); }}
           >
             <SelectTrigger className="mt-2 h-12 rounded-xl border-[#b7c8de] bg-white font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
               <SelectValue />
