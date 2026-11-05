@@ -49,6 +49,7 @@ export function PublicFooter() {
     return () => { mounted = false; data.subscription.unsubscribe(); };
   }, []);
   const status = access?.level === 1 || access?.attribution === "Administrador" ? "Administrador" : access?.attribution === "Representante" ? "Representante" : access?.attribution === "Vendedor" || access?.can_sell ? "Vendedor" : "Visitante";
+  const {data:activeState}=useQuery({queryKey:["footer-active-user",user?.name],enabled:!!user,queryFn:async()=>{const {data:auth}=await supabase.auth.getUser();if(!auth.user)return null;const {data,error}=await supabase.from("profiles").select("access_active").eq("id",auth.user.id).maybeSingle();if(error)throw error;return data?.access_active??null;}});
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const prepareCatalog = () => {
@@ -74,7 +75,7 @@ export function PublicFooter() {
   return <>
     {menuOpen && <button type="button" aria-label="Fechar menu do usuário" className="fixed inset-0 z-[90] bg-black/20" onClick={() => setMenuOpen(false)} />}
     {menuOpen && <div role="menu" aria-label="Opções do usuário" className="fixed bottom-[76px] right-2 z-[100] w-56 max-w-[calc(100vw-16px)] rounded-2xl border-2 border-[#d4af37] bg-white p-2 text-[#102a52] shadow-2xl">
-      <div className="border-b border-slate-200 px-3 py-3"><div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"><strong className="break-words">{user?.name ?? "Visitante"}</strong><span className="font-semibold text-[#8a6516]">— {status}</span></div></div>
+      <div className="border-b border-slate-200 px-3 py-3"><div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"><strong className="break-words">{user?.name ?? "Visitante"}</strong>{activeState!=null&&<span className={activeState?"text-xs font-bold text-green-700":"text-xs font-bold text-red-700"}>{activeState?"Ativo":"Inativo"}</span>}<span className="font-semibold text-[#8a6516]">{status}</span></div></div>
       <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Contact size={19}/> Cartão de visita</Link>
       <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Download size={19}/> Downloads</Link>
       <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={19}/> Ajuda</button>
