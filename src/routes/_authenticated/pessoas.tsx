@@ -314,35 +314,64 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
 }
 
 function RepresentativeDetails({name,email}:{name:string;email:string}) {
+ const qc=useQueryClient();
+ const [values,setValues]=useState<Record<string,string>>({});
+ const [initialized,setInitialized]=useState(false);
+ const [saving,setSaving]=useState(false);
  const {data:record,isLoading,error}=useQuery({
   queryKey:["admin-representative-detail",name,email],
   queryFn:async()=>{
    const {data:profiles,error:profileError}=await supabase.from("representative_profiles").select("slug,full_name,email,phone,region");
    if(profileError)throw profileError;
-   const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+   const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").trim().toLowerCase();
    const profile=profiles?.find(p=>!!email&&norm(p.email)===norm(email))??profiles?.find(p=>norm(p.full_name)===norm(name));
    if(!profile)return null;
    const {data:details,error:detailsError}=await supabase.from("representative_private_details").select("city,state,service_cities,street_address,neighborhood,postal_code,cpf,rg").eq("slug",profile.slug).maybeSingle();
    if(detailsError)throw detailsError;
    return {profile,details};
-  },
-  retry:false
+  },retry:false
  });
- const map=/abdenego|abdnego/i.test(name) ? "/images/territories/abdenego.webp" : /livaldo/i.test(name) ? "/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" : null;
- return <section className="space-y-2 rounded-xl border border-blue-200 bg-[#f8fbff] p-3 text-sm">
-  <h4 className="flex items-center gap-2 font-extrabold"><span>Região, cidades e mapa de atuação</span></h4>
-  {isLoading&&<p>Carregando informações de atuação…</p>}
+ const fields=[
+  {key:"region",label:"Região de atuação"},
+  {key:"city",label:"Cidade-base"},
+  {key:"state",label:"Estado (UF)"},
+  {key:"service_cities",label:"Cidades atendidas"},
+  {key:"phone",label:"Telefone"},
+  {key:"street_address",label:"Endereço"},
+  {key:"neighborhood",label:"Bairro"},
+  {key:"postal_code",label:"CEP"},
+  {key:"cpf",label:"CPF"},
+  {key:"rg",label:"RG"},
+ ] as const;
+ if(record&&!initialized){
+  const initial:Record<string,string>={};
+  for(const field of fields){const source=field.key==="region"||field.key==="phone"?record.profile:record.details;initial[field.key]=String((source as Record<string,unknown>|null)?.[field.key]??"");}
+  setValues(initial);setInitialized(true);
+ }
+ async function saveRegion(){
+  if(!record)return;
+  setSaving(true);
+  try{
+   const {error:profileError}=await supabase.from("representative_profiles").update({region:values.region??"",phone:values.phone??""}).eq("slug",record.profile.slug);
+   if(profileError)throw profileError;
+   const details={city:values.city??"",state:values.state??"",service_cities:values.service_cities??"",street_address:values.street_address??"",neighborhood:values.neighborhood??"",postal_code:values.postal_code??"",cpf:values.cpf??"",rg:values.rg??""};
+   const {error:detailError}=await supabase.from("representative_private_details").upsert({slug:record.profile.slug,...details},{onConflict:"slug"});
+   if(detailError)throw detailError;
+   toast.success("Dados regionais e cadastrais atualizados.");
+   await qc.invalidateQueries({queryKey:["admin-representative-detail",name,email]});
+  }catch(e){toast.error("Não foi possível salvar os dados da ficha: "+(e instanceof Error?e.message:String(e)));}
+  finally{setSaving(false);}
+ }
+ const map=/abdenego|abdnego/i.test(name)?"/images/territories/abdenego.webp":/livaldo/i.test(name)?"/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png":null;
+ return <section className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3 text-sm">
+  <h4 className="font-extrabold">Região e dados cadastrais</h4>
+  {isLoading&&<p>Carregando ficha…</p>}
   {error&&<p role="alert" className="text-red-700">Não foi possível consultar a ficha regional.</p>}
-  {!isLoading&&!error&&<div className="space-y-1">
-   <p><strong>Região:</strong> {record?.profile.region||"Não cadastrada"}</p>
-   <p><strong>Estado (UF):</strong> {record?.details?.state||"Não cadastrado"}</p>
-   <p><strong>Cidade:</strong> {record?.details?.city||"Não cadastrada"}</p>
-   <p><strong>Cidades atendidas:</strong> {record?.details?.service_cities||"Não cadastradas"}</p>
-   <p><strong>Telefone:</strong> {record?.profile.phone||"Não cadastrado"}</p>
-   <p><strong>Endereço:</strong> {[record?.details?.street_address,record?.details?.neighborhood,record?.details?.postal_code].filter(Boolean).join(" · ")||"Não cadastrado"}</p>
-   <p><strong>CPF:</strong> {record?.details?.cpf||"Não cadastrado"}</p>
-   <p><strong>RG:</strong> {record?.details?.rg||"Não cadastrado"}</p>
-  </div>}
-  {map?<a href={map} target="_blank" rel="noreferrer" className="block rounded-lg border border-blue-200 bg-white p-2"><img src={map} alt={`Mapa de atuação de ${name}`} className="max-h-80 w-full object-contain"/><span className="mt-1 block text-center text-xs font-bold">Ampliar mapa de atuação</span></a>:<p className="rounded-lg bg-white p-3 text-xs text-slate-600">Não há imagem de mapa vinculada a este representante.</p>}
+  {!isLoading&&!error&&!record&&<p className="text-xs text-slate-600">Este representante não possui uma ficha regional vinculada. O cadastro comercial permanece editável acima.</p>}
+  {record&&initialized&&<>
+   {fields.map(field=><label key={field.key} className="block text-sm font-bold">{field.label}<input value={values[field.key]??""} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal"/></label>)}
+   <button type="button" disabled={saving} onClick={()=>void saveRegion()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-3 font-bold text-white disabled:opacity-50">{saving?"Salvando dados…":"Salvar dados regionais e cadastrais"}</button>
+  </>}
+  {map&&<a href={map} target="_blank" rel="noreferrer" className="block rounded-lg border border-blue-200 bg-white p-2"><img src={map} alt={`Mapa de atuação de ${name}`} className="max-h-80 w-full object-contain"/><span className="mt-1 block text-center text-xs font-bold">Ampliar mapa de atuação</span></a>}
  </section>;
 }
