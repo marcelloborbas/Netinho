@@ -330,12 +330,19 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
   </div>
 
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Ficha do representante comercial</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
-   <section className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4"><h4 className="text-lg font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
-
+   <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+    <h3 className="mb-4 text-base font-black text-[#102a52]">Identificação e acesso</h3>
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(160px,1fr)_minmax(130px,1fr)]">
+     <label className="block text-sm font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+     <label className="block text-sm font-bold">Status / perfil<select value="Representante" disabled className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-700"><option>Representante</option></select><span className="mt-1 block text-xs font-normal text-slate-500">Cadastro comercial; para mudar o perfil, vincule uma conta de acesso.</span></label>
+     <label className="block text-sm font-bold">Situação<select value={active?"ativo":"inativo"} onChange={e=>setActive(e.target.value==="ativo")} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
+    </div>
+    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+     <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+    </div>
+   </section>
    <RepresentativeDetails name={representative.full_name} email={representative.email} representativeId={representative.id} />
-   <label className="block text-sm font-bold">Nome<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
-   <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
-   <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Status ativo</label>
+   <section className="rounded-xl border border-amber-300 bg-amber-50 p-4"><h4 className="text-base font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
    <p className="text-xs text-slate-600">Este é um cadastro comercial ainda não vinculado à ficha de usuário. Sua exclusão não apaga uma conta Google ou outros registros.</p>
    <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white disabled:opacity-50">Salvar ficha e comissão</button>
   </div></div></div>}
