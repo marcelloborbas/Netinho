@@ -178,8 +178,8 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   setBusy(true);
   const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:role,p_active:active,p_uf:uf,p_cities:cities,p_supervisor:supervisor||null} as never);
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
-  const {error:profileError}=await supabase.from("profiles").update({full_name:name.trim(),phone:phone.trim()||null}).eq("id",person.id);
-  if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não: "+profileError.message);onSaved();return;}
+  const {data:updatedProfile,error:profileError}=await supabase.from("profiles").update({full_name:name.trim(),phone:phone.trim()||null}).eq("id",person.id).select("id").maybeSingle();
+  if(profileError||!updatedProfile){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
   if(sales){
    const parsed=commissionRate === "" ? null : Number(commissionRate);
    if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
@@ -195,10 +195,10 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
    if(uploaded.error){setBusy(false);toast.error("Erro ao enviar mapa: "+uploaded.error.message);return;}
    image=supabase.storage.from("territory-maps").getPublicUrl(path).data.publicUrl;
   }
-  const {error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"});
+  const {data:savedTerritory,error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"}).select("user_id").maybeSingle();
   setBusy(false);
-  if(territoryError){toast.error("Permissões salvas, mas região/mapa não: "+territoryError.message);return;}
-  setMapUrl(image);setMapFile(null);toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
+  if(territoryError||!savedTerritory){toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
+  setMapUrl(image);setMapFile(null);await qc.invalidateQueries({queryKey:["person-territory",person.id]});toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <div className="flex items-start justify-between gap-3">
@@ -296,8 +296,8 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
  async function save(){
   if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
-  const {error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id);
-  if(error){setBusy(false);toast.error("Não foi possível salvar: "+error.message);return;}
+  const {data:savedRepresentative,error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id).select("id").maybeSingle();
+  if(error||!savedRepresentative){setBusy(false);toast.error("A ficha não foi atualizada: "+(error?.message??"O banco não autorizou a alteração."));return;}
   const rate=commissionRate===""?null:Number(commissionRate);
   const {error:rateError}=await supabase.rpc("admin_set_commercial_representative_commission" as never,{p_representative:representative.id,p_rate:rate} as never);
   setBusy(false);
@@ -353,6 +353,7 @@ function RepresentativeDetails({name,email}:{name:string;email:string}) {
   queryFn:async()=>{
    const {data:profiles,error:profileError}=await supabase.from("representative_profiles").select("slug,full_name,email,phone,region");
    if(profileError)throw profileError;
+   if(!savedProfile)throw new Error("O banco não autorizou a atualização da região ou telefone.");
    const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").trim().toLowerCase();
    const profile=profiles?.find(p=>!!email&&norm(p.email)===norm(email))??profiles?.find(p=>norm(p.full_name)===norm(name));
    if(!profile)return null;
@@ -382,11 +383,12 @@ function RepresentativeDetails({name,email}:{name:string;email:string}) {
   if(!record)return;
   setSaving(true);
   try{
-   const {error:profileError}=await supabase.from("representative_profiles").update({region:values.region??"",phone:values.phone??""}).eq("slug",record.profile.slug);
+   const {data:savedProfile,error:profileError}=await supabase.from("representative_profiles").update({region:values.region??"",phone:values.phone??""}).eq("slug",record.profile.slug).select("slug").maybeSingle();
    if(profileError)throw profileError;
    const details={city:values.city??"",state:values.state??"",service_cities:values.service_cities??"",street_address:values.street_address??"",neighborhood:values.neighborhood??"",postal_code:values.postal_code??"",cpf:values.cpf??"",rg:values.rg??""};
-   const {error:detailError}=await supabase.from("representative_private_details").upsert({slug:record.profile.slug,...details},{onConflict:"slug"});
+   const {data:savedDetails,error:detailError}=await supabase.from("representative_private_details").upsert({slug:record.profile.slug,...details},{onConflict:"slug"}).select("slug").maybeSingle();
    if(detailError)throw detailError;
+   if(!savedDetails)throw new Error("O banco não confirmou a atualização dos dados cadastrais.");
    toast.success("Dados regionais e cadastrais atualizados.");
    await qc.invalidateQueries({queryKey:["admin-representative-detail",name,email]});
   }catch(e){toast.error("Não foi possível salvar os dados da ficha: "+(e instanceof Error?e.message:String(e)));}
