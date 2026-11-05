@@ -1,3 +1,4 @@
+import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +8,7 @@ export const Route = createFileRoute("/_authenticated/vendedores")({
 function Vendedores() {
   const { data: access } = useQuery(accessQuery);
   return <section className="surface-card mx-auto max-w-4xl space-y-4 p-6">
+      <AdminPageNavigation/>
 
     <p className="text-muted-foreground">Gestão de vendedores e representantes comerciais.</p>
     {access?.level === 1 ? <>
