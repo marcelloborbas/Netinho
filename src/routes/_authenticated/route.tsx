@@ -21,16 +21,21 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ context, location }) => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user && !["/catalogo", "/representantes"].includes(location.pathname)) throw redirect({ to: "/auth" });
-    if (!data.user) return { user: null, access: null };
-    if (data.user) draftActions.switchAccount(data.user.id);
+    // A sessão local evita redirecionar para /auth durante uma falha transitória
+    // de getUser; as permissões continuam verificadas pela RPC no servidor.
+    const { data: sessionData } = await supabase.auth.getSession();
+    const sessionUser = sessionData.session?.user ?? null;
+    if (!sessionUser && !["/catalogo", "/representantes"].includes(location.pathname)) {
+      throw redirect({ to: "/auth" });
+    }
+    if (!sessionUser) return { user: null, access: null };
+    draftActions.switchAccount(sessionUser.id);
     const access = await context.queryClient.fetchQuery(accessQuery);
     if (location.pathname === "/admin" || location.pathname === "/admin-gestao") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
     }
     if (!access.can_sell && access.level !== 1 && !["/catalogo", "/representantes"].includes(location.pathname)) throw redirect({ to: "/catalogo" });
-    return { user: data.user, access };
+    return { user: sessionUser, access };
   },
   component: AppShell,
 });
