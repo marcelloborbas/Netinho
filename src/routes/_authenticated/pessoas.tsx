@@ -178,8 +178,8 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   setBusy(true);
   const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:role,p_active:active,p_uf:uf,p_cities:cities,p_supervisor:supervisor||null} as never);
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
-  const {data:updatedProfile,error:profileError}=await supabase.from("profiles").update({full_name:name.trim(),phone:phone.trim()||null}).eq("id",person.id).select("id").maybeSingle();
-  if(profileError||!updatedProfile){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
+  const {error:profileError}=await supabase.rpc("admin_update_person_contact" as never,{p_user:person.id,p_name:name.trim(),p_phone:phone.trim()} as never);
+  if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
   if(sales){
    const parsed=commissionRate === "" ? null : Number(commissionRate);
    if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
