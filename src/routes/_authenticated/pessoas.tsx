@@ -45,6 +45,33 @@ function Pessoas() {
  }});
  const {data:commissionRows=[],error:ratesError}=useQuery({queryKey:["admin-all-person-commissions"],enabled:!!me?.isAdmin,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("user_id,rate");if(error)throw error;return (data??[]) as {user_id:string;rate:number}[];}});
  const {data:commercialRates=[],error:commercialRatesError}=useQuery({queryKey:["admin-all-commercial-commissions"],enabled:!!me?.isAdmin,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("representative_id,rate");if(error)throw error;return (data??[]) as {representative_id:string;rate:number}[];}});
+ const {data:monthTotals={},error:monthTotalsError,isLoading:monthTotalsLoading}=useQuery({
+  queryKey:["admin-monthly-seller-totals",new Date().toLocaleDateString("en-CA",{timeZone:"America/Sao_Paulo"}).slice(0,7)],
+  enabled:!!me?.isAdmin,
+  queryFn:async()=>{
+   const today=new Date();
+   const dateParts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(today);
+   const y=Number(dateParts.find(p=>p.type==="year")?.value);
+   const m=Number(dateParts.find(p=>p.type==="month")?.value);
+   const target=y+"-"+String(m).padStart(2,"0");
+   const begin=new Date(Date.UTC(y,m-1,1)-86400000).toISOString();
+   const finish=new Date(Date.UTC(y,m,1)+86400000).toISOString();
+   const totals:Record<string,number>={};
+   for(let offset=0;;offset+=500){
+    const result=await supabase.from("orders").select("seller_id,created_at,total,kind,status").gte("created_at",begin).lt("created_at",finish).order("created_at").range(offset,offset+499);
+    if(result.error)throw result.error;
+    for(const order of result.data??[]){
+     if(!order.seller_id||order.kind==="orcamento"||order.status==="cancelled")continue;
+     const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(new Date(order.created_at));
+     if(parts.find(p=>p.type==="year")?.value+"-"+parts.find(p=>p.type==="month")?.value!==target)continue;
+     totals[order.seller_id]=(totals[order.seller_id]??0)+Number(order.total??0);
+    }
+    if((result.data??[]).length<500)break;
+   }
+   return totals;
+  }
+ });
+ const monthlySalesFor=(id:string)=>monthTotalsLoading?"Calculando…":monthTotalsError?"Indisponível":(monthTotals[id]??0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
  const rateForPerson=(id:string)=>commissionRows.find(x=>x.user_id===id)?.rate;
  const rateForRepresentative=(id:string)=>commercialRates.find(x=>x.representative_id===id)?.rate;
  const matchesRate=(rate:number|undefined)=>commissionFilter==="Todas"||(commissionFilter==="Definida"?rate!=null:commissionFilter==="Não definida"?rate==null:rate!=null&&Number(rate)===Number(commissionFilter));
@@ -56,7 +83,7 @@ function Pessoas() {
  if(editing&&(selectedPerson||selectedRepresentative))return <main className="mx-auto min-h-[calc(100dvh-140px)] w-full max-w-3xl space-y-4 bg-[#f1f1f1] px-3 py-4 text-[#102a52]">
   <button type="button" onClick={()=>setEditing(null)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-bold"><ArrowLeft size={19}/>Voltar para PESSOAL</button>
   
-  {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
+  {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} monthlySales={monthlySalesFor(selectedPerson.id)} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} monthlySales="Sem vínculo com pedidos" editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
  </main>;
 
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
@@ -77,14 +104,14 @@ function Pessoas() {
   </div>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
   {[...people.filter(p=>(filterRole==="Todos"||p.site_role===filterRole)&&(statusFilter==="Todos"||(statusFilter==="Ativos"?p.access_active:!p.access_active))&&matchesRate(rateForPerson(p.id))&&(`${p.full_name} ${p.email}`).toLocaleLowerCase("pt-BR").includes(searchText.toLocaleLowerCase("pt-BR").trim())).map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>(filterRole==="Todos"||filterRole==="Representante")&&(statusFilter==="Todos"||(statusFilter==="Ativos"?rep.active:!rep.active))&&matchesRate(rateForRepresentative(rep.id))&&(`${rep.full_name} ${rep.email}`).toLocaleLowerCase("pt-BR").includes(searchText.toLocaleLowerCase("pt-BR").trim())&&!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
-   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
-   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
+   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
+   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} monthlySales="Sem vínculo com pedidos" onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
   {loadingRepresentatives&&<p>Carregando representantes…</p>}
   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
-function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];monthlySales:string;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
  const {data:me}=useQuery(meQuery);
  const qc=useQueryClient();
  const ownAccount=me?.id===person.id;
@@ -145,7 +172,7 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
-   <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}{(person.site_role==="Vendedor"||person.site_role==="Representante")&&<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commissionData==null?"Comissão: não definida":`Comissão: ${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span><span className="block text-sm font-semibold text-[#102a52]">{person.site_role}</span></span>
+   <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}{(person.site_role==="Vendedor"||person.site_role==="Representante")&&<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commissionData==null?"Comissão: não definida":`Comissão: ${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span><span className="block text-sm font-bold text-[#102a52]">Vendas do mês: {monthlySales}</span><span className="block text-sm font-semibold text-[#102a52]">{person.site_role}</span></span>
    <span className="shrink-0 text-right text-sm font-bold"><span className={person.access_active?"text-green-700":"text-red-700"}>{person.access_active?"Ativo":"Inativo"}</span></span>
   </button>
   <div className="mt-2 flex items-center justify-between gap-2">
@@ -223,7 +250,7 @@ function PersonCard({person,people,onSaved,onEdit,editingPage=false,onClose}:{pe
 }
 
 type CommercialRepresentative = {id:string;full_name:string;email:string;active:boolean};
-function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;monthlySales:string;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
  const [open,setOpen]=useState(editingPage);
  const [busy,setBusy]=useState(false);
  const [name,setName]=useState(representative.full_name);
@@ -254,7 +281,7 @@ function RepresentativeCard({representative,onSaved,onEdit,editingPage=false,onC
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commercialCommission==null?"Comissão: não definida":`Comissão: ${Number(commercialCommission).toLocaleString("pt-BR")}%`}</span></strong><span className="block break-all text-xs text-slate-600">{representative.email}</span><span className="block text-sm font-semibold text-[#102a52]">Representante</span></button>
+  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commercialCommission==null?"Comissão: não definida":`Comissão: ${Number(commercialCommission).toLocaleString("pt-BR")}%`}</span></strong><span className="block break-all text-xs text-slate-600">{representative.email}</span><span className="block text-sm font-bold text-[#102a52]">Vendas do mês: {monthlySales}</span><span className="block text-sm font-semibold text-[#102a52]">Representante</span></button>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar ficha</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
