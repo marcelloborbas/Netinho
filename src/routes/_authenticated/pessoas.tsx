@@ -397,9 +397,9 @@ function RepresentativeDetails({name,email,representativeId}:{name:string;email:
   if(!record)return;
   setSaving(true);
   try{
-   const {data:savedProfile,error:profileError}=await supabase.from("representative_profiles").update({region:values.region??"",phone:values.phone??""}).eq("slug",record.profile.slug).select("slug").maybeSingle();
+   const {data:savedProfile,error:profileError}=await supabase.from("representative_profiles").update({region:values["region"]??"",phone:values["phone"]??""}).eq("slug",record.profile.slug).select("slug").maybeSingle();
    if(profileError)throw profileError;
-   const details={city:values.city??"",state:values.state??"",service_cities:values.service_cities??"",street_address:values.street_address??"",neighborhood:values.neighborhood??"",postal_code:values.postal_code??"",cpf:values.cpf??"",rg:values.rg??""};
+   const details={city:values["city"]??"",state:values["state"]??"",service_cities:values["service_cities"]??"",street_address:values["street_address"]??"",neighborhood:values["neighborhood"]??"",postal_code:values["postal_code"]??"",cpf:values["cpf"]??"",rg:values["rg"]??""};
    const {data:savedDetails,error:detailError}=await supabase.from("representative_private_details").upsert({slug:record.profile.slug,...details},{onConflict:"slug"}).select("slug").maybeSingle();
    if(detailError)throw detailError;
    if(!savedDetails)throw new Error("O banco não confirmou a atualização dos dados cadastrais.");
