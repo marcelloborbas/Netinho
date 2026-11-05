@@ -101,7 +101,7 @@ function OrderPage() {
     window.speechSynthesis.speak(utterance);
     return () => window.speechSynthesis.cancel();
   }, [sentResult]);
-  const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : !actionChosen ? "actions" : "done";
+  const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : "actions";
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
     const footer = document.querySelector<HTMLElement>(".mobile-nav");
@@ -322,7 +322,7 @@ function OrderPage() {
 
   return (
     <div className="mx-auto w-full max-w-[640px] space-y-4 pb-5">
-      <style>{`@keyframes netinhoGuidePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(234,179,8,.38); } 50% { box-shadow: 0 0 0 7px rgba(234,179,8,.10); } } .netinho-guided-pulse { animation: netinhoGuidePulse 1.5s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .netinho-guided-pulse { animation: none; } }`}</style>
+      <style>{`@keyframes netinhoGuidePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.22), 0 0 10px rgba(220,38,38,.2); } 50% { box-shadow: 0 0 0 6px rgba(220,38,38,.12), 0 0 24px rgba(239,68,68,.7); } } .netinho-guided-pulse { animation: netinhoGuidePulse 1.5s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .netinho-guided-pulse { animation: none; } }`}</style>
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
           <div className="min-h-0 flex-1 overflow-hidden">
@@ -380,22 +380,22 @@ function OrderPage() {
         {[
           { label: "Cliente", done: !!d.customerId, active: pulseStep === "customer" },
           { label: "Pagamento", done: paymentChosen, active: pulseStep === "payment" },
-          { label: "Finalizar", done: actionChosen, active: pulseStep === "actions" },
+          { label: "Finalizar", done: false, active: pulseStep === "actions" },
         ].map((step, index) => (
-          <div key={step.label} className={`flex items-center justify-center gap-1.5 rounded-xl border px-1.5 py-2 text-[11px] font-extrabold sm:text-sm ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : step.active ? "border-[#e5b32d] bg-[#fff5d6] text-[#102a52]" : "border-slate-200 bg-white text-slate-500"}`}>
-            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] ${step.done ? "bg-emerald-700 text-white" : step.active ? "bg-[#102a52] text-white" : "bg-slate-200 text-slate-600"}`}>{step.done ? "✓" : index + 1}</span>
+          <div key={step.label} className={`flex items-center justify-center gap-1.5 rounded-xl border px-1.5 py-2 text-[11px] font-extrabold sm:text-sm ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : step.active ? "netinho-guided-pulse border-red-500 bg-red-50 text-red-800" : "border-slate-200 bg-white text-slate-500"}`}>
+            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] ${step.done ? "bg-emerald-700 text-white" : step.active ? "bg-red-600 text-white" : "bg-slate-200 text-slate-600"}`}>{step.done ? "✓" : index + 1}</span>
             {step.label}
           </div>
         ))}
       </div>
-      <section className={`surface-card grid gap-4 rounded-[22px] border-2 p-4 shadow-[0_8px_24px_rgba(16,42,82,.09)] sm:grid-cols-2 ${pulseStep === "customer" ? "netinho-guided-pulse border-amber-400 bg-[#fffdf5]" : "border-[#dce5f0] bg-white"}`}>
+      <section className={`surface-card grid gap-4 rounded-[22px] border-2 p-4 shadow-[0_8px_24px_rgba(16,42,82,.09)] sm:grid-cols-2 ${pulseStep === "customer" ? "netinho-guided-pulse border-red-500 bg-red-50" : d.customerId ? "border-emerald-400 bg-emerald-50" : "border-[#dce5f0] bg-white"}`}>
         <div className="space-y-1.5 sm:col-span-2">
           <div className="mb-2 flex items-center justify-between gap-2">
             <div>
               <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 01 · Identificação</p>
               <Label className="text-lg font-black uppercase tracking-wide text-[#102a52] sm:text-xl">CLIENTE *</Label>
             </div>
-            <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${d.customerId ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}`}>{d.customerId ? "✓ Selecionado" : "Pendente"}</span>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${d.customerId ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>{d.customerId ? "✓ Selecionado" : "Pendente"}</span>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
@@ -461,14 +461,14 @@ function OrderPage() {
         </div>
       </section>
 
-      <section className={`surface-card rounded-[22px] border-2 p-4 shadow-[0_8px_24px_rgba(16,42,82,.09)] ${pulseStep === "payment" ? "netinho-guided-pulse border-amber-400 bg-[#fffdf5]" : "border-[#dce5f0] bg-white"}`}>
+      <section className={`surface-card rounded-[22px] border-2 p-4 shadow-[0_8px_24px_rgba(16,42,82,.09)] ${pulseStep === "payment" ? "netinho-guided-pulse border-red-500 bg-red-50" : paymentChosen ? "border-emerald-400 bg-emerald-50" : "border-[#dce5f0] bg-white"}`}>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <div>
               <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 02 · Valores</p>
               <Label className="text-base font-extrabold text-[#102a52] sm:text-lg">Condição de pagamento</Label>
             </div>
-            <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${paymentChosen ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}`}>{paymentChosen ? "✓ Confirmada" : "Escolha uma opção"}</span>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${paymentChosen ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>{paymentChosen ? "✓ Confirmada" : "Escolha uma opção"}</span>
           </div>
           <Select
             value={d.paymentTerm}
@@ -489,7 +489,7 @@ function OrderPage() {
 
       </section>
 
-      <div className={`grid grid-cols-2 gap-2 rounded-[22px] border-2 p-3 shadow-sm sm:gap-3 ${pulseStep === "actions" ? "netinho-guided-pulse border-amber-400 bg-[#fffdf5]" : "border-[#dce5f0] bg-white"}`} aria-label="Ações do pedido">
+      <div className={`grid grid-cols-2 gap-2 rounded-[22px] border-2 p-3 shadow-sm sm:gap-3 ${pulseStep === "actions" ? "netinho-guided-pulse border-red-500 bg-red-50" : "border-[#dce5f0] bg-white"}`} aria-label="Ações do pedido">
         <div className="col-span-2 flex items-center justify-between pb-1">
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 03 · Próximo passo</p>
