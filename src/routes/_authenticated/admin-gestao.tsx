@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/admin-gestao")({
 
 const actions = [
   { label: "Pessoas e Comissões", description: "Perfis, comissões e áreas de atuação", to: "/pessoas", Icon: Users },
-  { label: "Pedidos", description: "Acompanhar pedidos e solicitações", to: "/pedidos", Icon: ClipboardList },
+  { label: "Pedidos", description: "Acompanhar pedidos e solicitações", to: "/admin-pedidos", Icon: ClipboardList },
   { label: "Clientes", description: "Consultar cadastros comerciais", to: "/clientes", Icon: UserRound },
   { label: "Vendedores", description: "Equipe e acompanhamento de vendas", to: "/vendedores", Icon: BriefcaseBusiness },
   { label: "Distribuidoras", description: "Parceiros e fornecedores", to: "/distribuidoras", Icon: Warehouse },
