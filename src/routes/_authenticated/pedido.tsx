@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { createPortal, flushSync } from "react-dom";
-import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck, Volume2 } from "lucide-react";
+import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck, Volume2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
@@ -494,24 +494,31 @@ function OrderPage() {
 
       </section>
 
-      <div className={`grid grid-cols-2 gap-2 rounded-[22px] border-2 p-3 shadow-sm sm:gap-3 ${pulseStep === "actions" ? "netinho-guided-pulse border-red-500 bg-red-50" : "border-[#dce5f0] bg-white"}`} aria-label="Ações do pedido">
-        <div className="col-span-2 flex items-center justify-between pb-1">
+      <section className={`rounded-[22px] border-2 p-3 shadow-sm sm:p-4 ${pulseStep === "actions" ? "netinho-guided-pulse border-red-500 bg-red-50" : "border-[#dce5f0] bg-white"}`} aria-label="Etapa 3: ações do pedido">
+        <div className="mb-3 flex items-center justify-between gap-3">
           <div>
-            <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 03 · Próximo passo</p>
-            <p className="text-sm font-extrabold text-[#102a52]">O que deseja fazer?</p>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 03 · Finalização</p>
+            <p className="text-sm font-extrabold text-[#102a52] sm:text-base">Escolha como continuar</p>
           </div>
-          <span className="rounded-full bg-[#e9f1fc] px-2.5 py-1 text-xs font-bold text-[#153d6d]">{d.items.length} {d.items.length === 1 ? "peça" : "peças"}</span>
+          <span className="shrink-0 rounded-lg bg-[#e9f1fc] px-2.5 py-1 text-xs font-bold text-[#153d6d]">{d.items.length} {d.items.length === 1 ? "peça" : "peças"}</span>
         </div>
-        <Button type="button" className="h-auto min-h-12 whitespace-normal rounded-xl border-0 bg-[#ea580c] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#c2410c] sm:text-base" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
-          Editar pedido
-        </Button>
-        <Button asChild className="h-auto min-h-12 whitespace-normal rounded-xl border-0 bg-[#166534] px-2 py-2 text-center text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#14532d] sm:text-base">
-          <Link to="/catalogo" search={{ modo: "venda" }} onClick={() => { setActionChosen(true); buttonSound(); }}>Continuar comprando</Link>
-        </Button>
-        <Button type="button" className="col-span-2 h-14 whitespace-normal rounded-xl bg-gradient-to-r from-[#0767b6] to-[#1596e5] shadow-[0_5px_14px_rgba(10,100,180,.25)] px-2 py-2 text-center text-base font-bold text-white transition-transform duration-150 hover:scale-[1.02] active:scale-95 hover:bg-[#0c70bc] sm:text-lg" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
-          Enviar PEDIDO
-        </Button>
-      </div>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          <Button type="button" className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#ea580c] p-2 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#c2410c] active:scale-95" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+            <Pencil className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
+            <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Editar pedido</span>
+          </Button>
+          <Button asChild className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#166534] p-2 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#14532d] active:scale-95">
+            <Link to="/catalogo" search={{ modo: "venda" }} onClick={() => { setActionChosen(true); buttonSound(); }}>
+              <ShoppingCart className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
+              <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Continuar comprando</span>
+            </Link>
+          </Button>
+          <Button type="button" className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#0767b6] p-2 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#0c70bc] active:scale-95 disabled:opacity-50" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
+            <ClipboardCheck className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
+            <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Enviar pedido</span>
+          </Button>
+        </div>
+      </section>
 
       <ul id="pedido-itens" className="space-y-2">
         {d.items.map((i) => {
