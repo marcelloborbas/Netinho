@@ -1,3 +1,4 @@
+import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -73,6 +74,7 @@ function Customers() {
 
   return (
     <div className="customers-showcase space-y-4 sm:space-y-5">
+      <AdminPageNavigation/>
       <section className="space-y-3 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Cadastro e lista de clientes">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p role="status" className="text-sm font-bold text-[#102a52]">{list.length} {list.length === 1 ? "cliente cadastrado" : "clientes cadastrados"}</p>
