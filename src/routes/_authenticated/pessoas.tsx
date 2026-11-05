@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trash2, Pencil, X, UserPlus, ArrowLeft } from "lucide-react";
+import { Trash2, Pencil, X, UserPlus, ArrowLeft, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -87,19 +87,19 @@ function Pessoas() {
  </main>;
 
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
-  <div className="flex justify-end gap-2"><button type="button" onClick={()=>setAdding(true)} className="inline-flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-[#d4af37] bg-white px-3 text-xs font-extrabold text-[#102a52]" aria-label="Adicionar nova pessoa"><UserPlus size={22}/>Adicionar</button></div>
+  
   {adding&&<div role="dialog" aria-modal="true" aria-label="Adicionar nova pessoa" className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="flex items-center justify-between"><h2 className="text-xl font-black">Adicionar pessoa</h2><button type="button" aria-label="Fechar" onClick={()=>setAdding(false)}><X size={22}/></button></div><p className="text-sm text-slate-600">Este formulário cria apenas um contato comercial, sem login nem permissões. Para atribuir Visitante, Vendedor, Representante ou Administrador, edite uma conta já cadastrada na lista de usuários.</p><label className="block text-sm font-bold">Nome completo<input value={newName} onChange={e=>setNewName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><label className="block text-sm font-bold">E-mail<input type="email" value={newEmail} onChange={e=>setNewEmail(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><button type="button" disabled={creating} onClick={()=>void addPerson()} className="min-h-12 w-full rounded-lg bg-[#102a52] px-4 font-bold text-white disabled:opacity-50">{creating?"Adicionando…":"Adicionar pessoa"}</button></div></div>}
   
   <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-3">
-   <h1 className="text-xl font-black">Pessoas e comissões</h1>
+   <div className="flex items-center justify-between gap-3"><h1 className="text-xl font-black">Pessoas e Comissões</h1><button type="button" onClick={()=>setAdding(true)} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-3 text-sm font-bold text-white"><UserPlus size={18}/>Adicionar</button></div>
    <input aria-label="Buscar por nome ou e-mail" type="search" value={searchText} onChange={e=>setSearchText(e.target.value)} placeholder="Buscar nome ou e-mail" className="min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/>
+   <div className="text-sm font-bold">Perfil e comissão</div>
    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
     <label className="text-xs font-bold">Perfil<select aria-label="Filtrar por perfil" value={filterRole} onChange={e=>setFilterRole(e.target.value as Role|"Todos")} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option value="Todos">Todos</option>{roles.map(role=><option key={role} value={role}>{role}</option>)}</select></label>
     <label className="text-xs font-bold">Comissão<select aria-label="Filtrar por comissão" value={commissionFilter} onChange={e=>setCommissionFilter(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option>Todas</option><option>Definida</option><option>Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(n=><option key={n} value={n}>{n.toLocaleString("pt-BR")}%</option>)}</select></label>
     <label className="text-xs font-bold">Situação<select aria-label="Filtrar por situação" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option>Todos</option><option>Ativos</option><option>Inativos</option></select></label>
    </div>
-   <div className="flex flex-wrap gap-3 text-sm font-semibold"><Link to="/clientes" className="text-blue-800 underline">Clientes cadastrados</Link><Link to="/distribuidoras" className="text-blue-800 underline">Fornecedores / distribuidoras</Link></div>
-   <p className="text-xs text-slate-600">Clientes comerciais e fornecedores têm cadastros próprios, separados dos usuários do site.</p>
+   
    {(ratesError||commercialRatesError)&&<p role="alert" className="text-xs font-semibold text-red-700">Não foi possível consultar todas as comissões. O filtro por comissão pode estar incompleto.</p>}
   </div>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
@@ -171,10 +171,14 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   setMapUrl(image);setMapFile(null);toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="flex min-h-12 w-full items-center justify-between gap-3 text-left">
-   <span className="min-w-0"><strong className="block break-words text-lg">{person.full_name||"Sem nome"}{(person.site_role==="Vendedor"||person.site_role==="Representante")&&<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commissionData==null?"Comissão: não definida":`Comissão: ${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</strong><span className="block break-all text-xs text-slate-600">{person.email}</span><span className="block text-sm font-bold text-[#102a52]">Vendas do mês: {monthlySales}</span><span className="block text-sm font-semibold text-[#102a52]">{person.site_role}</span></span>
-   <span className="shrink-0 text-right text-sm font-bold"><span className={person.access_active?"text-green-700":"text-red-700"}>{person.access_active?"Ativo":"Inativo"}</span></span>
-  </button>
+  <div className="flex items-start justify-between gap-3">
+    <div className="min-w-0 flex-1">
+      <div className="flex flex-wrap items-baseline gap-2"><strong className="break-words text-lg">{person.full_name||"Sem nome"}</strong>{(person.site_role==="Vendedor"||person.site_role==="Representante")&&<span className="whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 text-sm font-black text-[#102a52]">{commissionError?"—":commissionData==null?"—":`${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</div>
+      <div className="text-sm font-semibold text-[#102a52]">{person.site_role}</div>
+      <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
+    </div>
+    <div aria-label="Foto do usuário" className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]"><UserRound size={33}/></div>
+  </div>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar ficha</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${person.access_active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{person.access_active?"Ativo":"Inativo"}</span>
@@ -281,7 +285,14 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <button type="button" onClick={()=>onEdit?.()} aria-expanded={open||editingPage} className="w-full text-left"><strong className="block break-words text-lg">{representative.full_name}<span className="ml-2 inline-block whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 align-middle text-sm font-bold text-[#102a52]">{commissionError?"Comissão indisponível":commercialCommission==null?"Comissão: não definida":`Comissão: ${Number(commercialCommission).toLocaleString("pt-BR")}%`}</span></strong><span className="block break-all text-xs text-slate-600">{representative.email}</span><span className="block text-sm font-bold text-[#102a52]">Vendas do mês: {monthlySales}</span><span className="block text-sm font-semibold text-[#102a52]">Representante</span></button>
+  <div className="flex items-start justify-between gap-3">
+    <div className="min-w-0 flex-1">
+      <div className="flex flex-wrap items-baseline gap-2"><strong className="break-words text-lg">{representative.full_name}</strong><span className="whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 text-sm font-black text-[#102a52]">{commissionError?"—":commercialCommission==null?"—":`${Number(commercialCommission).toLocaleString("pt-BR")}%`}</span></div>
+      <div className="text-sm font-semibold text-[#102a52]">Representante</div>
+      <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
+    </div>
+    <div aria-label="Foto do representante" className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]"><UserRound size={33}/></div>
+  </div>
   <div className="mt-2 flex items-center justify-between gap-2">
    <button type="button" onClick={()=>onEdit?.()} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar ficha</button>
    <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
