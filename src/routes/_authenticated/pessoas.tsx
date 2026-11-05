@@ -1,3 +1,4 @@
+import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -81,6 +82,7 @@ function Pessoas() {
  const selectedRepresentative=representatives.find(p=>editing===`representative:${p.id}`);
  const refresh=()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});};
  if(editing&&(selectedPerson||selectedRepresentative))return <main className="mx-auto min-h-[calc(100dvh-140px)] w-full max-w-3xl space-y-4 bg-[#f1f1f1] px-3 py-4 text-[#102a52]">
+      <AdminPageNavigation/>
   <button type="button" onClick={()=>setEditing(null)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-bold"><ArrowLeft size={19}/>Voltar para PESSOAL</button>
   
   {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} monthlySales={monthlySalesFor(selectedPerson.id)} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} monthlySales="Sem vínculo com pedidos" editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
