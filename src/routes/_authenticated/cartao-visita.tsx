@@ -1,6 +1,23 @@
 import { pageHead } from "@/lib/page-head";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
+const normalizeName = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const publishedCards: Record<string, string> = {
+  "abdnego eugenio": "cartao-abdnego-eugenio.webp",
+  "abdenego eugenio": "cartao-abdnego-eugenio.webp",
+  "domingos rodrigues": "cartao-domingos-rodrigues.webp",
+  "jhonatas jose": "cartao-jhonatas-jose.webp",
+  "jose justino": "cartao-jose-justino.webp",
+  "livaldo silva": "cartao-livaldo-silva.webp",
+  "livaldo de souza silva": "cartao-livaldo-silva.webp",
+  "luciano da silva": "cartao-luciano-da-silva.webp",
+  "marcello borba": "cartao-marcello-borba.webp",
+  "marcello borba sampaio": "cartao-marcello-borba.webp",
+  "osmair zanetti": "cartao-osmair-zanetti.webp",
+  "romullo sousa": "cartao-romullo-sousa.webp",
+  "jose burgato": "jose-burgato.webp",
+};
 import { Share2, Download, Contact, ImageOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -19,12 +36,18 @@ function BusinessCardPage() {
   const [loading,setLoading]=useState(true);
   useEffect(()=>{let active=true;void supabase.auth.getUser().then(({data})=>{if(active)setUserId(data.user?.id??"");});return()=>{active=false;};},[]);
   useEffect(()=>{
-    if(!userId)return;
+    if(!userId || !access)return;
     let active=true;
     const stored=supabase.storage.from("person-photos").getPublicUrl(userId+"/cartao.webp").data.publicUrl;
+    const matchedName = normalizeName(access.name ?? "");
+    const publishedFile = publishedCards[matchedName];
     const extensions=["webp","png","jpg","jpeg"];
     void (async()=>{
   try { const response=await fetch(stored,{method:"HEAD",cache:"no-store"}); if(response.ok && (response.headers.get("content-type")??"").startsWith("image/")) {if(active){setImage(stored);setLoading(false);}return;} } catch { /* tenta cartão publicado */ }
+      if (publishedFile) {
+        const url = "/cartoes-digitais/" + encodeURIComponent(publishedFile);
+        try { const response = await fetch(url, {method:"HEAD",cache:"no-store"}); if(response.ok && (response.headers.get("content-type")??"").startsWith("image/")) { if(active){setImage(url);setLoading(false);}return; } } catch { /* tenta alternativas */ }
+      }
       for(const ext of extensions){
         const url="/images/cartoes-visita/"+encodeURIComponent(userId)+"."+ext;
         try{const response=await fetch(url,{method:"HEAD"});if(response.ok && (response.headers.get("content-type")??"").startsWith("image/")){if(active){setImage(url);setLoading(false);}return;}}catch{/* tenta a próxima extensão */}
@@ -32,7 +55,7 @@ function BusinessCardPage() {
       if(active){setImage("");setLoading(false);}
     })();
     return()=>{active=false;};
-  },[userId]);
+  },[userId,access?.name]);
   const isSales=access?.attribution==="Representante"||access?.attribution==="Vendedor"||access?.can_sell===true;
   const getCardFile=async()=>{
     const response=await fetch(image);
@@ -71,6 +94,6 @@ function BusinessCardPage() {
         <button type="button" onClick={()=>void share()} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#102a52] px-2 text-sm font-bold text-white"><Share2 size={19}/> Compartilhar</button>
         <button type="button" onClick={()=>void download()} className="flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#102a52] px-2 text-sm font-bold"><Download size={19}/> Baixar imagem</button>
       </div>
-    </section>:<section className="flex flex-col items-center gap-3 rounded-2xl border-2 border-[#d4af37] bg-white p-6 text-center"><ImageOff size={40}/><h2 className="text-lg font-black">Cartão ainda não cadastrado</h2><p className="text-sm">A imagem do cartão deve ser adicionada ao repositório na pasta <code>public/images/cartoes-visita/</code>, com o ID da conta como nome do arquivo e extensão .webp, .png ou .jpg.</p><Contact size={24} className="text-[#d4af37]"/></section>}
+    </section>:<section className="flex flex-col items-center gap-3 rounded-2xl border-2 border-[#d4af37] bg-white p-6 text-center"><ImageOff size={40}/><h2 className="text-lg font-black">Cartão ainda não cadastrado</h2><p className="text-sm">O cartão deve estar publicado na pasta <code>public/cartoes-digitais/</code> e associado ao nome cadastrado na sua ficha. Caso já tenha sido enviado, solicite a vinculação do seu cartão ao administrador.</p><Contact size={24} className="text-[#d4af37]"/></section>}
   </main>;
 }
