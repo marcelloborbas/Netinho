@@ -1,7 +1,8 @@
 import { pageHead } from "@/lib/page-head";
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileText, Eye, FolderOpen } from "lucide-react";
+import { Download, FileText, Eye, FolderOpen, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/_authenticated/downloads")({
   head: () => pageHead("/downloads", "Baixar documentos | Netinho Auto Parts", "Catálogo FCO, formulário de pedido e ficha cadastral."),
@@ -35,6 +36,7 @@ function DownloadsPage() {
         return <div key={filename} className="rounded-xl border border-slate-200 p-3"><p className="break-words text-sm font-semibold">{filename}</p><div className="mt-3 grid grid-cols-2 gap-3"><a href={url} download={filename} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#102a52] px-2 py-3 text-sm font-bold text-white"><Download size={18}/> Baixar</a><a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#102a52] px-2 py-3 text-sm font-bold"><Eye size={18}/> Visualizar</a></div></div>;
       })}</div>}
     </section>
+    <a href={`https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Gostaria de falar com a equipe sobre os materiais de apoio.")}`} target="_blank" rel="noopener noreferrer" aria-label="Falar com a Netinho pelo WhatsApp" className="flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-green-700 bg-[#16803e] px-4 py-3 text-center text-base font-bold text-white shadow-md transition hover:bg-[#126a34]"><MessageCircle size={25} aria-hidden="true"/> Falar com a Netinho pelo WhatsApp</a>
     {documents.map(doc => {
       const url = "/downloads/" + encodeURIComponent(doc.filename);
       return <section key={doc.filename} className="rounded-2xl border border-[#d4af37] bg-white p-4 shadow-md">
