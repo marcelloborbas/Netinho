@@ -261,7 +261,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
      <label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     </div>
    </section>
-   <RepresentativeDetails name={person.full_name} email={person.email} />
+   <RepresentativeDetails name={person.full_name} email={person.email} representativeId={person.id} />
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
    <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
     <h3 className="text-lg font-black">Comissão individual sobre vendas</h3>
@@ -397,9 +397,9 @@ function RepresentativeDetails({name,email,representativeId}:{name:string;email:
   if(!record)return;
   setSaving(true);
   try{
-   const {data:savedProfile,error:profileError}=await supabase.from("representative_profiles").update({region:values.region??"",phone:values.phone??""}).eq("slug",record.profile.slug).select("slug").maybeSingle();
+   const {data:savedProfile,error:profileError}=await supabase.from("representative_profiles").update({region:values["region"]??"",phone:values["phone"]??""}).eq("slug",record.profile.slug).select("slug").maybeSingle();
    if(profileError)throw profileError;
-   const details={city:values.city??"",state:values.state??"",service_cities:values.service_cities??"",street_address:values.street_address??"",neighborhood:values.neighborhood??"",postal_code:values.postal_code??"",cpf:values.cpf??"",rg:values.rg??""};
+   const details={city:values["city"]??"",state:values["state"]??"",service_cities:values["service_cities"]??"",street_address:values["street_address"]??"",neighborhood:values["neighborhood"]??"",postal_code:values["postal_code"]??"",cpf:values["cpf"]??"",rg:values["rg"]??""};
    const {data:savedDetails,error:detailError}=await supabase.from("representative_private_details").upsert({slug:record.profile.slug,...details},{onConflict:"slug"}).select("slug").maybeSingle();
    if(detailError)throw detailError;
    if(!savedDetails)throw new Error("O banco não confirmou a atualização dos dados cadastrais.");

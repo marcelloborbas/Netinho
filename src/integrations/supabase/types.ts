@@ -41,6 +41,94 @@ export type Database = {
         }
         Relationships: []
       }
+      commercial_representative_commission_rates: {
+        Row: {
+          rate: number
+          representative_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          rate: number
+          representative_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          rate?: number
+          representative_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commercial_representative_commission_rat_representative_id_fkey"
+            columns: ["representative_id"]
+            isOneToOne: true
+            referencedRelation: "commercial_representatives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commercial_representative_details: {
+        Row: {
+          address_number: string
+          city: string
+          cpf: string
+          map_url: string
+          neighborhood: string
+          phone: string
+          postal_code: string
+          region: string
+          representative_id: string
+          rg: string
+          service_cities: string
+          state: string
+          street_address: string
+          updated_at: string
+        }
+        Insert: {
+          address_number?: string
+          city?: string
+          cpf?: string
+          map_url?: string
+          neighborhood?: string
+          phone?: string
+          postal_code?: string
+          region?: string
+          representative_id: string
+          rg?: string
+          service_cities?: string
+          state?: string
+          street_address?: string
+          updated_at?: string
+        }
+        Update: {
+          address_number?: string
+          city?: string
+          cpf?: string
+          map_url?: string
+          neighborhood?: string
+          phone?: string
+          postal_code?: string
+          region?: string
+          representative_id?: string
+          rg?: string
+          service_cities?: string
+          state?: string
+          street_address?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commercial_representative_details_representative_id_fkey"
+            columns: ["representative_id"]
+            isOneToOne: true
+            referencedRelation: "commercial_representatives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commercial_representatives: {
         Row: {
           active: boolean
@@ -282,6 +370,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      person_territories: {
+        Row: {
+          city_base: string
+          map_url: string
+          region: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city_base?: string
+          map_url?: string
+          region?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city_base?: string
+          map_url?: string
+          region?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
@@ -569,6 +681,10 @@ export type Database = {
     }
     Functions: {
       access_context: { Args: never; Returns: Json }
+      admin_set_commercial_representative_commission: {
+        Args: { p_rate: number; p_representative: string }
+        Returns: undefined
+      }
       admin_set_person: {
         Args: {
           p_active: boolean
@@ -589,6 +705,10 @@ export type Database = {
         Returns: undefined
       }
       admin_supplier_commissions: { Args: never; Returns: Json }
+      admin_update_person_contact: {
+        Args: { p_name: string; p_phone: string; p_user: string }
+        Returns: undefined
+      }
       can_sell: { Args: never; Returns: boolean }
       catalog_products: { Args: never; Returns: Json }
       create_order: { Args: { payload: Json }; Returns: string }
