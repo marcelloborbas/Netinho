@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { categoriesQuery, productsQuery } from "@/lib/queries";
-import { Home, Search, ShoppingCart, ClipboardList, CircleHelp, LogOut, UserRound, Settings, ShieldCheck, Download } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, CircleHelp, LogOut, UserRound, Settings, ShieldCheck, Download, Contact } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -74,7 +74,8 @@ export function PublicFooter() {
   return <>
     {menuOpen && <button type="button" aria-label="Fechar menu do usuário" className="fixed inset-0 z-[90] bg-black/20" onClick={() => setMenuOpen(false)} />}
     {menuOpen && <div role="menu" aria-label="Opções do usuário" className="fixed bottom-[76px] right-2 z-[100] w-56 max-w-[calc(100vw-16px)] rounded-2xl border-2 border-[#d4af37] bg-white p-2 text-[#102a52] shadow-2xl">
-      <div className="border-b border-slate-200 px-3 py-2"><div className="text-xs text-slate-500">Nome de usuário</div><div className="text-sm font-bold break-words">{user?.name ?? "Visitante"}</div><div className="mt-2 text-xs text-slate-500">Status</div><div className="text-sm font-semibold text-[#102a52]">{status}</div></div>
+      <div className="border-b border-slate-200 px-3 py-3"><div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"><strong className="break-words">{user?.name ?? "Visitante"}</strong><span className="font-semibold text-[#8a6516]">— {status}</span></div></div>
+      <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Contact size={19}/> Cartão de visita</Link>
       <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={19}/> Ajuda</button>
       <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Download size={19}/> Downloads</Link>
       {access?.level === 1 && <Link role="menuitem" to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Settings size={19}/> Administração</Link>}
@@ -86,9 +87,8 @@ export function PublicFooter() {
         <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className="text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]" />{label}
         {pathname === to && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#ffd43b] shadow-[0_0_9px_2px_rgba(255,212,59,0.65)]"/>}
       </Link>)}
-      <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[13px] font-semibold text-white hover:text-[#ffdc55]">
-        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-[47px] w-[47px] rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={38} className="rounded-full border border-[#ffd43b] p-1 text-[#ffd43b]"/>}
-        <span>Usuário</span>
+      <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-0 py-1 text-[13px] font-semibold text-white hover:text-[#ffdc55]">
+        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-[61px] w-[61px] rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={49} className="rounded-full border border-[#ffd43b] p-1 text-[#ffd43b]"/>}
       </button>
     </nav>
   </>;
