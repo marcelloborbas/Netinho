@@ -423,6 +423,7 @@ function RepresentativeDetails({name,email,representativeId}:{name:string;email:
 }
 
 function CommercialDetailsForm({representativeId}:{representativeId:string}) {
+  const validRepresentativeId=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(representativeId??"");
  const qc=useQueryClient();
  const [values,setValues]=useState<Record<string,string>>({});
  const [busy,setBusy]=useState(false);
