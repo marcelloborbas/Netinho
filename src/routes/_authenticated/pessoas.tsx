@@ -330,7 +330,6 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
   </div>
 
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Ficha do representante comercial</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
-   <h3 className="text-lg font-extrabold">Ficha do representante comercial</h3>
    <section className="rounded-xl border-2 border-amber-400 bg-amber-50 p-4"><h4 className="text-lg font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
 
    <RepresentativeDetails name={representative.full_name} email={representative.email} />
@@ -353,7 +352,6 @@ function RepresentativeDetails({name,email}:{name:string;email:string}) {
   queryFn:async()=>{
    const {data:profiles,error:profileError}=await supabase.from("representative_profiles").select("slug,full_name,email,phone,region");
    if(profileError)throw profileError;
-   if(!savedProfile)throw new Error("O banco não autorizou a atualização da região ou telefone.");
    const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").trim().toLowerCase();
    const profile=profiles?.find(p=>!!email&&norm(p.email)===norm(email))??profiles?.find(p=>norm(p.full_name)===norm(name));
    if(!profile)return null;
