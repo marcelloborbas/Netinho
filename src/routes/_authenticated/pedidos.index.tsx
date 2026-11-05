@@ -1,3 +1,4 @@
+import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MonthlySalesReport } from "./pedidos.relatorio";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -78,6 +79,7 @@ function Orders() {
   const totalPedidos = list.filter(o => o.kind !== "orcamento").reduce((sum,o) => sum + Number(o.total || 0),0);
   return (
     <div className="meus-pedidos-page mx-auto w-full max-w-4xl space-y-4 px-2 pb-28 sm:px-4">
+      <AdminPageNavigation/>
       <h1 className="rounded-[24px] border-[3px] border-[#f3b51c] bg-gradient-to-b from-[#0755a5] to-[#061c44] px-3 py-5 text-center text-[clamp(1.5rem,6vw,2.2rem)] font-black uppercase text-[#ffcd42] shadow-lg">MINHAS VENDAS</h1>
       <Link to="/pedidos/relatorio" className="flex min-h-20 items-center justify-center gap-3 rounded-[22px] border-[3px] border-[#f2bf37] bg-white px-4 py-4 text-center text-base font-black uppercase text-[#102a52] shadow-sm hover:bg-blue-50"><ChartColumnIncreasing size={22}/> Relatório de Vendas por Cliente e Mês</Link>
       <section className="rounded-[24px] border-[3px] border-red-500 bg-gradient-to-br from-[#f91515] to-[#b90000] px-3 py-5 text-center text-white shadow-lg" aria-label="Total dos pedidos realizados"><p className="text-sm font-bold uppercase tracking-wide">Total das vendas realizadas</p><p className="mt-1 text-[clamp(2rem,8vw,3.5rem)] font-black">{brl(totalPedidos)}</p></section>
