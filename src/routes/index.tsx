@@ -126,10 +126,10 @@ function Home() {
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
-        <section className="relative isolate min-h-[310px] overflow-hidden bg-[#071e3c] sm:min-h-[380px] lg:min-h-[430px]" aria-label="Boas-vindas">
+      <main className="relative mx-auto flex w-full max-w-[1680px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
+        <section className="relative isolate min-h-[310px] overflow-hidden bg-[#071e3c] sm:min-h-[380px] lg:min-h-[390px] xl:min-h-[440px]" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
-          <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[380px] sm:px-8 sm:pb-8 lg:min-h-[430px] lg:px-12">
+          <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[380px] sm:px-8 sm:pb-8 lg:min-h-[390px] xl:min-h-[440px] lg:px-12">
             <p className="max-w-full break-words text-[clamp(1.65rem,4.2vw,3.75rem)] leading-[1.12] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
             <p className="mt-1 max-w-full break-words text-[clamp(1.35rem,3vw,2.8rem)] leading-[1.2] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
             <p className="max-w-full break-words text-[clamp(1.35rem,3vw,2.8rem)] leading-[1.2] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
@@ -138,7 +138,7 @@ function Home() {
         <section className="mx-2 overflow-hidden rounded-[14px] border border-[#5aafe9] bg-[#061b39] shadow-[0_0_14px_#40a9ff66] sm:mx-4" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Montadoras">
+        <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4 lg:gap-5 lg:px-6" aria-label="Montadoras">
           {[
             {name:"Volkswagen",slug:"volkswagen",image:"/images/montadoras/volkswagen.webp"},
             {name:"Fiat",slug:"fiat",image:"/images/montadoras/fiat.webp"},
@@ -165,10 +165,10 @@ function Home() {
             onClick={() => void navigate({to:"/catalogo"})}
             className="group relative flex min-w-0 items-stretch overflow-hidden rounded-xl border-2 border-[#2389c9] bg-[#062a58] p-0 text-center text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c]"
           >
-            <img src={brand.image} alt={brand.name} className="block aspect-[4/5] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
+            <img src={brand.image} alt={brand.name} className="block aspect-[4/5] h-full w-full object-cover object-center lg:aspect-[16/9] transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
           </button>)}
         </section>
-        <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4" aria-label="Peças e quantidades">
+        <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4 lg:gap-5 lg:px-6" aria-label="Peças e quantidades">
           {[
             {name:"Caixa de Direção",image:"/images/categorias/Caixa de Direção.webp",term:"caixa de direção"},
             {name:"Atuador de Embreagem",image:"/images/categorias/Atuador de Embreagem.webp",term:"atuador"},
