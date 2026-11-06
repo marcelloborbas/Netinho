@@ -319,10 +319,10 @@ function OrderPage() {
                   </div>
                 </section>
                 {/* Áreas clicáveis transparentes sobre os botões desenhados na própria arte. */}
-                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[7%] left-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
+                <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[3%] left-[7%] z-20 h-[19%] w-[42%] cursor-pointer touch-manipulation rounded-2xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
                 </button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[3%] right-[7%] z-20 h-[19%] w-[42%] cursor-pointer touch-manipulation rounded-2xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
                   <span className="sr-only">Enviar Pedido</span>
                 </button>
               </div>
