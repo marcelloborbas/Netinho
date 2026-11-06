@@ -135,7 +135,7 @@ function Home() {
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
             <p className="max-w-full break-words text-[clamp(2rem,7vw,7.5rem)] leading-[1.06] font-extrabold text-white drop-shadow-lg">
-              {salutation}, Sr. <span className="inline-block animate-pulse font-black drop-shadow-[0_0_16px_currentColor] motion-reduce:animate-none" style={{ color: dailyNameColor }}>{userName || "usuário"}</span>!
+              {salutation}, Sr. <span className="inline-block origin-left animate-pulse align-baseline font-black text-[2em] leading-none drop-shadow-[0_0_16px_currentColor] motion-reduce:animate-none" style={{ color: dailyNameColor }}>{userName || "usuário"}</span>!
             </p>
             <p className="mt-2 max-w-full break-words text-[clamp(1.8rem,5.5vw,5.6rem)] leading-[1.08] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
             <p className="max-w-full break-words text-[clamp(1.8rem,5.5vw,5.6rem)] leading-[1.08] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
