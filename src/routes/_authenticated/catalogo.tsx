@@ -487,21 +487,19 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     window.open("https://wa.me/" + target + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   }
   function buy() {
-    if (!canSell) { setShowContact(true); return; }
-    if (p.manufacturer === "HD") { toast.info("HD Embreagens: em breve."); return; }
-    const prices = { cash: p.price_cash, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
+    if (!canSell) { toast.info("Para fazer pedidos, é necessário acesso de Vendedor ou Representante."); void navigate({ to: "/pedido" }); return; }
+    if (p.manufacturer === "HD") { toast.info("HD Embreagens: em breve."); void navigate({ to: "/pedido" }); return; }
+    const prices = { cash: p.price_cash ?? 0, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
     if (Object.values(prices).every((value) => value == null)) {
-      toast.info("Peça sem preço cadastrado. Consulte a distribuidora.");
-      void navigate({ to: "/vendas", search: { modo: "venda", q: p.code, promo: "" } });
-      return;
+      toast.info("Peça sem preço cadastrado: valor provisório R$ 0,00. Confirme o preço com a distribuidora.");
     }
     if (p.id.startsWith("fco-campaign-")) {
-      void navigate({ to: "/vendas", search: { modo: "venda", q: p.code, promo: p.code } });
+      void navigate({ to: "/pedido" });
       return;
     }
     if (p.localOnly) {
       toast.info("Esta peça ainda não está cadastrada para pedidos. Consulte a distribuidora.");
-      void navigate({ to: "/vendas", search: { modo: "venda", q: p.code, promo: "" } });
+      void navigate({ to: "/pedido" });
       return;
     }
     const draft = draftActions.get();
@@ -537,7 +535,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0 flex-1 rounded-lg border border-[#d4af37] bg-[#102a52] px-2 py-2 text-[#f4cf60]">
           <span className="block text-[11px] font-bold">Preço à vista</span>
-          <strong className="block min-h-[1.5em] break-words text-lg font-black leading-tight !text-[#ffe083] sm:text-2xl" style={{ color: "#ffe083", opacity: 1, visibility: "visible" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) ? brl(Number(p.price_cash)) : "Sob consulta"}</strong>
+          <strong className="block min-h-[1.5em] break-words text-lg font-black leading-tight !text-[#ffe083] sm:text-2xl" style={{ color: "#ffe083", opacity: 1, visibility: "visible" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) ? brl(Number(p.price_cash)) : "R$ 0,00"}</strong>
         </div>
         <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#2588f9] bg-[#0878ed] text-white shadow-sm"><ShoppingCart size={21}/></button>
       </div>
