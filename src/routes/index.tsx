@@ -119,6 +119,9 @@ function Home() {
     return first && !["usuário", "usuario", "visitante", "sr.", "sr"].includes(first.toLowerCase()) ? first : "";
   };
   const userName = validName(accountName) || validName(access?.name || "") || validName(savedName);
+  // Alterna a cor do destaque a cada dia, sem depender de uma chamada externa.
+  const dailyNameColors = ["#ffe083", "#7ee7ff", "#ffc1e3", "#b8ffb0", "#ffd0a1", "#d4c3ff", "#fff2a6"];
+  const dailyNameColor = dailyNameColors[Math.floor(Date.now() / 86_400_000) % dailyNameColors.length];
   const status = access?.level === 1 || access?.attribution === "Administrador"
     ? "Administrador"
     : access?.attribution === "Representante" ? "Representante"
@@ -128,12 +131,14 @@ function Home() {
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative flex w-full max-w-none flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
-        <section className="relative isolate min-h-[310px] overflow-hidden bg-[#071e3c] sm:min-h-[380px] lg:min-h-[420px] xl:min-h-[460px]" aria-label="Boas-vindas">
+        <section className="relative isolate min-h-[420px] overflow-hidden bg-[#071e3c] sm:min-h-[520px] lg:min-h-[620px] xl:min-h-[700px]" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
-          <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[380px] sm:px-8 sm:pb-8 lg:min-h-[420px] xl:min-h-[460px] lg:px-12">
-            <p className="max-w-full break-words text-[clamp(1.65rem,4.2vw,3.75rem)] leading-[1.12] font-extrabold text-white drop-shadow-lg">{salutation}, Sr. {userName || "usuário"}!</p>
-            <p className="mt-1 max-w-full break-words text-[clamp(1.35rem,3vw,2.8rem)] leading-[1.2] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
-            <p className="max-w-full break-words text-[clamp(1.35rem,3vw,2.8rem)] leading-[1.2] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
+          <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
+            <p className="max-w-full break-words text-[clamp(2rem,7vw,7.5rem)] leading-[1.06] font-extrabold text-white drop-shadow-lg">
+              {salutation}, Sr. <span className="inline-block animate-pulse font-black drop-shadow-[0_0_16px_currentColor] motion-reduce:animate-none" style={{ color: dailyNameColor }}>{userName || "usuário"}</span>!
+            </p>
+            <p className="mt-2 max-w-full break-words text-[clamp(1.8rem,5.5vw,5.6rem)] leading-[1.08] font-bold text-white drop-shadow-lg">É bom tê-lo conosco.</p>
+            <p className="max-w-full break-words text-[clamp(1.8rem,5.5vw,5.6rem)] leading-[1.08] font-bold text-[#ffe083] drop-shadow-lg">Que seu dia seja abençoado!</p>
           </div>
         </section>
         <section className="mx-2 overflow-hidden rounded-[14px] border border-[#5aafe9] bg-[#061b39] shadow-[0_0_14px_#40a9ff66] sm:mx-4" aria-label="Promoções em destaque">
