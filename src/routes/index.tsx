@@ -12,22 +12,6 @@ import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/")({
   ssr: false,
-  head: () => ({ meta: [
-    { title: "Catálogo B2B e pedidos de autopeças | Netinho Auto Parts" },
-    { name: "description", content: "Consulte o catálogo de autopeças da Netinho Auto Parts e acesse sua área para montar e acompanhar pedidos B2B." },
-    { property: "og:type", content: "website" },
-    { property: "og:title", content: "Catálogo B2B e pedidos de autopeças | Netinho Auto Parts" },
-    { property: "og:description", content: "Consulte o catálogo de autopeças da Netinho Auto Parts e acesse sua área para montar e acompanhar pedidos B2B." },
-    { property: "og:url", content: "https://www.netinhoautoparts.live/" },
-    { property: "og:image", content: "https://www.netinhoautoparts.live/images/netinho-compartilhar.png?v=20261104-2" },
-    { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: "601" },
-      { property: "og:image:height", content: "601" },
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: "Catálogo B2B e pedidos de autopeças | Netinho Auto Parts" },
-    { name: "twitter:description", content: "Consulte o catálogo de autopeças da Netinho Auto Parts e acesse sua área para montar e acompanhar pedidos B2B." },
-    { name: "twitter:image", content: "https://www.netinhoautoparts.live/images/netinho-compartilhar.png?v=20261104-2" },
-  ] }),
   component: Home,
 });
 
