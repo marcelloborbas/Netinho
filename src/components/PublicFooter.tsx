@@ -49,7 +49,7 @@ export function PublicFooter() {
     return () => { mounted = false; data.subscription.unsubscribe(); };
   }, []);
   const status = access?.level === 1 || access?.attribution === "Administrador" ? "Administrador" : access?.attribution === "Representante" ? "Representante" : access?.attribution === "Vendedor" || access?.can_sell ? "Vendedor" : "Visitante";
-  const {data:activeState}=useQuery({queryKey:["footer-active-user",user?.name],enabled:!!user,queryFn:async()=>{const {data:auth}=await supabase.auth.getUser();if(!auth.user)return null;const {data,error}=await supabase.from("profiles").select("access_active").eq("id",auth.user.id).maybeSingle();if(error)throw error;return data?.access_active??null;}});
+  const {data:activeState}=useQuery({queryKey:["footer-active-user",user?.name],enabled:!!user&&menuOpen,staleTime:120000,queryFn:async()=>{const {data:auth}=await supabase.auth.getUser();if(!auth.user)return null;const {data,error}=await supabase.from("profiles").select("access_active").eq("id",auth.user.id).maybeSingle();if(error)throw error;return data?.access_active??null;}});
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const prepareCatalog = () => {
