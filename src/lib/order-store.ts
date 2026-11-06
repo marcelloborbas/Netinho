@@ -115,13 +115,16 @@ export function lineNet(i: DraftItem, term: PaymentTerm) {
   return Math.round(p * (1 - i.discount / 100) * 100) / 100;
 }
 export function draftTotals(d: Draft) {
-  let gross = 0,
-    net = 0,
+  let grossCents = 0,
+    netCents = 0,
     units = 0;
   for (const i of d.items) {
-    gross += (i.prices[d.paymentTerm] ?? 0) * i.quantity;
-    net += lineNet(i, d.paymentTerm) * i.quantity;
+    const quantity = Math.max(0, Math.trunc(i.quantity));
+    const unitCents = Math.round((i.prices[d.paymentTerm] ?? 0) * 100);
+    const discountedUnitCents = Math.round(unitCents * (1 - i.discount / 100));
+    grossCents += unitCents * quantity;
+    netCents += discountedUnitCents * quantity;
     units += i.quantity;
   }
-  return { gross, net, discount: gross - net, units };
+  return { gross: grossCents / 100, net: netCents / 100, discount: (grossCents - netCents) / 100, units };
 }
