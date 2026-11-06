@@ -162,7 +162,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
  const [open,setOpen]=useState(editingPage);
 
  const sales=role==="Vendedor"||role==="Representante"||role==="Administrador";
- const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:true,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate == null ? (person.site_role==="Administrador"?"3":"") : String(rate));return rate ?? null;}});
+ const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:true,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate == null ? (person.site_role==="Administrador"?"3.5":"") : String(rate));return rate ?? null;}});
  const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open||editingPage,queryFn:async()=>{
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
@@ -184,10 +184,8 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   if(sales){
    const parsed=role==="Administrador" ? 3.5 : commissionRate === "" ? null : Number(commissionRate);
    if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
-   if(role!=="Administrador"){
-    const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
-    if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message+". Confira se o cadastro está habilitado como vendedor ou representante no banco.");onSaved();return;}
-   }
+   const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
+   if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message+". Confira se a migração de comissões do administrador foi aplicada no Supabase.");onSaved();return;}
    void qc.invalidateQueries({queryKey:["person-commission",person.id]});
   }
   let image=effectiveMap.trim();
