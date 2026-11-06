@@ -137,7 +137,7 @@ function Home() {
         </section>
         <section className="mx-3 mb-2 py-2 sm:mx-6" aria-label="Montadoras">
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
-            {[["Volkswagen","volkswagen"],["Fiat","fiat"],["Chevrolet","chevrolet"],["Ford","ford"],["Renault","renault"],["Toyota","toyota"],["Honda","honda"],["Hyundai","hyundai"],["Nissan","nissan"],["Peugeot","peugeot"],["Citroën","citroen"],["Jeep","jeep"],["Mitsubishi","mitsubishi"],["Mercedes-Benz","mercedes-benz"],["Kia","kia"],["Volvo","volvo"]].map(([name, slug]) => (
+            {[["Volkswagen","volkswagen"],["Fiat","fiat"],["Chevrolet","chevrolet"],["Ford","ford"]].map(([name, slug]) => (
               <button key={slug} type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: name } })} className="group flex min-w-0 items-center justify-center p-1 transition-transform hover:scale-105 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffd43b]" aria-label={`Ver peças da montadora ${name}`}>
                 <img src={`/images/montadoras/${slug}.webp`} alt="" loading="lazy" className="h-14 w-full object-contain sm:h-16" />
               </button>
