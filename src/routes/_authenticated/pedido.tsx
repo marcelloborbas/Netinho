@@ -393,7 +393,7 @@ function OrderPage() {
               setReview(false);
             }
           }}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-red-300 bg-red-600 text-white shadow-lg transition hover:bg-red-700 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-red-600 transition hover:border-red-400 hover:bg-red-50 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
           aria-label="Excluir pedido em aberto"
           title="Excluir pedido em aberto"
         >
@@ -465,7 +465,7 @@ function OrderPage() {
           </Link>
           </div>
             </div>
-            <div className="space-y-1.5"><Field label="Comprador" value={d.buyer} onChange={(v) => draftActions.update({ buyer: v })} /></div></div>
+          </div>
           {selectedCustomer && (
             <div className="rounded-lg bg-secondary/40 p-3 text-xs leading-5 text-muted-foreground">
               <b className="text-foreground">
