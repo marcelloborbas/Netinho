@@ -87,13 +87,11 @@ function BusinessCardPage() {
       }
     }catch(e){if((e as Error).name!=="AbortError")toast.error("Não foi possível compartilhar o cartão.");}
   };
-  return <main className="mx-auto w-full max-w-xl space-y-5 pb-24 text-[#102a52]">
-    {!isSales?<div className="rounded-xl border bg-white p-5 text-center text-sm">O cartão de visita está disponível para vendedores e representantes.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="flex flex-col items-center gap-4 px-2">
+  return <main className="mx-auto w-full max-w-none space-y-2 pb-24 text-[#102a52]">
+    {!isSales?<div className="rounded-xl border bg-white p-5 text-center text-sm">O cartão de visita está disponível para vendedores e representantes.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="relative mx-auto w-full max-w-4xl">
       <img src={image} alt="Cartão de visita profissional do usuário" className="block h-auto w-full object-contain" />
-      <div className="flex items-center justify-center gap-6">
-        <button type="button" onClick={()=>void share()} aria-label="Compartilhar cartão de visita" title="Compartilhar" className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#123e74] text-white shadow-md transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]"><Share2 size={25}/></button>
-        <button type="button" onClick={()=>void download()} aria-label="Baixar cartão de visita" title="Baixar" className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#fff8e6] text-[#102a52] shadow-md transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]"><Download size={25}/></button>
-      </div>
+      <button type="button" onClick={()=>void share()} aria-label="Compartilhar cartão de visita" title="Compartilhar" className="absolute bottom-3 left-3 z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#123e74]/95 text-white shadow-lg transition hover:scale-105"><Share2 size={25}/></button>
+      <button type="button" onClick={()=>void download()} aria-label="Baixar cartão de visita" title="Baixar" className="absolute bottom-3 right-3 z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#fff8e6]/95 text-[#102a52] shadow-lg transition hover:scale-105"><Download size={25}/></button>
     </section>:<section className="flex flex-col items-center gap-3 rounded-2xl border-2 border-[#d4af37] bg-white p-6 text-center"><ImageOff size={40}/><h2 className="text-lg font-black">Cartão ainda não cadastrado</h2><p className="text-sm">O cartão deve estar publicado na pasta <code>public/cartoes-digitais/</code> e associado ao nome cadastrado na sua ficha. Caso já tenha sido enviado, solicite a vinculação do seu cartão ao administrador.</p><Contact size={24} className="text-[#d4af37]"/></section>}
   </main>;
 }
