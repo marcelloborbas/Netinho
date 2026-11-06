@@ -222,13 +222,6 @@ function OrderPage() {
   if (sentResult === "sent") {
     return createPortal(
       <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]">
-        <button type="button" onClick={() => setSentHelpOpen(v => !v)} className="absolute right-3 top-3 z-[100001] rounded-full border-2 border-[#ffe083] bg-[#102a52] px-4 py-2 text-sm font-bold text-white shadow-lg">Ajuda da LIA</button>
-        {sentHelpOpen && <div className="absolute left-3 right-3 top-16 z-[100001] mx-auto max-w-md rounded-2xl border-2 border-[#ffe083] bg-white p-4 text-[#102a52] shadow-2xl">
-          <p className="mb-2 font-black">LIA — Pedido enviado</p>
-          <p className="max-h-40 overflow-y-auto text-sm">Seu pedido foi enviado com sucesso para a Netinho Auto Parts! Uma cópia também foi encaminhada para o seu e-mail, para que você possa consultá-la sempre que precisar. Agora, é só aguardar! Nossa equipe dará continuidade ao atendimento do seu pedido. Você também poderá acompanhar as informações na página Minhas Vendas. Que Deus abençoe seu dia!</p>
-          <button type="button" onClick={playSentAudio} className="mt-3 rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white">Ouvir locução original da LIA</button>
-          <button type="button" onClick={() => {sentAudioRef.current?.pause();setSentHelpOpen(false);}} className="ml-2 rounded-lg border px-4 py-2 font-bold">Fechar</button>
-        </div>}
         <main className="min-h-0 flex-1 overflow-hidden" role="status" aria-label="Pedido enviado com sucesso">
           <div className="relative mx-auto h-full w-full max-w-[600px]">
             <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-full w-full object-fill" draggable={false} />
@@ -295,14 +288,14 @@ function OrderPage() {
       <main className="relative flex min-h-[85dvh] items-center justify-center overflow-hidden bg-gradient-to-b from-[#07172d] via-[#102a52] to-[#174779] px-4 py-16 text-white" role="status" aria-live="polite" aria-busy="true">
         <div className="pointer-events-none absolute -left-24 top-10 h-64 w-64 animate-pulse rounded-full bg-[#e5b32d]/10 blur-3xl" aria-hidden="true" />
         <div className="pointer-events-none absolute -right-24 bottom-10 h-72 w-72 animate-pulse rounded-full bg-sky-400/10 blur-3xl" aria-hidden="true" />
-        <div className="relative w-full max-w-md rounded-[28px] border-2 border-[#e5b32d] bg-[#0a2140] p-7 text-center shadow-[0_0_45px_rgba(229,179,45,.20)] sm:p-10">
+        <div className="relative w-full max-w-md overflow-hidden rounded-[32px] border-2 border-[#e5b32d] bg-gradient-to-b from-[#143c70] via-[#0a2140] to-[#06172d] p-8 text-center shadow-[0_20px_70px_rgba(0,0,0,.42),0_0_35px_rgba(229,179,45,.18)] sm:p-11">
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full border border-[#e5b32d]/60 bg-[#143a65] shadow-[0_0_26px_rgba(229,179,45,.30)]">
             <span className="inline-block h-14 w-14 animate-spin rounded-full border-[5px] border-white/20 border-t-[#ffd95d] border-r-[#ffd95d] motion-reduce:animate-none" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">Enviando o pedido</h1>
+          <h1 className="text-3xl font-black uppercase tracking-wide text-[#ffe083] sm:text-4xl">Enviando o pedido</h1>
           <p className="mt-3 text-base font-semibold leading-relaxed text-[#f5d779]">Estamos encaminhando seu pedido à Netinho Auto Parts.</p>
-          <div className="mx-auto mt-7 h-2.5 w-full max-w-xs overflow-hidden rounded-full bg-white/15" aria-hidden="true">
-            <div className="h-full w-2/3 animate-pulse rounded-full bg-gradient-to-r from-[#d4a62d] to-[#ffe18a] motion-reduce:animate-none" />
+          <div className="mx-auto mt-7 h-3 w-full max-w-xs overflow-hidden rounded-full border border-white/20 bg-white/10" aria-hidden="true">
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-gradient-to-r from-[#d4a62d] via-[#ffe18a] to-white shadow-[0_0_16px_rgba(255,225,138,.65)] motion-reduce:animate-none" />
           </div>
           <p className="mt-6 text-sm font-medium leading-relaxed text-white/90">Aguarde a confirmação do envio.<br />Não feche esta página nem clique novamente.</p>
         </div>
@@ -359,13 +352,6 @@ function OrderPage() {
                     <p className="break-all text-[clamp(17px,6vw,36px)] font-black tabular-nums leading-tight">{brl(t.net)}</p>
                   </div>
                 </section>
-                <button type="button" onClick={() => setConfirmHelpOpen(v => !v)} className="absolute right-[4%] top-[3%] z-30 rounded-full border-2 border-[#ffe083] bg-[#102a52] px-3 py-2 text-sm font-black text-white shadow-lg">Ajuda da LIA</button>
-                {confirmHelpOpen && <div className="absolute left-[4%] right-[4%] top-[13%] z-30 rounded-xl border-2 border-[#ffe083] bg-white p-3 text-[#102a52] shadow-xl">
-                  <p className="font-black">LIA — Resumo do pedido</p>
-                  <p className="mt-1 max-h-28 overflow-y-auto text-sm">Quase finalizado! Antes mesmo de enviar, confira atentamente os dados do seu pedido. Caso precise fazer alguma alteração, selecione Revisar Pedido. Se estiver tudo correto, clique em Enviar Pedido.</p>
-                  <button type="button" onClick={playConfirmHelp} className="mt-2 rounded-lg bg-[#102a52] px-3 py-2 text-sm font-bold text-white">Ouvir locução da LIA</button>
-                  <button type="button" onClick={() => {stopConfirmAudio();setConfirmHelpOpen(false);}} className="ml-2 rounded-lg border px-3 py-2 text-sm font-bold">Fechar</button>
-                </div>}
                 {/* Áreas clicáveis transparentes sobre os botões desenhados na própria arte. */}
                 <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[7%] left-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
@@ -381,8 +367,8 @@ function OrderPage() {
         </div>,
         document.body
       )}
-      <div className="flex items-center justify-center gap-4 rounded-[22px] border border-[#e4b941] bg-gradient-to-r from-[#091b36] via-[#143c70] to-[#0b2447] px-4 py-4 shadow-[0_8px_22px_rgba(9,27,54,.22)]">
-        <h1 className="text-center text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
+      <div className="relative flex items-center justify-between gap-4 overflow-hidden rounded-[24px] border-2 border-[#d4af37] bg-gradient-to-br from-[#06172f] via-[#123b70] to-[#071e3c] px-5 py-5 shadow-[0_12px_28px_rgba(9,27,54,.32)]">
+        <h1 className="font-display text-3xl font-black uppercase tracking-[.12em] text-[#ffe083] drop-shadow-md sm:text-4xl">
           {review ? "Revisar pedido" : "Pedido"}
         </h1>
         <button
@@ -393,11 +379,11 @@ function OrderPage() {
               setReview(false);
             }
           }}
-          className="inline-flex h-12 w-12 shrink-0 animate-pulse items-center justify-center rounded-xl border-2 border-red-400 bg-red-50 text-red-700 shadow-[0_0_15px_rgba(220,38,38,.35)] transition hover:scale-105 hover:bg-red-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300 motion-reduce:animate-none"
+          className="inline-flex h-14 w-14 shrink-0 animate-pulse items-center justify-center rounded-2xl border-2 border-[#ffb2b2] bg-gradient-to-b from-[#dc2626] to-[#991b1b] text-white shadow-[0_0_18px_rgba(239,68,68,.45)] transition hover:scale-105 hover:from-[#ef4444] hover:to-[#b91c1c] focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300 motion-reduce:animate-none"
           aria-label="Excluir pedido em aberto"
           title="Excluir pedido em aberto"
         >
-          <Trash2 className="h-7 w-7" />
+          <Trash2 className="h-8 w-8" strokeWidth={2.5} />
         </button>
       </div>
 
@@ -538,9 +524,9 @@ function OrderPage() {
                   <button
                     aria-label="Remover"
                     onClick={() => draftActions.removeItem(i.productId)}
-                    className="p-1 text-red-600 hover:text-red-700"
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-200 bg-red-50 text-red-700 shadow-sm transition hover:scale-105 hover:bg-red-100"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-5 w-5" strokeWidth={2.4} />
                   </button>
                 )}
               </div>
