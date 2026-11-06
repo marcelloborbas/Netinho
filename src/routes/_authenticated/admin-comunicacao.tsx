@@ -32,13 +32,28 @@ function AdminCommunication() {
       const { data: profiles, error } = await supabase.from("profiles").select("id,full_name,phone,site_role").eq("site_role", "Representante").order("full_name");
       if (error) throw error;
       const items: Contact[] = (profiles ?? []).map(p => ({ id: p.id, name: p.full_name || "Representante", phone: p.phone ?? "", source: "perfil" }));
-      // Contatos comerciais sem conta de acesso também podem possuir telefone.
-      const commercial = await supabase.from("commercial_representatives").select("id,full_name,phone,active").eq("active", true).order("full_name");
-      if (!commercial.error) {
-        for (const p of commercial.data ?? []) {
-          if (!items.some(item => (p.phone && whatsappNumber(item.phone) === whatsappNumber(p.phone)) || item.name.trim().toLocaleLowerCase("pt-BR") === (p.full_name || "").trim().toLocaleLowerCase("pt-BR"))) {
-            items.push({ id: p.id, name: p.full_name || "Representante", phone: p.phone ?? "", source: "comercial" });
-          }
+      // Fichas regionais podem armazenar o telefone em representative_profiles,
+      // enquanto os cadastros comerciais usam commercial_representatives/details.
+      const regional = await supabase.from("representative_profiles").select("full_name,email,phone");
+      if (regional.error) throw regional.error;
+      const normalizeName = (name: string) => name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").trim().toLowerCase();
+      for (const entry of regional.data ?? []) {
+        const target = items.find(item => normalizeName(item.name) === normalizeName(entry.full_name ?? ""));
+        if (target && !whatsappNumber(target.phone) && whatsappNumber(entry.phone ?? "")) target.phone = entry.phone!;
+      }
+      const commercial = await supabase.from("commercial_representatives").select("id,full_name,email,phone,active").order("full_name");
+      if (commercial.error) throw commercial.error;
+      const details = await supabase.from("commercial_representative_details" as never).select("representative_id,phone");
+      if (details.error) throw details.error;
+      const detailPhones = new Map(((details.data ?? []) as { representative_id: string; phone: string | null }[]).map(d => [d.representative_id, d.phone ?? ""]));
+      for (const entry of commercial.data ?? []) {
+        const regionalPhone = (regional.data ?? []).find(row => row.email && entry.email && row.email.toLowerCase() === entry.email.toLowerCase())?.phone ?? "";
+        const phone = [entry.phone ?? "", detailPhones.get(entry.id) ?? "", regionalPhone].find(value => whatsappNumber(value)) ?? entry.phone ?? detailPhones.get(entry.id) ?? regionalPhone;
+        const existing = items.find(item => normalizeName(item.name) === normalizeName(entry.full_name ?? "") || (!!phone && whatsappNumber(item.phone) === whatsappNumber(phone)));
+        if (existing) {
+          if (!whatsappNumber(existing.phone) && whatsappNumber(phone)) existing.phone = phone;
+        } else {
+          items.push({ id: entry.id, name: entry.full_name || "Representante", phone, source: "comercial" });
         }
       }
       return items.sort((a,b) => a.name.localeCompare(b.name, "pt-BR"));
