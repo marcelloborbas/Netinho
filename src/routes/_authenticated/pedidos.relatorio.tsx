@@ -66,7 +66,7 @@ export function MonthlySalesReport({ embedded = false }: { embedded?: boolean } 
     queryKey: ["sales-monthly-report", year, month],
     queryFn: () => loadMonth(year, month),
   });
-  const {data:commissionRate, isError:commissionError}=useQuery({queryKey:["my-sales-commission"],queryFn:async()=>{const {data:auth,error:authError}=await supabase.auth.getUser();if(authError||!auth.user)throw authError??new Error("Sem login");const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",auth.user.id).maybeSingle();if(error)throw error;return (data as {rate:number}|null)?.rate??null;}});
+  const {data:commissionRate, isError:commissionError}=useQuery({queryKey:["my-sales-commission"],queryFn:async()=>{const {data:auth,error:authError}=await supabase.auth.getUser();if(authError||!auth.user)throw authError??new Error("Sem login");const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",auth.user.id).maybeSingle();if(error)throw error;const savedRate=(data as {rate:number}|null)?.rate;if(savedRate!=null)return savedRate;const {data:profile,error:profileError}=await supabase.from("profiles").select("site_role").eq("id",auth.user.id).maybeSingle();if(profileError)throw profileError;return profile?.site_role==="Administrador"?3.5:null;}});
   const { customers } = useMemo(() => {
     const groups = new Map<string, { name: string; total: number; orders: OrderRow[] }>();
     for (const order of data) {
