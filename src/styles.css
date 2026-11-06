@@ -4520,7 +4520,17 @@ html body .welcome-auth-stage .welcome-auth-art {
   clip-path: none !important;
 }
 
-/* Página inicial mobile: um único bloco de layout, sem sobreposições sucessivas. */
+/* Home modernizada: rolagem natural, sem grades de altura fixa que cortam os cartões. */
+.home-page { min-height: 100dvh; overflow-x: hidden; }
+.home-page > main { min-height: 0; overflow: visible; }
+.home-page .home-cover-anchor > div:first-child { min-height: 170px; }
+@media (max-width: 639px) {
+  .home-page > main { display: flex; flex-direction: column; height: auto; overflow: visible; padding-bottom: 90px; }
+  .home-page > main > section { height: auto; overflow: visible; }
+  .home-page > main > section:first-child { overflow: hidden; }
+  .home-page .home-cover-anchor > div:first-child { height: 190px; }
+}
+
 @media (max-width: 639px) and (min-height: 600px) {
   html body .home-page {
     height: 100dvh !important;
