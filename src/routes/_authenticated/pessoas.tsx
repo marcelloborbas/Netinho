@@ -351,7 +351,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
      <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     </div>
    </section>
-   <RepresentativeDetails name={representative.full_name} email={representative.email} representativeId={representative.id} />
+   <RepresentativeDetails name={representative.full_name} email={representative.email} representativeId={representative.id} commercial />
    <section className="rounded-xl border border-amber-300 bg-amber-50 p-4"><h4 className="text-base font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
    <p className="text-xs text-slate-600">Este é um cadastro comercial ainda não vinculado à ficha de usuário. Sua exclusão não apaga uma conta Google ou outros registros.</p>
    <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white disabled:opacity-50">Salvar ficha e comissão</button>
@@ -359,7 +359,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
  </article>;
 }
 
-function RepresentativeDetails({name,email,representativeId}:{name:string;email:string;representativeId:string}) {
+function RepresentativeDetails({name,email,representativeId,commercial=false}:{name:string;email:string;representativeId:string;commercial?:boolean}) {
  const qc=useQueryClient();
  const [values,setValues]=useState<Record<string,string>>({});
  const [initialized,setInitialized]=useState(false);
@@ -382,7 +382,7 @@ function RepresentativeDetails({name,email,representativeId}:{name:string;email:
   {key:"city",label:"Cidade-base"},
   {key:"state",label:"Estado (UF)"},
   {key:"service_cities",label:"Cidades atendidas"},
-  {key:"phone",label:"Telefone"},
+  {key:"phone",label:"Telefone / WhatsApp"},
   {key:"street_address",label:"Endereço"},
   {key:"neighborhood",label:"Bairro"},
   {key:"postal_code",label:"CEP"},
@@ -424,13 +424,13 @@ function RepresentativeDetails({name,email,representativeId}:{name:string;email:
 }
 
 function CommercialDetailsForm({representativeId}:{representativeId:string}) {
-  const validRepresentativeId=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(representativeId??"");
+
  const qc=useQueryClient();
  const [values,setValues]=useState<Record<string,string>>({});
  const [busy,setBusy]=useState(false);
  const [loaded,setLoaded]=useState(false);
  const fields=[
-  {key:"phone",label:"Telefone"},{key:"street_address",label:"Endereço"},
+  {key:"phone",label:"Telefone / WhatsApp"},{key:"street_address",label:"Endereço"},
   {key:"address_number",label:"Número"},{key:"neighborhood",label:"Bairro"},
   {key:"postal_code",label:"CEP"},{key:"city",label:"Cidade"},
   {key:"state",label:"Estado (UF)"},{key:"region",label:"Região de atuação"},
