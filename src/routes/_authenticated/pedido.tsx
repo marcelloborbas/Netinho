@@ -56,7 +56,6 @@ function OrderPage() {
   const [sendError, setSendError] = useState("");
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmHelpOpen, setConfirmHelpOpen] = useState(false);
   // Nenhuma condição é exibida como escolhida até a seleção explícita.
   const paymentChosen = d.paymentConfirmed === true && PAYMENT_TERMS.some((term) => term.value === d.paymentTerm);
   const [actionChosen, setActionChosen] = useState(false);
@@ -106,13 +105,11 @@ function OrderPage() {
     buttonSound();
     setReview(true);
     stopConfirmAudio();
-    setConfirmHelpOpen(false);
     setConfirmOpen(true);
     // A locução do resumo só toca quando o usuário solicitar Ajuda.
   }
   function closeConfirmation() {
     stopConfirmAudio();
-    setConfirmHelpOpen(false);
     setConfirmOpen(false);
     setReview(false);
     buttonSound();
@@ -324,7 +321,7 @@ function OrderPage() {
                 <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[7%] left-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
                 </button>
-                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); setConfirmHelpOpen(false); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
+                <button type="button" disabled={busy} onClick={() => { buttonSound(); stopConfirmAudio(); void finalize(); }} aria-label="Enviar Pedido" title="Enviar Pedido" className="absolute bottom-[7%] right-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400 disabled:cursor-not-allowed">
                   <span className="sr-only">Enviar Pedido</span>
                 </button>
               </div>
