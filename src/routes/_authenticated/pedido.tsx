@@ -580,11 +580,12 @@ function OrderPage() {
         <Row label="Condição" value={termLabel(d.paymentTerm)} />
         <Row label="Itens / unidades" value={`${d.items.length} / ${t.units}`} />
         <Row label="Subtotal" value={brl(t.gross)} />
-        {t.discount > 0 && <Row label="Descontos" value={`- ${brl(t.discount)}`} />}
+        {t.discount > 0 && <Row label="Desconto aplicado" value={`− ${brl(t.discount)}`} />}
         <div className="flex items-center justify-between border-t pt-2">
           <span className="font-semibold uppercase">Total</span>
-          <span className="font-display text-3xl font-bold text-primary">{brl(t.net)}</span>
+          <span className="font-display text-3xl font-bold text-red-600">{brl(t.net)}</span>
         </div>
+        {t.discount > 0 && <p className="text-right text-xs font-semibold text-green-700" aria-live="polite">Desconto de {brl(t.discount)} já abatido do total.</p>}
       </section>
 
       {review && (
