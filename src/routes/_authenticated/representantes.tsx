@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 
 export const Route = createFileRoute("/_authenticated/representantes")({
+  staticData: { sitemap: false },
   head: () => pageHead("/representantes", "Buscar representantes | Netinho Auto Parts", "Localize representantes da Netinho Auto Parts por cidade e estado e consulte suas áreas de atendimento."), component: Page });
 type Representative = { slug: string; full_name: string; region: string; phone: string | null; photo_url?: string | null };
 type ServiceArea = { slug: string; service_cities: string | null };
@@ -15,8 +16,8 @@ type GeoData = { features: Feature[] };
 const centroids: Record<string,[number,number]> = {AC:[-70,-9],AL:[-36.6,-9.6],AP:[-51,-1.2],AM:[-64,-4],BA:[-41.7,-12.8],CE:[-39.5,-5.2],DF:[-47.9,-15.8],ES:[-40.5,-19.6],GO:[-49.4,-16],MA:[-45,-5],MT:[-56,-12.7],MS:[-54.5,-20.5],MG:[-44.7,-18.6],PA:[-52,-4],PB:[-36.8,-7.1],PR:[-51,-24.8],PE:[-37.9,-8.4],PI:[-42.8,-7.5],RJ:[-42.6,-22.2],RN:[-36.4,-5.8],RS:[-53,-30],RO:[-63,-10.8],RR:[-61,2],SC:[-50.5,-27.3],SP:[-48.5,-22.5],SE:[-37.4,-10.6],TO:[-48,-10]};
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 const stateAliases: Record<string,string> = {SP:"sao paulo",RJ:"rio de janeiro",MG:"minas gerais",PR:"parana",SC:"santa catarina",RS:"rio grande do sul",ES:"espirito santo",BA:"bahia",GO:"goias",DF:"distrito federal",MT:"mato grosso",MS:"mato grosso do sul",PE:"pernambuco",CE:"ceara",PA:"para",AM:"amazonas",MA:"maranhao",PB:"paraiba",RN:"rio grande do norte",AL:"alagoas",SE:"sergipe",PI:"piaui",TO:"tocantins",RO:"rondonia",AC:"acre",AP:"amapa",RR:"roraima"};
-const stateFor = (text: string) => Object.keys(stateAliases).filter(uf => new RegExp("(?:^|[^a-z])"+uf+"(?:$|[^a-z])","i").test(text) || normalize(text).includes(stateAliases[uf]));
-const project = ([lon,lat]:number[]):[number,number] => [(lon+74)*9.2+18,(6-lat)*9.2+15];
+const stateFor = (text: string) => Object.keys(stateAliases).filter(uf => new RegExp("(?:^|[^a-z])"+uf+"(?:$|[^a-z])","i").test(text) || normalize(text).includes(stateAliases[uf] ?? "\u0000"));
+const project = ([lon = 0, lat = 0]:number[]):[number,number] => [(lon+74)*9.2+18,(6-lat)*9.2+15];
 function polygonPath(feature:Feature) {
   const coords = feature.geometry.coordinates as number[][][][] | number[][][];
   const polygons = feature.geometry.type === "MultiPolygon" ? coords as number[][][][] : [coords as number[][][]];

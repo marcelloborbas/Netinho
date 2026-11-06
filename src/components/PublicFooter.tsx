@@ -60,7 +60,7 @@ export function PublicFooter() {
       const { data, error } = await supabase.from("profiles").select("*").eq("id", auth.user.id).maybeSingle();
       if (error) throw error;
       const record = data as Record<string, unknown> | null;
-      const value = record?.commission_percent ?? record?.commission_rate ?? record?.commission_percentage;
+      const value = record?.["commission_percent"] ?? record?.["commission_rate"] ?? record?.["commission_percentage"];
       const rate = typeof value === "number" ? value : typeof value === "string" && value.trim() ? Number(value) : NaN;
       return Number.isFinite(rate) ? rate : null;
     },

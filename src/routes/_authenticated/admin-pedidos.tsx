@@ -8,6 +8,7 @@ import { ClipboardList, UserRound } from "lucide-react";
 import { brl } from "@/lib/brand";
 
 export const Route=createFileRoute("/_authenticated/admin-pedidos")({
+  staticData: { sitemap: false },
  component:AdminOrders,
  head:()=>({meta:[{title:"Pedidos administrativos | Netinho Auto Parts"}]})
 });

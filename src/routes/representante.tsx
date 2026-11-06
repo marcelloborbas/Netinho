@@ -7,13 +7,14 @@ import { BrandPageLayout } from "@/components/BrandPageLayout";
 import { ExpandableMap } from "@/components/ExpandableMap";
 
 export const Route = createFileRoute("/representante")({
+  staticData: { sitemap: true },
   component: RepresentativePage,
   head: () => ({ meta: [
       { property: "og:url", content: "https://www.netinhoautoparts.live/representante" },
-    { title: "Representante Comercial | Netinho Auto Parts" },
-    { name: "description", content: "Conheça a região de atendimento do representante comercial Netinho Auto Parts." },
-    { property: "og:title", content: "Representante Comercial | Netinho Auto Parts" },
-    { property: "og:description", content: "Conheça a região de atendimento do representante comercial Netinho Auto Parts." },
+    { title: "Abdenego Eugênio — Representante Comercial | Netinho" },
+    { name: "description", content: "Abdenego Eugênio, representante comercial da Netinho Auto Parts no Vale do Paraíba e Litoral Norte de São Paulo." },
+    { property: "og:title", content: "Abdenego Eugênio — Representante Comercial | Netinho" },
+    { property: "og:description", content: "Abdenego Eugênio, representante comercial da Netinho Auto Parts no Vale do Paraíba e Litoral Norte de São Paulo." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -102,10 +103,11 @@ function RepresentativePage() {
   return (
     <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
-      <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (teste — Sorocaba e região)</Link></div>
+      <div className="rounded-lg border p-3 text-sm"><span className="font-semibold">Representantes cadastrados: </span><Link to="/representante" className="font-bold text-amber-400 underline">Abdenego Eugênio</Link><span className="mx-2">·</span><Link to="/representante-livaldo" className="font-bold text-amber-400 underline">Livaldo Souza Silva (Sorocaba e região)</Link></div>
       <section className="surface-card space-y-4 p-5">
-        <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Abdenego Eugênio"}</h2><span className={`rounded-full px-3 py-1 text-xs font-bold ${authorizationColor}`}>{authorizationLabel}</span>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "abdenego-eugenio" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Abdenego Eugênio" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
+        <p className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Representante Comercial Netinho Auto Parts</p>
+        <div className="flex flex-wrap items-center gap-3"><h1 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Abdenego Eugênio"} — Vale do Paraíba e Litoral Norte</h1><span className={`rounded-full px-3 py-1 text-xs font-bold ${authorizationColor}`}>{authorizationLabel}</span>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "abdenego-eugenio" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Abdenego Eugênio" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
+        <p className="text-sm">Atende lojas de autopeças do Vale do Paraíba e do Litoral Norte de São Paulo, levando o catálogo e os pedidos à Netinho Auto Parts.</p>
         <p className="text-sm text-muted-foreground">Dados de representação cadastrados pela administração — somente leitura.</p>
         <dl className="grid gap-3 sm:grid-cols-2">
           <div><dt className="text-xs text-muted-foreground">Área de atuação</dt><dd className="font-medium">{profile?.region ?? "Vale do Paraíba e Litoral Norte de São Paulo"}</dd></div>

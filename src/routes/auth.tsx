@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/auth")({
+  staticData: { sitemap: true },
   ssr: false,
   head: () => ({
     links: [{ rel: "preload", as: "image", href: "/images/netinho-auth-nova.webp" }],

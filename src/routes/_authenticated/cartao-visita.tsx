@@ -25,6 +25,7 @@ import { accessQuery } from "@/lib/access";
 import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/cartao-visita")({
+  staticData: { sitemap: false },
   head: () => pageHead("/cartao-visita", "Cartão de visita | Netinho Auto Parts", "Consulte e compartilhe seu cartão de visita profissional."),
   component: BusinessCardPage,
 });

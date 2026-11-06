@@ -11,6 +11,7 @@ import { PublicFooter } from "@/components/PublicFooter";
 import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: false },
   ssr: false,
   component: Home,
 });

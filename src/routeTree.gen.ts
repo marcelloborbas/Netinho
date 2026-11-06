@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OfertasRouteImport } from './routes/ofertas'
 import { Route as RepresentanteRouteImport } from './routes/representante'
 import { Route as RepresentanteLivaldoRouteImport } from './routes/representante-livaldo'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SolicitarAcessoRouteImport } from './routes/solicitar-acesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminGestaoRouteImport } from './routes/_authenticated/admin-gestao'
@@ -65,6 +66,11 @@ const RepresentanteRoute = RepresentanteRouteImport.update({
 const RepresentanteLivaldoRoute = RepresentanteLivaldoRouteImport.update({
   id: '/representante-livaldo',
   path: '/representante-livaldo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SolicitarAcessoRoute = SolicitarAcessoRouteImport.update({
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
@@ -253,6 +261,7 @@ export interface FileRoutesById {
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin-gestao': typeof AuthenticatedAdminGestaoRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
+    | '/sitemap.xml'
     | '/solicitar-acesso'
     | '/admin'
     | '/admin-gestao'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
+    | '/sitemap.xml'
     | '/solicitar-acesso'
     | '/admin'
     | '/admin-gestao'
@@ -343,6 +354,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
+    | '/sitemap.xml'
     | '/solicitar-acesso'
     | '/_authenticated/admin'
     | '/_authenticated/admin-gestao'
@@ -374,6 +386,7 @@ export interface RootRouteChildren {
   OfertasRoute: typeof OfertasRoute
   RepresentanteRoute: typeof RepresentanteRoute
   RepresentanteLivaldoRoute: typeof RepresentanteLivaldoRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolicitarAcessoRoute: typeof SolicitarAcessoRoute
   EditarRepresentanteSlugRoute: typeof EditarRepresentanteSlugRoute
 }
@@ -420,6 +433,13 @@ declare module '@tanstack/react-router' {
       path: '/representante-livaldo'
       fullPath: '/representante-livaldo'
       preLoaderRoute: typeof RepresentanteLivaldoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solicitar-acesso': {
@@ -635,6 +655,7 @@ const rootRouteChildren: RootRouteChildren = {
   OfertasRoute: OfertasRoute,
   RepresentanteRoute: RepresentanteRoute,
   RepresentanteLivaldoRoute: RepresentanteLivaldoRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolicitarAcessoRoute: SolicitarAcessoRoute,
   EditarRepresentanteSlugRoute: EditarRepresentanteSlugRoute,
 }

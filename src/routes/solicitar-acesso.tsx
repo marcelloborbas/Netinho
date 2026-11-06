@@ -8,6 +8,7 @@ import { accessQuery } from "@/lib/access";
 
 const schema = z.object({ perfil: z.enum(["Vendedor", "Representante", "Administrador"]).catch("Vendedor") });
 export const Route = createFileRoute("/solicitar-acesso")({
+  staticData: { sitemap: true },
   head: () => pageHead("/solicitar-acesso", "Solicitar acesso | Netinho Auto Parts", "Solicite autorização para utilizar os recursos da Netinho Auto Parts e envie seus dados para avaliação da administração."),
   validateSearch: schema,
   component: SolicitarAcesso,

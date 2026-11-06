@@ -18,6 +18,7 @@ import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated")({
+  staticData: { sitemap: "exclude-subtree" },
   ssr: false,
   beforeLoad: async ({ context, location }) => {
     // A sessão local evita redirecionar para /auth durante uma falha transitória

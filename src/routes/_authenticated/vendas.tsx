@@ -10,6 +10,7 @@ import { brl } from "@/lib/brand";
 import { readOffers, type Offer } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/vendas")({
+  staticData: { sitemap: false },
   validateSearch: (s: Record<string, unknown>) => ({ modo: s["modo"] === "consulta" ? "consulta" as const : "venda" as const, q: typeof s["q"] === "string" ? s["q"] : "", promo: typeof s["promo"] === "string" ? s["promo"] : "" }),
   head: () => pageHead("/vendas", "Selecionar peças | Netinho Auto Parts", "Selecione o cliente e as peças para compor seu pedido B2B na Netinho Auto Parts."),
   component: SalesPage,

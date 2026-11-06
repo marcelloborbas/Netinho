@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/_authenticated/novo-cliente")({
+  staticData: { sitemap: false },
   head: () => pageHead("/novo-cliente", "Cadastrar cliente | Netinho Auto Parts", "Cadastre um cliente e selecione-o para iniciar um pedido na Netinho Auto Parts."),
   component: NovoCliente,
 });

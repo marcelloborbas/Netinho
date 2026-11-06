@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { BrandPageLayout } from "@/components/BrandPageLayout";
 
 export const Route = createFileRoute("/editar-representante/$slug")({
+  staticData: { sitemap: false },
   component: EditRepresentativePage,
   head: () => ({ meta: [
     { title: "Editar representante | Netinho Auto Parts" },
