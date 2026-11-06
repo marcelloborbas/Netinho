@@ -15,6 +15,7 @@ export interface Draft {
   customerId: string | null;
   customerName: string | null;
   paymentTerm: PaymentTerm;
+  paymentConfirmed: boolean;
   kind: "pedido" | "orcamento";
   delivery: string;
   carrier: string;
@@ -28,6 +29,7 @@ const empty: Draft = {
   customerId: null,
   customerName: null,
   paymentTerm: "cash",
+  paymentConfirmed: false,
   kind: "pedido",
   delivery: "",
   carrier: "",
