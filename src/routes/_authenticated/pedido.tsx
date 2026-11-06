@@ -91,15 +91,20 @@ function OrderPage() {
   const sentAudioRef = useRef<HTMLAudioElement | null>(null);
   function playSentAudio() {
     if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null; }
+    const fallbackSpeech = () => {
+      if (!("speechSynthesis" in window)) { setSentAudioError(true); return; }
+      const speech = new SpeechSynthesisUtterance("Seu pedido foi enviado com sucesso para a Netinho Auto Parts! Uma cópia também foi encaminhada para o seu e-mail, para que você possa consultá-la sempre que precisar. Agora, é só aguardar! Nossa equipe dará continuidade ao atendimento do seu pedido. Você também poderá acompanhar as informações na página Minhas Vendas. Que Deus abençoe seu dia!");
+      speech.lang = "pt-BR";
+      speech.rate = 0.95;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(speech);
+    };
     const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261106-3");
     audio.preload = "auto";
     audio.loop = false;
     sentAudioRef.current = audio;
-    audio.onerror = () => { setSentAudioError(true); toast.error("Áudio da LIA indisponível. Confira o arquivo no repositório."); };
-    void audio.play().then(() => setSentAudioError(false)).catch(() => {
-      setSentAudioError(true);
-      toast.info("O navegador bloqueou o áudio automático. Toque em Ouvir LIA para tentar novamente.");
-    });
+    audio.onerror = fallbackSpeech;
+    void audio.play().catch(fallbackSpeech);
   }
   const sentSpeechStarted = useRef(false);
   useEffect(() => {
@@ -114,6 +119,7 @@ function OrderPage() {
     return () => {
       sentAudioRef.current?.pause();
       sentAudioRef.current = null;
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     };
   }, [sentResult]);
   const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : "actions";
@@ -238,7 +244,6 @@ function OrderPage() {
   if (sentResult === "sent") {
     return createPortal(
       <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]">
-        <button type="button" onClick={playSentAudio} className="absolute right-3 top-3 z-[100001] inline-flex items-center gap-2 rounded-full border-2 border-[#ffe083] bg-[#102a52] px-4 py-2 text-sm font-extrabold text-white shadow-lg"><Volume2 className="h-5 w-5"/> {sentAudioError ? "Ouvir LIA" : "Repetir LIA"}</button>
         <main className="min-h-0 flex-1 overflow-hidden" role="status" aria-label="Pedido enviado com sucesso">
           <div className="relative mx-auto h-full w-full max-w-[600px]">
             <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-full w-full object-fill" draggable={false} />
