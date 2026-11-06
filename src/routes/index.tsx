@@ -135,13 +135,11 @@ function Home() {
         <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] sm:h-auto shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="mx-3 mb-2 rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] px-3 py-4 text-white shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6 sm:px-6" aria-label="Montadoras">
-          <h2 className="mb-3 text-center text-lg font-extrabold tracking-wide text-[#f1ce67] sm:text-2xl">MONTADORAS</h2>
+        <section className="mx-3 mb-2 py-2 sm:mx-6" aria-label="Montadoras">
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
             {[["Volkswagen","volkswagen"],["Fiat","fiat"],["Chevrolet","chevrolet"],["Ford","ford"],["Renault","renault"],["Toyota","toyota"],["Honda","honda"],["Hyundai","hyundai"],["Nissan","nissan"],["Peugeot","peugeot"],["Citroën","citroen"],["Jeep","jeep"],["Mitsubishi","mitsubishi"],["Mercedes-Benz","mercedes-benz"],["Kia","kia"],["Volvo","volvo"]].map(([name, slug]) => (
-              <button key={slug} type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: name } })} className="group flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-[#d4af37]/35 bg-[#102d55] px-1 py-3 transition-colors hover:border-[#ffd43b] hover:bg-[#17416f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffd43b]" aria-label={`Ver peças da montadora ${name}`}>
-                <img src={`/images/montadoras/${slug}.webp`} alt="" loading="lazy" className="h-10 w-full object-contain sm:h-12" />
-                <span className="w-full truncate text-center text-[10px] font-semibold text-white sm:text-xs" title={name}>{name}</span>
+              <button key={slug} type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: name } })} className="group flex min-w-0 items-center justify-center p-1 transition-transform hover:scale-105 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffd43b]" aria-label={`Ver peças da montadora ${name}`}>
+                <img src={`/images/montadoras/${slug}.webp`} alt="" loading="lazy" className="h-14 w-full object-contain sm:h-16" />
               </button>
             ))}
           </div>
