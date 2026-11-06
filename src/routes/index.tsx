@@ -34,6 +34,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   const navigate = useNavigate();
   const [hour, setHour] = useState<number | null>(null);
+  const [representativeBannerReady, setRepresentativeBannerReady] = useState(true);
   useEffect(() => {
     const refreshGreeting = () => setHour(new Date().getHours());
     refreshGreeting();
@@ -114,10 +115,10 @@ function Home() {
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
 
-<p className="flex w-full min-w-0 items-baseline gap-[0.25em] whitespace-nowrap text-[clamp(19px,5vw,22px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
+<p className="flex w-full min-w-0 flex-wrap items-baseline gap-x-[0.3em] gap-y-0.5 text-[clamp(19px,5vw,25px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
   <span className="shrink-0">{salutation}, Sr.</span>
   <span
-    className="min-w-0 truncate text-[clamp(23px,6vw,27px)] sm:text-[clamp(1.5rem,3.8vw,3.8rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
+    className="inline-block max-w-full break-words text-[clamp(38px,10vw,58px)] leading-[1.05] sm:text-[clamp(3.5rem,6vw,6rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
     style={{ color: dailyNameColor }}
     title={userName || "usuário"}
   >
@@ -143,6 +144,16 @@ function Home() {
             aria-label="Encontre seu representante. Abrir o mapa de representantes"
             className="group relative flex w-full min-h-[180px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-gradient-to-r from-[#071b36] via-[#113b6a] to-[#071b36] px-5 py-6 text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[240px] sm:px-10"
           >
+            {representativeBannerReady && (
+              <img
+                src="/images/encontre-seu-representante.webp"
+                alt="Encontre seu Representante — mapa do Brasil"
+                className="absolute inset-0 z-20 h-full w-full object-contain bg-[#071b36]"
+                loading="lazy"
+                decoding="async"
+                onError={() => setRepresentativeBannerReady(false)}
+              />
+            )}
             <span className="pointer-events-none absolute -left-20 -top-28 h-56 w-56 rounded-full border-[22px] border-[#d4af37]/10" aria-hidden="true" />
             <span className="relative z-10 flex min-w-0 flex-1 flex-col gap-2">
               <span className="text-xs font-bold uppercase tracking-[.2em] text-[#d4af37] sm:text-sm">Atendimento em sua região</span>
