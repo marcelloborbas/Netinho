@@ -2,7 +2,7 @@ import { pageHead } from "@/lib/page-head";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
-import { MapPinned, UsersRound, PhoneCall, X, HandPointer } from "lucide-react";
+import { MapPinned, UsersRound, PhoneCall, MousePointer2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 
@@ -66,7 +66,7 @@ function Page() {
      {enriched.flatMap(rep=>rep.ufs.filter(uf=>centroids[uf]).map(uf=>({rep,uf}))).map(({rep,uf},i,all)=>{const [cx,cy]=project(centroids[uf]);const order=all.slice(0,i).filter(p=>p.uf===uf).length;const x=cx+(order%3-1)*27;const y=cy+Math.floor(order/3)*28;const photo=representativePhoto(rep.full_name,rep.photo_url);return <g key={uf+"-"+rep.slug} transform={`translate(${x},${y})`} role="button" tabIndex={0} aria-label={`Abrir contato de ${rep.full_name} em ${uf}`} className="cursor-pointer outline-none" onClick={()=>setSelected(rep.slug)} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setSelected(rep.slug);}}}><path d="M0 20 L-9 7 L9 7 Z" fill="#e7b93f" stroke="#061b38" strokeWidth="1.5"/><circle r="16" fill="#d4af37" stroke="#071c38" strokeWidth="2.5"/>{photo?<><defs><clipPath id={`rep-photo-${i}`}><circle r="13"/></clipPath></defs><image href={photo} x="-13" y="-13" width="26" height="26" preserveAspectRatio="xMidYMid slice" clipPath={`url(#rep-photo-${i})`}/></>:<text textAnchor="middle" y="4" fontSize="12" fontWeight="bold" fill="#08254b">{rep.full_name.charAt(0)}</text>}<title>{rep.full_name} · {uf}</title></g>;})}
     </svg>:<div className="flex min-h-[45vh] items-center justify-center text-center text-white">{mapError?"Não foi possível carregar o mapa. Tente novamente mais tarde.":"Carregando mapa do Brasil..."}</div>}
    </div>
-   <div className="relative z-10 mx-auto mt-4 flex max-w-sm items-center justify-center gap-3 rounded-2xl border border-[#d4af37]/65 bg-[#06172f]/85 px-4 py-3 text-center"><HandPointer className="shrink-0 text-[#e7c36a]" size={29}/><p className="text-sm font-bold leading-snug">Toque na foto para conhecer seu representante.</p></div>
+   <div className="relative z-10 mx-auto mt-4 flex max-w-sm items-center justify-center gap-3 rounded-2xl border border-[#d4af37]/65 bg-[#06172f]/85 px-4 py-3 text-center"><MousePointer2 className="shrink-0 text-[#e7c36a]" size={29}/><p className="text-sm font-bold leading-snug">Toque na foto para conhecer seu representante.</p></div>
    {isLoading&&<p className="mt-3 text-center text-sm">Carregando representantes...</p>}
    {error&&<p role="alert" className="mt-3 text-center text-sm text-amber-200">Não foi possível carregar os representantes cadastrados.</p>}
    {!isLoading&&!enriched.some(rep=>rep.ufs.length>0)&&<p className="mt-3 text-center text-sm text-amber-100">Os estados de atuação precisam estar cadastrados para posicionar as fotos no mapa.</p>}
