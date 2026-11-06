@@ -1,5 +1,10 @@
 # Roadmap NETINHO
 
+## SEO em 06/11/2026
+- [x] Criar lista de páginas para o Google (sitemap) e citá-la no robots.txt.
+- [x] Identificar representante e região no título das páginas de Abdenego e Livaldo; retirar avisos de teste de Livaldo (confirmado real).
+- [ ] Apresentação pública da página inicial: cliente decidiu manter o envio direto ao login; achados de conteúdo seguem em aberto.
+
 ## Prévias de compartilhamento em 04/11/2026
 - [x] Completar metadados específicos das páginas e corrigir a descrição do login, preservando a logo e as permissões.
 - [x] Conferir HTML das sete páginas públicas e descrição do login na prévia; build OK, sem publicar. Achado SEO corrigido. Testes: 9 passaram e 3 de apresentação/acesso falharam por expectativas existentes fora do escopo.

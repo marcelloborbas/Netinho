@@ -19,3 +19,4 @@
 - Authenticated pages live under `src/routes/_authenticated/`; reads use the browser client with RLS (seller sees own rows, admin sees all via `has_role`).
 - Home-screen installation UI is isolated in InstallAppButton using the browser's one-use install event and a manual-instructions fallback; no worker is needed for this control.
 - Keep page-specific share metadata on leaf routes; pageHead supplies consistent metadata without private data, and homepage-only server fallback must match the homepage rather than override other routes.
+- Sitemap is router-derived (`src/lib/sitemap.ts` + `src/routes/sitemap[.]xml.ts`); every route declares `staticData.sitemap`, the logged-in area uses "exclude-subtree", and `/` stays out because it redirects visitors to login.
