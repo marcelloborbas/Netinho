@@ -137,36 +137,29 @@ function Home() {
         <section className="mx-3 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="px-3 pb-4 pt-2 sm:px-6 sm:pb-7" aria-label="Encontre seu representante">
+        <section className="flex flex-1 px-3 pb-3 pt-1 sm:px-6 sm:pb-6" aria-label="Encontre seu representante">
           <button
             type="button"
             onClick={() => void navigate({ to: "/representantes" })}
             aria-label="Encontre seu representante. Abrir o mapa de representantes"
-            className="group relative flex w-full min-h-[180px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-gradient-to-r from-[#071b36] via-[#113b6a] to-[#071b36] px-5 py-6 text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[240px] sm:px-10"
+            className="group relative flex w-full min-h-[220px] flex-1 items-center justify-center overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-[#071b36] text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-shadow hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[280px]"
           >
-            {representativeBannerReady && (
+            {representativeBannerReady ? (
               <img
                 src="/images/encontre-seu-representante.webp"
                 alt="Encontre seu Representante — mapa do Brasil"
-                className="absolute inset-0 z-20 h-full w-full object-contain bg-[#071b36]"
+                className="absolute inset-0 h-full w-full object-cover object-center"
                 loading="lazy"
                 decoding="async"
                 onError={() => setRepresentativeBannerReady(false)}
               />
+            ) : (
+              <span className="flex flex-col items-center gap-2 px-5 py-8 text-center">
+                <span className="text-xs font-bold uppercase tracking-[.2em] text-[#d4af37]">Atendimento em sua região</span>
+                <span className="font-display text-[clamp(30px,7vw,64px)] font-black leading-tight text-white">Encontre seu <span className="text-[#f1ce67]">Representante</span></span>
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-white">Ver representantes <ArrowRight size={18} /></span>
+              </span>
             )}
-            <span className="pointer-events-none absolute -left-20 -top-28 h-56 w-56 rounded-full border-[22px] border-[#d4af37]/10" aria-hidden="true" />
-            <span className="relative z-10 flex min-w-0 flex-1 flex-col gap-2">
-              <span className="text-xs font-bold uppercase tracking-[.2em] text-[#d4af37] sm:text-sm">Atendimento em sua região</span>
-              <span className="font-display text-[clamp(28px,6vw,62px)] font-black leading-[.95] tracking-tight text-white">Encontre seu<br/><span className="text-[#f1ce67]">Representante</span></span>
-              <span className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-[#edf3fb] sm:text-lg">Consulte a cobertura e os contatos <ArrowRight size={19} className="text-[#f1ce67] transition-transform group-hover:translate-x-1" /></span>
-            </span>
-            <span className="relative z-10 flex h-28 w-28 shrink-0 items-center justify-center rounded-full border border-[#d4af37]/50 bg-white/10 shadow-inner sm:h-40 sm:w-40" aria-hidden="true">
-              <svg viewBox="0 0 100 110" className="h-24 w-24 drop-shadow-[0_0_8px_rgba(212,175,55,.28)] sm:h-36 sm:w-36" fill="none">
-                <path d="M31 6 43 10 52 5 65 11 75 19 89 25 93 39 84 47 90 61 80 67 74 84 62 89 53 105 41 97 35 82 22 76 19 64 7 55 12 43 7 31 19 20Z" fill="#F2F5F9" stroke="#D4AF37" strokeWidth="2.8" strokeLinejoin="round"/>
-                <path d="M31 6 35 30 20 40 38 55 31 79M52 5 54 28 72 34 84 47M12 43 37 55 58 51 90 61M38 55 51 75 41 97M58 51 74 84 62 89" stroke="#8494A8" strokeWidth="1.4" strokeLinejoin="round"/>
-                <path d="M50 32c-7 0-12 5-12 12 0 9 12 22 12 22s12-13 12-22c0-7-5-12-12-12Z" fill="#D4AF37" stroke="#071B36" strokeWidth="2"/><circle cx="50" cy="44" r="4" fill="#071B36"/>
-              </svg>
-            </span>
           </button>
         </section>
       </main>
