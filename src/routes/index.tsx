@@ -137,12 +137,12 @@ function Home() {
         <section className="mx-3 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="flex flex-1 px-3 pb-3 pt-1 sm:px-6 sm:pb-6" aria-label="Encontre seu representante">
+        <section className="flex min-h-[42dvh] flex-1 px-3 pb-3 pt-1 sm:min-h-[360px] sm:px-6 sm:pb-6" aria-label="Encontre seu representante">
           <button
             type="button"
             onClick={() => void navigate({ to: "/representantes" })}
             aria-label="Encontre seu representante. Abrir o mapa de representantes"
-            className="group relative flex w-full min-h-[220px] flex-1 items-center justify-center overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-[#071b36] text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-shadow hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[280px]"
+            className="group relative flex w-full min-h-[42dvh] flex-1 items-center justify-center overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-[#071b36] text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-shadow hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[280px]"
           >
             {representativeBannerReady ? (
               <img
