@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
@@ -34,7 +33,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const navigate = useNavigate();
   const [hour, setHour] = useState<number | null>(null);
-  const [representativeBannerReady, setRepresentativeBannerReady] = useState(true);
   useEffect(() => {
     const refreshGreeting = () => setHour(new Date().getHours());
     refreshGreeting();
@@ -137,30 +135,16 @@ function Home() {
         <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] sm:h-auto shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="flex min-h-[35dvh] flex-1 px-3 pb-1 pt-1 sm:min-h-[360px] sm:px-6 sm:pb-6" aria-label="Encontre seu representante">
-          <button
-            type="button"
-            onClick={() => void navigate({ to: "/representantes" })}
-            aria-label="Encontre seu representante. Abrir o mapa de representantes"
-            className="group relative flex w-full min-h-[35dvh] flex-1 items-center justify-center overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-[#071b36] text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-shadow hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[280px]"
-          >
-            {representativeBannerReady ? (
-              <img
-                src="/images/encontre-seu-representante.webp"
-                alt="Encontre seu Representante — mapa do Brasil"
-                className="absolute inset-0 h-full w-full object-cover object-center"
-                loading="lazy"
-                decoding="async"
-                onError={() => setRepresentativeBannerReady(false)}
-              />
-            ) : (
-              <span className="flex flex-col items-center gap-2 px-5 py-8 text-center">
-                <span className="text-xs font-bold uppercase tracking-[.2em] text-[#d4af37]">Atendimento em sua região</span>
-                <span className="font-display text-[clamp(30px,7vw,64px)] font-black leading-tight text-white">Encontre seu <span className="text-[#f1ce67]">Representante</span></span>
-                <span className="inline-flex items-center gap-2 text-sm font-semibold text-white">Ver representantes <ArrowRight size={18} /></span>
-              </span>
-            )}
-          </button>
+        <section className="mx-3 mb-2 rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] px-3 py-4 text-white shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6 sm:px-6" aria-label="Montadoras">
+          <h2 className="mb-3 text-center text-lg font-extrabold tracking-wide text-[#f1ce67] sm:text-2xl">MONTADORAS</h2>
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
+            {[["Volkswagen","volkswagen"],["Fiat","fiat"],["Chevrolet","chevrolet"],["Ford","ford"],["Renault","renault"],["Toyota","toyota"],["Honda","honda"],["Hyundai","hyundai"],["Nissan","nissan"],["Peugeot","peugeot"],["Citroën","citroen"],["Jeep","jeep"],["Mitsubishi","mitsubishi"],["Mercedes-Benz","mercedes-benz"],["Kia","kia"],["Volvo","volvo"]].map(([name, slug]) => (
+              <button key={slug} type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: name } })} className="group flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-[#d4af37]/35 bg-[#102d55] px-1 py-3 transition-colors hover:border-[#ffd43b] hover:bg-[#17416f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffd43b]" aria-label={`Ver peças da montadora ${name}`}>
+                <img src={`/images/montadoras/${slug}.webp`} alt="" loading="lazy" className="h-10 w-full object-contain sm:h-12" />
+                <span className="w-full truncate text-center text-[10px] font-semibold text-white sm:text-xs" title={name}>{name}</span>
+              </button>
+            ))}
+          </div>
         </section>
       </main>
       <a
