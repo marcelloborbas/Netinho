@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 
-import { brl } from "@/lib/brand";
-import { useDraft, draftTotals, draftActions } from "@/lib/order-store";
+import { useDraft, draftActions } from "@/lib/order-store";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
