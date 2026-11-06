@@ -58,7 +58,7 @@ function OrderPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmHelpOpen, setConfirmHelpOpen] = useState(false);
   // À vista é uma condição válida e já vem selecionada no rascunho.
-  const paymentChosen = PAYMENT_TERMS.some((term) => term.value === d.paymentTerm);
+  const paymentChosen = d.paymentConfirmed === true && PAYMENT_TERMS.some((term) => term.value === d.paymentTerm);
   const [actionChosen, setActionChosen] = useState(false);
   const [confirmSpeaking, setConfirmSpeaking] = useState(false);
   const confirmAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -148,6 +148,7 @@ function OrderPage() {
   }
   function openConfirmation() {
     if (!d.customerId) { toast.error("Selecione o cliente."); return; }
+    if (!paymentChosen) { toast.error("Selecione a condição de pagamento, inclusive se for à vista."); return; }
     if (!d.items.length || busy) return;
     buttonSound();
     setReview(true);
@@ -171,6 +172,7 @@ function OrderPage() {
       toast.error("Selecione o cliente.");
       return;
     }
+    if (!paymentChosen) { toast.error("Selecione a condição de pagamento."); return; }
     if (d.kind === "pedido" && t.net < customerMinimum(selectedCustomer?.order_class)) {
       toast.error(
         `Pedido mínimo deste cliente: ${brl(customerMinimum(selectedCustomer?.order_class))}`,
@@ -393,11 +395,11 @@ function OrderPage() {
               setReview(false);
             }
           }}
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-red-600 transition hover:border-red-400 hover:bg-red-50 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
+          className="inline-flex h-12 w-12 shrink-0 animate-pulse items-center justify-center rounded-xl border-2 border-red-400 bg-red-50 text-red-700 shadow-[0_0_15px_rgba(220,38,38,.35)] transition hover:scale-105 hover:bg-red-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300 motion-reduce:animate-none"
           aria-label="Excluir pedido em aberto"
           title="Excluir pedido em aberto"
         >
-          <Trash2 className="h-6 w-6" />
+          <Trash2 className="h-7 w-7" />
         </button>
       </div>
 
@@ -485,7 +487,7 @@ function OrderPage() {
           </div>
           <Select
             value={d.paymentTerm}
-            onValueChange={(v) => { draftActions.update({ paymentTerm: v as PaymentTerm }); }}
+            onValueChange={(v) => { draftActions.update({ paymentTerm: v as PaymentTerm, paymentConfirmed: true }); }}
           >
             <SelectTrigger className="mt-2 h-12 rounded-xl border-[#b7c8de] bg-white font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
               <SelectValue />
