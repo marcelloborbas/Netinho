@@ -1,5 +1,9 @@
 # Roadmap NETINHO
 
+## Imagem de compartilhamento em 06/11/2026
+- [x] Aplicar logo anexa somente à prévia da página inicial, com imagem inteira em 1200×630.
+- [x] Manter a mesma imagem no HTML para buscadores; preservar logos visíveis e ícones, sem publicar.
+
 ## SEO em 06/11/2026
 - [x] Criar lista de páginas para o Google (sitemap) e citá-la no robots.txt.
 - [x] Identificar representante e região no título das páginas de Abdenego e Livaldo; retirar avisos de teste de Livaldo (confirmado real).
