@@ -29,10 +29,10 @@ export function HomePartsCarousel() {
     image.src = `${next.image}?v=20261102-2`;
   }, [index]);
   return (
-    <section className="home-cover-anchor relative w-full overflow-hidden" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+    <section className="home-cover-anchor relative h-full w-full overflow-hidden" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
-      <div className="relative h-[clamp(180px,42vw,340px)] w-full overflow-hidden bg-[#061a36]">
-        <img src={`${parts[index]?.image ?? ""}?v=20261102-2`} alt={parts[index]?.title ?? ""} decoding="async" fetchPriority={index === 0 ? "high" : "auto"} className="absolute inset-0 block h-full w-full object-contain object-center" />
+      <div className="relative h-full min-h-[155px] w-full overflow-hidden bg-[#061a36]">
+        <img src={`${parts[index]?.image ?? ""}?v=20261102-2`} alt={parts[index]?.title ?? ""} decoding="async" fetchPriority={index === 0 ? "high" : "auto"} className="absolute inset-0 block h-full w-full object-cover object-center" />
       </div>
       <div className="absolute bottom-1.5 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-[#071e3bcc] px-2 py-1" aria-label="Selecionar imagem">
         {parts.map((part,i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i+1}: ${part.title}`} aria-current={i===index ? "true" : undefined} onClick={() => setIndex(i)} className={`h-2 rounded-full transition-all ${i===index ? "w-5 bg-[#f3c75d]" : "w-2 bg-white/70 hover:bg-white"}`}/>)}
