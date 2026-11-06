@@ -467,21 +467,9 @@ function OrderPage() {
             </div>
           </div>
           {selectedCustomer && (
-            <div className="rounded-lg bg-secondary/40 p-3 text-xs leading-5 text-muted-foreground">
-              <b className="text-foreground">
-                {selectedCustomer.trade_name || selectedCustomer.company_name}
-              </b>
-              {selectedCustomer.cnpj && <div>CNPJ: {selectedCustomer.cnpj}</div>}
-              {selectedCustomer.phone && <div>Tel.: {selectedCustomer.phone}</div>}
-              {selectedCustomer.email && <div>{selectedCustomer.email}</div>}
-              {(selectedCustomer.address || selectedCustomer.city || selectedCustomer.state) && (
-                <div>
-                  {[selectedCustomer.address, selectedCustomer.city, selectedCustomer.state]
-                    .filter(Boolean)
-                    .join(", ")}
-                </div>
-              )}
-            </div>
+            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-bold text-[#102a52]">
+              {selectedCustomer.trade_name || selectedCustomer.company_name}
+            </p>
           )}
         </div>
       </section>
@@ -533,7 +521,7 @@ function OrderPage() {
               <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Continuar comprando</span>
             </Link>
           </Button>
-          <Button type="button" className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#0767b6] p-2 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#0c70bc] active:scale-95 disabled:opacity-50" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
+          <Button type="button" className="netinho-guided-pulse flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#ffe083] bg-gradient-to-b from-[#147bd0] to-[#064c93] p-2 text-center text-white shadow-[0_0_20px_rgba(20,123,208,.55)] transition-transform hover:scale-[1.03] hover:from-[#168be9] hover:to-[#0757a7] active:scale-95 disabled:animate-none disabled:opacity-50" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
             <ClipboardCheck className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
             <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Enviar pedido</span>
           </Button>
