@@ -299,13 +299,19 @@ function OrderPage() {
   // Nunca apresentar a confirmação antes da resposta do servidor.
   if (busy) {
     return (
-      <main className="flex min-h-[75dvh] items-center justify-center bg-gradient-to-b from-[#102a52] via-[#145fa5] to-[#eaf6ff] px-4" role="status" aria-live="polite" aria-busy="true">
-        <div className="w-full max-w-xl text-center">
-          <div className="mx-auto flex min-h-28 w-full items-center justify-center gap-4 rounded-3xl border-2 border-[#d4af37] bg-gradient-to-b from-[#3ab5f5] to-[#0755a0] px-6 py-6 text-xl font-black uppercase tracking-wide text-white shadow-[0_9px_0_#0c5b92,0_18px_32px_#0b396344] sm:min-h-36 sm:text-2xl">
-            <span className="inline-block h-9 w-9 shrink-0 animate-spin rounded-full border-4 border-white/40 border-t-white motion-reduce:animate-none" aria-hidden="true"/>
-            <span>Enviando o pedido...</span>
+      <main className="relative flex min-h-[85dvh] items-center justify-center overflow-hidden bg-gradient-to-b from-[#07172d] via-[#102a52] to-[#174779] px-4 py-16 text-white" role="status" aria-live="polite" aria-busy="true">
+        <div className="pointer-events-none absolute -left-24 top-10 h-64 w-64 animate-pulse rounded-full bg-[#e5b32d]/10 blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -right-24 bottom-10 h-72 w-72 animate-pulse rounded-full bg-sky-400/10 blur-3xl" aria-hidden="true" />
+        <div className="relative w-full max-w-md rounded-[28px] border-2 border-[#e5b32d] bg-[#0a2140] p-7 text-center shadow-[0_0_45px_rgba(229,179,45,.20)] sm:p-10">
+          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full border border-[#e5b32d]/60 bg-[#143a65] shadow-[0_0_26px_rgba(229,179,45,.30)]">
+            <span className="inline-block h-14 w-14 animate-spin rounded-full border-[5px] border-white/20 border-t-[#ffd95d] border-r-[#ffd95d] motion-reduce:animate-none" aria-hidden="true" />
           </div>
-          <p className="mt-6 text-base font-semibold text-white">Aguarde a confirmação. Não é necessário clicar novamente.</p>
+          <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">Enviando o pedido</h1>
+          <p className="mt-3 text-base font-semibold leading-relaxed text-[#f5d779]">Estamos encaminhando seu pedido à Netinho Auto Parts.</p>
+          <div className="mx-auto mt-7 h-2.5 w-full max-w-xs overflow-hidden rounded-full bg-white/15" aria-hidden="true">
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-gradient-to-r from-[#d4a62d] to-[#ffe18a] motion-reduce:animate-none" />
+          </div>
+          <p className="mt-6 text-sm font-medium leading-relaxed text-white/90">Aguarde a confirmação do envio.<br />Não feche esta página nem clique novamente.</p>
         </div>
       </main>
     );
