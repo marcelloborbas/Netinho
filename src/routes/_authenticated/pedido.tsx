@@ -57,7 +57,7 @@ function OrderPage() {
   const [sentResult, setSentResult] = useState<"sent" | "failed" | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmHelpOpen, setConfirmHelpOpen] = useState(false);
-  // À vista é uma condição válida e já vem selecionada no rascunho.
+  // Nenhuma condição é exibida como escolhida até a seleção explícita.
   const paymentChosen = d.paymentConfirmed === true && PAYMENT_TERMS.some((term) => term.value === d.paymentTerm);
   const [actionChosen, setActionChosen] = useState(false);
   const [confirmSpeaking, setConfirmSpeaking] = useState(false);
@@ -87,41 +87,20 @@ function OrderPage() {
     setConfirmSpeaking(true);
     void audio.play().catch(() => setConfirmSpeaking(false));
   }
-  const [sentAudioError, setSentAudioError] = useState(false);
+  const [sentHelpOpen, setSentHelpOpen] = useState(false);
   const sentAudioRef = useRef<HTMLAudioElement | null>(null);
   function playSentAudio() {
-    if (sentAudioRef.current) { sentAudioRef.current.pause(); sentAudioRef.current = null; }
-    const fallbackSpeech = () => {
-      if (!("speechSynthesis" in window)) { setSentAudioError(true); return; }
-      const speech = new SpeechSynthesisUtterance("Seu pedido foi enviado com sucesso para a Netinho Auto Parts! Uma cópia também foi encaminhada para o seu e-mail, para que você possa consultá-la sempre que precisar. Agora, é só aguardar! Nossa equipe dará continuidade ao atendimento do seu pedido. Você também poderá acompanhar as informações na página Minhas Vendas. Que Deus abençoe seu dia!");
-      speech.lang = "pt-BR";
-      speech.rate = 0.95;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(speech);
-    };
-    const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261106-3");
-    audio.preload = "auto";
+    sentAudioRef.current?.pause();
+    const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261106-4");
     audio.loop = false;
     sentAudioRef.current = audio;
-    audio.onerror = fallbackSpeech;
-    void audio.play().catch(fallbackSpeech);
+    audio.onerror = () => toast.error("Não foi possível carregar a gravação da LIA. Confira o arquivo MP3.");
+    void audio.play().catch(() => toast.error("Não foi possível reproduzir a gravação da LIA."));
   }
-  const sentSpeechStarted = useRef(false);
-  useEffect(() => {
-    if (sentResult !== "sent") {
-      sentSpeechStarted.current = false;
-      return;
-    }
-    if (sentSpeechStarted.current) return;
-    sentSpeechStarted.current = true;
-
-    playSentAudio();
-    return () => {
-      sentAudioRef.current?.pause();
-      sentAudioRef.current = null;
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    };
-  }, [sentResult]);
+  useEffect(() => () => {
+    sentAudioRef.current?.pause();
+    confirmAudioRef.current?.pause();
+  }, []);
   const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : "actions";
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
@@ -161,8 +140,7 @@ function OrderPage() {
     stopConfirmAudio();
     setConfirmHelpOpen(false);
     setConfirmOpen(true);
-    // A locução é iniciada uma única vez após a ação do usuário.
-    playConfirmHelp();
+    // A locução do resumo só toca quando o usuário solicitar Ajuda.
   }
   function closeConfirmation() {
     stopConfirmAudio();
@@ -244,6 +222,13 @@ function OrderPage() {
   if (sentResult === "sent") {
     return createPortal(
       <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]">
+        <button type="button" onClick={() => setSentHelpOpen(v => !v)} className="absolute right-3 top-3 z-[100001] rounded-full border-2 border-[#ffe083] bg-[#102a52] px-4 py-2 text-sm font-bold text-white shadow-lg">Ajuda da LIA</button>
+        {sentHelpOpen && <div className="absolute left-3 right-3 top-16 z-[100001] mx-auto max-w-md rounded-2xl border-2 border-[#ffe083] bg-white p-4 text-[#102a52] shadow-2xl">
+          <p className="mb-2 font-black">LIA — Pedido enviado</p>
+          <p className="max-h-40 overflow-y-auto text-sm">Seu pedido foi enviado com sucesso para a Netinho Auto Parts! Uma cópia também foi encaminhada para o seu e-mail, para que você possa consultá-la sempre que precisar. Agora, é só aguardar! Nossa equipe dará continuidade ao atendimento do seu pedido. Você também poderá acompanhar as informações na página Minhas Vendas. Que Deus abençoe seu dia!</p>
+          <button type="button" onClick={playSentAudio} className="mt-3 rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white">Ouvir locução original da LIA</button>
+          <button type="button" onClick={() => {sentAudioRef.current?.pause();setSentHelpOpen(false);}} className="ml-2 rounded-lg border px-4 py-2 font-bold">Fechar</button>
+        </div>}
         <main className="min-h-0 flex-1 overflow-hidden" role="status" aria-label="Pedido enviado com sucesso">
           <div className="relative mx-auto h-full w-full max-w-[600px]">
             <img src="/images/lia-confirmacao-pedido-final.webp?v=67549b3a" alt="Pedido enviado com sucesso! Parabéns pela venda." className="block h-full w-full object-fill" draggable={false} />
@@ -374,6 +359,13 @@ function OrderPage() {
                     <p className="break-all text-[clamp(17px,6vw,36px)] font-black tabular-nums leading-tight">{brl(t.net)}</p>
                   </div>
                 </section>
+                <button type="button" onClick={() => setConfirmHelpOpen(v => !v)} className="absolute right-[4%] top-[3%] z-30 rounded-full border-2 border-[#ffe083] bg-[#102a52] px-3 py-2 text-sm font-black text-white shadow-lg">Ajuda da LIA</button>
+                {confirmHelpOpen && <div className="absolute left-[4%] right-[4%] top-[13%] z-30 rounded-xl border-2 border-[#ffe083] bg-white p-3 text-[#102a52] shadow-xl">
+                  <p className="font-black">LIA — Resumo do pedido</p>
+                  <p className="mt-1 max-h-28 overflow-y-auto text-sm">Quase finalizado! Antes mesmo de enviar, confira atentamente os dados do seu pedido. Caso precise fazer alguma alteração, selecione Revisar Pedido. Se estiver tudo correto, clique em Enviar Pedido.</p>
+                  <button type="button" onClick={playConfirmHelp} className="mt-2 rounded-lg bg-[#102a52] px-3 py-2 text-sm font-bold text-white">Ouvir locução da LIA</button>
+                  <button type="button" onClick={() => {stopConfirmAudio();setConfirmHelpOpen(false);}} className="ml-2 rounded-lg border px-3 py-2 text-sm font-bold">Fechar</button>
+                </div>}
                 {/* Áreas clicáveis transparentes sobre os botões desenhados na própria arte. */}
                 <button type="button" onClick={closeConfirmation} aria-label="Revisar Pedido" title="Revisar Pedido" className="absolute bottom-[7%] left-[2%] z-20 h-[12%] w-[47%] sm:bottom-[9%] sm:h-[11%] cursor-pointer touch-manipulation rounded-xl bg-transparent focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-400">
                   <span className="sr-only">Revisar Pedido</span>
@@ -474,11 +466,6 @@ function OrderPage() {
           </div>
             </div>
           </div>
-          {selectedCustomer && (
-            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-bold text-[#102a52]">
-              {selectedCustomer.trade_name || selectedCustomer.company_name}
-            </p>
-          )}
         </div>
       </section>
 
@@ -492,11 +479,11 @@ function OrderPage() {
             <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${paymentChosen ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>{paymentChosen ? "✓ Confirmada" : "Escolha uma opção"}</span>
           </div>
           <Select
-            value={d.paymentTerm}
+            value={paymentChosen ? d.paymentTerm : ""}
             onValueChange={(v) => { draftActions.update({ paymentTerm: v as PaymentTerm, paymentConfirmed: true }); }}
           >
             <SelectTrigger className="mt-2 h-12 rounded-xl border-[#b7c8de] bg-white font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
-              <SelectValue />
+              <SelectValue placeholder="Selecione a condição de pagamento" />
             </SelectTrigger>
             <SelectContent>
               {PAYMENT_TERMS.map((p) => (
