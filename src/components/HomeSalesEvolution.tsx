@@ -45,26 +45,29 @@ export function HomeSalesEvolution() {
     queryFn: loadSalesEvolution,
     staleTime: 120_000,
   });
-  const max = Math.max(1, ...(data ?? []).map(item => item.total));
-  const total = data?.[data.length - 1]?.total ?? 0;
-  return <section className="mx-3 mb-3 rounded-2xl border border-[#d4af37]/70 bg-[#071b36] px-4 py-4 text-white shadow-lg sm:mx-6 sm:px-6" aria-label="Evolução das suas vendas">
-    <button type="button" onClick={() => void navigate({ to: "/pedidos" })} className="flex w-full items-center justify-between gap-3 text-left focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffd43b]">
-      <span className="text-base font-extrabold text-[#f1ce67] sm:text-xl">EVOLUÇÃO DAS SUAS VENDAS</span>
-      <span className="text-xs font-semibold text-white/80">Ver relatório ›</span>
-    </button>
-    {isLoading ? <p className="py-8 text-center text-sm">Carregando suas vendas…</p> :
-      isError ? <p className="py-8 text-center text-sm">Não foi possível consultar suas vendas.</p> :
-      <><p className="mt-2 text-xs text-white/75">Total do mês atual</p>
-        <p className="text-2xl font-black text-[#ffe083]">{brl(total)}</p>
-        <div className="mt-4 grid h-32 grid-cols-6 items-end gap-2 sm:h-44" role="img" aria-label={`Vendas dos últimos seis meses: ${(data ?? []).map(item => `${item.label}: ${brl(item.total)}`).join("; ")}`}>
-          {(data ?? []).map(item => <div key={item.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
-            <span className="max-w-full truncate text-[9px] font-bold text-[#ffe083] sm:text-xs" title={brl(item.total)}>{item.total > 0 ? brl(item.total) : "—"}</span>
-            <div className="flex h-[75%] w-full items-end justify-center">
-              <div className="w-full max-w-12 rounded-t-md bg-gradient-to-t from-[#1b75ce] to-[#f4c64c]" style={{ height: `${item.total > 0 ? Math.max(7, item.total / max * 100) : 2}%` }} />
-            </div>
-            <span className="text-[11px] font-semibold sm:text-sm">{item.label}</span>
-          </div>)}
-        </div>
-      </>}
+  const history = data ?? [];
+  const chartMax = Math.max(1, ...history.map(item => item.total));
+  const previousTotal = history.length > 1 ? history[history.length - 2].total : 0;
+  const currentTotal = history.length ? history[history.length - 1].total : 0;
+  const growth = previousTotal > 0 ? (currentTotal - previousTotal) / previousTotal * 100 : null;
+  return <section className="mx-3 mb-3 !min-h-0 !h-auto overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 text-white shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6" aria-label="Evolução das vendas pessoais">
+    <div className="flex items-center gap-2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-8 w-8 shrink-0 text-[#ffd42a]" aria-hidden="true"><path d="M3 3v18h18M7 16v-4M12 16V7M17 16V5"/></svg>
+      <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas</h2><p className="text-xs text-[#d7e8ff]">Seu desempenho nos últimos seis meses</p></div>
+    </div>
+    {isError ? <p role="alert" className="mt-4 text-sm">Não foi possível consultar o histórico de vendas.</p> :
+      isLoading ? <p role="status" className="mt-4 text-sm">Carregando evolução...</p> :
+      <div className="mt-2 grid h-[165px] grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-60 sm:gap-3" role="img" aria-label={`Vendas dos últimos seis meses: ${history.map(item => `${item.label}: ${brl(item.total)}`).join("; ")}`}>
+        {history.map((item, index) => <div key={item.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
+          <span className="max-w-full truncate text-[10px] font-extrabold tabular-nums sm:text-xs" title={brl(item.total)}>{item.total >= 1000 ? `R$ ${(item.total / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}k` : `R$ ${Math.round(item.total)}`}</span>
+          <div className={`w-full max-w-16 rounded-t-md border border-white/40 shadow-[0_0_10px_#28baff77] ${index === history.length - 1 ? "bg-gradient-to-t from-[#d48a00] to-[#ffed25]" : index % 2 ? "bg-gradient-to-t from-[#dc7500] to-[#ffae20]" : "bg-gradient-to-t from-[#065ac0] to-[#1cc7ff]"}`} style={{ height: `${Math.max(item.total > 0 ? 7 : 2, item.total / chartMax * 100)}%` }} title={brl(item.total)} />
+          <span className="text-[10px] font-bold sm:text-xs">{item.label}</span>
+        </div>)}
+      </div>}
+    <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border-2 border-[#ffda34] bg-[#041a42]/70 p-2">
+      <span className="text-sm font-black uppercase sm:text-lg">Desempenho</span>
+      <span className={`text-xl font-black tabular-nums ${growth == null ? "text-white" : growth >= 0 ? "text-[#6eff6e]" : "text-[#ffb3b3]"}`}>{isLoading || isError || growth == null ? "—" : `${growth > 0 ? "+" : ""}${growth.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`}</span>
+      <span className="max-w-24 text-right text-[10px] leading-tight text-[#dceaff]">Em relação ao mês anterior</span>
+    </div>
   </section>;
 }
