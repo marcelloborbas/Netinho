@@ -88,8 +88,9 @@ export function PublicFooter() {
         <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className="text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]" />{label}
         {pathname === to && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#ffd43b] shadow-[0_0_9px_2px_rgba(255,212,59,0.65)]"/>}
       </Link>)}
-      <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-0 py-1 text-[13px] font-semibold text-white hover:text-[#ffdc55]">
-        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-[61px] w-[61px] rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={49} className="rounded-full border border-[#ffd43b] p-1 text-[#ffd43b]"/>}
+      <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-0.5 py-1 text-[12px] font-semibold text-white hover:text-[#ffdc55]">
+        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-[49px] w-[49px] rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={39} className="rounded-full border border-[#ffd43b] p-1 text-[#ffd43b]"/>}
+        <span>Usuário</span>
       </button>
     </nav>
   </>;
