@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowRight, CarFront, PackageSearch, Tags, PackagePlus, MapPinned } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
@@ -110,27 +110,56 @@ function Home() {
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative grid w-full max-w-none flex-1 grid-rows-3 gap-2 overflow-hidden bg-[#0b2447] px-3 py-3 pb-[86px] text-[#102a52] sm:gap-4 sm:px-6 sm:pb-24">
-        <section className="relative isolate min-h-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] shadow-lg" aria-label="Boas-vindas">
+      <main className="relative flex w-full max-w-none flex-1 flex-col gap-2 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-[82px] text-[#102a52] sm:gap-4 sm:pb-24">
+        <section className="relative isolate h-[29dvh] min-h-[210px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-auto sm:min-h-[520px] lg:min-h-[620px] xl:min-h-[700px]" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
-          <div className="relative z-10 flex h-full flex-col justify-end bg-gradient-to-t from-[#06152e] via-[#06152e]/65 to-transparent px-4 pb-4 pt-4 text-white sm:px-10">
-            <h1 className="flex flex-wrap items-baseline gap-x-2 text-[clamp(20px,5vw,32px)] font-bold leading-tight drop-shadow-lg">
-              <span>{salutation}, Sr.</span>
-              <span className="max-w-full break-words text-[clamp(30px,8vw,52px)] font-black motion-safe:animate-pulse motion-reduce:animate-none" style={{color:dailyNameColor}}>{userName || "usuário"}!</span>
-            </h1>
-            <p className="mt-2 text-[clamp(16px,4vw,22px)] font-semibold">É bom tê-lo conosco.</p>
-            <p className="text-[clamp(16px,4vw,22px)] font-bold text-[#ffe083]">Que seu dia seja abençoado!</p>
+          <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
+
+<p className="flex w-full min-w-0 flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-[clamp(13px,3.6vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
+  <span className="shrink-0">{salutation}, Sr.</span>
+  <span
+    className="inline-block min-w-0 truncate text-[clamp(25px,7vw,38px)] leading-[1.05] sm:text-[clamp(2.2rem,4.5vw,4.8rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
+    style={{ color: dailyNameColor }}
+    title={userName || "usuário"}
+  >
+    {userName || "usuário"}!
+  </span>
+</p>
+<p className="mt-2 text-[clamp(19px,5vw,22px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
+  É bom tê-lo conosco.
+</p>
+<p className="text-[clamp(19px,5vw,22px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-[#ffe083] drop-shadow-lg">
+  Que seu dia seja abençoado!
+</p>
+
           </div>
         </section>
-        <section className="min-h-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] shadow-lg" aria-label="Peças e novidades em destaque">
+        <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] sm:h-auto shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="min-h-0" aria-label="Encontre seu representante">
-          <button type="button" onClick={()=>void navigate({to:"/representantes"})} className="group relative flex h-full w-full items-center overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] text-left shadow-lg focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37]">
-            {representativeBannerReady&&<img src="/images/encontre-seu-representante.webp" alt="" className="absolute inset-0 h-full w-full object-cover opacity-45" loading="lazy" decoding="async" onError={()=>setRepresentativeBannerReady(false)}/>}
-            <span className="relative z-10 flex w-full items-center justify-between gap-3 bg-gradient-to-r from-[#061b38]/95 via-[#061b38]/75 to-transparent p-5 text-white">
-              <span className="flex flex-col gap-2"><span className="flex items-center gap-2 text-[#f4cf73]"><MapPinned size={22}/><span className="text-[10px] font-bold uppercase tracking-[.15em]">Atendimento regional</span></span><strong className="text-xl font-black leading-tight sm:text-2xl">Encontre seu<br/>representante</strong><span className="text-xs text-white/85">Veja quem atende sua região</span></span><ArrowRight className="shrink-0 text-[#ffe083]" size={28}/>
-            </span>
+        <section className="flex min-h-[35dvh] flex-1 px-3 pb-1 pt-1 sm:min-h-[360px] sm:px-6 sm:pb-6" aria-label="Encontre seu representante">
+          <button
+            type="button"
+            onClick={() => void navigate({ to: "/representantes" })}
+            aria-label="Encontre seu representante. Abrir o mapa de representantes"
+            className="group relative flex w-full min-h-[35dvh] flex-1 items-center justify-center overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-[#071b36] text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-shadow hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[280px]"
+          >
+            {representativeBannerReady ? (
+              <img
+                src="/images/encontre-seu-representante.webp"
+                alt="Encontre seu Representante — mapa do Brasil"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                loading="lazy"
+                decoding="async"
+                onError={() => setRepresentativeBannerReady(false)}
+              />
+            ) : (
+              <span className="flex flex-col items-center gap-2 px-5 py-8 text-center">
+                <span className="text-xs font-bold uppercase tracking-[.2em] text-[#d4af37]">Atendimento em sua região</span>
+                <span className="font-display text-[clamp(30px,7vw,64px)] font-black leading-tight text-white">Encontre seu <span className="text-[#f1ce67]">Representante</span></span>
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-white">Ver representantes <ArrowRight size={18} /></span>
+              </span>
+            )}
           </button>
         </section>
       </main>
