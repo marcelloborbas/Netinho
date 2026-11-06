@@ -29,9 +29,9 @@ export function HomePartsCarousel() {
     image.src = `${next.image}?v=20261102-2`;
   }, [index]);
   return (
-    <section className="home-cover-anchor relative h-full w-full overflow-hidden" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+    <section className="home-cover-anchor relative w-full overflow-hidden" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
 
-      <div className="relative h-full w-full overflow-hidden bg-[#0b2447]">
+      <div className="relative h-[clamp(180px,42vw,340px)] w-full overflow-hidden bg-[#061a36]">
         <img src={`${parts[index]?.image ?? ""}?v=20261102-2`} alt={parts[index]?.title ?? ""} decoding="async" fetchPriority={index === 0 ? "high" : "auto"} className="absolute inset-0 block h-full w-full object-contain object-center" />
       </div>
       <div className="absolute bottom-1.5 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-[#071e3bcc] px-2 py-1" aria-label="Selecionar imagem">
