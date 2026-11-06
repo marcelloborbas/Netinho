@@ -62,8 +62,7 @@ export function PublicFooter() {
   };
   const links = [
     { to: "/" as const, label: "Início", icon: Home },
-    { to: "/catalogo" as const, label: "Catálogo", icon: Search },
-    { to: "/pedido" as const, label: "Pedido", icon: ShoppingCart },
+    { to: "/catalogo" as const, label: "Catálogo/Pedido", icon: Search },
     { to: "/pedidos" as const, label: "Vendas", icon: ClipboardList },
   ];
   async function logout() {
@@ -83,9 +82,9 @@ export function PublicFooter() {
       {user && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); clickSound(); void logout(); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-red-700 hover:bg-red-50"><LogOut size={19}/> Sair</button>}
       {!user && <Link role="menuitem" to="/auth" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={19}/> Entrar</Link>}
     </div>}
-    <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-[#215c9b] !bg-gradient-to-b !from-[#092b57] !via-[#061c3b] !to-[#031126] !shadow-[0_-5px_22px_rgba(0,58,132,0.24)]" style={{ gridTemplateColumns: "repeat(5, minmax(0, 1fr))" }}>
-      {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} preload="intent" onMouseEnter={to === "/catalogo" ? prepareCatalog : undefined} onFocus={to === "/catalogo" ? prepareCatalog : undefined} onTouchStart={to === "/catalogo" ? prepareCatalog : undefined} onClick={clickSound} aria-current={pathname === to ? "page" : undefined} className={`group relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[13px] font-semibold transition-all duration-200 hover:bg-[#174e9b]/30 hover:text-[#ffdc55] ${pathname === to ? "text-[#ffdc55]" : "text-white"}`}>
-        <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className="text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]" />{label}
+    <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-[#215c9b] !bg-gradient-to-b !from-[#092b57] !via-[#061c3b] !to-[#031126] !shadow-[0_-5px_22px_rgba(0,58,132,0.24)]" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+      {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} preload="intent" onMouseEnter={to === "/catalogo" ? prepareCatalog : undefined} onFocus={to === "/catalogo" ? prepareCatalog : undefined} onTouchStart={to === "/catalogo" ? prepareCatalog : undefined} onClick={clickSound} aria-current={pathname === to ? "page" : undefined} className={`group relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] sm:text-[13px] font-semibold transition-all duration-200 hover:bg-[#174e9b]/30 hover:text-[#ffdc55] ${pathname === to ? "text-[#ffdc55]" : "text-white"}`}>
+        {to === "/catalogo" ? <span className="flex items-center gap-1 text-[#ffd43b]"><Search size={21}/><ShoppingCart size={21}/></span> : <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className="text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]" />}{label}
         {pathname === to && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#ffd43b] shadow-[0_0_9px_2px_rgba(255,212,59,0.65)]"/>}
       </Link>)}
       <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-0.5 py-1 text-[12px] font-semibold text-white hover:text-[#ffdc55]">
