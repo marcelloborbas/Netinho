@@ -181,7 +181,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   const {error:profileError}=await supabase.rpc("admin_update_person_contact" as never,{p_user:person.id,p_name:name.trim(),p_phone:phone.trim()} as never);
   if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
   if(sales){
-   const parsed=commissionRate === "" ? null : Number(commissionRate);
+   const parsed=role==="Administrador" ? 3 : commissionRate === "" ? null : Number(commissionRate);
    if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
    const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
    if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message);onSaved();return;}
