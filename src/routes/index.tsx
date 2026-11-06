@@ -109,10 +109,10 @@ function Home() {
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative flex w-full max-w-none flex-1 flex-col gap-2 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-[82px] text-[#102a52] sm:gap-4 sm:pb-24">
-        <section className="relative isolate h-[29dvh] min-h-[210px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-auto sm:min-h-[520px] lg:min-h-[620px] xl:min-h-[700px]" aria-label="Boas-vindas">
+      <main className="relative mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-2 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-[82px] text-[#102a52] sm:gap-3 sm:pb-24">
+        <section className="relative isolate h-[29dvh] min-h-[210px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-[clamp(260px,30vw,380px)] sm:min-h-0" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
-          <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
+          <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:px-7 sm:pb-6 lg:px-10">
 
 <p className="flex w-full min-w-0 flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-[clamp(13px,3.6vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
   <span className="shrink-0">{salutation}, Sr.</span>
@@ -133,7 +133,7 @@ function Home() {
 
           </div>
         </section>
-        <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6 sm:h-auto" aria-label="Promoções em destaque">
+        <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6 sm:h-[clamp(190px,25vw,310px)] sm:min-h-0" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
         <HomeSalesEvolution />
