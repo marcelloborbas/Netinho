@@ -414,7 +414,8 @@ function RepresentativeDetails({name,email,representativeId,commercial=false}:{n
   <h4 className="font-extrabold">Região e dados cadastrais</h4>
   {isLoading&&<p>Carregando ficha…</p>}
   {error&&<p role="alert" className="text-red-700">Não foi possível consultar a ficha regional.</p>}
-  {!isLoading&&!error&&!record&&<CommercialDetailsForm representativeId={representativeId} />}
+  {!isLoading&&!error&&!record&&commercial&&<CommercialDetailsForm representativeId={representativeId} />}
+  {!isLoading&&!error&&!record&&!commercial&&<p className="rounded-lg bg-amber-50 p-3 text-sm">Ficha regional não vinculada. Atualize os dados principais na seção Identificação e acesso. Não será criado cadastro comercial duplicado.</p>}
   {record&&initialized&&<>
    {fields.map(field=><label key={field.key} className="block text-sm font-bold">{field.label}<input value={values[field.key]??""} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal"/></label>)}
    <button type="button" disabled={saving} onClick={()=>void saveRegion()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-3 font-bold text-white disabled:opacity-50">{saving?"Salvando dados…":"Salvar dados regionais e cadastrais"}</button>
