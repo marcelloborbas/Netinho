@@ -31,21 +31,21 @@ function AdminCommunication() {
     queryFn: async () => {
       const { data: profiles, error } = await supabase.from("profiles").select("id,full_name,phone,site_role").eq("site_role", "Representante").order("full_name");
       if (error) throw error;
-      const items: Contact[] = (profiles ?? []).filter(p => !!p.phone).map(p => ({ id: p.id, name: p.full_name || "Representante", phone: p.phone!, source: "perfil" }));
+      const items: Contact[] = (profiles ?? []).map(p => ({ id: p.id, name: p.full_name || "Representante", phone: p.phone ?? "", source: "perfil" }));
       // Contatos comerciais sem conta de acesso também podem possuir telefone.
       const commercial = await supabase.from("commercial_representatives").select("id,full_name,phone,active").eq("active", true).order("full_name");
       if (!commercial.error) {
         for (const p of commercial.data ?? []) {
-          if (p.phone && !items.some(item => whatsappNumber(item.phone) === whatsappNumber(p.phone!))) {
-            items.push({ id: p.id, name: p.full_name || "Representante", phone: p.phone, source: "comercial" });
+          if (!items.some(item => (p.phone && whatsappNumber(item.phone) === whatsappNumber(p.phone)) || item.name.trim().toLocaleLowerCase("pt-BR") === (p.full_name || "").trim().toLocaleLowerCase("pt-BR"))) {
+            items.push({ id: p.id, name: p.full_name || "Representante", phone: p.phone ?? "", source: "comercial" });
           }
         }
       }
-      return items.filter(item => whatsappNumber(item.phone) !== null).sort((a,b) => a.name.localeCompare(b.name, "pt-BR"));
+      return items.sort((a,b) => a.name.localeCompare(b.name, "pt-BR"));
     },
   });
   const filtered = useMemo(() => contacts.filter(c => c.name.toLocaleLowerCase("pt-BR").includes(filter.toLocaleLowerCase("pt-BR"))), [contacts, filter]);
-  const recipients = mode === "todos" ? contacts : contacts.filter(c => selected.includes(c.source + ":" + c.id));
+  const recipients = (mode === "todos" ? contacts : contacts.filter(c => selected.includes(c.source + ":" + c.id))).filter(c => whatsappNumber(c.phone) !== null);
   const messageUrl = (phone: string) => `https://wa.me/${whatsappNumber(phone)}?text=${encodeURIComponent(message.trim())}`;
   if (checking) return <p className="p-5">Verificando acesso…</p>;
   if (!me?.isAdmin) return <p className="p-5">Acesso restrito ao administrador.</p>;
@@ -63,12 +63,12 @@ function AdminCommunication() {
       <label className="block text-sm font-bold">Mensagem
         <textarea value={message} onChange={e => setMessage(e.target.value)} rows={4} maxLength={2000} className="mt-1 w-full rounded-xl border-2 border-slate-200 bg-white p-3 text-base font-normal text-[#102a52]" placeholder="Escreva a mensagem para os representantes"/>
       </label>
-      <p className="text-xs text-slate-600">Destinatários disponíveis: {contacts.length}. Números sem WhatsApp válido ou sem telefone cadastrado não aparecem.</p>
+      <p className="text-xs text-slate-600">Representantes cadastrados: {contacts.length}. Com WhatsApp disponível: {contacts.filter(c => whatsappNumber(c.phone) !== null).length}. Quem não possui telefone válido continua visível para atualização cadastral.</p>
     </section>
     {mode === "individual" && <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
       <label className="block text-sm font-bold">Buscar representante<input value={filter} onChange={e => setFilter(e.target.value)} placeholder="Nome do representante" className="mt-1 min-h-11 w-full rounded-xl border border-slate-300 px-3"/></label>
-      {isLoading ? <p>Carregando representantes…</p> : isError ? <p role="alert">Não foi possível consultar os representantes.</p> : filtered.length === 0 ? <p className="text-sm">Nenhum representante com telefone encontrado. Confira os telefones em Pessoas e Comissões.</p> :
-        <div className="max-h-80 space-y-1 overflow-y-auto">{filtered.map(c => <label key={c.source + c.id} className="flex min-h-12 items-center gap-3 rounded-lg border border-slate-200 px-3 py-2"><input type="checkbox" checked={selected.includes(c.source + ":" + c.id)} onChange={e => setSelected(prev => e.target.checked ? [...prev, c.source + ":" + c.id] : prev.filter(id => id !== c.source + ":" + c.id))} className="h-5 w-5 accent-[#123e74]"/><span className="min-w-0 flex-1 truncate font-semibold">{c.name}</span><span className="text-xs text-slate-500">{c.phone}</span></label>)}</div>}
+      {isLoading ? <p>Carregando representantes…</p> : isError ? <p role="alert">Não foi possível consultar os representantes.</p> : filtered.length === 0 ? <p className="text-sm">Nenhum representante encontrado nos cadastros consultados. Confira Pessoas e Comissões.</p> :
+        <div className="max-h-80 space-y-1 overflow-y-auto">{filtered.map(c => <label key={c.source + c.id} className="flex min-h-12 items-center gap-3 rounded-lg border border-slate-200 px-3 py-2"><input type="checkbox" disabled={!whatsappNumber(c.phone)} checked={selected.includes(c.source + ":" + c.id)} onChange={e => setSelected(prev => e.target.checked ? [...prev, c.source + ":" + c.id] : prev.filter(id => id !== c.source + ":" + c.id))} className="h-5 w-5 accent-[#123e74]"/><span className="min-w-0 flex-1 truncate font-semibold">{c.name}</span><span className={`text-xs ${whatsappNumber(c.phone) ? "text-slate-500" : "font-bold text-amber-700"}`}>{whatsappNumber(c.phone) ? c.phone : "Sem telefone válido"}</span></label>)}</div>}
     </section>}
     {mode === "todos" && <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm">O WhatsApp comum não envia automaticamente uma mensagem para todos. Abra cada conversa abaixo e confirme o envio. Para disparos em massa, é necessária uma integração oficial com consentimento dos destinatários.</p>}
     <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
