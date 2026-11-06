@@ -135,20 +135,20 @@ function Home() {
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
 
-<p className="flex w-full min-w-0 items-baseline gap-[0.25em] whitespace-nowrap text-[16px] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
+<p className="flex w-full min-w-0 items-baseline gap-[0.25em] whitespace-nowrap text-[clamp(17px,4.5vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
   <span className="shrink-0">{salutation}, Sr.</span>
   <span
-    className="min-w-0 truncate text-[20px] sm:text-[clamp(1.5rem,3.8vw,3.8rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
+    className="min-w-0 truncate text-[clamp(21px,5.5vw,24px)] sm:text-[clamp(1.5rem,3.8vw,3.8rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
     style={{ color: dailyNameColor }}
     title={userName || "usuário"}
   >
     {userName || "usuário"}!
   </span>
 </p>
-<p className="mt-2 text-[16px] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
+<p className="mt-2 text-[clamp(17px,4.5vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
   É bom tê-lo conosco.
 </p>
-<p className="text-[16px] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-[#ffe083] drop-shadow-lg">
+<p className="text-[clamp(17px,4.5vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-[#ffe083] drop-shadow-lg">
   Que seu dia seja abençoado!
 </p>
 
