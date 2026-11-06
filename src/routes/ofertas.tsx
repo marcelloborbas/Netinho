@@ -4,6 +4,7 @@ import { ShoppingCart, Tag } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 export const Route = createFileRoute("/ofertas")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { property: "og:url", content: "https://www.netinhoautoparts.live/ofertas" },

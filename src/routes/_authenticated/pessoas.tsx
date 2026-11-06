@@ -9,6 +9,7 @@ import { meQuery } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/pessoas")({
+  staticData: { sitemap: false },
   component: Pessoas,
   head: () => ({ meta: [{ title: "Pessoal | Netinho" }, { name: "description", content: "Administração de pessoas e acessos da Netinho Auto Parts." }, { property: "og:title", content: "Pessoal | Netinho" }, { property: "og:description", content: "Administração de pessoas e acessos da Netinho Auto Parts." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
 });

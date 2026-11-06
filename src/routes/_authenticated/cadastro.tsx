@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 
 export const Route = createFileRoute("/_authenticated/cadastro")({
+  staticData: { sitemap: false },
   component: CadastroPage,
   head: () => pageHead("/cadastro", "Meu cadastro | Netinho Auto Parts", "Consulte os dados do seu cadastro, perfil de acesso e região de atendimento na Netinho Auto Parts."),
 });

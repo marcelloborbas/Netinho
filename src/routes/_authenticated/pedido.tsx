@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/pedido")({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { title: "Meu pedido | NETINHO" },

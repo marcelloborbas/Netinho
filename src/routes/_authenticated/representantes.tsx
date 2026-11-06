@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 
 export const Route = createFileRoute("/_authenticated/representantes")({
+  staticData: { sitemap: false },
   head: () => pageHead("/representantes", "Buscar representantes | Netinho Auto Parts", "Localize representantes da Netinho Auto Parts por cidade e estado e consulte suas áreas de atendimento."), component: Page });
 type Representative = { slug: string; full_name: string; region: string; phone: string | null; photo_url?: string | null };
 type ServiceArea = { slug: string; service_cities: string | null };

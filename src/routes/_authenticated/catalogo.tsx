@@ -15,6 +15,7 @@ import hdCatalog from "@/data/hd-catalog.json";
 import { readOffers } from "@/routes/ofertas";
 
 export const Route = createFileRoute("/_authenticated/catalogo")({
+  staticData: { sitemap: false },
   validateSearch: (search: Record<string, unknown>): { marca?: "FCO" | "HD" | undefined; modo?: "consulta" | "venda" | undefined; q?: string | undefined } => ({
     marca: search["marca"] === "FCO" || search["marca"] === "HD" ? search["marca"] : undefined,
     modo: search["modo"] === "consulta" || search["modo"] === "venda" ? search["modo"] : undefined,

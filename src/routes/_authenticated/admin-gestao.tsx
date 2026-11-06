@@ -5,6 +5,7 @@ import { meQuery } from "@/lib/queries";
 import { Users, ClipboardList, UserRound, BriefcaseBusiness, Warehouse, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin-gestao")({
+  staticData: { sitemap: false },
   component: Admin,
   head: () => ({ meta: [{ title: "Administração | Netinho Auto Parts" }] }),
 });

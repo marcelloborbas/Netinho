@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Download, FileText, Eye, FolderOpen, ArrowDownToLine } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/downloads")({
+  staticData: { sitemap: false },
   head: () => pageHead("/downloads", "Baixar documentos | Netinho Auto Parts", "Catálogo FCO, formulário de pedido e ficha cadastral."),
   component: DownloadsPage,
 });

@@ -8,6 +8,7 @@ import { BrandPageLayout } from "@/components/BrandPageLayout";
 import { ExpandableMap } from "@/components/ExpandableMap";
 
 export const Route = createFileRoute("/representante-livaldo")({
+  staticData: { sitemap: true },
   component: LivaldoPage,
   head: () => ({ meta: [
       { property: "og:url", content: "https://www.netinhoautoparts.live/representante-livaldo" },
@@ -57,9 +58,9 @@ function LivaldoPage() {
     <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
       <section className="surface-card space-y-3 p-5">
-        <h1 className="text-2xl font-bold">Representante Comercial</h1>
-        <div className="flex flex-wrap items-center gap-3"><h2 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Livaldo Souza Silva"}</h2><span className={`rounded-full px-3 py-1 text-xs font-bold ${authorizationColor}`}>{authorizationLabel}</span>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
-        <p className="text-sm font-semibold text-primary">Cadastro de teste</p>
+        <p className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Representante Comercial Netinho Auto Parts</p>
+        <div className="flex flex-wrap items-center gap-3"><h1 className="font-display text-3xl font-black leading-tight text-amber-400 sm:text-4xl">{profile?.full_name ?? "Livaldo Souza Silva"} — Sorocaba e região</h1><span className={`rounded-full px-3 py-1 text-xs font-bold ${authorizationColor}`}>{authorizationLabel}</span>{me?.isAdmin && <Link to="/editar-representante/$slug" params={{ slug: "livaldo-souza-silva" }} title="Editar representante (somente administrador)" aria-label="Editar cadastro de Livaldo Souza Silva" className="rounded-lg border border-amber-400/50 p-2 text-amber-400 hover:bg-amber-400/10"><Pencil className="h-5 w-5" /></Link>}</div>
+        <p className="text-sm">Atende lojas de autopeças de Sorocaba e região, levando o catálogo e os pedidos à Netinho Auto Parts.</p>
         <p><span className="text-muted-foreground">Área de representação:</span> {profile?.region ?? "Sorocaba e região — DDD 015"}</p>
         <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole size={16} /> Dados somente para visualização. Alterações exclusivas da administração.</p>
       </section>
@@ -67,7 +68,7 @@ function LivaldoPage() {
         <h2 className="text-xl font-bold">Mapa da área de atuação</h2>
         <SorocabaMap />
       </section>
-      <p className="text-xs text-muted-foreground">Este perfil é demonstrativo e não concede acesso a preços, estoque ou pedidos.</p>
+      <p className="text-xs text-muted-foreground">Esta página não concede acesso a preços, estoque ou pedidos.</p>
     </main></BrandPageLayout>
   );
 }
