@@ -18,7 +18,7 @@ const publishedCards: Record<string, string> = {
   "romullo sousa": "cartao-romullo-sousa.webp",
   "jose burgato": "jose-burgato.webp",
 };
-import { Share2, Download, Contact, ImageOff } from "lucide-react";
+import { Share2, Download, Contact, ImageOff, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { accessQuery } from "@/lib/access";
@@ -86,13 +86,13 @@ function BusinessCardPage() {
       }
     }catch(e){if((e as Error).name!=="AbortError")toast.error("Não foi possível compartilhar o cartão.");}
   };
-  return <main className="mx-auto w-full max-w-xl space-y-4 pb-24 text-[#102a52]">
-    <header className="rounded-2xl border-2 border-[#d4af37] bg-[#102a52] px-5 py-6 text-center text-white"><h1 className="text-2xl font-black">CARTÃO DE VISITA</h1></header>
-    {!isSales?<div className="rounded-xl border bg-white p-5 text-center text-sm">O cartão de visita está disponível para vendedores e representantes.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="space-y-4 rounded-2xl border-2 border-[#d4af37] bg-white p-3 shadow-lg">
-      <img src={image} alt="Cartão de visita profissional do usuário" className="h-auto w-full rounded-xl object-contain"/>
+  return <main className="mx-auto w-full max-w-xl space-y-5 pb-24 text-[#102a52]">
+    <header className="relative overflow-hidden rounded-[28px] border-2 border-[#d4af37] bg-gradient-to-br from-[#06172f] via-[#164a83] to-[#071e3c] px-6 py-8 text-center text-white shadow-[0_14px_34px_rgba(6,23,47,.28)]"><Sparkles className="mx-auto mb-3 text-[#ffe083]" size={32} aria-hidden="true"/><h1 className="text-2xl font-black tracking-[.09em] text-[#ffe083] sm:text-3xl">CARTÃO DE VISITA</h1><p className="mt-2 text-sm font-medium text-white/90">Sua apresentação profissional, pronta para compartilhar.</p></header>
+    {!isSales?<div className="rounded-xl border bg-white p-5 text-center text-sm">O cartão de visita está disponível para vendedores e representantes.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="space-y-5 overflow-hidden rounded-[28px] border-2 border-[#d4af37] bg-gradient-to-b from-[#f7faff] to-white p-4 shadow-[0_14px_36px_rgba(16,42,82,.16)]">
+      <div className="rounded-[20px] border border-[#d4af37]/60 bg-[#102a52] p-2 shadow-lg"><img src={image} alt="Cartão de visita profissional do usuário" className="h-auto w-full rounded-xl object-contain"/></div><p className="text-center text-sm font-semibold text-[#365679]">Apresente-se com profissionalismo. Compartilhe seu cartão com clientes e parceiros.</p>
       <div className="grid grid-cols-2 gap-3">
-        <button type="button" onClick={()=>void share()} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#102a52] px-2 text-sm font-bold text-white"><Share2 size={19}/> Compartilhar</button>
-        <button type="button" onClick={()=>void download()} className="flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#102a52] px-2 text-sm font-bold"><Download size={19}/> Baixar imagem</button>
+        <button type="button" onClick={()=>void share()} className="flex min-h-14 items-center justify-center gap-2 rounded-xl border border-[#d4af37] bg-gradient-to-b from-[#1a538d] to-[#09284e] px-2 text-sm font-black text-white shadow-md transition hover:brightness-110"><Share2 size={19}/> Compartilhar</button>
+        <button type="button" onClick={()=>void download()} className="flex min-h-14 items-center justify-center gap-2 rounded-xl border-2 border-[#d4af37] bg-[#fff8e6] px-2 text-sm font-black text-[#102a52] shadow-sm transition hover:bg-[#ffedbb]"><Download size={19}/> Baixar imagem</button>
       </div>
     </section>:<section className="flex flex-col items-center gap-3 rounded-2xl border-2 border-[#d4af37] bg-white p-6 text-center"><ImageOff size={40}/><h2 className="text-lg font-black">Cartão ainda não cadastrado</h2><p className="text-sm">O cartão deve estar publicado na pasta <code>public/cartoes-digitais/</code> e associado ao nome cadastrado na sua ficha. Caso já tenha sido enviado, solicite a vinculação do seu cartão ao administrador.</p><Contact size={24} className="text-[#d4af37]"/></section>}
   </main>;
