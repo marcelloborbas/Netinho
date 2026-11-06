@@ -133,7 +133,7 @@ function Home() {
 
           </div>
         </section>
-        <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] sm:h-auto shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
+        <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6 sm:h-auto" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
         <HomeSalesEvolution />
