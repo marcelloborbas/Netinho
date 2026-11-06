@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
+import { HomeSalesEvolution } from "@/components/HomeSalesEvolution";
 import { PublicFooter } from "@/components/PublicFooter";
 import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/page-head";
@@ -135,15 +136,7 @@ function Home() {
         <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] sm:h-auto shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="mx-3 mb-2 py-2 sm:mx-6" aria-label="Montadoras">
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
-            {[["Volkswagen","volkswagen"],["Fiat","fiat"],["Chevrolet","chevrolet"],["Ford","ford"]].map(([name, slug]) => (
-              <button key={slug} type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: name } })} className="group flex min-w-0 items-center justify-center p-1 transition-transform hover:scale-105 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ffd43b]" aria-label={`Ver peças da montadora ${name}`}>
-                <img src={`/images/montadoras/${slug}.webp`} alt="" loading="lazy" className="h-14 w-full object-contain sm:h-16" />
-              </button>
-            ))}
-          </div>
-        </section>
+        <HomeSalesEvolution />
       </main>
       <a
         href={`https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Gostaria de atendimento.")}`}
