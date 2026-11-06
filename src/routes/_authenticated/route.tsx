@@ -77,20 +77,6 @@ function AppShell() {
       <main className={fullScreenEmptyOrder ? "w-full min-h-[100dvh] p-0" : pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : fullWidthSales ? "w-full min-w-0 flex-1 px-1 py-1 sm:px-2" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
         <Outlet />
       </main>
-      {canSell && draft.items.length > 0 && (
-        <Link to="/pedido" className={`order-dock ${pathname === "/pedido" ? "netinho-guided-pulse" : ""}`}>
-          <span className="flex min-w-0 flex-1 items-center gap-2 text-white">
-            <ShoppingCart size={20} className="shrink-0" />
-            <span className="min-w-0 flex-1">
-              <b className="block text-sm font-bold text-white">Pedido em Aberto!</b>
-              <span className="block truncate text-xs font-semibold text-white" title={draft.customerName?.trim().split(/\s+/)[0] || "Selecione o cliente"}>
-                {draft.customerName || "Selecione o cliente"}
-              </span>
-            </span>
-          </span>
-          <b className="shrink-0 whitespace-nowrap text-lg font-black text-[#FFED00] drop-shadow-[0_0_5px_rgba(255,237,0,0.45)] sm:text-xl">{brl(draftTotals(draft).net)}</b>
-        </Link>
-      )}
       <PublicFooter />
     </div>
   );
