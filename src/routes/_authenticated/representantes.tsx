@@ -16,6 +16,19 @@ type GeoData = { features: Feature[] };
 const centroids: Record<string,[number,number]> = {AC:[-70,-9],AL:[-36.6,-9.6],AP:[-51,-1.2],AM:[-64,-4],BA:[-41.7,-12.8],CE:[-39.5,-5.2],DF:[-47.9,-15.8],ES:[-40.5,-19.6],GO:[-49.4,-16],MA:[-45,-5],MT:[-56,-12.7],MS:[-54.5,-20.5],MG:[-44.7,-18.6],PA:[-52,-4],PB:[-36.8,-7.1],PR:[-51,-24.8],PE:[-37.9,-8.4],PI:[-42.8,-7.5],RJ:[-42.6,-22.2],RN:[-36.4,-5.8],RS:[-53,-30],RO:[-63,-10.8],RR:[-61,2],SC:[-50.5,-27.3],SP:[-48.5,-22.5],SE:[-37.4,-10.6],TO:[-48,-10]};
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 const stateAliases: Record<string,string> = {SP:"sao paulo",RJ:"rio de janeiro",MG:"minas gerais",PR:"parana",SC:"santa catarina",RS:"rio grande do sul",ES:"espirito santo",BA:"bahia",GO:"goias",DF:"distrito federal",MT:"mato grosso",MS:"mato grosso do sul",PE:"pernambuco",CE:"ceara",PA:"para",AM:"amazonas",MA:"maranhao",PB:"paraiba",RN:"rio grande do norte",AL:"alagoas",SE:"sergipe",PI:"piaui",TO:"tocantins",RO:"rondonia",AC:"acre",AP:"amapa",RR:"roraima"};
+const photoFiles: Record<string,string> = {
+ "abdnego eugenio":"cartao-abdnego-eugenio.webp",
+ "domingos rodrigues":"cartao-domingos-rodrigues.webp",
+ "jhonatas jose":"cartao-jhonatas-jose.webp",
+ "jose justino":"cartao-jose-justino.webp",
+ "livaldo silva":"cartao-livaldo-silva.webp",
+ "luciano da silva":"cartao-luciano-da-silva.webp",
+ "marcello borba":"cartao-marcello-borba.webp",
+ "osmair zanetti":"cartao-osmair-zanetti.webp",
+ "romullo sousa":"cartao-romullo-sousa.webp",
+ "jose burgato":"jose-burgato.webp",
+};
+const representativePhoto = (name:string, photo?:string|null) => photo || (Object.entries(photoFiles).find(([key])=>normalize(name).includes(key))?.[1] ? "/images/fotos-representantes/"+Object.entries(photoFiles).find(([key])=>normalize(name).includes(key))![1] : null);
 const stateFor = (text: string) => Object.keys(stateAliases).filter(uf => new RegExp("(?:^|[^a-z])"+uf+"(?:$|[^a-z])","i").test(text) || normalize(text).includes(stateAliases[uf] ?? "\u0000"));
 const project = ([lon = 0, lat = 0]:number[]):[number,number] => [(lon+74)*9.2+18,(6-lat)*9.2+15];
 function polygonPath(feature:Feature) {
@@ -57,7 +70,7 @@ function Page() {
     <h2 className="text-lg font-black text-[#102a52]">Representantes {isLoading?"· carregando":`· ${matching.length}`}</h2>
     <div className="max-h-[600px] space-y-3 overflow-y-auto pr-1">{matching.map(rep=><article key={rep.slug} className={`overflow-hidden rounded-[20px] border-2 bg-white shadow-md ${selected===rep.slug?"border-[#d4af37]":"border-[#dce5f0]"}`}>
       <button type="button" onClick={()=>setSelected(selected===rep.slug?null:rep.slug)} className="flex w-full items-center gap-3 p-3 text-left">
-       {rep.photo_url?<img src={rep.photo_url} alt={`Foto de ${rep.full_name}`} className="h-16 w-16 shrink-0 rounded-full border-2 border-[#d4af37] object-cover" />:<span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#102a52] text-white"><UserRound size={31}/></span>}
+       {representativePhoto(rep.full_name,rep.photo_url)?<img src={representativePhoto(rep.full_name,rep.photo_url)!} alt={`Foto de ${rep.full_name}`} className="h-16 w-16 shrink-0 rounded-full border-2 border-[#d4af37] object-cover" />:<span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#102a52] text-white"><UserRound size={31}/></span>}
        <span className="min-w-0 flex-1"><strong className="block text-base text-[#102a52]">{rep.full_name}</strong><span className="mt-1 block text-xs text-slate-600">{rep.region||rep.ufs.join(", ")||"Região a confirmar"}</span></span><ChevronDown className={`shrink-0 text-[#102a52] transition-transform ${selected===rep.slug?"rotate-180":""}`}/></button>
       {selected===rep.slug&&<div className="space-y-3 border-t border-slate-200 bg-[#f3f7fc] p-4"><p className="text-xs font-black uppercase text-[#8a6516]">Localidades de atuação</p><p className="text-sm font-semibold text-[#102a52]">{rep.cities.length?rep.cities.join(" · "):rep.region||"Localidades ainda não informadas"}</p>{rep.phone&&<a href={`tel:${rep.phone.replace(/[^\d+]/g,"")}`} className="flex items-center gap-2 text-sm font-bold text-[#102a52]"><Phone size={17}/>{rep.phone}</a>}{rep.phone&&<a href={`https://wa.me/${rep.phone.replace(/\D/g,"").replace(/^(?!55)(?=\d{10,11}$)/,"55")}`} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#166534] px-4 text-sm font-black text-white"><MessageCircle size={17}/> Falar pelo WhatsApp</a>}</div>}
      </article>)}</div>
