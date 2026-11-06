@@ -110,11 +110,10 @@ function Home() {
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative flex w-full max-w-none flex-1 flex-col gap-2 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-[82px] text-[#102a52] sm:gap-4 sm:pb-24">
+      <main className="relative flex w-full max-w-none flex-1 flex-col gap-2 overflow-x-hidden bg-[#0b2447] pb-[82px] text-[#102a52] sm:gap-4 sm:pb-24">
         <section className="relative isolate min-h-[260px] overflow-hidden bg-[#071e3c] sm:min-h-[420px]" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="relative z-10 flex min-h-[260px] flex-col justify-end bg-gradient-to-t from-[#06152e] via-[#06152e]/65 to-transparent px-5 pb-7 pt-16 text-white sm:min-h-[420px] sm:px-10">
-            <span className="mb-2 w-fit rounded-full border border-[#d4af37]/70 bg-[#06152e]/70 px-3 py-1 text-[10px] font-bold uppercase tracking-[.18em] text-[#ffe083]">Netinho Auto Parts</span>
             <h1 className="flex flex-wrap items-baseline gap-x-2 text-[clamp(20px,5vw,32px)] font-bold leading-tight drop-shadow-lg">
               <span>{salutation}, Sr.</span>
               <span className="max-w-full break-words text-[clamp(30px,8vw,52px)] font-black motion-safe:animate-pulse motion-reduce:animate-none" style={{color:dailyNameColor}}>{userName || "usuário"}!</span>
@@ -123,25 +122,8 @@ function Home() {
             <p className="text-[clamp(16px,4vw,22px)] font-bold text-[#ffe083]">Que seu dia seja abençoado!</p>
           </div>
         </section>
-        <section className="px-3 pt-3 sm:px-6" aria-label="Acesso rápido">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-[#986f18]">Sua central de negócios</p><h2 className="text-lg font-black text-[#102a52]">O que você procura?</h2></div>
-            <span className="rounded-full bg-[#e5edf7] px-3 py-1 text-[11px] font-semibold text-[#24496e]">Acesso rápido</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              {title:"Veja nossas peças",detail:"Catálogo completo",icon:PackageSearch},
-              {title:"Montadoras",detail:"Encontre por marca",icon:CarFront},
-              {title:"Ofertas e saldão",detail:"Consulte as condições",icon:Tags},
-              {title:"Lançamentos",detail:"Novidades em peças",icon:PackagePlus},
-            ].map(({title,detail,icon:Icon})=><button key={title} type="button" onClick={()=>void navigate({to:"/catalogo"})} className="group flex min-h-[126px] flex-col items-start justify-between rounded-[18px] border border-[#d4af37]/70 bg-gradient-to-br from-[#123d70] to-[#061a35] p-4 text-left text-white shadow-[0_8px_20px_rgba(7,27,54,.15)] transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37]">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#f4cf73]/60 bg-white/10 text-[#f4cf73]"><Icon size={26}/></span>
-              <span><strong className="block text-sm font-black leading-tight sm:text-base">{title}</strong><span className="mt-1 block text-[11px] text-[#d4e4f6]">{detail}</span></span>
-            </button>)}
-          </div>
-        </section>
         <section className="px-3 pt-3 sm:px-6" aria-label="Peças e novidades em destaque">
-          <div className="mb-2 flex items-center justify-between"><h2 className="text-base font-black text-[#102a52]">Destaques do catálogo</h2><button type="button" onClick={()=>void navigate({to:"/catalogo"})} className="inline-flex items-center gap-1 text-xs font-bold text-[#175b96]">Ver catálogo <ArrowRight size={15}/></button></div>
+          <div className="mb-2 flex items-center justify-between"><h2 className="text-base font-black text-white">Destaques do catálogo</h2><button type="button" onClick={()=>void navigate({to:"/catalogo"})} className="inline-flex items-center gap-1 text-xs font-bold text-[#175b96]">Ver catálogo <ArrowRight size={15}/></button></div>
           <div className="overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] shadow-lg"><HomePartsCarousel /></div>
         </section>
         <section className="px-3 pb-5 pt-3 sm:px-6" aria-label="Encontre seu representante">
