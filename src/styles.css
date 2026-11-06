@@ -4522,13 +4522,13 @@ html body .welcome-auth-stage .welcome-auth-art {
 
 /* Home modernizada: rolagem natural, sem grades de altura fixa que cortam os cartões. */
 .home-page { min-height: 100dvh; overflow-x: hidden; }
-.home-page > main { min-height: 0; overflow: visible; }
+.home-page > main { min-height: 0; overflow: hidden; }
 .home-page .home-cover-anchor > div:first-child { min-height: 170px; }
 @media (max-width: 639px) {
-  .home-page > main { display: flex; flex-direction: column; height: auto; overflow: visible; padding-bottom: 90px; }
-  .home-page > main > section { height: auto; overflow: visible; }
+  .home-page > main { display: grid; grid-template-rows: repeat(3,minmax(0,1fr)); min-height: 0; overflow: hidden; padding-bottom: 86px; }
+  .home-page > main > section { min-height: 0; height: 100%; overflow: hidden; }
   .home-page > main > section:first-child { overflow: hidden; }
-  .home-page .home-cover-anchor > div:first-child { height: 190px; }
+  .home-page .home-cover-anchor { height: 100%; }\n  .home-page .home-cover-anchor > div:first-child { height: 100%; min-height: 0; }
 }
 
 
