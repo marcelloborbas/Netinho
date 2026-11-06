@@ -182,10 +182,12 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   const {error:profileError}=await supabase.rpc("admin_update_person_contact" as never,{p_user:person.id,p_name:name.trim(),p_phone:phone.trim()} as never);
   if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
   if(sales){
-   const parsed=role==="Administrador" ? 3 : commissionRate === "" ? null : Number(commissionRate);
+   const parsed=role==="Administrador" ? 3.5 : commissionRate === "" ? null : Number(commissionRate);
    if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
-   const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
-   if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message);onSaved();return;}
+   if(role!=="Administrador"){
+    const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
+    if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message+". Confira se o cadastro está habilitado como vendedor ou representante no banco.");onSaved();return;}
+   }
    void qc.invalidateQueries({queryKey:["person-commission",person.id]});
   }
   let image=effectiveMap.trim();
@@ -204,7 +206,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <div className="flex items-start justify-between gap-3">
     <div className="min-w-0 flex-1">
-      <div className="flex flex-wrap items-baseline gap-2"><strong className="break-words text-lg">{person.full_name||"Sem nome"}</strong>{(person.site_role==="Vendedor"||person.site_role==="Representante"||person.site_role==="Administrador")&&<span className="whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 text-sm font-black text-[#102a52]">{commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</div>
+      <div className="flex flex-wrap items-baseline gap-2"><strong className="break-words text-lg">{person.full_name||"Sem nome"}</strong>{(person.site_role==="Vendedor"||person.site_role==="Representante"||person.site_role==="Administrador")&&<span className="whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 text-sm font-black text-[#102a52]">{commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</div>
       <div className="text-sm font-semibold text-[#102a52]">{person.site_role}</div>
       <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
     </div>
