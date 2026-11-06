@@ -9,10 +9,25 @@ import { accessQuery } from "@/lib/access";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { PublicFooter } from "@/components/PublicFooter";
 import { BRAND } from "@/lib/brand";
+import { pageHead } from "@/lib/page-head";
+import { homeShareImage } from "@/lib/home-share-image";
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: false },
   ssr: false,
+  head: () => ({
+    meta: [
+      ...pageHead("/", "Netinho Auto Parts | Catálogo de Peças e Representantes", "Netinho Auto Parts: consulte nosso catálogo de autopeças, faça pedidos e encontre um representante em sua região.").meta,
+      { property: "og:image", content: homeShareImage.url },
+      { property: "og:image:secure_url", content: homeShareImage.url },
+      { property: "og:image:type", content: homeShareImage.type },
+      { property: "og:image:width", content: homeShareImage.width },
+      { property: "og:image:height", content: homeShareImage.height },
+      { property: "og:image:alt", content: "Netinho Auto Parts" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: homeShareImage.url },
+    ],
+  }),
   component: Home,
 });
 

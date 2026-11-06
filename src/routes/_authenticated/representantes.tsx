@@ -30,7 +30,7 @@ const photoFiles: Record<string,string> = {
 };
 const representativePhoto = (name:string, photo?:string|null) => photo || (Object.entries(photoFiles).find(([key])=>normalize(name).includes(key))?.[1] ? "/images/fotos-representantes/"+Object.entries(photoFiles).find(([key])=>normalize(name).includes(key))![1] : null);
 const stateFor = (text: string) => Object.keys(stateAliases).filter(uf => new RegExp("(?:^|[^a-z])"+uf+"(?:$|[^a-z])","i").test(text) || normalize(text).includes(stateAliases[uf] ?? "\u0000"));
-const project = ([lon = 0, lat = 0]:number[]):[number,number] => [(lon+74)*9.2+18,(6-lat)*9.2+15];
+const project = ([lon = 0, lat = 0]:number[] = []):[number,number] => [(lon+74)*9.2+18,(6-lat)*9.2+15];
 function polygonPath(feature:Feature) {
   const coords = feature.geometry.coordinates as number[][][][] | number[][][];
   const polygons = feature.geometry.type === "MultiPolygon" ? coords as number[][][][] : [coords as number[][][]];
