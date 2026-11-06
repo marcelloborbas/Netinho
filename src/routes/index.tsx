@@ -110,10 +110,10 @@ function Home() {
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative flex w-full max-w-none flex-1 flex-col gap-2 overflow-x-hidden bg-[#0b2447] pb-[82px] text-[#102a52] sm:gap-4 sm:pb-24">
-        <section className="relative isolate mx-3 mt-3 h-[220px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] shadow-lg sm:mx-6 sm:h-[300px]" aria-label="Boas-vindas">
+      <main className="relative grid w-full max-w-none flex-1 grid-rows-3 gap-2 overflow-hidden bg-[#0b2447] px-3 py-3 pb-[86px] text-[#102a52] sm:gap-4 sm:px-6 sm:pb-24">
+        <section className="relative isolate min-h-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] shadow-lg" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
-          <div className="relative z-10 flex h-full flex-col justify-end bg-gradient-to-t from-[#06152e] via-[#06152e]/65 to-transparent px-5 pb-7 pt-16 text-white sm:min-h-[420px] sm:px-10">
+          <div className="relative z-10 flex h-full flex-col justify-end bg-gradient-to-t from-[#06152e] via-[#06152e]/65 to-transparent px-4 pb-4 pt-4 text-white sm:px-10">
             <h1 className="flex flex-wrap items-baseline gap-x-2 text-[clamp(20px,5vw,32px)] font-bold leading-tight drop-shadow-lg">
               <span>{salutation}, Sr.</span>
               <span className="max-w-full break-words text-[clamp(30px,8vw,52px)] font-black motion-safe:animate-pulse motion-reduce:animate-none" style={{color:dailyNameColor}}>{userName || "usuário"}!</span>
@@ -122,10 +122,10 @@ function Home() {
             <p className="text-[clamp(16px,4vw,22px)] font-bold text-[#ffe083]">Que seu dia seja abençoado!</p>
           </div>
         </section>
-        <section className="mx-3 h-[220px] shrink-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] shadow-lg sm:mx-6 sm:h-[300px]" aria-label="Peças e novidades em destaque">
+        <section className="min-h-0 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] shadow-lg" aria-label="Peças e novidades em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="mx-3 mb-5 h-[220px] shrink-0 sm:mx-6 sm:h-[300px]" aria-label="Encontre seu representante">
+        <section className="min-h-0" aria-label="Encontre seu representante">
           <button type="button" onClick={()=>void navigate({to:"/representantes"})} className="group relative flex h-full w-full items-center overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#0b2447] text-left shadow-lg focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37]">
             {representativeBannerReady&&<img src="/images/encontre-seu-representante.webp" alt="" className="absolute inset-0 h-full w-full object-cover opacity-45" loading="lazy" decoding="async" onError={()=>setRepresentativeBannerReady(false)}/>}
             <span className="relative z-10 flex w-full items-center justify-between gap-3 bg-gradient-to-r from-[#061b38]/95 via-[#061b38]/75 to-transparent p-5 text-white">
