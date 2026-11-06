@@ -60,7 +60,6 @@ function OrderPage() {
   // Nenhuma condição é exibida como escolhida até a seleção explícita.
   const paymentChosen = d.paymentConfirmed === true && PAYMENT_TERMS.some((term) => term.value === d.paymentTerm);
   const [actionChosen, setActionChosen] = useState(false);
-  const [confirmSpeaking, setConfirmSpeaking] = useState(false);
   const confirmAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => () => { confirmAudioRef.current?.pause(); confirmAudioRef.current = null; }, []);
   function stopConfirmAudio() {
@@ -69,38 +68,7 @@ function OrderPage() {
       confirmAudioRef.current.onended = null;
       confirmAudioRef.current = null;
     }
-    setConfirmSpeaking(false);
   }
-  function playConfirmHelp() {
-    stopConfirmAudio();
-    const audio = new Audio("/audio/lia/lia-confirma%20pedido.mp3?v=20261104-1");
-    audio.loop = false;
-    audio.autoplay = false;
-    confirmAudioRef.current = audio;
-    audio.onended = () => {
-      if (confirmAudioRef.current === audio) {
-        confirmAudioRef.current = null;
-        setConfirmSpeaking(false);
-      }
-    };
-    audio.onerror = () => setConfirmSpeaking(false);
-    setConfirmSpeaking(true);
-    void audio.play().catch(() => setConfirmSpeaking(false));
-  }
-  const [sentHelpOpen, setSentHelpOpen] = useState(false);
-  const sentAudioRef = useRef<HTMLAudioElement | null>(null);
-  function playSentAudio() {
-    sentAudioRef.current?.pause();
-    const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261106-4");
-    audio.loop = false;
-    sentAudioRef.current = audio;
-    audio.onerror = () => toast.error("Não foi possível carregar a gravação da LIA. Confira o arquivo MP3.");
-    void audio.play().catch(() => toast.error("Não foi possível reproduzir a gravação da LIA."));
-  }
-  useEffect(() => () => {
-    sentAudioRef.current?.pause();
-    confirmAudioRef.current?.pause();
-  }, []);
   const pulseStep = !d.customerId ? "customer" : !paymentChosen ? "payment" : "actions";
   const [footerOffset, setFooterOffset] = useState(66);
   useEffect(() => {
