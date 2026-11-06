@@ -262,7 +262,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
      <label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     </div>
    </section>
-   <RepresentativeDetails name={person.full_name} email={person.email} representativeId={person.id} />
+   <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-[#102a52]">Este usuário possui uma conta de acesso. Seus dados de contato e região devem ser editados nos campos da ficha acima. A ficha comercial complementar só pode ser salva para representantes vinculados ao cadastro comercial.</p>
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
    <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
     <h3 className="text-lg font-black">Comissão individual sobre vendas</h3>
