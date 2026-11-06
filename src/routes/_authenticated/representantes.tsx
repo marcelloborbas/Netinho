@@ -17,18 +17,22 @@ const centroids: Record<string,[number,number]> = {AC:[-70,-9],AL:[-36.6,-9.6],A
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 const stateAliases: Record<string,string> = {SP:"sao paulo",RJ:"rio de janeiro",MG:"minas gerais",PR:"parana",SC:"santa catarina",RS:"rio grande do sul",ES:"espirito santo",BA:"bahia",GO:"goias",DF:"distrito federal",MT:"mato grosso",MS:"mato grosso do sul",PE:"pernambuco",CE:"ceara",PA:"para",AM:"amazonas",MA:"maranhao",PB:"paraiba",RN:"rio grande do norte",AL:"alagoas",SE:"sergipe",PI:"piaui",TO:"tocantins",RO:"rondonia",AC:"acre",AP:"amapa",RR:"roraima"};
 const photoFiles: Record<string,string> = {
- "abdnego eugenio":"cartao-abdnego-eugenio.webp",
- "domingos rodrigues":"cartao-domingos-rodrigues.webp",
- "jhonatas jose":"cartao-jhonatas-jose.webp",
- "jose justino":"cartao-jose-justino.webp",
- "livaldo silva":"cartao-livaldo-silva.webp",
- "luciano da silva":"cartao-luciano-da-silva.webp",
- "marcello borba":"cartao-marcello-borba.webp",
- "osmair zanetti":"cartao-osmair-zanetti.webp",
- "romullo sousa":"cartao-romullo-sousa.webp",
- "jose burgato":"jose-burgato.webp",
+ "abdnego":"cartao-abdnego-eugenio.webp",
+ "domingos":"cartao-domingos-rodrigues.webp",
+ "jhonatas":"cartao-jhonatas-jose.webp",
+ "justino":"cartao-jose-justino.webp",
+ "livaldo":"cartao-livaldo-silva.webp",
+ "luciano":"cartao-luciano-da-silva.webp",
+ "marcello":"cartao-marcello-borba.webp",
+ "osmair":"cartao-osmair-zanetti.webp",
+ "romullo":"cartao-romullo-sousa.webp",
+ "romulo":"cartao-romullo-sousa.webp",
+ "burgato":"jose-burgato.webp",
 };
-const representativePhoto = (name:string, photo?:string|null) => photo || (Object.entries(photoFiles).find(([key])=>normalize(name).includes(key))?.[1] ? "/images/fotos-representantes/"+Object.entries(photoFiles).find(([key])=>normalize(name).includes(key))![1] : null);
+const representativePhoto = (name:string, photo?:string|null) => {
+ const key=Object.keys(photoFiles).find(k=>normalize(name).includes(k));
+ return key?"/images/fotos-representantes/"+photoFiles[key]:photo||null;
+};
 const stateFor = (text: string) => Object.keys(stateAliases).filter(uf => new RegExp("(?:^|[^a-z])"+uf+"(?:$|[^a-z])","i").test(text) || normalize(text).includes(stateAliases[uf] ?? "\u0000"));
 const project = ([lon = 0, lat = 0]:number[] = []):[number,number] => [(lon+74)*9.2+18,(6-lat)*9.2+15];
 function polygonPath(feature:Feature) {
