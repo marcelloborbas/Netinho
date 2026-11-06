@@ -57,14 +57,14 @@ export function PublicFooter() {
     queryFn: async () => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) return null;
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", auth.user.id).maybeSingle();
+      const { data, error } = await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id", auth.user.id).maybeSingle();
       if (error) throw error;
-      const record = data as Record<string, unknown> | null;
-      const value = record?.["commission_percent"] ?? record?.["commission_rate"] ?? record?.["commission_percentage"];
+      const value = (data as { rate?: number | string } | null)?.rate;
       const rate = typeof value === "number" ? value : typeof value === "string" && value.trim() ? Number(value) : NaN;
       return Number.isFinite(rate) ? rate : null;
     },
   });
+  const displayedCommission = status === "Administrador" ? 3.5 : commissionRate;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const prepareCatalog = () => {
@@ -89,7 +89,16 @@ export function PublicFooter() {
   return <>
     {menuOpen && <button type="button" aria-label="Fechar menu do usuário" className="fixed inset-0 z-[90] bg-black/20" onClick={() => setMenuOpen(false)} />}
     {menuOpen && <div role="menu" aria-label="Opções do usuário" className="fixed bottom-[76px] right-2 z-[100] w-56 max-w-[calc(100vw-16px)] rounded-2xl border-2 border-[#d4af37] bg-white p-2 text-[#102a52] shadow-2xl">
-      <div className="border-b border-slate-200 px-3 py-3"><div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm"><strong className="break-words">{(user?.name ?? "Visitante").trim().split(/\s+/)[0]}</strong>{activeState!=null&&<span className={activeState?"text-xs font-bold text-green-700":"text-xs font-bold text-red-700"}>{activeState?"Ativo":"Inativo"}</span>}{commissionRate != null && <span className="rounded-full border border-[#d4af37]/60 bg-[#fff6d8] px-2 py-0.5 text-xs font-black text-[#8a6516]">{commissionRate.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 })}% comissão</span>}<span className="font-semibold text-[#8a6516]">{status}</span></div></div>
+      <div className="border-b border-slate-200 px-2 py-3">
+        <div className="flex items-center justify-between gap-2">
+          <strong className="min-w-0 truncate text-sm" title={user?.name ?? "Visitante"}>{(user?.name ?? "Visitante").trim().split(/\s+/)[0]}</strong>
+          <div className="flex shrink-0 items-center gap-2">
+            {activeState != null && <span className={activeState ? "text-xs font-bold text-green-700" : "text-xs font-bold text-red-700"}>{activeState ? "Ativo" : "Inativo"}</span>}
+            {displayedCommission != null && <span className="rounded-lg border-2 border-[#d4af37] bg-[#fff0a3] px-2 py-1 text-sm font-black text-[#6d4800] shadow-sm">{displayedCommission.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 })}%</span>}
+          </div>
+        </div>
+        <p className="mt-1 text-xs font-semibold text-[#8a6516]">{status}</p>
+      </div>
       <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Contact size={19}/> Cartão de visita</Link>
       <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Download size={19}/> Downloads</Link>
       <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={19}/> Ajuda</button>
