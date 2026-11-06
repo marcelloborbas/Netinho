@@ -96,7 +96,7 @@ function OrderPage() {
     if (sentSpeechStarted.current) return;
     sentSpeechStarted.current = true;
 
-    const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261105-1");
+    const audio = new Audio("/audio/lia/lia-pedido-enviado.mp3?v=20261106-2");
     audio.preload = "auto";
     audio.loop = false;
     const fallbackSpeech = () => {
