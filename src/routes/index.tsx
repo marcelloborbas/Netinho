@@ -2,11 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles, ShieldCheck, ChevronRight, CarFront, ArrowRight, Wrench, Gauge, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
-import { productsQuery } from "@/lib/queries";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { PublicFooter } from "@/components/PublicFooter";
 import { BRAND } from "@/lib/brand";
@@ -63,26 +62,6 @@ function Home() {
     return () => { active = false; window.clearTimeout(timeout); };
   }, [navigate]);
   const { data: access } = useQuery({ ...accessQuery, enabled: entryApproved, retry: false });
-  // O catálogo completo não deve disputar rede/CPU com a primeira pintura da página.
-  // As quantidades continuam vindo dos produtos reais, mas são buscadas após a interface aparecer.
-  const [loadCounts, setLoadCounts] = useState(false);
-  useEffect(() => {
-    if (!entryApproved) return;
-    let idleId: number | undefined;
-    const timer = window.setTimeout(() => {
-      if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(() => setLoadCounts(true), { timeout: 2500 });
-      } else {
-        setLoadCounts(true);
-      }
-    }, 1200);
-    return () => {
-      window.clearTimeout(timer);
-      if (idleId !== undefined && "cancelIdleCallback" in window) window.cancelIdleCallback(idleId);
-    };
-  }, [entryApproved]);
-  const { data: catalogProducts } = useQuery({ ...productsQuery, enabled: entryApproved && loadCounts });
-  const countFor = (term: string) => catalogProducts?.filter(p => (p.categories?.name || "").toLocaleLowerCase("pt-BR").includes(term.toLocaleLowerCase("pt-BR"))).length;
   const previousLevel = useRef<string | null>(null);
   useEffect(() => {
     if (!access) return;
@@ -130,7 +109,7 @@ function Home() {
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative flex w-full max-w-none flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#06152e] via-[#092d59] to-[#07549a] pb-24 text-white sm:gap-4">
+      <main className="relative flex w-full max-w-none flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-24 text-[#102a52] sm:gap-4">
         <section className="relative isolate min-h-[420px] overflow-hidden bg-[#071e3c] sm:min-h-[520px] lg:min-h-[620px] xl:min-h-[700px]" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-center" decoding="async" fetchPriority="high" />
           <div className="relative z-10 flex min-h-[310px] w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:min-h-[520px] sm:px-8 sm:pb-8 lg:min-h-[620px] xl:min-h-[700px] lg:px-12">
@@ -154,49 +133,30 @@ function Home() {
 
           </div>
         </section>
-        <section className="mx-2 overflow-hidden rounded-[14px] border border-[#5aafe9] bg-[#061b39] shadow-[0_0_14px_#40a9ff66] sm:mx-4" aria-label="Promoções em destaque">
+        <section className="mx-3 overflow-hidden rounded-[18px] border border-[#d4af37]/60 bg-[#071b36] shadow-[0_8px_26px_rgba(7,27,54,.18)] sm:mx-6" aria-label="Promoções em destaque">
           <HomePartsCarousel />
         </section>
-        <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4 lg:gap-5 lg:px-6" aria-label="Montadoras">
-          {[
-            {name:"Volkswagen",slug:"volkswagen",image:"/images/montadoras/volkswagen.webp"},
-            {name:"Fiat",slug:"fiat",image:"/images/montadoras/fiat.webp"},
-            {name:"Chevrolet",slug:"chevrolet",image:"/images/montadoras/chevrolet.webp"},
-            {name:"Ford",slug:"ford",image:"/images/montadoras/ford.webp"},
-            {name:"Renault",slug:"renault",image:"/images/montadoras/renault.webp"},
-            {name:"Hyundai",slug:"hyundai",image:"/images/montadoras/hyundai.webp"},
-            {name:"Toyota",slug:"toyota",image:"/images/montadoras/toyota.webp"},
-            {name:"Honda",slug:"honda",image:"/images/montadoras/honda.webp"},
-            {name:"Nissan",slug:"nissan",image:"/images/montadoras/nissan.webp"},
-            {name:"Peugeot",slug:"peugeot",image:"/images/montadoras/peugeot.webp"},
-            {name:"Citroën",slug:"citroen",image:"/images/montadoras/citroen.webp"},
-            {name:"Jeep",slug:"jeep",image:"/images/montadoras/jeep.webp"},
-            {name:"Mitsubishi",slug:"mitsubishi",image:"/images/montadoras/mitsubishi.webp"},
-            {name:"BMW",slug:"bmw",image:"/images/montadoras/bmw.webp"},
-            {name:"Mercedes-Benz",slug:"mercedes",image:"/images/montadoras/mercedes-benz.webp"},
-            {name:"Kia",slug:"kia",image:"/images/montadoras/kia.webp"},
-            {name:"Land Rover",slug:"landrover",image:"/images/montadoras/landrover.webp"},
-            {name:"Volvo",slug:"volvo",image:"/images/montadoras/volvo.webp"},
-          ].slice(0, 4).map((brand) => <button
-            key={brand.name}
+        <section className="px-3 pb-4 pt-2 sm:px-6 sm:pb-7" aria-label="Encontre seu representante">
+          <button
             type="button"
-            title={`Consultar peças ${brand.name}`}
-            onClick={() => void navigate({to:"/catalogo"})}
-            className="group relative flex min-w-0 items-stretch overflow-hidden rounded-xl border-2 border-[#2389c9] bg-[#062a58] p-0 text-center text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ffd23c] hover:shadow-[0_0_18px_#ffca32aa] focus-visible:border-[#ffd23c] focus-visible:ring-2 focus-visible:ring-[#ffd23c] active:border-[#ffd23c]"
+            onClick={() => void navigate({ to: "/representantes" })}
+            aria-label="Encontre seu representante. Abrir o mapa de representantes"
+            className="group relative flex w-full min-h-[180px] items-center justify-between gap-3 overflow-hidden rounded-[22px] border border-[#d4af37]/70 bg-gradient-to-r from-[#071b36] via-[#113b6a] to-[#071b36] px-5 py-6 text-left shadow-[0_10px_30px_rgba(7,27,54,.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(7,27,54,.28)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#d4af37] sm:min-h-[240px] sm:px-10"
           >
-            <img src={brand.image} alt={brand.name} className="block aspect-[4/5] h-full w-full object-cover object-center lg:aspect-[16/9] transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
-          </button>)}
-        </section>
-        <section className="grid grid-cols-4 gap-1.5 px-2 sm:gap-3 sm:px-4 lg:gap-5 lg:px-6" aria-label="Peças e quantidades">
-          {[
-            {name:"Caixa de Direção",image:"/images/categorias/Caixa de Direção.webp",term:"caixa de direção"},
-            {name:"Atuador de Embreagem",image:"/images/categorias/Atuador de Embreagem.webp",term:"atuador"},
-            {name:"Bobina de Ignição",image:"/images/categorias/Bobina de Ignição.webp",term:"bobina"},
-            {name:"Rolamento de Roda",image:"/images/categorias/Rolamento de Roda.webp",term:"rolamento de roda"},
-          ].map(part=><button key={part.name} type="button" aria-label={part.name} onClick={() => void navigate({to:"/catalogo"})} className="flex min-w-0 flex-col overflow-hidden rounded-xl bg-white p-0 text-center text-[#08264a] shadow-[0_3px_10px_#02183155]">
-            <span className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-white"><img src={part.image} alt={part.name} loading="lazy" className="block h-full w-full object-cover object-center"/></span>
-            <span className="block w-full rounded-full bg-[#ffd33c] py-0.5 text-[10px] font-extrabold">{countFor(part.term) === undefined ? "— peças" : `${countFor(part.term)} peças`}</span>
-          </button>)}
+            <span className="pointer-events-none absolute -left-20 -top-28 h-56 w-56 rounded-full border-[22px] border-[#d4af37]/10" aria-hidden="true" />
+            <span className="relative z-10 flex min-w-0 flex-1 flex-col gap-2">
+              <span className="text-xs font-bold uppercase tracking-[.2em] text-[#d4af37] sm:text-sm">Atendimento em sua região</span>
+              <span className="font-display text-[clamp(28px,6vw,62px)] font-black leading-[.95] tracking-tight text-white">Encontre seu<br/><span className="text-[#f1ce67]">Representante</span></span>
+              <span className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-[#edf3fb] sm:text-lg">Consulte a cobertura e os contatos <ArrowRight size={19} className="text-[#f1ce67] transition-transform group-hover:translate-x-1" /></span>
+            </span>
+            <span className="relative z-10 flex h-28 w-28 shrink-0 items-center justify-center rounded-full border border-[#d4af37]/50 bg-white/10 shadow-inner sm:h-40 sm:w-40" aria-hidden="true">
+              <svg viewBox="0 0 100 110" className="h-24 w-24 drop-shadow-[0_0_8px_rgba(212,175,55,.28)] sm:h-36 sm:w-36" fill="none">
+                <path d="M31 6 43 10 52 5 65 11 75 19 89 25 93 39 84 47 90 61 80 67 74 84 62 89 53 105 41 97 35 82 22 76 19 64 7 55 12 43 7 31 19 20Z" fill="#F2F5F9" stroke="#D4AF37" strokeWidth="2.8" strokeLinejoin="round"/>
+                <path d="M31 6 35 30 20 40 38 55 31 79M52 5 54 28 72 34 84 47M12 43 37 55 58 51 90 61M38 55 51 75 41 97M58 51 74 84 62 89" stroke="#8494A8" strokeWidth="1.4" strokeLinejoin="round"/>
+                <path d="M50 32c-7 0-12 5-12 12 0 9 12 22 12 22s12-13 12-22c0-7-5-12-12-12Z" fill="#D4AF37" stroke="#071B36" strokeWidth="2"/><circle cx="50" cy="44" r="4" fill="#071B36"/>
+              </svg>
+            </span>
+          </button>
         </section>
       </main>
       <a
