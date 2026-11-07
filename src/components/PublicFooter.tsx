@@ -64,6 +64,7 @@ export function PublicFooter() {
       return Number.isFinite(rate) ? rate : null;
     },
   });
+  const isVisitor = !!access && status === "Visitante";
   const displayedCommission = status === "Administrador" ? 3.5 : commissionRate;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -99,16 +100,16 @@ export function PublicFooter() {
         </div>
         <p className="mt-1 text-xs font-semibold text-[#8a6516]">{status}</p>
       </div>
-      <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Contact size={19}/> Cartão de visita</Link>
-      <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Download size={19}/> Downloads</Link>
+      <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold ${isVisitor ? "text-slate-400" : "hover:bg-slate-100"}`}><Contact size={19}/> Cartão de visita</Link>
+      <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold ${isVisitor ? "text-slate-400" : "hover:bg-slate-100"}`}><Download size={19}/> Downloads</Link>
       <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={19}/> Ajuda</button>
       {access?.level === 1 && <Link role="menuitem" to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Settings size={19}/> Administração</Link>}
       {user && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); clickSound(); void logout(); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-red-700 hover:bg-red-50"><LogOut size={19}/> Sair</button>}
       {!user && <Link role="menuitem" to="/auth" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={19}/> Entrar</Link>}
     </div>}
     <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-[#215c9b] !bg-gradient-to-b !from-[#092b57] !via-[#061c3b] !to-[#031126] !shadow-[0_-5px_22px_rgba(0,58,132,0.24)]" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
-      {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} preload="intent"  onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={pathname === to ? "page" : undefined} className={`group relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] sm:text-[13px] font-semibold transition-all duration-200 hover:bg-[#174e9b]/30 hover:text-[#ffdc55] ${pathname === to ? "text-[#ffdc55]" : "text-white"}`}>
-        <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className="text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]" />{label}
+      {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} preload="intent"  onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={pathname === to ? "page" : undefined} className={`group relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] sm:text-[13px] font-semibold transition-all duration-200 ${isVisitor && label === "Vendas" ? "text-slate-400" : `hover:bg-[#174e9b]/30 hover:text-[#ffdc55] ${pathname === to ? "text-[#ffdc55]" : "text-white"}`}`}>
+        <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className={isVisitor && label === "Vendas" ? "text-slate-400" : "text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]"} />{label}
         {pathname === to && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#ffd43b] shadow-[0_0_9px_2px_rgba(255,212,59,0.65)]"/>}
       </Link>)}
       <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-0.5 py-1 text-[12px] font-semibold text-white hover:text-[#ffdc55]">
