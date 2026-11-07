@@ -57,7 +57,7 @@ function BusinessCardPage() {
     })();
     return()=>{active=false;};
   },[userId,access?.name]);
-  const isSales=access?.attribution==="Representante"||access?.attribution==="Vendedor"||access?.can_sell===true;
+  const isSales=access?.level===1||access?.attribution==="Administrador"||access?.attribution==="Representante"||access?.attribution==="Vendedor"||access?.can_sell===true;
   const getCardFile=async()=>{
     const response=await fetch(image);
     if(!response.ok)throw new Error("Imagem do cartão indisponível.");
@@ -66,7 +66,7 @@ function BusinessCardPage() {
     return new File([blob],"cartao-netinho."+ext,{type:blob.type||"image/webp"});
   };
   const download=async()=>{
-    if(!image)return;
+    if(!image || !isSales)return;
     try{
       const file=await getCardFile();
       const url=URL.createObjectURL(file);
@@ -88,7 +88,7 @@ function BusinessCardPage() {
     }catch(e){if((e as Error).name!=="AbortError")toast.error("Não foi possível compartilhar o cartão.");}
   };
   return <main className="mx-auto w-full max-w-none space-y-2 pb-24 text-[#102a52]">
-    {!isSales?<div className="rounded-xl border bg-white p-5 text-center text-sm">O cartão de visita está disponível para vendedores e representantes.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="relative mx-auto w-full max-w-4xl">
+    {!isSales?<div className="rounded-xl border border-slate-300 bg-slate-100 p-5 text-center text-sm font-semibold text-slate-500">Cartão de visita indisponível para visitantes. Somente vendedores, representantes e administradores autorizados podem baixar ou compartilhar.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="relative mx-auto w-full max-w-4xl">
       <img src={image} alt="Cartão de visita profissional do usuário" className="block h-auto w-full object-contain" />
       <button type="button" onClick={()=>void share()} aria-label="Compartilhar cartão de visita" title="Compartilhar" className="absolute bottom-3 left-3 z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#123e74]/95 text-white shadow-lg transition hover:scale-105"><Share2 size={25}/></button>
       <button type="button" onClick={()=>void download()} aria-label="Baixar cartão de visita" title="Baixar" className="absolute bottom-3 right-3 z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#fff8e6]/95 text-[#102a52] shadow-lg transition hover:scale-105"><Download size={25}/></button>
