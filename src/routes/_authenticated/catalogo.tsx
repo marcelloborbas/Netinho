@@ -488,7 +488,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     window.open("https://wa.me/" + target + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   }
   function buy() {
-    if (!canSell) { toast.info("Para fazer pedidos, é necessário acesso de Vendedor ou Representante."); void navigate({ to: "/pedido" }); return; }
+    if (!canSell) return;
     if (p.manufacturer === "HD") { toast.info("HD Embreagens: em breve."); void navigate({ to: "/pedido" }); return; }
     const prices = { cash: p.price_cash ?? 0, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
     if (Object.values(prices).every((value) => value == null)) {
@@ -514,7 +514,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
   const brand = p.manufacturer ?? "FCO";
   const img = p.image_url || categoryPhoto(p.categories?.name ?? "") || partImage(p.categories?.name);
     return <li className="catalog-product-card surface-card grid min-w-0 grid-cols-[minmax(96px,32%)_minmax(0,1fr)] items-start gap-2 overflow-hidden rounded-xl p-1.5 sm:grid-cols-[minmax(135px,29%)_minmax(0,1fr)] sm:gap-2 sm:p-2">
-    <div className="relative catalog-card-image-col !self-start"><button type="button" onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} className="absolute right-2 top-2 z-10 rounded-full bg-[#09213c] p-2 text-[#39ff79] shadow-lg"><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual !min-h-0 !aspect-[1.2] w-full" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy" decoding="async"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
+    <div className="relative catalog-card-image-col !self-start"><button type="button" disabled={!canSell} onClick={onToggleFavorite} aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={isFavorite} title={canSell ? "Favoritos" : "Indisponível para visitantes"} className={`absolute right-2 top-2 z-10 rounded-full p-2 shadow-lg ${canSell ? "bg-[#09213c] text-[#39ff79]" : "cursor-not-allowed bg-slate-200 text-slate-400"}`}><Heart size={19} fill={isFavorite ? "currentColor" : "none"} /></button><div className="product-visual !min-h-0 !aspect-[1.2] w-full" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy" decoding="async"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div></div>
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
       <div className="mb-2 flex items-start justify-between gap-2"><p className="font-extrabold">Deseja comprar a peça {p.code}?</p><button type="button" aria-label="Fechar opções de contato" onClick={() => setShowContact(false)}><X size={20}/></button></div>
@@ -529,7 +529,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     <div className="catalog-card-info flex min-w-0 flex-1 flex-col gap-1.5 px-1 pb-1 pt-0.5">
       <div className="flex items-start justify-between gap-2 border-b border-[#d4af37] pb-2">
         <h2 className="min-w-0 flex-1 text-lg font-black leading-tight text-[#102a52] sm:text-2xl">{displayCategoryName(p.categories?.name?.replace(/^HD · /, "") || "Peça automotiva")}</h2>
-        <button type="button" aria-expanded={details} aria-label={details ? "Fechar ficha técnica" : "Abrir ficha técnica"} title="Ficha técnica" onClick={() => { if (!details) onView(); setDetails(!details); }} className="inline-flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-lg border border-[#42678b] bg-[#142f4c] text-[#e5f2ff] motion-reduce:animate-none"><PackageSearch size={20}/></button>
+        <button type="button" disabled={!canSell} aria-expanded={canSell && details} aria-label={canSell ? (details ? "Fechar ficha técnica" : "Abrir ficha técnica") : "Ficha técnica indisponível para visitantes"} title={canSell ? "Ficha técnica" : "Indisponível para visitantes"} onClick={() => { if (!canSell) return; if (!details) onView(); setDetails(!details); }} className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${canSell ? "animate-pulse border-[#42678b] bg-[#142f4c] text-[#e5f2ff] motion-reduce:animate-none" : "cursor-not-allowed border-slate-300 bg-slate-200 text-slate-400"}` }><PackageSearch size={20}/></button>
       </div>
       <VehicleBrandIcons application={p.application} />
       
@@ -538,7 +538,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
           <span className="block text-[11px] font-bold">Preço à vista</span>
           <strong className="block min-h-[1.5em] break-words text-lg font-black leading-tight !text-[#ffff00] sm:text-2xl" style={{ color: "#ffff00", opacity: 1, visibility: "visible" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) ? brl(Number(p.price_cash)) : "R$ 0,00"}</strong>
         </div>
-        <button type="button" onClick={buy} aria-label={canSell ? "Adicionar peça à venda" : "Consultar compra da peça"} title={canSell ? "Adicionar à venda" : "Consultar compra"} className="inline-flex h-[68px] w-12 shrink-0 animate-pulse items-center justify-center rounded-lg border border-[#2588f9] bg-[#0878ed] text-white shadow-sm motion-reduce:animate-none"><ShoppingCart size={21}/></button>
+        <button type="button" onClick={buy} disabled={!canSell} aria-label={canSell ? "Adicionar peça à venda" : "Carrinho indisponível para visitantes"} title={canSell ? "Adicionar à venda" : "Indisponível para visitantes"} className={`inline-flex h-[68px] w-12 shrink-0 items-center justify-center rounded-lg border shadow-sm ${canSell ? "animate-pulse border-[#2588f9] bg-[#0878ed] text-white motion-reduce:animate-none" : "cursor-not-allowed border-slate-300 bg-slate-200 text-slate-400"}` }><ShoppingCart size={21}/></button>
       </div>
       {canSell && <div className="text-xs font-bold text-[#137c45] sm:text-sm">{p.stock > 0 ? `Estoque: ${p.stock} un.` : "Estoque não informado"}</div>}
       {details && <div className="mb-3 space-y-2 rounded-xl border border-[#102a52] bg-[#f1f1f1] p-3 text-sm leading-6 text-[#102a52]" style={{ backgroundColor: "var(--netinho-page-bg, #f1f1f1)", color: "#102a52" }}>
@@ -548,7 +548,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
         {p.application && <p><strong>Aplicações:</strong> {p.application}</p>}
         {p.refs && <p><strong>Referências:</strong> {p.refs}</p>}
         <p className="text-xs text-[#102a52]">Confira a aplicação e as referências com o fabricante antes de confirmar a compra.</p>
-        {p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="text-xs underline"/>}
+        {canSell && p.catalog_page && <CatalogDownload brand="HD" page={p.catalog_page} className="text-xs underline"/>}
       </div>}
     </div>
   </li>;
