@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Search, MessageCircle, UserRound, ArrowRight } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { pageHead } from "@/lib/page-head";
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/representantes-mapa")({
 type Point = [number, number];
 type Geometry = { type: "Polygon" | "MultiPolygon"; coordinates: number[][][] | number[][][][] };
 type Feature = { properties: { name?: string; sigla?: string; id?: string }; geometry: Geometry };
-type Representative = { id: string; name: string; uf: string; city: string; region: string; phone: string; photo: string };
+type Representative = { id: string; name: string; uf: string; city: string; region: string };
 const states: Record<string, { name: string; lon: number; lat: number }> = {
   AC:{name:"Acre",lon:-70.4,lat:-9.0},AL:{name:"Alagoas",lon:-36.6,lat:-9.6},AP:{name:"Amapá",lon:-51.8,lat:1.5},
   AM:{name:"Amazonas",lon:-64.5,lat:-4.1},BA:{name:"Bahia",lon:-41.7,lat:-12.8},CE:{name:"Ceará",lon:-39.5,lat:-5.2},
@@ -31,8 +31,6 @@ const ufFrom = (value: string) => Object.keys(states).find(k => k === value.trim
 const project = ([lon,lat]:Point):Point => [(lon+75)*14, (6-lat)*14];
 const rings = (g:Geometry):number[][][] => g.type === "Polygon" ? g.coordinates as number[][][] : (g.coordinates as number[][][][]).flat();
 const pathOf = (g:Geometry) => rings(g).map(r=>r.map((p,i)=>{const [x,y]=project(p as Point);return (i?"L":"M")+x.toFixed(1)+","+y.toFixed(1);}).join(" ")+"Z").join(" ");
-const photoUrl = (id:string) => supabase.storage.from("person-photos").getPublicUrl(id+"/foto.webp").data.publicUrl;
-const digits = (value:string) => value.replace(/\D/g,"");
 const stateExtent = (features:Feature[],uf:string) => {
   const feature=features.find(f=>ufFrom(f.properties.sigla||f.properties.name||"")===uf);
   if(!feature)return null;
@@ -55,7 +53,6 @@ function RepresentativesMap(){
   const [selectedId,setSelectedId]=useState("");
   const [draftSearch,setDraftSearch]=useState("");
   const [search,setSearch]=useState("");
-  const [brokenPhotos,setBrokenPhotos]=useState<string[]>([]);
   useEffect(()=>{
     let active=true;
     // Limites estaduais públicos: carregados apenas nesta página, sem aumentar o peso da página inicial.
@@ -73,16 +70,14 @@ function RepresentativesMap(){
       const {data,error}=await supabase.rpc("list_public_representatives" as never);
       if(error)throw error;
       return ((data??[]) as Array<{id:string;full_name:string;uf:string;city:string;region:string;phone:string;photo_id:string}>).map(p=>({
-        id:p.id,name:p.full_name,uf:ufFrom(p.uf||""),city:p.city||"",region:p.region||"",phone:p.phone||"",photo:photoUrl(p.photo_id||p.id)
+        id:p.id,name:p.full_name,uf:ufFrom(p.uf||""),city:p.city||"",region:p.region||""
       })) as Representative[];
     },
   });
   const visible=people.filter(p=>!search.trim()||normalize([p.name,p.uf,states[p.uf]?.name,p.city,p.region].join(" ")).includes(normalize(search)));
   const selectedPeople=visible.filter(p=>!selected||p.uf===selected);
   const withoutState=visible.filter(p=>!p.uf);
-  const activePerson=people.find(p=>p.id===selectedId);
   const selectState=(uf:string)=>{setSelected(uf);setSelectedId("");};
-  const selectPerson=(p:Representative)=>{setSelected(p.uf);setSelectedId(p.id);};
   const labels=Object.entries(states);
   const mapView=selected?stateBounds(features,selected):"0 0 620 590";
   return <main className="mx-auto w-full max-w-[1500px] space-y-3 px-2 pb-28 pt-3 text-[#102a52] sm:px-4">
@@ -100,7 +95,6 @@ function RepresentativesMap(){
       </svg>
       {!features.length&&<p className="pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Consulte os representantes abaixo.":"Carregando divisões dos estados…"}</p>}
       {selected&&<div className="mx-auto my-3 max-w-xl rounded-xl border border-[#ffdc55] bg-[#164c83] p-3 text-center text-white"><h2 className="text-xl font-black text-[#ffdc55]">{states[selected]?.name} — {selected}</h2><p className="text-sm">{selectedPeople.length} representante(s) nesta seleção</p><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className="mt-2 rounded-lg bg-[#ffdc55] px-4 py-2 text-sm font-bold text-[#102a52]">Voltar ao mapa do Brasil</button></div>}
-      {activePerson&&<div className="mx-auto mt-2 flex max-w-xl items-center gap-3 rounded-xl border-2 border-[#ffdc55] bg-[#164c83] p-3 text-white shadow-[0_0_22px_#ffdc5580]"><img src={activePerson.photo} alt="" className="h-16 w-16 rounded-full border-2 border-[#ffdc55] object-cover" onError={e=>{e.currentTarget.style.display="none";}}/><div><strong className="block text-[#ffdc55]">{activePerson.name}</strong><span className="text-sm">{states[activePerson.uf]?.name}{activePerson.city?" · "+activePerson.city:""}</span><p className="text-xs">{activePerson.region|| (activePerson.city?`Cidade-base: ${activePerson.city}. Região atendida não cadastrada.`:"Região atendida não cadastrada.")}</p></div></div>}
     </section>
     <div className="flex flex-wrap gap-2"><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className={`rounded-lg px-4 py-2 text-sm font-bold ${!selected?"bg-[#d4af37] text-[#102a52]":"bg-slate-200"}`}>Todo o Brasil</button>{selected&&<span className="rounded-lg bg-[#d4af37] px-4 py-2 text-sm font-bold">{states[selected]?.name}</span>}</div>
     <section className="grid gap-3 md:grid-cols-2">
@@ -108,10 +102,9 @@ function RepresentativesMap(){
       {!selected&&withoutState.length>0&&<p className="col-span-full rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">{withoutState.length} representante(s) ainda não possuem UF identificada no cadastro. Eles continuam listados abaixo, mas precisam ter o estado de atuação preenchido na Administração para aparecer no mapa.</p>}
       {peopleError&&<p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">Não foi possível carregar os representantes. A consulta pública do Supabase pode estar pendente de instalação ou com erro. Detalhes: {peopleError instanceof Error ? peopleError.message : "Falha de consulta"}</p>}
       {!isLoading&&!peopleError&&!selectedPeople.length&&<p className="rounded-xl bg-white p-4 text-sm">Nenhum representante ativo com estado cadastrado para esta seleção.</p>}
-      {selectedPeople.map(p=><article key={p.id} onClick={()=>p.uf&&selectPerson(p)} className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 bg-white p-4 shadow-sm transition-all ${selectedId===p.id?"border-[#d4af37] ring-4 ring-[#d4af37]/40":"border-[#d4af37]"}`}>
-        {!brokenPhotos.includes(p.id)?<img src={p.photo} alt="" onError={()=>setBrokenPhotos(v=>[...v,p.id])} className="h-16 w-16 shrink-0 rounded-full border-2 border-[#d4af37] object-cover"/>:<div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-slate-200"><UserRound size={30}/></div>}
-        <div className="min-w-0 flex-1 break-words"><h2 className="text-base font-black">{p.name}</h2><p className="text-sm">{p.city? p.city+" · ":""}{p.uf||"UF não cadastrada"}</p><p className="text-sm font-semibold">Telefone: {p.phone||"Não informado"}</p><p className="text-xs text-slate-600"><strong>Locais de atuação:</strong> {p.region||"Região atendida não cadastrada"}{p.city&&<span className="block"><strong>Cidade-base:</strong> {p.city}</span>}</p></div>
-        {digits(p.phone).length>=10&&<a href={`https://wa.me/${digits(p.phone).startsWith("55")?digits(p.phone):"55"+digits(p.phone)}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp de ${p.name}`} className="rounded-full bg-[#137c45] p-3 text-white"><MessageCircle size={22}/></a>}
+      {selectedPeople.map(p=><article key={p.id} className="rounded-xl border-2 border-[#d4af37] bg-white p-4 shadow-sm">
+        <h2 className="text-base font-black">{p.name}</h2>
+        <p className="mt-1 text-sm text-slate-600"><strong>Locais de atendimento:</strong> {p.region||p.city||"Ainda não cadastrados"}{p.city&&p.region&&<span className="block">Cidade-base: {p.city}</span>}{p.uf&&<span className="block">Estado: {states[p.uf]?.name||p.uf}</span>}</p>
       </article>)}
     </section>
   </main>;
