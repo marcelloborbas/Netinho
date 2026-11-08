@@ -33,13 +33,18 @@ const rings = (g:Geometry):number[][][] => g.type === "Polygon" ? g.coordinates 
 const pathOf = (g:Geometry) => rings(g).map(r=>r.map((p,i)=>{const [x,y]=project(p as Point);return (i?"L":"M")+x.toFixed(1)+","+y.toFixed(1);}).join(" ")+"Z").join(" ");
 const photoUrl = (id:string) => supabase.storage.from("person-photos").getPublicUrl(id+"/foto.webp").data.publicUrl;
 const digits = (value:string) => value.replace(/\D/g,"");
-const stateBounds = (features:Feature[],uf:string) => {
+const stateExtent = (features:Feature[],uf:string) => {
   const feature=features.find(f=>ufFrom(f.properties.sigla||f.properties.name||"")===uf);
-  if(!feature)return "0 0 620 590";
+  if(!feature)return null;
   const pts=rings(feature.geometry).flat().map(p=>project(p as Point));
-  if(!pts.length)return "0 0 620 590";
+  if(!pts.length)return null;
   const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
-  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  return {minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+};
+const stateBounds = (features:Feature[],uf:string) => {
+  const extent=stateExtent(features,uf);
+  if(!extent)return "0 0 620 590";
+  const {minX,maxX,minY,maxY}=extent;
   const pad=Math.max(22,Math.max(maxX-minX,maxY-minY)*0.15);
   return [minX-pad,minY-pad,Math.max(90,maxX-minX+pad*2),Math.max(90,maxY-minY+pad*2)].join(" ");
 };
@@ -93,8 +98,13 @@ function RepresentativesMap(){
         {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff3c7" pointerEvents="none">{uf}</text>;})}
         {visible.filter(p=>p.uf&&(!selected||selected===p.uf)).map((p,i)=>{
           const st=states[p.uf];const same=visible.filter(v=>v.uf===p.uf);const idx=same.findIndex(v=>v.id===p.id);
-          const [x,y]=project([st.lon,st.lat]);const offsetX=(idx%4-1.5)*27,offsetY=Math.floor(idx/4)*30-24;
-          const cx=x+offsetX,cy=y+offsetY;const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
+          const [x,y]=project([st.lon,st.lat]);
+          const extent=stateExtent(features,p.uf);
+          const columns=Math.min(3,same.length);
+          const col=idx%columns,row=Math.floor(idx/columns),rows=Math.ceil(same.length/columns);
+          const spreadX=extent?Math.min(40,Math.max(16,(extent.maxX-extent.minX)*0.52/Math.max(1,columns-1))):35;
+          const spreadY=extent?Math.min(35,Math.max(16,(extent.maxY-extent.minY)*0.42/Math.max(1,rows-1))):25;
+          const cx=x+(col-(columns-1)/2)*spreadX,cy=y-9+(row-(rows-1)/2)*spreadY;const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
           return <g key={p.id} onClick={()=>selectPerson(p)} className={selectedId===p.id?"cursor-pointer drop-shadow-[0_0_12px_#ffe083]":"cursor-pointer"} role="button" aria-label={p.name+" - "+st.name}>
             <title>{p.name} - {st.name}</title>
             <path d={`M${cx} ${cy+18}l-9 -15a13 13 0 1 1 18 0z`} fill={selectedId===p.id?"#ffffff":"#e7b63d"} stroke="#071d3a" strokeWidth="1.5"/>
@@ -107,17 +117,17 @@ function RepresentativesMap(){
       </svg>
       {!features.length&&<p className="pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Consulte os representantes abaixo.":"Carregando divisões dos estados…"}</p>}
       {selected&&<div className="mx-auto my-3 max-w-xl rounded-xl border border-[#ffdc55] bg-[#164c83] p-3 text-center text-white"><h2 className="text-xl font-black text-[#ffdc55]">{states[selected]?.name} — {selected}</h2><p className="text-sm">{selectedPeople.length} representante(s) nesta seleção</p><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className="mt-2 rounded-lg bg-[#ffdc55] px-4 py-2 text-sm font-bold text-[#102a52]">Voltar ao mapa do Brasil</button></div>}
-      {activePerson&&<div className="mx-auto mt-2 flex max-w-xl items-center gap-3 rounded-xl border-2 border-[#ffdc55] bg-[#164c83] p-3 text-white shadow-[0_0_22px_#ffdc5580]"><img src={activePerson.photo} alt="" className="h-16 w-16 rounded-full border-2 border-[#ffdc55] object-cover" onError={e=>{e.currentTarget.style.display="none";}}/><div><strong className="block text-[#ffdc55]">{activePerson.name}</strong><span className="text-sm">{states[activePerson.uf]?.name}{activePerson.city?" · "+activePerson.city:""}</span><p className="text-xs">{activePerson.region||"Região não informada"}</p></div></div>}
+      {activePerson&&<div className="mx-auto mt-2 flex max-w-xl items-center gap-3 rounded-xl border-2 border-[#ffdc55] bg-[#164c83] p-3 text-white shadow-[0_0_22px_#ffdc5580]"><img src={activePerson.photo} alt="" className="h-16 w-16 rounded-full border-2 border-[#ffdc55] object-cover" onError={e=>{e.currentTarget.style.display="none";}}/><div><strong className="block text-[#ffdc55]">{activePerson.name}</strong><span className="text-sm">{states[activePerson.uf]?.name}{activePerson.city?" · "+activePerson.city:""}</span><p className="text-xs">{activePerson.region|| (activePerson.city?`Cidade-base: ${activePerson.city}. Região atendida não cadastrada.`:"Região atendida não cadastrada.")}</p></div></div>}
       <p className="text-center text-xs text-[#d8e5f4]">Os pinos indicam o estado de atuação, não o endereço pessoal do representante.</p>
     </section>
     <div className="flex flex-wrap gap-2"><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className={`rounded-lg px-4 py-2 text-sm font-bold ${!selected?"bg-[#d4af37] text-[#102a52]":"bg-slate-200"}`}>Todo o Brasil</button>{selected&&<span className="rounded-lg bg-[#d4af37] px-4 py-2 text-sm font-bold">{states[selected]?.name}</span>}</div>
-    <section className="grid gap-3 sm:grid-cols-2">
+    <section className="grid gap-3 md:grid-cols-2">
       {isLoading&&<p>Carregando representantes…</p>}
       {peopleError&&<p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">Não foi possível carregar os representantes. A consulta pública do Supabase pode estar pendente de instalação ou com erro. Detalhes: {peopleError instanceof Error ? peopleError.message : "Falha de consulta"}</p>}
       {!isLoading&&!peopleError&&!selectedPeople.length&&<p className="rounded-xl bg-white p-4 text-sm">Nenhum representante ativo com estado cadastrado para esta seleção.</p>}
-      {selectedPeople.map(p=><article key={p.id} onClick={()=>p.uf&&selectPerson(p)} className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 bg-white p-3 shadow-sm transition-all ${selectedId===p.id?"border-[#d4af37] ring-4 ring-[#d4af37]/40":"border-[#d4af37]"}`}>
+      {selectedPeople.map(p=><article key={p.id} onClick={()=>p.uf&&selectPerson(p)} className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 bg-white p-4 shadow-sm transition-all ${selectedId===p.id?"border-[#d4af37] ring-4 ring-[#d4af37]/40":"border-[#d4af37]"}`}>
         {!brokenPhotos.includes(p.id)?<img src={p.photo} alt="" onError={()=>setBrokenPhotos(v=>[...v,p.id])} className="h-16 w-16 shrink-0 rounded-full border-2 border-[#d4af37] object-cover"/>:<div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-slate-200"><UserRound size={30}/></div>}
-        <div className="min-w-0 flex-1"><h2 className="font-black">{p.name}</h2><p className="text-sm">{p.city? p.city+" · ":""}{p.uf||"UF não cadastrada"}</p><p className="text-sm font-semibold">Telefone: {p.phone||"Não informado"}</p><p className="text-xs text-slate-600">Locais de atuação: {p.region||"Não informados"}</p></div>
+        <div className="min-w-0 flex-1 break-words"><h2 className="text-base font-black">{p.name}</h2><p className="text-sm">{p.city? p.city+" · ":""}{p.uf||"UF não cadastrada"}</p><p className="text-sm font-semibold">Telefone: {p.phone||"Não informado"}</p><p className="text-xs text-slate-600"><strong>Locais de atuação:</strong> {p.region||"Região atendida não cadastrada"}{p.city&&<span className="block"><strong>Cidade-base:</strong> {p.city}</span>}</p></div>
         {digits(p.phone).length>=10&&<a href={`https://wa.me/${digits(p.phone).startsWith("55")?digits(p.phone):"55"+digits(p.phone)}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp de ${p.name}`} className="rounded-full bg-[#137c45] p-3 text-white"><MessageCircle size={22}/></a>}
       </article>)}
     </section>
