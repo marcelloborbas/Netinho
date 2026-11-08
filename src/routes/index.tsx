@@ -138,20 +138,11 @@ function Home() {
           <HomePartsCarousel />
         </section>
         <HomeSalesEvolution />
-        {status === "Visitante" ? (
-          <div aria-disabled="true" title="Disponível para vendedores e representantes" className="mx-3 flex min-h-20 cursor-not-allowed items-center gap-3 rounded-2xl border-[3px] border-slate-300 bg-slate-200 px-4 py-3 text-slate-500 sm:mx-6">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-300 text-slate-500"><MapPinned size={30}/></span>
-            <span className="min-w-0 flex-1"><strong className="block text-sm font-black tracking-wide sm:text-lg">REPRESENTANTES PELO BRASIL</strong><span className="block text-xs sm:text-sm">Disponível para usuários autorizados.</span></span>
-            <ChevronRight size={25} className="shrink-0"/>
-          </div>
-        ) : (
         <a href="/representantes-mapa" className="mx-3 flex min-h-20 items-center gap-3 rounded-2xl border-[3px] border-[#ffce2c] bg-gradient-to-r from-[#09254a] to-[#164c83] px-4 py-3 text-white shadow-[0_4px_0_#a96e00,0_5px_18px_#002a6c55] transition hover:brightness-110 sm:mx-6" aria-label="Abrir mapa dos representantes pelo Brasil">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#173f70] text-[#ffdc55]"><MapPinned size={30}/>
-          </span>
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#173f70] text-[#ffdc55]"><MapPinned size={30}/></span>
           <span className="min-w-0 flex-1"><strong className="block text-sm font-black tracking-wide text-[#ffdc55] sm:text-lg">REPRESENTANTES PELO BRASIL</strong><span className="block text-xs text-white sm:text-sm">Encontre quem atende sua cidade ou região.</span></span>
           <ChevronRight size={25} className="shrink-0 text-[#ffdc55]"/>
         </a>
-        )}
       </main>
       <a
         href={`https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Gostaria de atendimento.")}`}
