@@ -186,13 +186,6 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
   const {error:profileError}=await supabase.rpc("admin_update_person_contact" as never,{p_user:person.id,p_name:name.trim(),p_phone:phone.trim()} as never);
   if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
-  if(sales){
-   const parsed=role==="Administrador" ? 3.5 : commissionRate === "" ? null : Number(commissionRate);
-   if(parsed !== null && (!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){setBusy(false);toast.error("Comissão deve estar entre 0,5% e 3,5%.");return;}
-   const {error:commissionError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
-   if(commissionError){setBusy(false);toast.error("Perfil salvo, mas a comissão não foi atualizada: "+commissionError.message+". Confira se a migração de comissões do administrador foi aplicada no Supabase.");onSaved();return;}
-   void qc.invalidateQueries({queryKey:["person-commission",person.id]});
-  }
   let image=effectiveMap.trim();
   if(mapFile){
    const extension=mapFile.name.split(".").pop()?.toLowerCase()||"webp";
@@ -204,7 +197,25 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   const {data:savedTerritory,error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"}).select("user_id").maybeSingle();
   setBusy(false);
   if(territoryError||!savedTerritory){toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
-  setMapUrl(image);setMapFile(null);territoryEdited.current=false;await qc.invalidateQueries({queryKey:["person-territory",person.id]});toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
+  setMapUrl(image);setMapFile(null);territoryEdited.current=false;
+  await qc.invalidateQueries({queryKey:["person-territory",person.id]});
+  // Comissões são independentes: falhas não impedem o salvamento do território.
+  const parsed=role==="Administrador" ? 3.5 : commissionRate === "" ? null : Number(commissionRate);
+  const originalRate=commissionData??null;
+  const commissionChanged=sales && commissionData!==undefined && !commissionError && parsed!==originalRate;
+  let commissionWarning="";
+  if(commissionChanged){
+   if(parsed!==null&&(!Number.isFinite(parsed)||parsed<0.5||parsed>3.5||!Number.isInteger(parsed*2))){
+    commissionWarning="A comissão informada é inválida (permitido: 0,5% a 3,5%).";
+   }else{
+    const {error:rateError}=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:person.id,p_rate:parsed} as never);
+    if(rateError)commissionWarning="A comissão não foi atualizada: "+rateError.message;
+    else void qc.invalidateQueries({queryKey:["person-commission",person.id]});
+   }
+  }
+  if(commissionWarning)toast.warning("Pessoa e região salvas. "+commissionWarning);
+  else toast.success("Pessoa e região atualizadas.");
+  onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <div className="flex items-start justify-between gap-3">
