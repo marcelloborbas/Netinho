@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Search, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { pageHead } from "@/lib/page-head";
+import { meQuery } from "@/lib/queries";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/representantes-mapa")({
   staticData: { sitemap: false },
@@ -50,7 +52,6 @@ function RepresentativesMap(){
   const [features,setFeatures]=useState<Feature[]>([]);
   const [mapError,setMapError]=useState(false);
   const [selected,setSelected]=useState("");
-  const [selectedId,setSelectedId]=useState("");
   const [draftSearch,setDraftSearch]=useState("");
   const [search,setSearch]=useState("");
   useEffect(()=>{
@@ -62,6 +63,7 @@ function RepresentativesMap(){
       .catch(()=>{if(active)setMapError(true);});
     return()=>{active=false;};
   },[]);
+  const {data:me}=useQuery(meQuery);
   const {data:people=[],isLoading,error:peopleError}=useQuery({
     queryKey:["public-representatives-map-v3"],
     staleTime:60_000,
@@ -77,14 +79,14 @@ function RepresentativesMap(){
   const visible=people.filter(p=>!search.trim()||normalize([p.name,p.uf,states[p.uf]?.name,p.city,p.region].join(" ")).includes(normalize(search)));
   const selectedPeople=visible.filter(p=>!selected||p.uf===selected);
   const withoutState=visible.filter(p=>!p.uf);
-  const selectState=(uf:string)=>{setSelected(uf);setSelectedId("");};
+  const selectState=(uf:string)=>{setSelected(uf);};
   const labels=Object.entries(states);
   const mapView=selected?stateBounds(features,selected):"0 0 620 590";
   return <main className="mx-auto w-full max-w-[1500px] space-y-3 px-2 pb-28 pt-3 text-[#102a52] sm:px-4">
     <header className="rounded-2xl border-2 border-[#d4af37] bg-[#09254a] p-4 text-center text-white">
       <h1 className="text-xl font-black text-[#ffdc55] sm:text-3xl">REPRESENTANTES</h1>
     </header>
-    <form onSubmit={e=>{e.preventDefault();setSearch(draftSearch);setSelected("");setSelectedId("");}} className="flex items-center gap-2 rounded-xl border border-[#d4af37] bg-white px-3"><Search size={19}/><input value={draftSearch} onChange={e=>setDraftSearch(e.target.value)} placeholder="Buscar por nome, cidade ou estado" className="min-h-12 w-full bg-transparent text-sm outline-none"/><button type="submit" aria-label="Procurar representantes" title="Procurar" className="flex h-10 w-11 shrink-0 items-center justify-center rounded-lg bg-[#102a52] text-[#ffdc55]"><ArrowRight size={23}/></button></form>
+    <form onSubmit={e=>{e.preventDefault();setSearch(draftSearch);setSelected("");}} className="flex items-center gap-2 rounded-xl border border-[#d4af37] bg-white px-3"><Search size={19}/><input value={draftSearch} onChange={e=>setDraftSearch(e.target.value)} placeholder="Buscar por nome, cidade ou estado" className="min-h-12 w-full bg-transparent text-sm outline-none"/><button type="submit" aria-label="Procurar representantes" title="Procurar" className="flex h-10 w-11 shrink-0 items-center justify-center rounded-lg bg-[#102a52] text-[#ffdc55]"><ArrowRight size={23}/></button></form>
     <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-transparent p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
       <svg viewBox={mapView} className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais. Selecione um estado para consultar os representantes na lista abaixo">
         {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
@@ -105,7 +107,7 @@ function RepresentativesMap(){
       {selectedPeople.map(p=><article key={p.id} className="rounded-xl border-2 border-[#d4af37] bg-white p-4 shadow-sm">
         <h2 className="text-base font-black">{p.name}</h2>
         <p className="mt-1 text-sm text-slate-600"><strong>Locais de atendimento:</strong> {p.region||p.city||"Ainda não cadastrados"}{p.city&&p.region&&<span className="block">Cidade-base: {p.city}</span>}{p.uf&&<span className="block">Estado: {states[p.uf]?.name||p.uf}</span>}</p>
-      </article>)}
+        </div>\n      </article>)}
     </section>
   </main>;
 }
