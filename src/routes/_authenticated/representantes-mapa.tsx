@@ -80,25 +80,36 @@ function RepresentativesMap(){
   const selectedPeople=visible.filter(p=>!selected||p.uf===selected);
   const withoutState=visible.filter(p=>!p.uf);
   const selectState=(uf:string)=>{setSelected(uf);};
-  const labels=Object.entries(states);
+  const labels=Object.entries(states).sort((a,b)=>a[1].name.localeCompare(b[1].name,"pt-BR"));
+  const representativesByUf=(uf:string)=>people.filter(p=>p.uf===uf).length;
   const mapView=selected?stateBounds(features,selected):"0 0 620 590";
   return <main className="mx-auto w-full max-w-[1500px] space-y-3 px-2 pb-28 pt-3 text-[#102a52] sm:px-4">
     <header className="rounded-2xl border-2 border-[#d4af37] bg-[#09254a] p-4 text-center text-white">
       <h1 className="text-xl font-black text-[#ffdc55] sm:text-3xl">REPRESENTANTES</h1>
     </header>
     <form onSubmit={e=>{e.preventDefault();setSearch(draftSearch);setSelected("");}} className="flex items-center gap-2 rounded-xl border border-[#d4af37] bg-white px-3"><Search size={19}/><input value={draftSearch} onChange={e=>setDraftSearch(e.target.value)} placeholder="Buscar por nome, cidade ou estado" className="min-h-12 w-full bg-transparent text-sm outline-none"/><button type="submit" aria-label="Procurar representantes" title="Procurar" className="flex h-10 w-11 shrink-0 items-center justify-center rounded-lg bg-[#102a52] text-[#ffdc55]"><ArrowRight size={23}/></button></form>
-    <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-transparent p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
+    <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-[#f5f7fb] p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
       <svg viewBox={mapView} className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais. Selecione um estado para consultar os representantes na lista abaixo">
         {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
-          return <path key={uf||i} d={pathOf(f.geometry)} fill={selected===uf?"#d4af37":"#123b68"} stroke="#e4ba54" strokeWidth="1.2" fillRule="evenodd" className={uf?(selected===uf?"cursor-pointer drop-shadow-[0_0_12px_#ffe083] transition-all duration-500":"cursor-pointer hover:fill-[#286095] transition-all duration-500"):""} style={selected===uf?{filter:"drop-shadow(0 0 8px #ffe083)",strokeWidth:3}:undefined} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
+          return <path key={uf||i} d={pathOf(f.geometry)} fill={selected===uf?"#d4af37":"#123b68"} stroke="#f4c44e" strokeWidth="1.65" fillRule="evenodd" className={uf?(selected===uf?"cursor-pointer drop-shadow-[0_0_12px_#ffe083] transition-all duration-500":"cursor-pointer hover:fill-[#286095] transition-all duration-500"):""} role="button" tabIndex={uf?0:undefined} aria-label={uf?`Selecionar ${states[uf]?.name}, ${representativesByUf(uf)} representantes`:undefined} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();selectState(uf);}}} style={selected===uf?{filter:"drop-shadow(0 0 8px #ffe083)",strokeWidth:3}:undefined} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
         {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff3c7" pointerEvents="none">{uf}</text>;})}
       </svg>
-      {!features.length&&<p className="pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Consulte os representantes abaixo.":"Carregando divisões dos estados…"}</p>}
+      {!features.length&&<p className="pb-4 text-center text-sm text-[#102a52]">{mapError?"Não foi possível carregar as divisas estaduais. Consulte os representantes abaixo.":"Carregando divisões dos estados…"}</p>}
       {selected&&<div className="mx-auto my-3 max-w-xl rounded-xl border border-[#ffdc55] bg-[#164c83] p-3 text-center text-white"><h2 className="text-xl font-black text-[#ffdc55]">{states[selected]?.name} — {selected}</h2><p className="text-sm">{selectedPeople.length} representante(s) nesta seleção</p><button type="button" onClick={()=>{setSelected("");}} className="mt-2 rounded-lg bg-[#ffdc55] px-4 py-2 text-sm font-bold text-[#102a52]">Voltar ao mapa do Brasil</button></div>}
     </section>
     <div className="flex flex-wrap gap-2"><button type="button" onClick={()=>{setSelected("");}} className={`rounded-lg px-4 py-2 text-sm font-bold ${!selected?"bg-[#d4af37] text-[#102a52]":"bg-slate-200"}`}>Todo o Brasil</button>{selected&&<span className="rounded-lg bg-[#d4af37] px-4 py-2 text-sm font-bold">{states[selected]?.name}</span>}</div>
+    <section aria-label="Estados e Distrito Federal" className="rounded-2xl border border-[#d4af37] bg-white p-3 sm:p-5">
+      <h2 className="mb-3 text-base font-black text-[#102a52]">ESTADOS DO BRASIL <span className="text-sm font-normal text-slate-600">— selecione uma unidade federativa</span></h2>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {labels.map(([uf,st])=><button key={uf} type="button" onClick={()=>selectState(uf)} aria-pressed={selected===uf} className={`flex min-h-12 items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-xs font-bold transition hover:border-[#d4af37] hover:bg-[#fff5d5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:text-sm ${selected===uf?"border-[#d4af37] bg-[#102a52] text-[#ffdc55]":"border-slate-200 bg-slate-50 text-[#102a52]"}`}>
+          <span><span className="mr-2 text-[#c18d16]">{uf}</span>{st.name}</span>
+          {representativesByUf(uf)>0&&<span className={`rounded-full px-2 py-0.5 text-xs ${selected===uf?"bg-[#ffdc55] text-[#102a52]":"bg-[#e5eef8] text-[#102a52]"}`}>{representativesByUf(uf)}</span>}
+        </button>)}
+      </div>
+      <p className="mt-3 text-xs text-slate-500">Os números indicam quantos representantes estão cadastrados em cada estado. A localização no mapa não representa endereço particular.</p>
+    </section>
     <section className="grid gap-3 md:grid-cols-2">
       {isLoading&&<p>Carregando representantes…</p>}
       {!selected&&withoutState.length>0&&<p className="col-span-full rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">{withoutState.length} representante(s) ainda não possuem UF identificada no cadastro. Eles continuam listados abaixo, mas precisam ter o estado de atuação preenchido na Administração para aparecer no mapa.</p>}
