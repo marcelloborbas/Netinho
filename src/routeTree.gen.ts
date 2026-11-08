@@ -18,6 +18,7 @@ import { Route as RepresentanteLivaldoRouteImport } from './routes/representante
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SolicitarAcessoRouteImport } from './routes/solicitar-acesso'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminComunicacaoRouteImport } from './routes/_authenticated/admin-comunicacao'
 import { Route as AuthenticatedAdminGestaoRouteImport } from './routes/_authenticated/admin-gestao'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin-pedidos'
 import { Route as AuthenticatedCadastroRouteImport } from './routes/_authenticated/cadastro'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedPedidoRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedPessoasRouteImport } from './routes/_authenticated/pessoas'
 import { Route as AuthenticatedPromocaoRouteImport } from './routes/_authenticated/promocao'
 import { Route as AuthenticatedRepresentantesRouteImport } from './routes/_authenticated/representantes'
+import { Route as AuthenticatedRepresentantesMapaRouteImport } from './routes/_authenticated/representantes-mapa'
 import { Route as AuthenticatedTransportadorasRouteImport } from './routes/_authenticated/transportadoras'
 import { Route as AuthenticatedVendasRouteImport } from './routes/_authenticated/vendas'
 import { Route as AuthenticatedVendedoresRouteImport } from './routes/_authenticated/vendedores'
@@ -83,6 +85,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminComunicacaoRoute =
+  AuthenticatedAdminComunicacaoRouteImport.update({
+    id: '/admin-comunicacao',
+    path: '/admin-comunicacao',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminGestaoRoute =
   AuthenticatedAdminGestaoRouteImport.update({
     id: '/admin-gestao',
@@ -154,6 +162,12 @@ const AuthenticatedRepresentantesRoute =
     path: '/representantes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRepresentantesMapaRoute =
+  AuthenticatedRepresentantesMapaRouteImport.update({
+    id: '/representantes-mapa',
+    path: '/representantes-mapa',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTransportadorasRoute =
   AuthenticatedTransportadorasRouteImport.update({
     id: '/transportadoras',
@@ -202,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin-comunicacao': typeof AuthenticatedAdminComunicacaoRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
   '/admin-pedidos': typeof AuthenticatedAdminPedidosRoute
   '/cadastro': typeof AuthenticatedCadastroRoute
@@ -215,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/pessoas': typeof AuthenticatedPessoasRoute
   '/promocao': typeof AuthenticatedPromocaoRoute
   '/representantes': typeof AuthenticatedRepresentantesRoute
+  '/representantes-mapa': typeof AuthenticatedRepresentantesMapaRoute
   '/transportadoras': typeof AuthenticatedTransportadorasRoute
   '/vendas': typeof AuthenticatedVendasRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
@@ -232,6 +248,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin-comunicacao': typeof AuthenticatedAdminComunicacaoRoute
   '/admin-gestao': typeof AuthenticatedAdminGestaoRoute
   '/admin-pedidos': typeof AuthenticatedAdminPedidosRoute
   '/cadastro': typeof AuthenticatedCadastroRoute
@@ -245,6 +262,7 @@ export interface FileRoutesByTo {
   '/pessoas': typeof AuthenticatedPessoasRoute
   '/promocao': typeof AuthenticatedPromocaoRoute
   '/representantes': typeof AuthenticatedRepresentantesRoute
+  '/representantes-mapa': typeof AuthenticatedRepresentantesMapaRoute
   '/transportadoras': typeof AuthenticatedTransportadorasRoute
   '/vendas': typeof AuthenticatedVendasRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
@@ -264,6 +282,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solicitar-acesso': typeof SolicitarAcessoRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin-comunicacao': typeof AuthenticatedAdminComunicacaoRoute
   '/_authenticated/admin-gestao': typeof AuthenticatedAdminGestaoRoute
   '/_authenticated/admin-pedidos': typeof AuthenticatedAdminPedidosRoute
   '/_authenticated/cadastro': typeof AuthenticatedCadastroRoute
@@ -277,6 +296,7 @@ export interface FileRoutesById {
   '/_authenticated/pessoas': typeof AuthenticatedPessoasRoute
   '/_authenticated/promocao': typeof AuthenticatedPromocaoRoute
   '/_authenticated/representantes': typeof AuthenticatedRepresentantesRoute
+  '/_authenticated/representantes-mapa': typeof AuthenticatedRepresentantesMapaRoute
   '/_authenticated/transportadoras': typeof AuthenticatedTransportadorasRoute
   '/_authenticated/vendas': typeof AuthenticatedVendasRoute
   '/_authenticated/vendedores': typeof AuthenticatedVendedoresRoute
@@ -296,6 +316,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solicitar-acesso'
     | '/admin'
+    | '/admin-comunicacao'
     | '/admin-gestao'
     | '/admin-pedidos'
     | '/cadastro'
@@ -309,6 +330,7 @@ export interface FileRouteTypes {
     | '/pessoas'
     | '/promocao'
     | '/representantes'
+    | '/representantes-mapa'
     | '/transportadoras'
     | '/vendas'
     | '/vendedores'
@@ -326,6 +348,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solicitar-acesso'
     | '/admin'
+    | '/admin-comunicacao'
     | '/admin-gestao'
     | '/admin-pedidos'
     | '/cadastro'
@@ -339,6 +362,7 @@ export interface FileRouteTypes {
     | '/pessoas'
     | '/promocao'
     | '/representantes'
+    | '/representantes-mapa'
     | '/transportadoras'
     | '/vendas'
     | '/vendedores'
@@ -357,6 +381,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solicitar-acesso'
     | '/_authenticated/admin'
+    | '/_authenticated/admin-comunicacao'
     | '/_authenticated/admin-gestao'
     | '/_authenticated/admin-pedidos'
     | '/_authenticated/cadastro'
@@ -370,6 +395,7 @@ export interface FileRouteTypes {
     | '/_authenticated/pessoas'
     | '/_authenticated/promocao'
     | '/_authenticated/representantes'
+    | '/_authenticated/representantes-mapa'
     | '/_authenticated/transportadoras'
     | '/_authenticated/vendas'
     | '/_authenticated/vendedores'
@@ -454,6 +480,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin-comunicacao': {
+      id: '/_authenticated/admin-comunicacao'
+      path: '/admin-comunicacao'
+      fullPath: '/admin-comunicacao'
+      preLoaderRoute: typeof AuthenticatedAdminComunicacaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin-gestao': {
@@ -547,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRepresentantesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/representantes-mapa': {
+      id: '/_authenticated/representantes-mapa'
+      path: '/representantes-mapa'
+      fullPath: '/representantes-mapa'
+      preLoaderRoute: typeof AuthenticatedRepresentantesMapaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/transportadoras': {
       id: '/_authenticated/transportadoras'
       path: '/transportadoras'
@@ -601,6 +641,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminComunicacaoRoute: typeof AuthenticatedAdminComunicacaoRoute
   AuthenticatedAdminGestaoRoute: typeof AuthenticatedAdminGestaoRoute
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
   AuthenticatedCadastroRoute: typeof AuthenticatedCadastroRoute
@@ -614,6 +655,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPessoasRoute: typeof AuthenticatedPessoasRoute
   AuthenticatedPromocaoRoute: typeof AuthenticatedPromocaoRoute
   AuthenticatedRepresentantesRoute: typeof AuthenticatedRepresentantesRoute
+  AuthenticatedRepresentantesMapaRoute: typeof AuthenticatedRepresentantesMapaRoute
   AuthenticatedTransportadorasRoute: typeof AuthenticatedTransportadorasRoute
   AuthenticatedVendasRoute: typeof AuthenticatedVendasRoute
   AuthenticatedVendedoresRoute: typeof AuthenticatedVendedoresRoute
@@ -624,6 +666,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminComunicacaoRoute: AuthenticatedAdminComunicacaoRoute,
   AuthenticatedAdminGestaoRoute: AuthenticatedAdminGestaoRoute,
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
   AuthenticatedCadastroRoute: AuthenticatedCadastroRoute,
@@ -637,6 +680,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPessoasRoute: AuthenticatedPessoasRoute,
   AuthenticatedPromocaoRoute: AuthenticatedPromocaoRoute,
   AuthenticatedRepresentantesRoute: AuthenticatedRepresentantesRoute,
+  AuthenticatedRepresentantesMapaRoute: AuthenticatedRepresentantesMapaRoute,
   AuthenticatedTransportadorasRoute: AuthenticatedTransportadorasRoute,
   AuthenticatedVendasRoute: AuthenticatedVendasRoute,
   AuthenticatedVendedoresRoute: AuthenticatedVendedoresRoute,
