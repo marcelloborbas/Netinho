@@ -164,7 +164,9 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
  const [open,setOpen]=useState(editingPage);
 
  const sales=role==="Vendedor"||role==="Representante"||role==="Administrador";
- const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:true,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate == null ? (person.site_role==="Administrador"?"3.5":"") : String(rate));return rate ?? null;}});
+ const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:true,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;return rate ?? null;}});
+ const commissionInitialized=useRef(false);
+ useEffect(()=>{if(!commissionInitialized.current&&commissionData!==undefined){setCommissionRate(commissionData == null ? (person.site_role==="Administrador"?"3.5":"") : String(commissionData));commissionInitialized.current=true;}},[commissionData,person.site_role]);
  const {data:territory}=useQuery({queryKey:["person-territory",person.id],enabled:open||editingPage,queryFn:async()=>{
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
@@ -392,11 +394,11 @@ function RepresentativeDetails({name,email,representativeId,commercial=false}:{n
   {key:"cpf",label:"CPF"},
   {key:"rg",label:"RG"},
  ] as const;
- if(record&&!initialized){
+ useEffect(()=>{if(record&&!initialized){
   const initial:Record<string,string>={};
   for(const field of fields){const source=field.key==="region"||field.key==="phone"?record.profile:record.details;initial[field.key]=String((source as Record<string,unknown>|null)?.[field.key]??"");}
   setValues(initial);setInitialized(true);
- }
+ }},[record,initialized]);
  async function saveRegion(){
   if(!record)return;
   setSaving(true);
