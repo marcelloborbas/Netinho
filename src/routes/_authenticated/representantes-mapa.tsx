@@ -64,39 +64,12 @@ function RepresentativesMap(){
     queryKey:["public-representatives-map-v2"],
     staleTime:60_000,
     queryFn:async()=>{
-      // A Administração mantém pessoas e representantes comerciais em cadastros distintos.
-      // Consultar ambos sem trazer CPF, RG, endereço residencial ou comissões.
-      const [profileResult,commercialResult,repProfileResult]=await Promise.all([
-        supabase.from("profiles").select("id,full_name,email,site_role,access_active,territory_uf,territory_cities,phone").eq("site_role","Representante").eq("access_active",true),
-        supabase.from("commercial_representatives").select("id,full_name,email,active").eq("active",true),
-        supabase.from("representative_profiles").select("slug,full_name,email,phone,region"),
-      ]);
-      if(profileResult.error)throw profileResult.error;
-      const profiles=(profileResult.data??[]) as Array<{id:string;full_name:string|null;email:string|null;territory_uf:string|null;territory_cities:string|null;phone:string|null}>;
-      const commercial=(commercialResult.data??[]) as Array<{id:string;full_name:string;email:string;active:boolean}>;
-      const repProfiles=(repProfileResult.data??[]) as Array<{slug:string;full_name:string;email:string;phone:string|null;region:string|null}>;
-      const ids=profiles.map(p=>p.id);
-      const [territoryResult,commercialDetailResult,repDetailResult]=await Promise.all([
-        ids.length?supabase.from("person_territories" as never).select("user_id,city_base,region").in("user_id",ids):Promise.resolve({data:[]}),
-        commercial.length?supabase.from("commercial_representative_details" as never).select("representative_id,city,state,region,service_cities,phone").in("representative_id",commercial.map(p=>p.id)):Promise.resolve({data:[]}),
-        repProfiles.length?supabase.from("representative_private_details").select("slug,city,state,service_cities").in("slug",repProfiles.map(p=>p.slug)):Promise.resolve({data:[]}),
-      ]);
-      const territoryById=new Map(((territoryResult.data??[]) as Array<{user_id:string;city_base:string|null;region:string|null}>).map(t=>[t.user_id,t]));
-      const commercialById=new Map(((commercialDetailResult.data??[]) as Array<{representative_id:string;city:string|null;state:string|null;region:string|null;service_cities:string|null;phone:string|null}>).map(t=>[t.representative_id,t]));
-      const repBySlug=new Map(((repDetailResult.data??[]) as Array<{slug:string;city:string|null;state:string|null;service_cities:string|null}>).map(t=>[t.slug,t]));
-      const byEmail=(email:string|null|undefined)=>repProfiles.find(p=>email&&normalize(p.email)===normalize(email));
-      const rows:Representative[]=[];
-      for(const p of profiles){
-        const territory=territoryById.get(p.id);
-        const rp=byEmail(p.email);const detail=rp?repBySlug.get(rp.slug):undefined;
-        rows.push({id:p.id,name:p.full_name||rp?.full_name||"Representante",uf:ufFrom(p.territory_uf||detail?.state||""),city:territory?.city_base||detail?.city||"",region:territory?.region||p.territory_cities||detail?.service_cities||rp?.region||"",phone:p.phone||rp?.phone||"",photo:photoUrl(p.id)});
-      }
-      for(const p of commercial){
-        if(rows.some(r=>normalize(r.name)===normalize(p.full_name)))continue;
-        const d=commercialById.get(p.id);const rp=byEmail(p.email);const rd=rp?repBySlug.get(rp.slug):undefined;
-        rows.push({id:p.id,name:p.full_name,uf:ufFrom(d?.state||rd?.state||""),city:d?.city||rd?.city||"",region:d?.region||d?.service_cities||rd?.service_cities||rp?.region||"",phone:d?.phone||rp?.phone||"",photo:photoUrl(p.id)});
-      }
-      return rows;
+      // RPC retorna apenas dados comerciais autorizados à consulta pública.
+      const {data,error}=await supabase.rpc("list_public_representatives" as never);
+      if(error)throw error;
+      return ((data??[]) as Array<{id:string;full_name:string;uf:string;city:string;region:string;phone:string;photo_id:string}>).map(p=>({
+        id:p.id,name:p.full_name,uf:ufFrom(p.uf||""),city:p.city||"",region:p.region||"",phone:p.phone||"",photo:photoUrl(p.photo_id||p.id)
+      })) as Representative[];
     },
   });
   const visible=people.filter(p=>!search.trim()||normalize([p.name,p.uf,states[p.uf]?.name,p.city,p.region].join(" ")).includes(normalize(search)));
