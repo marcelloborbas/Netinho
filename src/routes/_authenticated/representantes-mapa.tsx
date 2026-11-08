@@ -66,7 +66,7 @@ function RepresentativesMap(){
     return()=>{active=false;};
   },[]);
   const {data:people=[],isLoading,error:peopleError}=useQuery({
-    queryKey:["public-representatives-map-v2"],
+    queryKey:["public-representatives-map-v3"],
     staleTime:60_000,
     queryFn:async()=>{
       // RPC retorna apenas dados comerciais autorizados à consulta pública.
@@ -79,6 +79,7 @@ function RepresentativesMap(){
   });
   const visible=people.filter(p=>!search.trim()||normalize([p.name,p.uf,states[p.uf]?.name,p.city,p.region].join(" ")).includes(normalize(search)));
   const selectedPeople=visible.filter(p=>!selected||p.uf===selected);
+  const withoutState=visible.filter(p=>!p.uf);
   const activePerson=people.find(p=>p.id===selectedId);
   const selectState=(uf:string)=>{setSelected(uf);setSelectedId("");};
   const selectPerson=(p:Representative)=>{setSelected(p.uf);setSelectedId(p.id);};
@@ -123,6 +124,7 @@ function RepresentativesMap(){
     <div className="flex flex-wrap gap-2"><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className={`rounded-lg px-4 py-2 text-sm font-bold ${!selected?"bg-[#d4af37] text-[#102a52]":"bg-slate-200"}`}>Todo o Brasil</button>{selected&&<span className="rounded-lg bg-[#d4af37] px-4 py-2 text-sm font-bold">{states[selected]?.name}</span>}</div>
     <section className="grid gap-3 md:grid-cols-2">
       {isLoading&&<p>Carregando representantes…</p>}
+      {!selected&&withoutState.length>0&&<p className="col-span-full rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">{withoutState.length} representante(s) ainda não possuem UF identificada no cadastro. Eles continuam listados abaixo, mas precisam ter o estado de atuação preenchido na Administração para aparecer no mapa.</p>}
       {peopleError&&<p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">Não foi possível carregar os representantes. A consulta pública do Supabase pode estar pendente de instalação ou com erro. Detalhes: {peopleError instanceof Error ? peopleError.message : "Falha de consulta"}</p>}
       {!isLoading&&!peopleError&&!selectedPeople.length&&<p className="rounded-xl bg-white p-4 text-sm">Nenhum representante ativo com estado cadastrado para esta seleção.</p>}
       {selectedPeople.map(p=><article key={p.id} onClick={()=>p.uf&&selectPerson(p)} className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 bg-white p-4 shadow-sm transition-all ${selectedId===p.id?"border-[#d4af37] ring-4 ring-[#d4af37]/40":"border-[#d4af37]"}`}>
