@@ -33,6 +33,16 @@ const rings = (g:Geometry):number[][][] => g.type === "Polygon" ? g.coordinates 
 const pathOf = (g:Geometry) => rings(g).map(r=>r.map((p,i)=>{const [x,y]=project(p as Point);return (i?"L":"M")+x.toFixed(1)+","+y.toFixed(1);}).join(" ")+"Z").join(" ");
 const photoUrl = (id:string) => supabase.storage.from("person-photos").getPublicUrl(id+"/foto.webp").data.publicUrl;
 const digits = (value:string) => value.replace(/\D/g,"");
+const stateBounds = (features:Feature[],uf:string) => {
+  const feature=features.find(f=>ufFrom(f.properties.sigla||f.properties.name||"")===uf);
+  if(!feature)return "0 0 620 590";
+  const pts=rings(feature.geometry).flat().map(p=>project(p as Point));
+  if(!pts.length)return "0 0 620 590";
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const pad=Math.max(22,Math.max(maxX-minX,maxY-minY)*0.15);
+  return [minX-pad,minY-pad,Math.max(90,maxX-minX+pad*2),Math.max(90,maxY-minY+pad*2)].join(" ");
+};
 function RepresentativesMap(){
   const [features,setFeatures]=useState<Feature[]>([]);
   const [mapError,setMapError]=useState(false);
@@ -92,22 +102,23 @@ function RepresentativesMap(){
   const visible=people.filter(p=>!search.trim()||normalize([p.name,p.uf,states[p.uf]?.name,p.city,p.region].join(" ")).includes(normalize(search)));
   const selectedPeople=visible.filter(p=>!selected||p.uf===selected);
   const activePerson=people.find(p=>p.id===selectedId);
-  const selectState=(uf:string)=>{setSelected(v=>v===uf?"":uf);setSelectedId("");};
+  const selectState=(uf:string)=>{setSelected(uf);setSelectedId("");};
   const selectPerson=(p:Representative)=>{setSelected(p.uf);setSelectedId(p.id);};
   const labels=Object.entries(states);
+  const mapView=selected?stateBounds(features,selected):"0 0 620 590";
   return <main className="mx-auto w-full max-w-[1500px] space-y-3 px-2 pb-28 pt-3 text-[#102a52] sm:px-4">
     <header className="rounded-2xl border-2 border-[#d4af37] bg-[#09254a] p-4 text-center text-white">
       <h1 className="text-xl font-black text-[#ffdc55] sm:text-3xl">REPRESENTANTES</h1>
     </header>
     <form onSubmit={e=>{e.preventDefault();setSearch(draftSearch);setSelected("");setSelectedId("");}} className="flex items-center gap-2 rounded-xl border border-[#d4af37] bg-white px-3"><Search size={19}/><input value={draftSearch} onChange={e=>setDraftSearch(e.target.value)} placeholder="Buscar por nome, cidade ou estado" className="min-h-12 w-full bg-transparent text-sm outline-none"/><button type="submit" aria-label="Procurar representantes" title="Procurar" className="flex h-10 w-11 shrink-0 items-center justify-center rounded-lg bg-[#102a52] text-[#ffdc55]"><ArrowRight size={23}/></button></form>
     <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-[#071d3a] p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
-      <svg viewBox="0 0 620 590" className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais, nomes e fotos dos representantes">
+      <svg viewBox={mapView} className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais, nomes e fotos dos representantes">
         {features.map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
           return <path key={uf||i} d={pathOf(f.geometry)} fill={selected===uf?"#d4af37":"#123b68"} stroke="#e4ba54" strokeWidth="1.2" fillRule="evenodd" className={uf?(selected===uf?"cursor-pointer drop-shadow-[0_0_12px_#ffe083] transition-all duration-500":"cursor-pointer hover:fill-[#286095] transition-all duration-500"):""} style={selected===uf?{filter:"drop-shadow(0 0 8px #ffe083)",strokeWidth:3}:undefined} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
-        {labels.map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff3c7" pointerEvents="none">{uf}</text>;})}
-        {visible.filter(p=>p.uf).map((p,i)=>{
+        {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff3c7" pointerEvents="none">{uf}</text>;})}
+        {visible.filter(p=>p.uf&&(!selected||selected===p.uf)).map((p,i)=>{
           const st=states[p.uf];const same=visible.filter(v=>v.uf===p.uf);const idx=same.findIndex(v=>v.id===p.id);
           const [x,y]=project([st.lon,st.lat]);const offsetX=(idx%4-1.5)*27,offsetY=Math.floor(idx/4)*30-24;
           const cx=x+offsetX,cy=y+offsetY;const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
@@ -122,6 +133,7 @@ function RepresentativesMap(){
         })}
       </svg>
       {!features.length&&<p className="pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Consulte os representantes abaixo.":"Carregando divisões dos estados…"}</p>}
+      {selected&&<div className="mx-auto my-3 max-w-xl rounded-xl border border-[#ffdc55] bg-[#164c83] p-3 text-center text-white"><h2 className="text-xl font-black text-[#ffdc55]">{states[selected]?.name} — {selected}</h2><p className="text-sm">{selectedPeople.length} representante(s) nesta seleção</p><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className="mt-2 rounded-lg bg-[#ffdc55] px-4 py-2 text-sm font-bold text-[#102a52]">Voltar ao mapa do Brasil</button></div>}
       {activePerson&&<div className="mx-auto mt-2 flex max-w-xl items-center gap-3 rounded-xl border-2 border-[#ffdc55] bg-[#164c83] p-3 text-white shadow-[0_0_22px_#ffdc5580]"><img src={activePerson.photo} alt="" className="h-16 w-16 rounded-full border-2 border-[#ffdc55] object-cover" onError={e=>{e.currentTarget.style.display="none";}}/><div><strong className="block text-[#ffdc55]">{activePerson.name}</strong><span className="text-sm">{states[activePerson.uf]?.name}{activePerson.city?" · "+activePerson.city:""}</span><p className="text-xs">{activePerson.region||"Região não informada"}</p></div></div>}
       <p className="text-center text-xs text-[#d8e5f4]">Os pinos indicam o estado de atuação, não o endereço pessoal do representante.</p>
     </section>
@@ -132,7 +144,7 @@ function RepresentativesMap(){
       {!isLoading&&!selectedPeople.length&&<p className="rounded-xl bg-white p-4 text-sm">Nenhum representante ativo com estado cadastrado para esta seleção.</p>}
       {selectedPeople.map(p=><article key={p.id} onClick={()=>p.uf&&selectPerson(p)} className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 bg-white p-3 shadow-sm transition-all ${selectedId===p.id?"border-[#d4af37] ring-4 ring-[#d4af37]/40":"border-[#d4af37]"}`}>
         {!brokenPhotos.includes(p.id)?<img src={p.photo} alt="" onError={()=>setBrokenPhotos(v=>[...v,p.id])} className="h-16 w-16 shrink-0 rounded-full border-2 border-[#d4af37] object-cover"/>:<div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-slate-200"><UserRound size={30}/></div>}
-        <div className="min-w-0 flex-1"><h2 className="font-black">{p.name}</h2><p className="text-sm">{p.city? p.city+" · ":""}{p.uf||"UF não cadastrada"}</p>{p.region&&<p className="text-xs text-slate-600">{p.region}</p>}</div>
+        <div className="min-w-0 flex-1"><h2 className="font-black">{p.name}</h2><p className="text-sm">{p.city? p.city+" · ":""}{p.uf||"UF não cadastrada"}</p><p className="text-sm font-semibold">Telefone: {p.phone||"Não informado"}</p><p className="text-xs text-slate-600">Locais de atuação: {p.region||"Não informados"}</p></div>
         {digits(p.phone).length>=10&&<a href={`https://wa.me/${digits(p.phone).startsWith("55")?digits(p.phone):"55"+digits(p.phone)}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp de ${p.name}`} className="rounded-full bg-[#137c45] p-3 text-white"><MessageCircle size={22}/></a>}
       </article>)}
     </section>
