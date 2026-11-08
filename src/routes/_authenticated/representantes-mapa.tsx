@@ -90,9 +90,9 @@ function RepresentativesMap(){
       <h1 className="text-xl font-black text-[#ffdc55] sm:text-3xl">REPRESENTANTES</h1>
     </header>
     <form onSubmit={e=>{e.preventDefault();setSearch(draftSearch);setSelected("");setSelectedId("");}} className="flex items-center gap-2 rounded-xl border border-[#d4af37] bg-white px-3"><Search size={19}/><input value={draftSearch} onChange={e=>setDraftSearch(e.target.value)} placeholder="Buscar por nome, cidade ou estado" className="min-h-12 w-full bg-transparent text-sm outline-none"/><button type="submit" aria-label="Procurar representantes" title="Procurar" className="flex h-10 w-11 shrink-0 items-center justify-center rounded-lg bg-[#102a52] text-[#ffdc55]"><ArrowRight size={23}/></button></form>
-    <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-[#071d3a] p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
+    <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-transparent p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
       <svg viewBox={mapView} className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais, nomes e fotos dos representantes">
-        {features.map((f,i)=>{
+        {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
           return <path key={uf||i} d={pathOf(f.geometry)} fill={selected===uf?"#d4af37":"#123b68"} stroke="#e4ba54" strokeWidth="1.2" fillRule="evenodd" className={uf?(selected===uf?"cursor-pointer drop-shadow-[0_0_12px_#ffe083] transition-all duration-500":"cursor-pointer hover:fill-[#286095] transition-all duration-500"):""} style={selected===uf?{filter:"drop-shadow(0 0 8px #ffe083)",strokeWidth:3}:undefined} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
@@ -113,9 +113,10 @@ function RepresentativesMap(){
           return <g key={p.id} onClick={()=>selectPerson(p)} className={selectedId===p.id?"cursor-pointer drop-shadow-[0_0_12px_#ffe083]":"cursor-pointer"} role="button" aria-label={p.name+" - "+st.name}>
             <title>{p.name} - {st.name}</title>
             <path d={`M ${cx} ${pinBottom} L ${cx-radius*.79} ${cy+radius*.52} A ${radius+3} ${radius+3} 0 1 1 ${cx+radius*.79} ${cy+radius*.52} Z`} fill="#dc2626" stroke="#7f1d1d" strokeWidth="2.2" strokeLinejoin="round"/>
-            <circle cx={cx} cy={cy} r={radius} fill="#ffffff" stroke="#ffffff" strokeWidth="2"/>
-            <defs><clipPath id={clip}><circle cx={cx} cy={cy} r={radius-2.5}/></clipPath></defs>
-            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-radius+2.5} y={cy-radius+2.5} width={(radius-2.5)*2} height={(radius-2.5)*2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} onError={()=>setBrokenPhotos(v=>[...v,p.id])}/>}
+
+            <defs><clipPath id={clip}><circle cx={cx} cy={cy} r={radius-0.8}/></clipPath></defs>
+            <circle cx={cx} cy={cy} r={radius} fill="#dc2626"/>
+            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-radius+0.8} y={cy-radius+0.8} width={(radius-0.8)*2} height={(radius-0.8)*2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} onError={()=>setBrokenPhotos(v=>[...v,p.id])}/>}
             {brokenPhotos.includes(p.id)&&<circle cx={cx} cy={cy} r={radius-2.5} fill="#173f70"/>}
           </g>;
         })}
