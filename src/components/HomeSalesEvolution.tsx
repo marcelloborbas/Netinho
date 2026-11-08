@@ -13,7 +13,7 @@ async function loadSalesEvolution() {
   const { data: auth, error: authError } = await supabase.auth.getUser();
   if (authError || !auth.user) throw authError ?? new Error("Faça login para consultar suas vendas.");
   const current = monthKey(new Date());
-  const [year, month] = current.split("-").map(Number);
+  const [year = new Date().getUTCFullYear(), month = new Date().getUTCMonth() + 1] = current.split("-").map(Number);
   const periods = Array.from({ length: 6 }, (_, i) => {
     const date = new Date(Date.UTC(year, month - 1 - (5 - i), 15));
     return { key: `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`, label: months[date.getUTCMonth()] };
@@ -47,8 +47,8 @@ export function HomeSalesEvolution() {
   });
   const history = data ?? [];
   const chartMax = Math.max(1, ...history.map(item => item.total));
-  const previousTotal = history.length > 1 ? history[history.length - 2].total : 0;
-  const currentTotal = history.length ? history[history.length - 1].total : 0;
+  const previousTotal = history.length > 1 ? history[history.length - 2]?.total ?? 0 : 0;
+  const currentTotal = history[history.length - 1]?.total ?? 0;
   const growth = previousTotal > 0 ? (currentTotal - previousTotal) / previousTotal * 100 : null;
   return <section className="mx-3 mb-3 !min-h-0 !h-auto overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 text-white shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6" aria-label="Evolução das vendas pessoais">
     <div className="flex items-center gap-2">
