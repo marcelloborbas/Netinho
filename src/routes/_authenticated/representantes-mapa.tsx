@@ -101,18 +101,22 @@ function RepresentativesMap(){
           const st=states[p.uf];const same=visible.filter(v=>v.uf===p.uf);const idx=same.findIndex(v=>v.id===p.id);
           const [x,y]=project([st.lon,st.lat]);
           const extent=stateExtent(features,p.uf);
-          const columns=Math.min(3,same.length);
+          // Distribuição em grade com centros estáveis; a foto fica sempre dentro do pino.
+          const columns=Math.min(selected?3:2,same.length);
           const col=idx%columns,row=Math.floor(idx/columns),rows=Math.ceil(same.length/columns);
-          const spreadX=extent?Math.min(40,Math.max(16,(extent.maxX-extent.minX)*0.52/Math.max(1,columns-1))):35;
-          const spreadY=extent?Math.min(35,Math.max(16,(extent.maxY-extent.minY)*0.42/Math.max(1,rows-1))):25;
-          const cx=x+(col-(columns-1)/2)*spreadX,cy=y-9+(row-(rows-1)/2)*spreadY;const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
+          const spacingX=selected?31:24,spacingY=selected?43:31;
+          const cx=x+(col-(columns-1)/2)*spacingX;
+          const cy=y-5+(row-(rows-1)/2)*spacingY;
+          const radius=selected?16:13;
+          const pinBottom=cy+radius+13;
+          const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
           return <g key={p.id} onClick={()=>selectPerson(p)} className={selectedId===p.id?"cursor-pointer drop-shadow-[0_0_12px_#ffe083]":"cursor-pointer"} role="button" aria-label={p.name+" - "+st.name}>
             <title>{p.name} - {st.name}</title>
-            <path d={`M${cx} ${cy+18}l-9 -15a13 13 0 1 1 18 0z`} fill={selectedId===p.id?"#ffffff":"#e7b63d"} stroke="#071d3a" strokeWidth="1.5"/>
-            <defs><clipPath id={clip}><circle cx={cx} cy={cy-3} r="10"/></clipPath></defs>
-            <circle cx={cx} cy={cy-3} r="12" fill="#ffffff"/>
-            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-10} y={cy-13} width="20" height="20" preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} onError={()=>setBrokenPhotos(v=>[...v,p.id])}/>}
-            {brokenPhotos.includes(p.id)&&<circle cx={cx} cy={cy-3} r="10" fill="#173f70"/>}
+            <path d={`M ${cx} ${pinBottom} L ${cx-radius*.79} ${cy+radius*.52} A ${radius+3} ${radius+3} 0 1 1 ${cx+radius*.79} ${cy+radius*.52} Z`} fill="#dc2626" stroke="#7f1d1d" strokeWidth="2.2" strokeLinejoin="round"/>
+            <circle cx={cx} cy={cy} r={radius} fill="#ffffff" stroke="#ffffff" strokeWidth="2"/>
+            <defs><clipPath id={clip}><circle cx={cx} cy={cy} r={radius-2.5}/></clipPath></defs>
+            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-radius+2.5} y={cy-radius+2.5} width={(radius-2.5)*2} height={(radius-2.5)*2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} onError={()=>setBrokenPhotos(v=>[...v,p.id])}/>}
+            {brokenPhotos.includes(p.id)&&<circle cx={cx} cy={cy} r={radius-2.5} fill="#173f70"/>}
           </g>;
         })}
       </svg>
