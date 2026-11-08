@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated")({
     // de getUser; as permissões continuam verificadas pela RPC no servidor.
     const { data: sessionData } = await supabase.auth.getSession();
     const sessionUser = sessionData.session?.user ?? null;
-    if (!sessionUser && !["/catalogo", "/representantes"].includes(location.pathname)) {
+    if (!sessionUser && !["/catalogo", "/representantes", "/representantes-mapa"].includes(location.pathname)) {
       throw redirect({ to: "/auth" });
     }
     if (!sessionUser) return { user: null, access: null };
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated")({
     if (location.pathname === "/admin" || location.pathname === "/admin-gestao") {
       if (access.level !== 1) throw redirect({ to: "/catalogo" });
     }
-    if (!access.can_sell && access.level !== 1 && !["/catalogo", "/representantes"].includes(location.pathname)) throw redirect({ to: "/catalogo" });
+    if (!access.can_sell && access.level !== 1 && !["/catalogo", "/representantes", "/representantes-mapa"].includes(location.pathname)) throw redirect({ to: "/catalogo" });
     return { user: sessionUser, access };
   },
   component: AppShell,
