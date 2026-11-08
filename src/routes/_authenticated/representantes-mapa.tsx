@@ -108,16 +108,15 @@ function RepresentativesMap(){
           const cx=x+(col-(columns-1)/2)*spacingX;
           const cy=y-5+(row-(rows-1)/2)*spacingY;
           const radius=selected?16:13;
-          const pinBottom=cy+radius+13;
           const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
-          return <g key={p.id} onClick={()=>selectPerson(p)} className={selectedId===p.id?"cursor-pointer drop-shadow-[0_0_12px_#ffe083]":"cursor-pointer"} role="button" aria-label={p.name+" - "+st.name}>
-            <title>{p.name} - {st.name}</title>
-            <path d={`M ${cx} ${pinBottom} L ${cx-radius*.79} ${cy+radius*.52} A ${radius+3} ${radius+3} 0 1 1 ${cx+radius*.79} ${cy+radius*.52} Z`} fill="#dc2626" stroke="#7f1d1d" strokeWidth="2.2" strokeLinejoin="round"/>
-
-            <defs><clipPath id={clip}><circle cx={cx} cy={cy} r={radius-0.8}/></clipPath></defs>
-            <circle cx={cx} cy={cy} r={radius} fill="#dc2626"/>
-            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-radius+0.8} y={cy-radius+0.8} width={(radius-0.8)*2} height={(radius-0.8)*2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} onError={()=>setBrokenPhotos(v=>[...v,p.id])}/>}
-            {brokenPhotos.includes(p.id)&&<circle cx={cx} cy={cy} r={radius-2.5} fill="#173f70"/>}
+          return <g key={p.id} onClick={()=>selectPerson(p)} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectPerson(p);}}} tabIndex={0} className="group cursor-pointer outline-none" role="button" aria-label={"Ver representante "+p.name+" em "+st.name}>
+            <title>{p.name} — clique para ver contato e região de atuação</title>
+            <defs><clipPath id={clip}><circle cx={cx} cy={cy} r={radius}/></clipPath></defs>
+            <circle cx={cx} cy={cy} r={radius+2} fill={selectedId===p.id?"#ffdc55":"#ffffff"} opacity={selectedId===p.id?1:0.12} className="transition-all duration-200 group-hover:opacity-100 group-focus:opacity-100"/>
+            <circle cx={cx} cy={cy} r={radius} fill="#173f70"/>
+            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-radius} y={cy-radius} width={radius*2} height={radius*2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} className="origin-center transition-all duration-200 group-hover:brightness-125 group-focus:brightness-125" onError={()=>setBrokenPhotos(v=>v.includes(p.id)?v:[...v,p.id])}/>}
+            {brokenPhotos.includes(p.id)&&<text x={cx} y={cy+5} textAnchor="middle" fontSize="15" fill="white">●</text>}
+            <circle cx={cx} cy={cy} r={radius+4} fill="transparent" stroke="#ffdc55" strokeWidth="2" className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus:opacity-100"/>
           </g>;
         })}
       </svg>
