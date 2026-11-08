@@ -1,7 +1,7 @@
 import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Trash2, Pencil, X, UserPlus, ArrowLeft, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -156,6 +156,8 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
  const [region,setRegion]=useState("");
  const [mapUrl,setMapUrl]=useState("");
  const [mapFile,setMapFile]=useState<File|null>(null);
+ const territoryInitialized=useRef(false);
+ const territoryEdited=useRef(false);
  const [supervisor,setSupervisor]=useState(person.supervisor_id??"");
  const [busy,setBusy]=useState(false);
  const [commissionRate,setCommissionRate]=useState("");
@@ -167,15 +169,16 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   const {data,error}=await supabase.from("person_territories" as never).select("city_base,region,map_url").eq("user_id",person.id).maybeSingle();
   if(error)throw error;
   const value=data as {city_base:string;region:string;map_url:string}|null;
-  setCityBase(value?.city_base??"");setRegion(value?.region??"");setMapUrl(value?.map_url??"");
   return value;
  }});
+ useEffect(()=>{if(!territoryInitialized.current&&!territoryEdited.current&&territory!==undefined){setCityBase(territory?.city_base??"");setRegion(territory?.region??"");setMapUrl(territory?.map_url??"");territoryInitialized.current=true;}},[territory]);
  const effectiveCity=cityBase;
  const effectiveRegion=region;
  const effectiveMap=mapUrl;
 
  async function save(){
   if(!name.trim()){toast.error("Informe o nome da pessoa.");return;}
+  if(sales&&!territoryInitialized.current&&!territoryEdited.current){toast.error("Aguarde o carregamento dos dados regionais antes de salvar.");return;}
   setBusy(true);
   const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:role,p_active:active,p_uf:uf,p_cities:cities,p_supervisor:supervisor||null} as never);
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
@@ -199,7 +202,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   const {data:savedTerritory,error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"}).select("user_id").maybeSingle();
   setBusy(false);
   if(territoryError||!savedTerritory){toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
-  setMapUrl(image);setMapFile(null);await qc.invalidateQueries({queryKey:["person-territory",person.id]});toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
+  setMapUrl(image);setMapFile(null);territoryEdited.current=false;await qc.invalidateQueries({queryKey:["person-territory",person.id]});toast.success("Pessoa e região atualizadas.");onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
   <div className="flex items-start justify-between gap-3">
@@ -273,8 +276,8 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
    </section>
    {sales&&<div className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3">
     <strong>Área de atuação</strong>
-    <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>setCityBase(e.target.value)} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-    <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>setRegion(e.target.value)} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+    <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>{territoryEdited.current=true;setCityBase(e.target.value);}} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+    <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>{territoryEdited.current=true;setRegion(e.target.value);}} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Estado(s) — UF<input value={uf} onChange={e=>setUf(e.target.value)} placeholder="Ex.: SP, MG" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Cidades atendidas<textarea value={cities} onChange={e=>setCities(e.target.value)} rows={2} placeholder="Ex.: Sorocaba, Itu, Votorantim" className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-3"/></label>
     {role==="Vendedor"&&<label className="block text-sm font-bold">Representante responsável<select value={supervisor} onChange={e=>setSupervisor(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="">Não vinculado</option>{people.filter(p=>p.id!==person.id&&p.site_role==="Representante").map(p=><option value={p.id} key={p.id}>{p.full_name||p.email}</option>)}</select></label>}
@@ -456,9 +459,9 @@ function CommercialDetailsForm({representativeId}:{representativeId:string}) {
  async function save(){
   setBusy(true);
   const payload={representative_id:representativeId,...Object.fromEntries(fields.map(f=>[f.key,(values[f.key]??"").trim()]))};
-  const {error}=await supabase.from("commercial_representative_details" as never).upsert(payload as never,{onConflict:"representative_id"});
+  const {data:saved,error}=await supabase.from("commercial_representative_details" as never).upsert(payload as never,{onConflict:"representative_id"}).select("representative_id").maybeSingle();
   setBusy(false);
-  if(error){toast.error("Não foi possível salvar os dados cadastrais: "+error.message);return;}
+  if(error||!saved){toast.error("O banco não confirmou os dados cadastrais: "+(error?.message??"Nenhum registro atualizado."));return;}
   toast.success("Endereço, telefone e região salvos.");
   await qc.invalidateQueries({queryKey:["commercial-representative-details",representativeId]});
  }
