@@ -91,39 +91,16 @@ function RepresentativesMap(){
     </header>
     <form onSubmit={e=>{e.preventDefault();setSearch(draftSearch);setSelected("");setSelectedId("");}} className="flex items-center gap-2 rounded-xl border border-[#d4af37] bg-white px-3"><Search size={19}/><input value={draftSearch} onChange={e=>setDraftSearch(e.target.value)} placeholder="Buscar por nome, cidade ou estado" className="min-h-12 w-full bg-transparent text-sm outline-none"/><button type="submit" aria-label="Procurar representantes" title="Procurar" className="flex h-10 w-11 shrink-0 items-center justify-center rounded-lg bg-[#102a52] text-[#ffdc55]"><ArrowRight size={23}/></button></form>
     <section className="relative overflow-hidden rounded-2xl border-[3px] border-[#d4af37] bg-transparent p-1 sm:p-3" aria-label="Mapa dos estados do Brasil">
-      <svg viewBox={mapView} className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais, nomes e fotos dos representantes">
+      <svg viewBox={mapView} className="mx-auto h-[min(78dvh,1050px)] min-h-[440px] w-full transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa do Brasil com divisões estaduais. Selecione um estado para consultar os representantes na lista abaixo">
         {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
           return <path key={uf||i} d={pathOf(f.geometry)} fill={selected===uf?"#d4af37":"#123b68"} stroke="#e4ba54" strokeWidth="1.2" fillRule="evenodd" className={uf?(selected===uf?"cursor-pointer drop-shadow-[0_0_12px_#ffe083] transition-all duration-500":"cursor-pointer hover:fill-[#286095] transition-all duration-500"):""} style={selected===uf?{filter:"drop-shadow(0 0 8px #ffe083)",strokeWidth:3}:undefined} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
         {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize="10" fontWeight="700" fill="#fff3c7" pointerEvents="none">{uf}</text>;})}
-        {visible.filter(p=>p.uf&&(!selected||selected===p.uf)).map((p,i)=>{
-          const st=states[p.uf];const same=visible.filter(v=>v.uf===p.uf);const idx=same.findIndex(v=>v.id===p.id);
-          const [x,y]=project([st.lon,st.lat]);
-          const extent=stateExtent(features,p.uf);
-          // Distribuição em grade com centros estáveis; a foto fica sempre dentro do pino.
-          const columns=Math.min(selected?3:2,same.length);
-          const col=idx%columns,row=Math.floor(idx/columns),rows=Math.ceil(same.length/columns);
-          const spacingX=selected?31:24,spacingY=selected?43:31;
-          const cx=x+(col-(columns-1)/2)*spacingX;
-          const cy=y-5+(row-(rows-1)/2)*spacingY;
-          const radius=selected?16:13;
-          const clip="photo-"+p.id.replace(/[^a-zA-Z0-9]/g,"");
-          return <g key={p.id} onClick={()=>selectPerson(p)} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectPerson(p);}}} tabIndex={0} className="group cursor-pointer outline-none" role="button" aria-label={"Ver representante "+p.name+" em "+st.name}>
-            <title>{p.name} — clique para ver contato e região de atuação</title>
-            <defs><clipPath id={clip}><circle cx={cx} cy={cy} r={radius}/></clipPath></defs>
-            <circle cx={cx} cy={cy} r={radius+2} fill={selectedId===p.id?"#ffdc55":"#ffffff"} opacity={selectedId===p.id?1:0.12} className="transition-all duration-200 group-hover:opacity-100 group-focus:opacity-100"/>
-            <circle cx={cx} cy={cy} r={radius} fill="#173f70"/>
-            {!brokenPhotos.includes(p.id)&&<image href={p.photo} x={cx-radius} y={cy-radius} width={radius*2} height={radius*2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${clip})`} className="origin-center transition-all duration-200 group-hover:brightness-125 group-focus:brightness-125" onError={()=>setBrokenPhotos(v=>v.includes(p.id)?v:[...v,p.id])}/>}
-            {brokenPhotos.includes(p.id)&&<text x={cx} y={cy+5} textAnchor="middle" fontSize="15" fill="white">●</text>}
-            <circle cx={cx} cy={cy} r={radius+4} fill="transparent" stroke="#ffdc55" strokeWidth="2" className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus:opacity-100"/>
-          </g>;
-        })}
       </svg>
       {!features.length&&<p className="pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Consulte os representantes abaixo.":"Carregando divisões dos estados…"}</p>}
       {selected&&<div className="mx-auto my-3 max-w-xl rounded-xl border border-[#ffdc55] bg-[#164c83] p-3 text-center text-white"><h2 className="text-xl font-black text-[#ffdc55]">{states[selected]?.name} — {selected}</h2><p className="text-sm">{selectedPeople.length} representante(s) nesta seleção</p><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className="mt-2 rounded-lg bg-[#ffdc55] px-4 py-2 text-sm font-bold text-[#102a52]">Voltar ao mapa do Brasil</button></div>}
       {activePerson&&<div className="mx-auto mt-2 flex max-w-xl items-center gap-3 rounded-xl border-2 border-[#ffdc55] bg-[#164c83] p-3 text-white shadow-[0_0_22px_#ffdc5580]"><img src={activePerson.photo} alt="" className="h-16 w-16 rounded-full border-2 border-[#ffdc55] object-cover" onError={e=>{e.currentTarget.style.display="none";}}/><div><strong className="block text-[#ffdc55]">{activePerson.name}</strong><span className="text-sm">{states[activePerson.uf]?.name}{activePerson.city?" · "+activePerson.city:""}</span><p className="text-xs">{activePerson.region|| (activePerson.city?`Cidade-base: ${activePerson.city}. Região atendida não cadastrada.`:"Região atendida não cadastrada.")}</p></div></div>}
-      <p className="text-center text-xs text-[#d8e5f4]">Os pinos indicam o estado de atuação, não o endereço pessoal do representante.</p>
     </section>
     <div className="flex flex-wrap gap-2"><button type="button" onClick={()=>{setSelected("");setSelectedId("");}} className={`rounded-lg px-4 py-2 text-sm font-bold ${!selected?"bg-[#d4af37] text-[#102a52]":"bg-slate-200"}`}>Todo o Brasil</button>{selected&&<span className="rounded-lg bg-[#d4af37] px-4 py-2 text-sm font-bold">{states[selected]?.name}</span>}</div>
     <section className="grid gap-3 md:grid-cols-2">
