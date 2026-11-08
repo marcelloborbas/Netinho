@@ -721,6 +721,18 @@ export type Database = {
         Returns: boolean
       }
       is_active_commercial_representative: { Args: never; Returns: boolean }
+      list_public_representatives: {
+        Args: never
+        Returns: {
+          city: string
+          full_name: string
+          id: string
+          phone: string
+          photo_id: string
+          region: string
+          uf: string
+        }[]
+      }
       save_supplier_commission: {
         Args: {
           p_manufacturer: string
