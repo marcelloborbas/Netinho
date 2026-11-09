@@ -11,11 +11,16 @@ const publishedCards: Record<string, string> = {
   "jose justino": "cartao-jose-justino.webp",
   "livaldo silva": "cartao-livaldo-silva.webp",
   "livaldo de souza silva": "cartao-livaldo-silva.webp",
+  "livaldo souza": "cartao-livaldo-silva.webp",
   "luciano da silva": "cartao-luciano-da-silva.webp",
   "marcello borba": "cartao-marcello-borba.webp",
+  "marcello borbas": "cartao-marcello-borba.webp",
+  "marcello borbas sampaio": "cartao-marcello-borba.webp",
   "marcello borba sampaio": "cartao-marcello-borba.webp",
   "osmair zanetti": "cartao-osmair-zanetti.webp",
+  "osmair zaneti": "cartao-osmair-zanetti.webp",
   "romullo sousa": "cartao-romullo-sousa.webp",
+  "romullo sagrima": "cartao-romullo-sousa.webp",
   "jose burgato": "jose-burgato.webp",
 };
 import { Share2, Download, Contact, ImageOff, Sparkles } from "lucide-react";
