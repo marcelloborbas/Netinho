@@ -6,12 +6,14 @@ import { accessQuery } from "@/lib/access";
 
 export const Route = createFileRoute("/_authenticated/downloads")({
   staticData: { sitemap: false },
-  head: () => pageHead("/downloads", "Baixar documentos | Netinho Auto Parts", "Catálogo FCO, formulário de pedido e ficha cadastral."),
+  head: () => pageHead("/downloads", "Baixar documentos | Netinho Auto Parts", "Catálogo FCO, tabelas de valores, formulário de pedido e ficha cadastral."),
   component: DownloadsPage,
 });
 
 const documents = [
   { label: "Baixar Catálogo - FCO", filename: "Catalogo_Netinho Representação FCO.pdf" },
+  { label: "Tabela de Valores - FCO | Produtos", filename: "Tabela_de_Valores_FCO_Produtos.pdf" },
+  { label: "Tabela de Valores - FCO | Caixas e Bombas", filename: "Tabela_de_Valores_FCO_Caixas_e_Bombas.pdf" },
   { label: "Baixar Formulário de Pedido", filename: "Formulario_Pedido_Netinho.pdf" },
   { label: "Baixar Ficha Cadastral", filename: "Ficha_Cadastral_Representantes_ da_Netinho.pdf" },
 ] as const;
