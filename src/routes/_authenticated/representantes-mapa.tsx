@@ -109,7 +109,7 @@ function RepresentativesMap(){
         </button>)}
       </div>
       <p className="mt-3 text-xs text-slate-500">Os números indicam quantos representantes estão cadastrados em cada estado. A localização no mapa não representa endereço particular.</p>
-    </section>
+    </section>}
     <section className="grid gap-3 md:grid-cols-2">
       {isLoading&&<p>Carregando representantes…</p>}
       {!selected&&withoutState.length>0&&<p className="col-span-full rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">{withoutState.length} representante(s) ainda não possuem UF identificada no cadastro. Eles continuam listados abaixo, mas precisam ter o estado de atuação preenchido na Administração para aparecer no mapa.</p>}
