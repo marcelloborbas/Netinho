@@ -469,6 +469,72 @@ export type Database = {
           },
         ]
       }
+      products_backup_20261109: {
+        Row: {
+          active: boolean | null
+          application: string | null
+          brand: string | null
+          catalog_page: number | null
+          category_id: string | null
+          code: string | null
+          created_at: string | null
+          id: string | null
+          image_url: string | null
+          manufacturer: string | null
+          price_30: number | null
+          price_30_45_60: number | null
+          price_30_45_60_75: number | null
+          price_cash: number | null
+          price_note: string | null
+          refs: string | null
+          search_text: string | null
+          stock: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          application?: string | null
+          brand?: string | null
+          catalog_page?: number | null
+          category_id?: string | null
+          code?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          manufacturer?: string | null
+          price_30?: number | null
+          price_30_45_60?: number | null
+          price_30_45_60_75?: number | null
+          price_cash?: number | null
+          price_note?: string | null
+          refs?: string | null
+          search_text?: string | null
+          stock?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          application?: string | null
+          brand?: string | null
+          catalog_page?: number | null
+          category_id?: string | null
+          code?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_url?: string | null
+          manufacturer?: string | null
+          price_30?: number | null
+          price_30_45_60?: number | null
+          price_30_45_60_75?: number | null
+          price_cash?: number | null
+          price_note?: string | null
+          refs?: string | null
+          search_text?: string | null
+          stock?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           access_active: boolean
