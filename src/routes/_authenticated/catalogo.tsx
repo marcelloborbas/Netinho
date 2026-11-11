@@ -492,7 +492,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
     if (p.manufacturer === "HD") { toast.info("HD Embreagens: em breve."); void navigate({ to: "/pedido" }); return; }
     const prices = { cash: p.price_cash ?? 0, "30": p.price_30, "30_45_60": p.price_30_45_60, "30_45_60_75": p.price_30_45_60_75 };
     if (Object.values(prices).every((value) => value == null)) {
-      toast.info("Peça sem preço cadastrado: valor provisório R$ 0,00. Confirme o preço com a distribuidora.");
+      toast.info("Peça com preço indisponível. Confirme o valor com a distribuidora antes de concluir o pedido.");
     }
     if (p.id.startsWith("fco-campaign-")) {
       void navigate({ to: "/pedido" });
@@ -536,7 +536,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0 flex-1 rounded-lg border border-[#d4af37] bg-[#102a52] px-2 py-2 text-[#f4cf60]">
           <span className="block text-[11px] font-bold">Preço à vista</span>
-          <strong className="block min-h-[1.5em] break-words text-lg font-black leading-tight !text-[#ffff00] sm:text-2xl" style={{ color: "#ffff00", opacity: 1, visibility: "visible" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) ? brl(Number(p.price_cash)) : "R$ 0,00"}</strong>
+          <strong className="block min-h-[1.5em] break-words text-lg font-black leading-tight !text-[#ffff00] sm:text-2xl" style={{ color: "#ffff00", opacity: 1, visibility: "visible" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) && Number(p.price_cash) > 0 ? brl(Number(p.price_cash)) : "Indisponível"}</strong>
         </div>
         <button type="button" onClick={buy} disabled={!canSell} aria-label={canSell ? "Adicionar peça à venda" : "Carrinho indisponível para visitantes"} title={canSell ? "Adicionar à venda" : "Indisponível para visitantes"} className={`inline-flex h-[68px] w-12 shrink-0 items-center justify-center rounded-lg border shadow-sm ${canSell ? "animate-pulse border-[#2588f9] bg-[#0878ed] text-white motion-reduce:animate-none" : "cursor-not-allowed border-slate-300 bg-slate-200 text-slate-400"}` }><ShoppingCart size={21}/></button>
       </div>
