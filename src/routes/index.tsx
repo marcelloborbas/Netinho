@@ -138,17 +138,14 @@ function Home() {
           <HomePartsCarousel />
         </section>
         <HomeSalesEvolution />
-        <section className="mx-3 rounded-2xl border-[3px] border-[#ffce2c] bg-gradient-to-r from-[#09254a] to-[#164c83] px-2 py-3 shadow-[0_4px_0_#a96e00,0_5px_18px_#002a6c55] sm:mx-6 sm:px-5" aria-label="Representantes e principais montadoras">
-          <style>{`@keyframes netinho-logo-3d {0%,100% {transform:perspective(500px) rotateY(-22deg)} 50% {transform:perspective(500px) rotateY(22deg)}} @media (prefers-reduced-motion:reduce){.netinho-logo-3d{animation:none!important}}`}</style>
-          <div className="grid grid-cols-5 items-center gap-1.5 sm:gap-4">
-            <a href="/representantes-mapa" className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-[#d4af37] bg-[#173f70] p-1.5 text-[#ffdc55] transition hover:bg-[#245b96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffdc55] sm:min-h-24" aria-label="Abrir mapa dos representantes pelo Brasil" title="Representantes pelo Brasil">
-              <MapPinned className="h-8 w-8 sm:h-12 sm:w-12" aria-hidden="true"/>
-              <span className="text-center text-[9px] font-black leading-tight sm:text-sm">Representantes</span>
-            </a>
-            {(["volkswagen","fiat","chevrolet","ford"] as const).map((brand,index)=><div key={brand} className="flex min-h-16 items-center justify-center sm:min-h-24" title={brand.charAt(0).toUpperCase()+brand.slice(1)}>
-              <img src={`/images/montadoras/${brand}.webp`} alt={brand.charAt(0).toUpperCase()+brand.slice(1)} loading="lazy" decoding="async" className="netinho-logo-3d h-12 w-full max-w-20 object-contain drop-shadow-[0_6px_5px_rgba(0,0,0,0.4)] sm:h-20 sm:max-w-32" style={{animation:`netinho-logo-3d 5s ease-in-out ${index*0.35}s infinite`,transformStyle:"preserve-3d",backfaceVisibility:"visible"}}/>
-            </div>)}
-          </div>
+        <section className="mx-3 flex items-center justify-between gap-2 px-1 py-2 sm:mx-6 sm:gap-5 sm:px-3" aria-label="Representantes e principais montadoras">
+          <style>{`@keyframes netinho-logo-z {from {transform:rotateZ(0deg)} to {transform:rotateZ(360deg)}} @media (prefers-reduced-motion:reduce){.netinho-logo-z{animation:none!important}}`}</style>
+          <a href="/representantes-mapa" className="flex h-14 w-14 shrink-0 items-center justify-center text-[#d4af37] transition hover:scale-110 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:h-20 sm:w-20" aria-label="Abrir mapa dos representantes pelo Brasil" title="Representantes pelo Brasil">
+            <MapPinned className="h-11 w-11 sm:h-16 sm:w-16" strokeWidth={1.8} aria-hidden="true"/>
+          </a>
+          {([{name:"Volkswagen",slug:"volkswagen",color:"001E50"},{name:"Fiat",slug:"fiat",color:"941711"},{name:"Chevrolet",slug:"chevrolet",color:"D1A24A"},{name:"Ford",slug:"ford",color:"002E6B"}] as const).map((brand,index)=><div key={brand.slug} className="flex min-w-0 flex-1 items-center justify-center" title={brand.name}>
+            <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt={`Logo ${brand.name}`} loading="lazy" decoding="async" className="netinho-logo-z h-10 w-10 max-w-full object-contain drop-shadow-[0_3px_3px_rgba(0,0,0,0.25)] sm:h-16 sm:w-16" style={{animation:`netinho-logo-z 7s linear ${index*0.35}s infinite`}}/>
+          </div>)}
         </section>
       </main>
       <a
