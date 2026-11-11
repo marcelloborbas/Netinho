@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { HomeSalesEvolution } from "@/components/HomeSalesEvolution";
-import { MapPinned, ChevronRight } from "lucide-react";
+import { MapPinned } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/page-head";
@@ -138,11 +138,18 @@ function Home() {
           <HomePartsCarousel />
         </section>
         <HomeSalesEvolution />
-        <a href="/representantes-mapa" className="mx-3 flex min-h-20 items-center gap-3 rounded-2xl border-[3px] border-[#ffce2c] bg-gradient-to-r from-[#09254a] to-[#164c83] px-4 py-3 text-white shadow-[0_4px_0_#a96e00,0_5px_18px_#002a6c55] transition hover:brightness-110 sm:mx-6" aria-label="Abrir mapa dos representantes pelo Brasil">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#173f70] text-[#ffdc55]"><MapPinned size={30}/></span>
-          <span className="min-w-0 flex-1"><strong className="block text-sm font-black tracking-wide text-[#ffdc55] sm:text-lg">REPRESENTANTES PELO BRASIL</strong><span className="block text-xs text-white sm:text-sm">Encontre quem atende sua cidade ou região.</span></span>
-          <ChevronRight size={25} className="shrink-0 text-[#ffdc55]"/>
-        </a>
+        <section className="mx-3 rounded-2xl border-[3px] border-[#ffce2c] bg-gradient-to-r from-[#09254a] to-[#164c83] px-2 py-3 shadow-[0_4px_0_#a96e00,0_5px_18px_#002a6c55] sm:mx-6 sm:px-5" aria-label="Representantes e principais montadoras">
+          <style>{`@keyframes netinho-logo-3d {0%,100% {transform:perspective(500px) rotateY(-22deg)} 50% {transform:perspective(500px) rotateY(22deg)}} @media (prefers-reduced-motion:reduce){.netinho-logo-3d{animation:none!important}}`}</style>
+          <div className="grid grid-cols-5 items-center gap-1.5 sm:gap-4">
+            <a href="/representantes-mapa" className="flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-[#d4af37] bg-[#173f70] p-1.5 text-[#ffdc55] transition hover:bg-[#245b96] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffdc55] sm:min-h-24" aria-label="Abrir mapa dos representantes pelo Brasil" title="Representantes pelo Brasil">
+              <MapPinned className="h-8 w-8 sm:h-12 sm:w-12" aria-hidden="true"/>
+              <span className="text-center text-[9px] font-black leading-tight sm:text-sm">Representantes</span>
+            </a>
+            {(["volkswagen","fiat","chevrolet","ford"] as const).map((brand,index)=><div key={brand} className="flex min-h-16 items-center justify-center sm:min-h-24" title={brand.charAt(0).toUpperCase()+brand.slice(1)}>
+              <img src={`/images/montadoras/${brand}.webp`} alt={brand.charAt(0).toUpperCase()+brand.slice(1)} loading="lazy" decoding="async" className="netinho-logo-3d h-12 w-full max-w-20 object-contain drop-shadow-[0_6px_5px_rgba(0,0,0,0.4)] sm:h-20 sm:max-w-32" style={{animation:`netinho-logo-3d 5s ease-in-out ${index*0.35}s infinite`,transformStyle:"preserve-3d",backfaceVisibility:"visible"}}/>
+            </div>)}
+          </div>
+        </section>
       </main>
       <a
         href={`https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Gostaria de atendimento.")}`}
