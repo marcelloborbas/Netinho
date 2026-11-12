@@ -138,19 +138,15 @@ function Home() {
           <HomePartsCarousel />
         </section>
         <HomeSalesEvolution />
-        <section className="mx-3 flex items-center justify-between gap-2 px-1 py-2 sm:mx-6 sm:gap-5 sm:px-3" aria-label="Representantes e logotipos das montadoras">
-          <style>{`@keyframes netinho-brand-spin {0% {transform:rotateY(0deg)} 100% {transform:rotateY(360deg)}} @media (prefers-reduced-motion:reduce){.netinho-brand-spin{animation:none!important}}`}</style>
+        <section className="mx-3 flex items-center justify-between gap-2 px-1 py-3 sm:mx-6 sm:gap-5 sm:px-3" aria-label="Representantes e logotipos das montadoras">
+          <style>{`@keyframes netinho-brand-spin {0% {transform:rotateY(0deg)} 100% {transform:rotateY(360deg)}} @keyframes netinho-chrome-pulse {0%,100% {filter:drop-shadow(0 0 2px rgba(212,175,55,.5)) drop-shadow(0 3px 3px rgba(0,0,0,.55))} 50% {filter:drop-shadow(0 0 9px rgba(255,225,117,.95)) drop-shadow(0 0 3px rgba(255,255,255,.85)) drop-shadow(0 3px 5px rgba(0,0,0,.65))}} @media (prefers-reduced-motion:reduce){.netinho-brand-spin,.netinho-chrome-pulse{animation:none!important}}`}</style>
           <a href="/representantes-mapa" className="flex h-14 w-14 shrink-0 items-center justify-center text-[#d4af37] transition hover:scale-110 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:h-20 sm:w-20" aria-label="Abrir mapa dos representantes pelo Brasil" title="Representantes pelo Brasil">
             <span className="netinho-brand-spin flex h-11 w-11 items-center justify-center sm:h-16 sm:w-16" style={{animation:"netinho-brand-spin 7s linear infinite",transformStyle:"preserve-3d"}}>
               <MapPinned className="h-full w-full drop-shadow-[2px_3px_1px_#5b4200]" strokeWidth={2.3} aria-hidden="true"/>
             </span>
           </a>
           {(["volkswagen","fiat","chevrolet","ford"] as const).map((brand,index)=><div key={brand} className={`flex min-w-0 flex-1 items-center justify-center ${brand==="ford"?"-translate-y-5 sm:-translate-y-3":""}`} title={brand.charAt(0).toUpperCase()+brand.slice(1)}>
-            <div className="netinho-brand-spin relative h-12 w-full max-w-[70px] sm:h-20 sm:max-w-28" style={{animation:`netinho-brand-spin 7s linear ${index*0.35}s infinite`,transformStyle:"preserve-3d",perspective:"800px"}}>
-              <img src={`/images/logos-montadoras/${brand}.svg`} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-contain brightness-[0.35] drop-shadow-[0_5px_5px_rgba(0,0,0,0.65)]" style={{transform:"translateZ(-5px) translateX(3px)"}}/>
-              <img src={`/images/logos-montadoras/${brand}.svg`} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-contain brightness-[0.55]" style={{transform:"translateZ(-3px) translateX(2px)"}}/>
-              <img src={`/images/logos-montadoras/${brand}.svg`} alt={`Logotipo ${brand}`} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]" style={{transform:"translateZ(3px)"}}/>
-            </div>
+            <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={`Logotipo 3D ${brand}`} loading="lazy" decoding="async" className="netinho-chrome-pulse block h-12 w-full max-w-[72px] object-contain sm:h-20 sm:max-w-28" style={{animation:`netinho-chrome-pulse 2.8s ease-in-out ${index*0.3}s infinite`}}/>
           </div>)}
         </section>
       </main>
