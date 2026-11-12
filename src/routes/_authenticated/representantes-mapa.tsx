@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, ArrowLeft, TrendingUp, UserRound, X, UserPlus, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { pageHead } from "@/lib/page-head";
@@ -75,6 +75,9 @@ function RepresentativesMap(){
   const [features,setFeatures]=useState<Feature[]>([]);
   const [mapError,setMapError]=useState(false);
   const [selected,setSelected]=useState("");
+  const [highlightedState,setHighlightedState]=useState("");
+  const selectionTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  useEffect(()=>()=>{if(selectionTimer.current)clearTimeout(selectionTimer.current);},[]);
   const [mapExpanded,setMapExpanded]=useState(false);
   const [editingRep,setEditingRep]=useState<Representative|null>(null);
   const qc=useQueryClient();
@@ -166,7 +169,8 @@ function RepresentativesMap(){
     const pad=5;
     return [minX-pad,minY-pad,maxX-minX+pad*2,maxY-minY+pad*2].join(" ");
   },[features]);
-  const selectState=(uf:string)=>{setSelected(uf);setMapExpanded(false);};
+  const selectState=(uf:string)=>{if(selectionTimer.current)clearTimeout(selectionTimer.current);setHighlightedState("");setSelected(uf);setMapExpanded(false);};
+  const chooseMapState=(uf:string)=>{if(selectionTimer.current)clearTimeout(selectionTimer.current);setHighlightedState(uf);selectionTimer.current=setTimeout(()=>{setSelected(uf);setHighlightedState("");setMapExpanded(false);selectionTimer.current=null;},420);};
   useEffect(()=>{if(!mapExpanded)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMapExpanded(false);};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey);},[mapExpanded]);
   return <main className="relative left-1/2 w-[calc(100vw-12px)] max-w-none -translate-x-1/2 space-y-2 px-0 pb-24 pt-0 text-[#102a52] sm:w-[calc(100vw-32px)]">
     {!selected&&<section className="relative mx-auto flex min-h-[calc(100dvh-190px)] w-full flex-col items-center justify-center gap-3 overflow-visible bg-transparent px-1 pb-3 pt-1 sm:min-h-[calc(100dvh-150px)]" aria-label="Mapa interativo dos estados do Brasil">
@@ -175,12 +179,13 @@ function RepresentativesMap(){
         <defs>
           <linearGradient id="netinho-map-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#63d66e"/><stop offset=".45" stopColor="#229c4c"/><stop offset="1" stopColor="#08743a"/></linearGradient>
           <linearGradient id="netinho-map-selected" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffe96b"/><stop offset=".5" stopColor="#f9c52c"/><stop offset="1" stopColor="#e4a919"/></linearGradient>
+          <linearGradient id="netinho-map-blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#3389e6"/><stop offset=".55" stopColor="#1554bc"/><stop offset="1" stopColor="#082f85"/></linearGradient>
           <filter id="netinho-map-glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
         {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
-          const active=selected===uf;
-          return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-selected)":"url(#netinho-map-metal)"} stroke={active?"#063b89":"#f8d74b"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();selectState(uf);}}} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
+          const active=highlightedState===uf;
+          return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-blue)":"url(#netinho-map-metal)"} stroke={active?"#fff0a3":"#f8d74b"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();chooseMapState(uf);}}} onClick={()=>uf&&chooseMapState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
         {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize={selected?"8":"10"} fontWeight="900" fill={selected?"#132d4d":"#ffffff"} stroke={selected?"none":"#064b93"} strokeWidth=".6" paintOrder="stroke" pointerEvents="none">{uf}</text>;})}
       </svg>
