@@ -51,7 +51,7 @@ const stateBounds = (features:Feature[],uf:string) => {
 };
 
 const photoFiles: Record<string,string> = {
-  abdnego:"Abdnego.webp", domingos:"Domingos.webp", jhonatas:"Jhonatas.webp",
+  abdnego:"Abdnego.webp", abdenego:"Abdnego.webp", abednego:"Abdnego.webp", domingos:"Domingos.webp", jhonatas:"Jhonatas.webp",
   justino:"José Justino.webp", livaldo:"Livaldo.webp", luciano:"Luciano.webp",
   marcello:"Marcello.webp", romullo:"Romullo.webp", romulo:"Romullo.webp",
   burgato:"José Burgato.webp", osmair:"Osmair.webp"
@@ -62,7 +62,7 @@ const representativePhoto = (name:string) => {
 };
 const fallbackPhoto = (name:string) => {
   const key=normalize(name);
-  if(key.includes("abdnego"))return "/images/fotos-representantes/cartao-abdnego-eugenio.webp";
+  if(key.includes("abdnego")||key.includes("abdenego")||key.includes("abednego"))return "/images/fotos-representantes/cartao-abdnego-eugenio.webp";
   if(key.includes("osmair"))return "/images/fotos-representantes/cartao-osmair-zanetti.webp";
   return null;
 };
