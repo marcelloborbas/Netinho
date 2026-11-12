@@ -156,12 +156,21 @@ function RepresentativesMap(){
   const labels=Object.entries(states).sort((a,b)=>a[1].name.localeCompare(b[1].name,"pt-BR"));
   const representativesByUf=useMemo(()=>new Map(labels.map(([uf])=>[uf,people.filter(p=>p.uf===uf).length])),[people]);
   const selectedPeople=people.filter(p=>!selected||p.uf===selected);
-  const mapView=selected?stateBounds(features,selected):"0 0 620 590";
+  // Enquadramento justo nas divisas reais do Brasil, sem a grande margem do viewBox fixo.
+  const mapView=useMemo(()=>{
+    if(!features.length)return "0 0 620 590";
+    const pts=features.flatMap(f=>rings(f.geometry).flat().map(p=>project(p as Point)));
+    if(!pts.length)return "0 0 620 590";
+    const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+    const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+    const pad=5;
+    return [minX-pad,minY-pad,maxX-minX+pad*2,maxY-minY+pad*2].join(" ");
+  },[features]);
   const selectState=(uf:string)=>{setSelected(uf);setMapExpanded(false);};
   useEffect(()=>{if(!mapExpanded)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMapExpanded(false);};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey);},[mapExpanded]);
-  return <main className="mx-auto w-full max-w-[1600px] space-y-5 px-0 pb-28 pt-0 text-[#102a52] sm:px-2">
-    {!selected&&<section className="relative w-full overflow-hidden rounded-2xl bg-transparent p-0" aria-label="Mapa interativo dos estados do Brasil">
-      <svg viewBox={mapView} className="mx-auto block h-[min(85dvh,1050px)] min-h-[420px] w-full max-w-none drop-shadow-[0_9px_8px_rgba(18,80,36,.16)] transition-all duration-500 sm:h-[min(90dvh,1150px)]" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
+  return <main className="relative left-1/2 w-[calc(100vw-12px)] max-w-none -translate-x-1/2 space-y-2 px-0 pb-24 pt-0 text-[#102a52] sm:w-[calc(100vw-32px)]">
+    {!selected&&<section className="relative mx-auto w-full overflow-visible bg-transparent p-0" aria-label="Mapa interativo dos estados do Brasil">
+      <svg viewBox={mapView} className="mx-auto block h-auto w-full max-h-[calc(100dvh-100px)] max-w-none drop-shadow-[0_9px_8px_rgba(18,80,36,.16)] transition-all duration-500 sm:max-h-[calc(100dvh-80px)]" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
         <defs>
           <linearGradient id="netinho-map-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#63d66e"/><stop offset=".45" stopColor="#229c4c"/><stop offset="1" stopColor="#08743a"/></linearGradient>
           <linearGradient id="netinho-map-selected" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffe96b"/><stop offset=".5" stopColor="#f9c52c"/><stop offset="1" stopColor="#e4a919"/></linearGradient>
