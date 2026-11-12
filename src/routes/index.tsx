@@ -143,7 +143,7 @@ function Home() {
           <a href="/representantes-mapa" className="flex min-w-0 flex-1 items-center justify-center transition hover:scale-105 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]" aria-label="Abrir mapa dos representantes pelo Brasil" title="Representantes pelo Brasil">
             <img src="/images/logos-montadoras/representantes-3d.webp" alt="Representantes pelo Brasil" loading="lazy" decoding="async" className="netinho-chrome-pulse block h-14 w-full max-w-[88px] object-contain sm:h-20 sm:max-w-28" style={{animation:"netinho-chrome-pulse 2.8s ease-in-out infinite"}}/>
           </a>
-          {(["volkswagen","fiat","chevrolet"] as const).map((brand,index)=><div key={brand} className="flex min-w-0 flex-1 items-center justify-center" title={brand.charAt(0).toUpperCase()+brand.slice(1)}>
+          {(["volkswagen","fiat"] as const).map((brand,index)=><div key={brand} className="flex min-w-0 flex-1 items-center justify-center" title={brand.charAt(0).toUpperCase()+brand.slice(1)}>
             <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={`Logotipo 3D ${brand}`} loading="lazy" decoding="async" className="netinho-chrome-pulse block h-14 w-full max-w-[88px] object-contain sm:h-20 sm:max-w-28" style={{animation:`netinho-chrome-pulse 2.8s ease-in-out ${(index+1)*0.3}s infinite`}}/>
           </div>)}
         </section>
