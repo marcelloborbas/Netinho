@@ -169,8 +169,9 @@ function RepresentativesMap(){
   const selectState=(uf:string)=>{setSelected(uf);setMapExpanded(false);};
   useEffect(()=>{if(!mapExpanded)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMapExpanded(false);};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey);},[mapExpanded]);
   return <main className="relative left-1/2 w-[calc(100vw-12px)] max-w-none -translate-x-1/2 space-y-2 px-0 pb-24 pt-0 text-[#102a52] sm:w-[calc(100vw-32px)]">
-    {!selected&&<section className="relative mx-auto w-full overflow-visible bg-transparent p-0" aria-label="Mapa interativo dos estados do Brasil">
-      <svg viewBox={mapView} className="mx-auto block h-auto w-full max-h-[calc(100dvh-100px)] max-w-none drop-shadow-[0_9px_8px_rgba(18,80,36,.16)] transition-all duration-500 sm:max-h-[calc(100dvh-80px)]" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
+    {!selected&&<section className="relative mx-auto flex min-h-[calc(100dvh-190px)] w-full flex-col items-center justify-center gap-3 overflow-visible bg-transparent px-1 pb-3 pt-1 sm:min-h-[calc(100dvh-150px)]" aria-label="Mapa interativo dos estados do Brasil">
+      <div className="w-full max-w-xl rounded-xl border border-[#e4c450] bg-gradient-to-r from-[#0d713d] via-[#168d48] to-[#0d713d] px-4 py-3 text-center text-sm font-black uppercase tracking-wider text-white shadow-md sm:text-base">Clique no estado para ver os representantes</div>
+      <svg viewBox={mapView} className="mx-auto block h-auto w-full max-w-[min(100%,calc((100dvh-260px)*0.95))] max-h-[calc(100dvh-260px)] drop-shadow-[0_9px_8px_rgba(18,80,36,.16)] transition-all duration-500 sm:max-w-[min(100%,calc((100dvh-220px)*1.15))] sm:max-h-[calc(100dvh-220px)]" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
         <defs>
           <linearGradient id="netinho-map-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#63d66e"/><stop offset=".45" stopColor="#229c4c"/><stop offset="1" stopColor="#08743a"/></linearGradient>
           <linearGradient id="netinho-map-selected" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffe96b"/><stop offset=".5" stopColor="#f9c52c"/><stop offset="1" stopColor="#e4a919"/></linearGradient>
