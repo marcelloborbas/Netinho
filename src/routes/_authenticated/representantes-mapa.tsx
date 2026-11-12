@@ -211,11 +211,11 @@ function RepresentativesMap(){
 
           <div className="grid grid-cols-[minmax(0,1fr)_100px] gap-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-5">
             <div className="min-w-0 space-y-2 text-sm sm:text-base">
-              <p><strong>Representante:</strong> <span className="font-semibold">{p.name}</span></p>
-              <p><strong>Telefone:</strong> {p.phone?<a className="font-semibold text-[#1267a3] underline-offset-2 hover:underline" href={`tel:${phone}`}>{p.phone}</a>:<span className="text-slate-500">Não informado</span>}</p>
+              <p><strong>Nome:</strong> <span className="font-semibold">{p.name}</span></p>
               <p><strong>Estado:</strong> {states[p.uf]?.name||p.uf||"Não informado"}</p>
               <p><strong>Cidade:</strong> {p.city||"Não informada"}</p>
-              {p.region&&<p className="text-xs text-slate-500"><MapPin size={13} className="mr-1 inline"/>{p.region}</p>}
+              <p><strong>Locais Atendidos:</strong> {p.region||"Não informados"}</p>
+              {isAdmin&&<p><strong>Telefone:</strong> {p.phone?<a className="font-semibold text-[#1267a3] underline-offset-2 hover:underline" href={`tel:${phone}`}>{p.phone}</a>:<span className="text-slate-500">Não informado</span>}</p>}
             </div>
             <div className="flex flex-col items-center gap-2">
               {photo?<img src={photo} alt={`Foto de ${p.name}`} loading="lazy" className="h-24 w-24 rounded-xl bg-slate-100 object-cover object-top shadow-md sm:h-36 sm:w-36" onError={e=>{const fallback=fallbackPhoto(p.name);if(fallback&&e.currentTarget.src!==new URL(fallback,window.location.origin).href)e.currentTarget.src=fallback;else e.currentTarget.style.display="none";}}/>:<div className="flex h-24 w-24 items-center justify-center rounded-xl bg-slate-100 sm:h-36 sm:w-36"><UserRound size={40} className="text-slate-400"/></div>}
