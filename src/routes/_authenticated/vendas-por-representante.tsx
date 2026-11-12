@@ -1,16 +1,23 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
-import { ArrowLeft, TrendingUp } from "lucide-react";
+import { TrendingUp, UsersRound, ChevronDown, UserRound, Wallet, BarChart3 } from "lucide-react";
 
+const photoFiles:Record<string,string>={abdnego:"Abdnego.webp",abdenego:"Abdnego.webp",abednego:"Abdnego.webp",domingos:"Domingos.webp",jhonatas:"Jhonatas.webp",justino:"José Justino.webp",livaldo:"Livaldo.webp",luciano:"Luciano.webp",marcello:"Marcello.webp",romullo:"Romullo.webp",romulo:"Romullo.webp",burgato:"José Burgato.webp",osmair:"Osmair.webp"};
+const normalizeName=(name:string)=>name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+const representativePhoto=(name:string)=>{const key=Object.keys(photoFiles).find(k=>normalizeName(name).includes(k));return key?"/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]):null;};
+function RepresentativePortrait({name}:{name:string}){
+ const [failed,setFailed]=useState(false);const src=representativePhoto(name);
+ return <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#d9e7f6] to-[#b2cce7] shadow-md ring-2 ring-white sm:h-24 sm:w-24">{src&&!failed?<img src={src} alt={`Foto de ${name}`} loading="lazy" onError={()=>setFailed(true)} className="h-full w-full object-cover object-top"/>:<UserRound size={40} className="text-[#345e86]"/>}</div>;
+}
 export const Route=createFileRoute("/_authenticated/vendas-por-representante")({component:RepresentativeSales,staticData:{sitemap:false}});
 const monthKey=(d:Date)=>new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",timeZone:"America/Sao_Paulo"}).format(d).slice(0,7);
 function RepresentativeSales(){
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
- const [selected,setSelected]=useState("todos");
+ const [expanded,setExpanded]=useState<string|null>(null);
  const {data,isLoading,isError}=useQuery({queryKey:["netinho-representative-sales"],enabled:me?.isAdmin===true,queryFn:async()=>{
   const [profiles,commercial,rates,commercialRates]=await Promise.all([
    supabase.from("profiles").select("id,full_name,site_role"),
@@ -46,18 +53,43 @@ function RepresentativeSales(){
  }});
  if(loadingMe)return <main className="p-5">Verificando acesso…</main>;
  if(!me?.isAdmin)return <main className="p-5">Relatório disponível somente para o administrador.</main>;
- const visible=data?.people.filter(p=>selected==="todos"||selected===p.id)??[];
- const sumSales=visible.reduce((n,p)=>n+(data?.results.get(p.id)?.total??0),0);
- const sumCommission=visible.reduce((n,p)=>n+(data?.results.get(p.id)?.commission??0),0);
- return <main className="mx-auto max-w-5xl space-y-4 px-3 py-5 pb-28 text-[#102a52]">
-  <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold"><ArrowLeft size={17}/>Página inicial</Link>
-  <header className="rounded-2xl bg-[#102a52] p-5 text-white"><h1 className="flex items-center gap-2 text-xl font-black"><TrendingUp/> Vendas por representante</h1><p className="mt-1 text-sm text-blue-100">Evolução das vendas e comissões estimadas · últimos seis meses</p></header>
-  {isLoading?<p>Carregando relatório…</p>:isError?<p role="alert" className="rounded-xl bg-red-50 p-4 text-red-800">Não foi possível consultar os dados. Verifique as permissões administrativas.</p>:<>
-   <label className="block rounded-xl bg-white p-3 text-sm font-bold">Representante<select value={selected} onChange={e=>setSelected(e.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white p-3"><option value="todos">Todos os representantes</option>{data?.people.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-   <div className="grid grid-cols-2 gap-3"><div className="rounded-xl bg-[#e8f0f8] p-4"><p className="text-xs font-bold">Vendas totais</p><strong className="text-lg">{brl(sumSales)}</strong></div><div className="rounded-xl bg-[#fff4d8] p-4"><p className="text-xs font-bold">Comissões estimadas</p><strong className="text-lg">{brl(sumCommission)}</strong></div></div>
-   {visible.map(p=>{const result=data!.results.get(p.id)!;const max=Math.max(1,...data!.periods.map(m=>result.months[m.key]??0));return <section key={p.id} className="rounded-2xl bg-white p-4 shadow-sm"><h2 className="font-black">{p.name}</h2><p className="mt-1 text-sm">Vendas: <strong>{brl(result.total)}</strong> · Comissão {p.rate.toLocaleString("pt-BR")}%: <strong>{brl(result.commission)}</strong></p><div className="mt-4 grid h-36 grid-cols-6 gap-2 border-b border-slate-200">{data!.periods.map(m=><div key={m.key} className="flex min-w-0 flex-col items-center justify-end gap-1"><div className="w-full max-w-10 rounded-t-md bg-gradient-to-t from-[#123d71] to-[#49a4df]" style={{height:Math.max(2,(result.months[m.key]??0)/max*85)+"%"}} title={brl(result.months[m.key]??0)}/><span className="text-[10px] font-bold">{m.label.split(" ")[0]}</span></div>)}</div></section>;})}
-   {!visible.length&&<p className="rounded-xl bg-white p-4">Nenhum representante cadastrado.</p>}
-   <p className="text-xs text-slate-500">Considera pedidos atribuídos diretamente aos representantes, excluindo orçamentos e cancelamentos. As comissões são estimadas pelas taxas atuais.</p>
+ const people=data?.people??[];
+ const sumSales=people.reduce((n,p)=>n+(data?.results.get(p.id)?.total??0),0);
+ const sumCommission=people.reduce((n,p)=>n+(data?.results.get(p.id)?.commission??0),0);
+ const ranked=[...people].sort((a,b)=>(data?.results.get(b.id)?.total??0)-(data?.results.get(a.id)?.total??0));
+ const highest=Math.max(1,...ranked.map(p=>data?.results.get(p.id)?.total??0));
+ return <main className="mx-auto max-w-6xl space-y-4 bg-gradient-to-b from-[#f0f5fb] to-[#e9eff7] px-3 py-4 pb-28 text-[#102a52] sm:px-6">
+  <header className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#071a36] via-[#12477e] to-[#0b2b52] p-5 text-white shadow-xl sm:p-7">
+   <div className="pointer-events-none absolute -right-12 -top-20 h-64 w-64 rounded-full bg-[#6ab6ee]/15 blur-2xl"/>
+   <div className="relative flex items-center gap-3"><span className="rounded-2xl bg-white/10 p-3 text-[#ffda79]"><TrendingUp size={27}/></span><div><p className="text-[11px] font-extrabold uppercase tracking-[.18em] text-[#bcd8f4]">Netinho Auto Parts · Gestão Comercial</p><h1 className="text-xl font-black sm:text-3xl">Vendas por Representante</h1><p className="text-xs text-[#c4d9ee] sm:text-sm">Desempenho e comissões · últimos seis meses</p></div></div>
+  </header>
+  {isLoading?<p className="rounded-2xl bg-white p-5">Carregando resultados dos representantes…</p>:isError?<p role="alert" className="rounded-xl bg-red-50 p-4 text-red-800">Não foi possível consultar os dados. Verifique as permissões administrativas.</p>:<>
+   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
+    <div className="rounded-2xl bg-white p-3 shadow-sm sm:p-5"><div className="flex items-center gap-2 text-[#2b6b9c]"><BarChart3 size={18}/><span className="text-xs font-bold">Vendas consolidadas</span></div><strong className="mt-2 block break-words text-lg font-black tabular-nums sm:text-2xl">{brl(sumSales)}</strong></div>
+    <div className="rounded-2xl bg-white p-3 shadow-sm sm:p-5"><div className="flex items-center gap-2 text-[#ae771a]"><Wallet size={18}/><span className="text-xs font-bold">Comissões estimadas</span></div><strong className="mt-2 block break-words text-lg font-black tabular-nums sm:text-2xl">{brl(sumCommission)}</strong></div>
+    <div className="col-span-2 flex items-center gap-3 rounded-2xl bg-[#102a52] p-3 text-white shadow-sm sm:col-span-1 sm:p-5"><UsersRound size={27} className="text-[#ffd779]"/><div><strong className="text-2xl font-black">{people.length}</strong><p className="text-xs text-[#d5e7f8]">Representantes cadastrados</p></div></div>
+   </div>
+   <div className="flex items-center justify-between gap-2 px-1"><h2 className="text-base font-black sm:text-lg">Desempenho da equipe</h2><span className="text-xs text-slate-500">Toque no cartão para ver os meses</span></div>
+   <div className="grid gap-3 lg:grid-cols-2">
+    {ranked.map((p,index)=>{const result=data!.results.get(p.id)!;const max=Math.max(1,...data!.periods.map(m=>result.months[m.key]??0));const isOpen=expanded===p.id;return <article key={p.id} className="overflow-hidden rounded-[22px] bg-white shadow-[0_6px_22px_rgba(13,45,79,.09)] transition-shadow hover:shadow-[0_9px_28px_rgba(13,45,79,.16)]">
+     <button type="button" aria-expanded={isOpen} onClick={()=>setExpanded(isOpen?null:p.id)} className="w-full p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1c75b3] sm:p-5">
+      <div className="flex items-center gap-3">
+       <RepresentativePortrait name={p.name}/>
+       <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-base font-black sm:text-lg">{p.name}</h3>{index===0&&result.total>0&&<span className="rounded-full bg-[#fff2cf] px-2 py-0.5 text-[10px] font-bold text-[#9a6609]">Destaque</span>}</div><p className="mt-1 text-xs font-semibold text-slate-500">Comissão {p.rate.toLocaleString("pt-BR")}%</p><p className="mt-2 text-lg font-black text-[#164c7b] sm:text-xl">{brl(result.total)}</p><p className="text-xs font-semibold text-[#94701f]">Comissões: {brl(result.commission)}</p></div>
+       <ChevronDown size={19} className={`shrink-0 text-[#4b789f] transition-transform duration-300 ${isOpen?"rotate-180":""}`}/>
+      </div>
+      <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[#e6edf5]"><div className="h-full rounded-full bg-gradient-to-r from-[#247ab7] to-[#5cc5ef] transition-all duration-500" style={{width:`${result.total/highest*100}%`}}/></div>
+      <p className="mt-1 text-right text-[10px] font-medium text-slate-500">Participação relativa ao maior volume</p>
+     </button>
+     {isOpen&&<div className="border-t border-[#e7eef5] bg-[#f7faff] px-4 pb-4 pt-3 sm:px-5">
+      <div className="mb-3 flex items-center justify-between"><strong className="text-xs uppercase tracking-wide text-[#315f86]">Evolução mensal</strong><span className="text-[11px] text-slate-500">6 meses</span></div>
+      <div className="grid h-40 grid-cols-6 gap-2 border-b border-[#d6e3ef]">{data!.periods.map(m=><div key={m.key} className="flex min-w-0 flex-col items-center justify-end gap-1"><span className="max-w-full truncate text-[10px] font-bold" title={brl(result.months[m.key]??0)}>{(result.months[m.key]??0)>=1000?`${((result.months[m.key]??0)/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k`:Math.round(result.months[m.key]??0)}</span><div className="w-full max-w-10 rounded-t-lg bg-gradient-to-t from-[#124578] to-[#46b1e7] transition-all duration-500" style={{height:Math.max(3,(result.months[m.key]??0)/max*100)+"%"}} title={brl(result.months[m.key]??0)}/><span className="text-[10px] font-bold uppercase">{m.label.split(" ")[0]}</span></div>)}</div>
+      <p className="mt-3 text-right text-xs font-semibold text-[#24547f]">Total do período: {brl(result.total)}</p>
+     </div>}
+    </article>;})}
+   </div>
+   {!people.length&&<p className="rounded-xl bg-white p-4">Nenhum representante cadastrado.</p>}
+   <p className="px-1 text-xs leading-relaxed text-slate-500">Pedidos atribuídos diretamente aos representantes, sem orçamentos ou cancelamentos. Comissões estimadas pelas taxas atuais; representantes sem vínculo de usuário podem não apresentar vendas.</p>
   </>}
  </main>;
 }
