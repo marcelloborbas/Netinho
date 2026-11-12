@@ -205,7 +205,8 @@ function RepresentativesMap(){
         const values=adminData?.sales.get(p.photoId)??adminData?.sales.get(p.id);
         const commission=adminData?.commissions.get(p.photoId)??adminData?.commissions.get(p.id);
         const max=Math.max(1,...(values??[0,0,0]));
-        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">\n
+        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">
+
           <div className="grid grid-cols-[minmax(0,1fr)_100px] gap-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-5">
             <div className="min-w-0 space-y-2 text-sm sm:text-base">
               <p><strong>Representante:</strong> <span className="font-semibold">{p.name}</span></p>
