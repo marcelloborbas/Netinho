@@ -19,11 +19,11 @@ const roles:Role[] = ["Visitante","Vendedor","Representante","Administrador"];
 function Pessoas() {
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const qc=useQueryClient();
- const [adding,setAdding]=useState(false);
  const location = useLocation();
+ const [adding,setAdding]=useState(()=>location.hash==="#novo-representante");
  const [filterRole,setFilterRole]=useState<Role | "Todos">(() => location.hash === "#representantes" ? "Representante" : "Todos");
  const [commissionFilter,setCommissionFilter]=useState("Todas");
- const [editing,setEditing]=useState<string|null>(null);
+ const [editing,setEditing]=useState<string|null>(()=>{const match=location.hash.match(/^#(person|representative):([0-9a-f-]{36})$/i);return match?match[1]+":"+match[2]:null;});
  const [newName,setNewName]=useState("");
  const [newEmail,setNewEmail]=useState("");
  const [creating,setCreating]=useState(false);
