@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { meQuery } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,10 +63,11 @@ export function HomeSalesEvolution() {
   const totalSales=history.reduce((sum,p)=>sum+p.total,0);
   const totalCommissions=history.reduce((sum,p)=>sum+p.commission,0);
   return <section className="mx-3 mb-3 !min-h-0 !h-auto overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 text-white shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6" aria-label="Evolução das vendas da Netinho">
-    <div className="flex items-center gap-2">
+    <Link to="/vendas-por-representante" className="flex items-center gap-2 rounded-lg p-1 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" title="Abrir vendas por representante" aria-label="Abrir relatório de vendas por representante">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-8 w-8 shrink-0 text-[#ffd42a]" aria-hidden="true"><path d="M3 3v18h18M7 16v-4M12 16V7M17 16V5"/></svg>
       <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas da Netinho</h2><p className="text-xs text-[#d7e8ff]">Resultado de todos os representantes nos últimos seis meses</p></div>
-    </div>
+      <span className="ml-auto text-xs font-bold text-[#ffdc6c]">Ver por representante ›</span>
+    </Link>
     {loadingMe ? <p className="mt-4 text-sm">Verificando acesso…</p> : isError ? <p role="alert" className="mt-4 text-sm">Não foi possível consultar o histórico de vendas.</p> :
       isLoading ? <p role="status" className="mt-4 text-sm">Carregando evolução...</p> :
       <div className="mt-2 grid h-[165px] grid-cols-6 gap-1.5 border-b border-[#8bcaff] pb-1 sm:h-60 sm:gap-3" role="img" aria-label={`Vendas dos últimos seis meses: ${history.map(item => `${item.label}: ${brl(item.total)}`).join("; ")}`}>
