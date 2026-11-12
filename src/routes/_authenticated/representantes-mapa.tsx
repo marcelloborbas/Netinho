@@ -54,11 +54,11 @@ const photoFiles: Record<string,string> = {
   abdnego:"Abdnego.webp", domingos:"Domingos.webp", jhonatas:"Jhonatas.webp",
   justino:"José Justino.webp", livaldo:"Livaldo.webp", luciano:"Luciano.webp",
   marcello:"Marcello.webp", romullo:"Romullo.webp", romulo:"Romullo.webp",
-  burgato:"José Burgato.webp", osmair:"cartao-osmair-zanetti.webp"
+  burgato:"José Burgato.webp", osmair:"Osmair.webp"
 };
 const representativePhoto = (name:string) => {
   const key=Object.keys(photoFiles).find(k=>normalize(name).includes(k));
-  return key ? (key==="osmair"?"/images/fotos-representantes/":"/images/public/images/representantes/")+encodeURIComponent(photoFiles[key]) : null;
+  return key ? "/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]) : null;
 };
 const fallbackPhoto = (name:string) => {
   const key=normalize(name);
