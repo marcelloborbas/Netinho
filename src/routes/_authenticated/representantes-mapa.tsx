@@ -272,12 +272,14 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
       setRate(String((commission.data as {rate?:number}|null)?.rate??""));
      }
     }else{
-     const [record,commission]=await Promise.all([
+     const [record,commission,details]=await Promise.all([
       supabase.from("commercial_representatives").select("*").eq("id",id).single(),
-      supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",id).maybeSingle()
+      supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",id).maybeSingle(),
+      supabase.from("commercial_representative_details" as never).select("phone,state,city,region,service_cities").eq("representative_id",id).maybeSingle()
      ]);
      if(record.error)throw record.error;
-     if(mounted){const d=record.data as Record<string,unknown>;setName(String(d.full_name??representative.name));setPhone(String(d.phone??representative.phone));setEmail(String(d.email??""));setActive(d.active!==false);setUf(String(d.uf??representative.uf));setCity(String(d.city??representative.city));setRegion(String(d.region??representative.region));setRate(String((commission.data as {rate?:number}|null)?.rate??""));}
+     if(details.error)throw details.error;
+     if(mounted){const d=record.data as Record<string,unknown>;const detail=(details.data??{}) as {phone?:string;state?:string;city?:string;region?:string;service_cities?:string};setName(String(d.full_name??representative.name));setPhone(detail.phone||representative.phone||"");setEmail(String(d.email??""));setActive(d.active!==false);setUf(ufFrom(detail.state||representative.uf));setCity(detail.city||representative.city);setRegion(detail.region||representative.region);setCities(detail.service_cities||"");setRate(String((commission.data as {rate?:number}|null)?.rate??""));}
     }
    }catch(e){if(mounted)toast.error(e instanceof Error?e.message:"Não foi possível carregar a ficha.");}
    finally{if(mounted)setInitializing(false);}
@@ -306,6 +308,8 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
    }else{
     const result=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim(),active} as never).eq("id",id);
     if(result.error)throw result.error;
+    const details=await supabase.from("commercial_representative_details" as never).upsert({representative_id:id,phone:phone.trim(),state:uf,city:city.trim(),region:region.trim(),service_cities:cities.trim()} as never,{onConflict:"representative_id"});
+    if(details.error)throw details.error;
     const commission=await supabase.rpc("admin_set_commercial_representative_commission" as never,{p_representative:id,p_rate:rateNumber} as never);
     if(commission.error)throw commission.error;
    }
@@ -323,7 +327,7 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
     <label className="text-sm font-bold">Estado<select value={uf} onChange={e=>setUf(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"><option value="">Selecione</option>{Object.entries(states).map(([key,st])=><option key={key} value={key}>{st.name}</option>)}</select></label>
     <label className="text-sm font-bold">Cidade<input value={city} onChange={e=>setCity(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
     <label className="text-sm font-bold sm:col-span-2">Região de atuação<input value={region} onChange={e=>setRegion(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
-    {target.startsWith("person:")&&<label className="text-sm font-bold sm:col-span-2">Cidades atendidas<input value={cities} onChange={e=>setCities(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>}
+    {<label className="text-sm font-bold sm:col-span-2">Cidades atendidas<input value={cities} onChange={e=>setCities(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>}
     <label className="text-sm font-bold">Comissão (%)<input value={rate} onChange={e=>setRate(e.target.value)} inputMode="decimal" placeholder="0,5 a 3,5" className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
     <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Ativo</label>
     <div className="flex justify-end gap-2 sm:col-span-2"><button type="button" onClick={onClose} className="rounded-lg bg-slate-100 px-4 py-3 font-bold">Cancelar</button><button type="button" disabled={busy} onClick={()=>void save()} className="rounded-lg bg-[#102a52] px-5 py-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar alterações"}</button></div>
