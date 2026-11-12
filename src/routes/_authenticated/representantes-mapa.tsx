@@ -159,27 +159,22 @@ function RepresentativesMap(){
   const mapView=selected?stateBounds(features,selected):"0 0 620 590";
   const selectState=(uf:string)=>{setSelected(uf);setMapExpanded(false);};
   useEffect(()=>{if(!mapExpanded)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMapExpanded(false);};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey);},[mapExpanded]);
-  return <main className="mx-auto w-full max-w-[1320px] space-y-5 px-2 pb-28 pt-3 text-[#102a52] sm:px-5">
-    {!selected&&<section className={`${mapExpanded?"fixed inset-2 z-[110] overflow-auto sm:inset-8":"relative overflow-hidden"} rounded-[24px] bg-gradient-to-br from-[#06152d] via-[#103e6e] to-[#071a36] p-2 shadow-[0_16px_40px_rgba(5,20,46,.25)] sm:p-5`} aria-label="Mapa interativo dos estados do Brasil" role={mapExpanded?"dialog":undefined} aria-modal={mapExpanded?true:undefined}>
-      <div className="pointer-events-none absolute inset-0 opacity-40" style={{backgroundImage:"radial-gradient(ellipse at 50% 35%,rgba(64,160,231,.42),transparent 60%)"}}/>
-      <div className="relative flex items-center justify-between gap-3 px-3 pt-2 text-white">
-        <div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#b8d9f4]">Netinho Auto Parts</p><h1 className="text-xl font-black sm:text-2xl">{selected?states[selected]?.name:"Brasil · Nossa representação"}</h1><p className="text-xs text-[#c5ddf0]">Toque em um estado para consultar seus representantes</p></div>
-        {selected&&<div className="flex shrink-0 items-center gap-2"><img src={stateFlag(selected)} alt={`Bandeira de ${states[selected]?.name}`} className="h-9 w-12 rounded object-cover shadow-md sm:h-12 sm:w-16"/><button type="button" onClick={()=>{setSelected("");setMapExpanded(false);}} className="flex items-center gap-1 rounded-full bg-white/15 px-3 py-2 text-xs font-bold text-white hover:bg-white/25"><ArrowLeft size={16}/> Brasil</button>{mapExpanded&&<button type="button" aria-label="Fechar mapa ampliado" onClick={()=>setMapExpanded(false)} className="rounded-full bg-white/20 p-2"><X size={19}/></button>}</div>}
-      </div>
-      <svg viewBox={mapView} className="relative mx-auto block h-[min(72dvh,800px)] min-h-[350px] w-full drop-shadow-[0_14px_12px_rgba(0,0,0,.45)] transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
+  return <main className="mx-auto w-full max-w-[1600px] space-y-5 px-0 pb-28 pt-0 text-[#102a52] sm:px-2">
+    {!selected&&<section className="relative w-full overflow-hidden rounded-2xl bg-transparent p-0" aria-label="Mapa interativo dos estados do Brasil">
+      <svg viewBox={mapView} className="mx-auto block h-[min(85dvh,1050px)] min-h-[420px] w-full max-w-none drop-shadow-[0_9px_8px_rgba(18,80,36,.16)] transition-all duration-500 sm:h-[min(90dvh,1150px)]" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
         <defs>
-          <linearGradient id="netinho-map-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#a5d4f2"/><stop offset=".45" stopColor="#3975a7"/><stop offset="1" stopColor="#17436e"/></linearGradient>
-          <linearGradient id="netinho-map-selected" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fff4b6"/><stop offset=".5" stopColor="#f1bd43"/><stop offset="1" stopColor="#b77c13"/></linearGradient>
+          <linearGradient id="netinho-map-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#63d66e"/><stop offset=".45" stopColor="#229c4c"/><stop offset="1" stopColor="#08743a"/></linearGradient>
+          <linearGradient id="netinho-map-selected" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffe96b"/><stop offset=".5" stopColor="#f9c52c"/><stop offset="1" stopColor="#e4a919"/></linearGradient>
           <filter id="netinho-map-glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
         {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
           const active=selected===uf;
-          return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-selected)":"url(#netinho-map-metal)"} stroke={active?"#fff3ba":"#8dc9ef"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();selectState(uf);}}} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
+          return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-selected)":"url(#netinho-map-metal)"} stroke={active?"#063b89":"#f8d74b"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();selectState(uf);}}} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
-        {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize={selected?"8":"10"} fontWeight="900" fill={selected?"#132d4d":"#ffffff"} stroke={selected?"none":"#0c3359"} strokeWidth=".6" paintOrder="stroke" pointerEvents="none">{uf}</text>;})}
+        {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize={selected?"8":"10"} fontWeight="900" fill={selected?"#132d4d":"#ffffff"} stroke={selected?"none":"#064b93"} strokeWidth=".6" paintOrder="stroke" pointerEvents="none">{uf}</text>;})}
       </svg>
-      {!features.length&&<p className="relative pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Use a seleção de estados abaixo.":"Carregando mapa do Brasil…"}</p>}
+      {!features.length&&<p className="relative pb-4 text-center text-sm text-[#102a52]">{mapError?"Não foi possível carregar as divisas estaduais. Use a seleção de estados abaixo.":"Carregando mapa do Brasil…"}</p>}
       {selected&&<p className="relative pb-3 text-center text-sm font-bold text-white">{selectedPeople.length} representante(s) · {states[selected]?.name}</p>}
     </section>}
     {mapExpanded&&<button type="button" aria-label="Fechar mapa ampliado" className="fixed inset-0 z-[109] bg-[#020b1d]/85" onClick={()=>setMapExpanded(false)}/>}
