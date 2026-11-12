@@ -7,7 +7,7 @@ import { brl } from "@/lib/brand";
 import { TrendingUp, UsersRound, ChevronDown, UserRound, Wallet, BarChart3 } from "lucide-react";
 
 const photoFiles:Record<string,string>={abdnego:"Abdnego.webp",abdenego:"Abdnego.webp",abednego:"Abdnego.webp",domingos:"Domingos.webp",jhonatas:"Jhonatas.webp",justino:"José Justino.webp",livaldo:"Livaldo.webp",luciano:"Luciano.webp",marcello:"Marcello.webp",romullo:"Romullo.webp",romulo:"Romullo.webp",burgato:"José Burgato.webp",osmair:"Osmair.webp"};
-const normalizeName=(name:string)=>name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
+const normalizeName=(name:string)=>name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const representativePhoto=(name:string)=>{const key=Object.keys(photoFiles).find(k=>normalizeName(name).includes(k));return key?"/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]):null;};
 function RepresentativePortrait({name}:{name:string}){
  const [failed,setFailed]=useState(false);const src=representativePhoto(name);
@@ -19,21 +19,36 @@ function RepresentativeSales(){
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
  const [expanded,setExpanded]=useState<string|null>(null);
  const {data,isLoading,isError}=useQuery({queryKey:["netinho-representative-sales"],enabled:me?.isAdmin===true,queryFn:async()=>{
-  const [profiles,commercial,rates,commercialRates]=await Promise.all([
+  const [profiles,commercial,rates,commercialRates,directory]=await Promise.all([
    supabase.from("profiles").select("id,full_name,site_role"),
    supabase.from("commercial_representatives").select("id,user_id,full_name,active"),
    supabase.from("salesperson_commission_rates" as never).select("user_id,rate"),
-   supabase.from("commercial_representative_commission_rates" as never).select("representative_id,rate")
+   supabase.from("commercial_representative_commission_rates" as never).select("representative_id,rate"),
+   supabase.rpc("list_public_representatives" as never)
   ]);
-  for(const result of [profiles,commercial,rates,commercialRates])if(result.error)throw result.error;
-  const people=new Map<string,{id:string;name:string;rate:number}>();
+  for(const result of [profiles,commercial,rates,commercialRates,directory])if(result.error)throw result.error;
+  type Rep={id:string;name:string;rate:number;userId:string|null};
+  const people=new Map<string,Rep>();
   const userRates=new Map(((rates.data??[]) as Array<{user_id:string;rate:number}>).map(x=>[x.user_id,Number(x.rate)]));
   const repRates=new Map(((commercialRates.data??[]) as Array<{representative_id:string;rate:number}>).map(x=>[x.representative_id,Number(x.rate)]));
-  for(const p of profiles.data??[])if(p.site_role==="Representante")people.set(p.id,{id:p.id,name:p.full_name||"Representante",rate:userRates.get(p.id)??0});
-  for(const p of commercial.data??[])if(p.active&&p.user_id){
-   const old=people.get(p.user_id);
-   people.set(p.user_id,{id:p.user_id,name:old?.name||p.full_name||"Representante",rate:old?.rate||userRates.get(p.user_id)||repRates.get(p.id)||0});
+  const profileById=new Map((profiles.data??[]).map(p=>[p.id,p]));
+  const commercialById=new Map((commercial.data??[]).map(p=>[p.id,p]));
+  const directoryRows=(directory.data??[]) as Array<{id:string;full_name:string;photo_id?:string}>;
+  const add=(id:string,name:string,userId:string|null,rate:number)=>{
+   const normalized=normalizeName(name);
+   const existing=[...people.values()].find(p=>(userId&&p.userId===userId)||normalizeName(p.name)===normalized);
+   if(existing){if(!existing.userId&&userId)existing.userId=userId;if(!existing.rate&&rate)existing.rate=rate;return;}
+   people.set(id,{id,name,userId,rate});
+  };
+  for(const p of directoryRows){
+   const commercialRep=commercialById.get(p.id);
+   const userId=commercialRep?.user_id||((p.photo_id&&profileById.has(p.photo_id))?p.photo_id:profileById.has(p.id)?p.id:null);
+   const profile=userId?profileById.get(userId):null;
+   add(p.id,p.full_name||profile?.full_name||"Representante",userId,userId?userRates.get(userId)??repRates.get(p.id)??0:repRates.get(p.id)??0);
   }
+  for(const p of profiles.data??[])if(p.site_role==="Representante")add(p.id,p.full_name||"Representante",p.id,userRates.get(p.id)??0);
+  for(const p of commercial.data??[])if(p.active)add(p.id,p.full_name||"Representante",p.user_id??null,p.user_id?userRates.get(p.user_id)??repRates.get(p.id)??0:repRates.get(p.id)??0);
+  const repByUser=new Map([...people.values()].filter(p=>p.userId).map(p=>[p.userId!,p.id]));
   const now=new Date();const periods=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return {key:monthKey(d),label:d.toLocaleDateString("pt-BR",{month:"short",year:"numeric"})};});
   const start=new Date(now.getFullYear(),now.getMonth()-5,1).toISOString();
   const results=new Map<string,{total:number;commission:number;months:Record<string,number>}>();
@@ -42,10 +57,10 @@ function RepresentativeSales(){
    const {data:orders,error}=await supabase.from("orders").select("seller_id,created_at,total,kind,status").gte("created_at",start).order("created_at").range(from,from+499);
    if(error)throw error;
    for(const o of orders??[]){
-    if(!o.seller_id||!people.has(o.seller_id)||o.kind==="orcamento"||o.status==="cancelled")continue;
+    if(!o.seller_id||!repByUser.has(o.seller_id)||o.kind==="orcamento"||o.status==="cancelled")continue;
     const period=monthKey(new Date(o.created_at));if(!periods.some(x=>x.key===period))continue;
-    const item=results.get(o.seller_id)!;const value=Number(o.total??0);
-    item.total+=value;item.commission+=value*people.get(o.seller_id)!.rate/100;item.months[period]=(item.months[period]??0)+value;
+    const repId=repByUser.get(o.seller_id)!;const item=results.get(repId)!;const value=Number(o.total??0);
+    item.total+=value;item.commission+=value*people.get(repId)!.rate/100;item.months[period]=(item.months[period]??0)+value;
    }
    if(!orders||orders.length<500)break;
   }
