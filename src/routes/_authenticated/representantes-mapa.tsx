@@ -132,6 +132,24 @@ function RepresentativesMap(){
       return {commissions,sales,months};
     }
   });
+  const {data:editRecords}=useQuery({
+    queryKey:["representatives-edit-targets"],
+    enabled:isAdmin,
+    queryFn:async()=>{
+      const [profiles,commercial]=await Promise.all([
+        supabase.from("profiles").select("id,full_name"),
+        supabase.from("commercial_representatives").select("id,full_name")
+      ]);
+      if(profiles.error)throw profiles.error;
+      if(commercial.error)throw commercial.error;
+      return {profiles:profiles.data??[],commercial:commercial.data??[]};
+    }
+  });
+  const editHash=(p:Representative)=>{
+    if(editRecords?.profiles.some(x=>x.id===p.photoId||x.id===p.id))return "person:"+(editRecords.profiles.find(x=>x.id===p.photoId||x.id===p.id)?.id??p.id);
+    const commercial=editRecords?.commercial.find(x=>x.id===p.id||normalize(x.full_name??"")===normalize(p.name));
+    return commercial?"representative:"+commercial.id:null;
+  };
   const labels=Object.entries(states).sort((a,b)=>a[1].name.localeCompare(b[1].name,"pt-BR"));
   const representativesByUf=useMemo(()=>new Map(labels.map(([uf])=>[uf,people.filter(p=>p.uf===uf).length])),[people]);
   const selectedPeople=people.filter(p=>!selected||p.uf===selected);
@@ -184,7 +202,7 @@ function RepresentativesMap(){
         const values=adminData?.sales.get(p.photoId)??adminData?.sales.get(p.id);
         const commission=adminData?.commissions.get(p.photoId)??adminData?.commissions.get(p.id);
         const max=Math.max(1,...(values??[0,0,0]));
-        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">\n          {isAdmin&&<Link to="/pessoas" hash={`person:${p.photoId}`} title={`Abrir ficha completa de ${p.name} para edição`} className="mb-3 flex items-center justify-between rounded-lg bg-[#eaf2fa] px-3 py-2 text-xs font-bold text-[#153c68] hover:bg-[#dceafa]">Abrir ficha completa do representante <Pencil size={16}/></Link>}
+        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">\n          {isAdmin&&editHash(p)&&<Link to="/pessoas" hash={editHash(p)!} title={`Abrir ficha completa de ${p.name} para edição`} className="mb-3 flex items-center justify-between rounded-lg bg-[#eaf2fa] px-3 py-2 text-xs font-bold text-[#153c68] hover:bg-[#dceafa]">Abrir ficha completa do representante <Pencil size={16}/></Link>}
           <div className="grid grid-cols-[minmax(0,1fr)_100px] gap-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-5">
             <div className="min-w-0 space-y-2 text-sm sm:text-base">
               <p><strong>Representante:</strong> <span className="font-semibold">{p.name}</span></p>
