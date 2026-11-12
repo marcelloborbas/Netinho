@@ -187,18 +187,8 @@ function RepresentativesMap(){
       {selected&&<p className="relative pb-3 text-center text-sm font-bold text-white">{selectedPeople.length} representante(s) · {states[selected]?.name}</p>}
     </section>}
     {mapExpanded&&<button type="button" aria-label="Fechar mapa ampliado" className="fixed inset-0 z-[109] bg-[#020b1d]/85" onClick={()=>setMapExpanded(false)}/>}
-    {selected&&<div className="flex items-center justify-between gap-3 rounded-xl bg-[#102a52] px-4 py-3 text-white"><div className="flex items-center gap-3"><img src={stateFlag(selected)} alt={`Bandeira de ${states[selected]?.name}`} className="h-9 w-12 rounded object-cover"/><strong>{states[selected]?.name}</strong></div><button type="button" onClick={()=>selectState("")} className="rounded-lg bg-white/15 px-3 py-2 text-sm font-bold">Voltar ao Brasil</button></div>}
-    <section aria-label="Seleção dos estados e Distrito Federal">
-      <h2 className="mb-3 px-1 text-sm font-extrabold uppercase tracking-wider text-[#102a52]">Estados e Distrito Federal</h2>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        {labels.map(([uf,st])=><button key={uf} type="button" onClick={()=>selectState(uf===selected?"":uf)} aria-pressed={selected===uf} className={`group flex min-h-14 items-center gap-2 rounded-xl bg-white px-3 py-2 text-left shadow-sm ring-1 ring-slate-200 transition duration-200 hover:-translate-y-0.5 hover:bg-[#e4f3ff] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2677b7] ${selected===uf?"bg-[#dceeff] ring-2 ring-[#2779b7]":""}`}>
-          <img src={stateFlag(uf)} alt={`Bandeira de ${st.name}`} loading="lazy" className="h-8 w-11 shrink-0 rounded object-cover shadow-sm"/>
-          <span className="min-w-0 flex-1 text-xs font-bold text-[#102a52] sm:text-sm">{st.name}</span>
-          {(representativesByUf.get(uf)??0)>0&&<span className="rounded-full bg-[#e0edf8] px-2 py-0.5 text-xs font-black text-[#174d7d]">{representativesByUf.get(uf)}</span>}
-        </button>)}
-      </div>
-    </section>
-    <section aria-label="Representantes cadastrados" className="space-y-3">
+    {selected&&<div className="flex items-center justify-between gap-3 rounded-xl bg-[#102a52] px-4 py-3 text-white"><strong className="text-base sm:text-lg">{states[selected]?.name} · Representantes</strong><button type="button" onClick={()=>selectState("")} className="rounded-lg bg-white/15 px-3 py-2 text-sm font-bold hover:bg-white/25"><ArrowLeft size={16} className="mr-1 inline"/> Voltar ao mapa</button></div>}
+    {selected&&<section aria-label="Representantes cadastrados" className="space-y-3">
       {isAdmin&&<div className="flex justify-end"><Link to="/pessoas" hash="novo-representante" aria-label="Acrescentar representante" title="Acrescentar representante" className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#102a52] text-white shadow-md transition hover:scale-105 hover:bg-[#21588a]"><UserPlus size={20}/></Link></div>}
       <h2 className="px-1 text-base font-black text-[#102a52]">{selected?`Representantes · ${states[selected]?.name}`:"Representantes pelo Brasil"}</h2>
       {isLoading&&<p>Carregando representantes…</p>}
@@ -236,7 +226,7 @@ function RepresentativesMap(){
           </div>}
         </article>;
       })}
-    </section>
+    </section>}
     {isAdmin&&editingRep&&<RepresentativeEditDialog representative={editingRep} target={editHash(editingRep)} onClose={()=>setEditingRep(null)} onSaved={()=>{void qc.invalidateQueries({queryKey:["public-representatives-map-v3"]});void qc.invalidateQueries({queryKey:["representatives-edit-targets"]});}}/>}
   </main>;
 }
