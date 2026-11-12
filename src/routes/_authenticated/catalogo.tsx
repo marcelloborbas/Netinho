@@ -166,7 +166,7 @@ function Catalog() {
   const [vehicleModel, setVehicleModel] = useState("all");
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
   const dq = useDeferredValue(q);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const [compared, setCompared] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const [recentCodes, setRecentCodes] = useState<string[]>(() => {
@@ -238,6 +238,11 @@ function Catalog() {
       ...localHd.filter((hd) => !hdCodes.has(hd.code)),
     ];
   }, [products, localFco]);
+  const searchSuggestions = useMemo(() => {
+    const term = searchInput.trim();
+    if (!term) return [];
+    return combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && productMatches(p, term)).slice(0, 8);
+  }, [combined, searchInput]);
   const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD" && p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
   const categoryCounts = useMemo(() => {
     const eligible = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq));
@@ -311,32 +316,23 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 px-2 pt-1 pb-28 sm:px-6 sm:pt-4 sm:pb-32">
-      <section className="space-y-2 rounded-[16px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-2 shadow-lg sm:p-3" aria-label="Pesquisar catálogo">
-        <div className="w-full" role="search">
-          <div className="relative w-full min-w-0">
-            <Search className="absolute left-3 top-3 text-[#1675d1]" size={20} aria-hidden="true" />
-            <input id="catalog-search" aria-label="Buscar peças" value={searchInput}
+      <section className="relative z-20 rounded-[16px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-2 shadow-lg sm:p-3" aria-label="Pesquisar catálogo">
+        <div className="flex items-center gap-2" role="search">
+          <div className="relative min-w-0 flex-1">
+            <input id="catalog-search" aria-label="Buscar peças" autoComplete="off" value={searchInput}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => window.setTimeout(() => setSearchFocused(false), 160)}
               onChange={(e) => { const value = e.target.value; setSearchInput(value); setQ(value.trim()); setPage(1); }}
-              placeholder="Busque pelo código, pela peça ou pelo veículo..."
-              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-11 w-full rounded-xl border-2 border-[#8dbbe5] pl-11 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
+              placeholder="Busque pelo código, peça ou veículo..."
+              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-11 w-full rounded-xl border-2 border-[#8dbbe5] px-3 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
             {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-2.5 text-[#102a52]"><X size={20}/></button>}
+            {searchFocused && searchInput.trim() && <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-xl border-2 border-[#d4af37] bg-white shadow-2xl" role="listbox" aria-label="Resultados enquanto digita">
+              {searchSuggestions.length ? searchSuggestions.map((p) => <button key={p.id} type="button" role="option" aria-selected={false} onMouseDown={(e) => e.preventDefault()} onClick={() => { setSearchInput(p.code); setQ(p.code); setPage(1); setSearchFocused(false); document.getElementById("catalog-search")?.blur(); }} className="flex w-full items-center justify-between gap-3 border-b border-slate-200 px-3 py-3 text-left text-sm text-[#102a52] hover:bg-[#eaf2ff]">
+                <span className="min-w-0"><strong className="block">{p.code}</strong><span className="block truncate">{p.name}</span></span><Search size={17} className="shrink-0 text-[#1675d1]"/>
+              </button>) : <p className="p-3 text-sm font-medium text-[#102a52]">Nenhum item encontrado.</p>}
+            </div>}
           </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-                        <div className="relative">
-              <button type="button" aria-label="Filtros do catálogo" aria-expanded={filterOpen} onClick={() => setFilterOpen((open) => !open)}
-                className="flex min-h-11 items-center gap-1 rounded-xl border-2 border-[#8fc9ff] bg-white px-3 py-2 text-[#102a52] hover:bg-[#eaf2ff]">
-                <Filter size={19} /><span className="text-xs font-bold">Filtros</span>
-              </button>
-              {filterOpen && <div className="absolute left-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-[#416c93] bg-[#09213c] p-1 shadow-xl" role="group" aria-label="Ordenar e filtrar peças">
-                {visibleFilterOptions.map(([value, label]) => <button key={value} type="button" aria-pressed={filterMode === value}
-                  onClick={() => { setFilterMode(value); setPage(1); setFilterOpen(false); }}
-                  className={`block w-full rounded-lg px-3 py-2 text-left text-sm font-semibold hover:bg-[#24517b] ${filterMode === value ? "bg-[#21496c] text-[#39ff79]" : "text-white"}`}>{label}</button>)}
-              </div>}
-            </div>
-          </div>
-          <button type="button" onClick={() => { reset(); setFilterOpen(false); }} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border-2 border-[#8fc9ff] bg-white px-3 py-2 text-xs font-bold text-[#102a52] hover:bg-[#eaf2ff]" aria-label="Limpar filtros do catálogo"><X size={17} aria-hidden="true" />Limpar filtros</button>
+          <button type="button" onClick={() => { setSearchFocused(true); document.getElementById("catalog-search")?.focus(); }} aria-label="Buscar peças" title="Buscar" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#d4af37] bg-white text-[#102a52] shadow-sm hover:bg-[#fff4c2]"><Search size={23}/></button>
         </div>
       </section>
 
