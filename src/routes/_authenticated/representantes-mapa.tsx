@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { MapPin, Phone, ArrowLeft, TrendingUp, UserRound } from "lucide-react";
+import { MapPin, ArrowLeft, TrendingUp, UserRound, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { pageHead } from "@/lib/page-head";
 import { meQuery } from "@/lib/queries";
@@ -54,18 +54,26 @@ const photoFiles: Record<string,string> = {
   abdnego:"Abdnego.webp", domingos:"Domingos.webp", jhonatas:"Jhonatas.webp",
   justino:"José Justino.webp", livaldo:"Livaldo.webp", luciano:"Luciano.webp",
   marcello:"Marcello.webp", romullo:"Romullo.webp", romulo:"Romullo.webp",
-  burgato:"José Burgato.webp"
+  burgato:"José Burgato.webp", osmair:"cartao-osmair-zanetti.webp"
 };
 const representativePhoto = (name:string) => {
   const key=Object.keys(photoFiles).find(k=>normalize(name).includes(k));
-  return key ? "/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]) : null;
+  return key ? (key==="osmair"?"/images/fotos-representantes/":"/images/public/images/representantes/")+encodeURIComponent(photoFiles[key]) : null;
 };
+const fallbackPhoto = (name:string) => {
+  const key=normalize(name);
+  if(key.includes("abdnego"))return "/images/fotos-representantes/cartao-abdnego-eugenio.webp";
+  if(key.includes("osmair"))return "/images/fotos-representantes/cartao-osmair-zanetti.webp";
+  return null;
+};
+const stateFlag = (uf:string) => `https://cdn.jsdelivr.net/gh/akagabi/bandeira-dos-estados-do-brasil@`+"master/"+uf.toLowerCase()+".svg";
 const monthLabel=(date:Date)=>new Intl.DateTimeFormat("pt-BR",{month:"short",timeZone:"UTC"}).format(date).replace(".","");
 const lastThreeMonths=()=>Array.from({length:3},(_,i)=>{const now=new Date();return new Date(Date.UTC(now.getFullYear(),now.getMonth()-3+i,1));});
 function RepresentativesMap(){
   const [features,setFeatures]=useState<Feature[]>([]);
   const [mapError,setMapError]=useState(false);
   const [selected,setSelected]=useState("");
+  const [mapExpanded,setMapExpanded]=useState(false);
   useEffect(()=>{
     let active=true;
     fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson")
@@ -127,12 +135,14 @@ function RepresentativesMap(){
   const representativesByUf=useMemo(()=>new Map(labels.map(([uf])=>[uf,people.filter(p=>p.uf===uf).length])),[people]);
   const selectedPeople=people.filter(p=>!selected||p.uf===selected);
   const mapView=selected?stateBounds(features,selected):"0 0 620 590";
+  const selectState=(uf:string)=>{setSelected(uf);setMapExpanded(Boolean(uf));};
+  useEffect(()=>{if(!mapExpanded)return;const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setMapExpanded(false);};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey);},[mapExpanded]);
   return <main className="mx-auto w-full max-w-[1320px] space-y-5 px-2 pb-28 pt-3 text-[#102a52] sm:px-5">
-    <section className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#06152d] via-[#103e6e] to-[#071a36] p-2 shadow-[0_16px_40px_rgba(5,20,46,.25)] sm:p-5" aria-label="Mapa interativo dos estados do Brasil">
+    <section className={`${mapExpanded?"fixed inset-2 z-[110] overflow-auto sm:inset-8":"relative overflow-hidden"} rounded-[24px] bg-gradient-to-br from-[#06152d] via-[#103e6e] to-[#071a36] p-2 shadow-[0_16px_40px_rgba(5,20,46,.25)] sm:p-5" aria-label="Mapa interativo dos estados do Brasil" role={mapExpanded?"dialog":undefined} aria-modal={mapExpanded?true:undefined}>
       <div className="pointer-events-none absolute inset-0 opacity-40" style={{backgroundImage:"radial-gradient(ellipse at 50% 35%,rgba(64,160,231,.42),transparent 60%)"}}/>
       <div className="relative flex items-center justify-between gap-3 px-3 pt-2 text-white">
         <div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#b8d9f4]">Netinho Auto Parts</p><h1 className="text-xl font-black sm:text-2xl">{selected?states[selected]?.name:"Brasil · Nossa representação"}</h1><p className="text-xs text-[#c5ddf0]">Toque em um estado para ampliar e consultar seus representantes</p></div>
-        {selected&&<button type="button" onClick={()=>setSelected("")} className="flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-3 py-2 text-xs font-bold text-white hover:bg-white/25"><ArrowLeft size={16}/> Brasil</button>}
+        {selected&&<div className="flex shrink-0 items-center gap-2"><img src={stateFlag(selected)} alt={`Bandeira de ${states[selected]?.name}`} className="h-9 w-12 rounded object-cover shadow-md sm:h-12 sm:w-16"/><button type="button" onClick={()=>{setSelected("");setMapExpanded(false);}} className="flex items-center gap-1 rounded-full bg-white/15 px-3 py-2 text-xs font-bold text-white hover:bg-white/25"><ArrowLeft size={16}/> Brasil</button>{mapExpanded&&<button type="button" aria-label="Fechar mapa ampliado" onClick={()=>setMapExpanded(false)} className="rounded-full bg-white/20 p-2"><X size={19}/></button>}</div>}
       </div>
       <svg viewBox={mapView} className="relative mx-auto block h-[min(72dvh,800px)] min-h-[350px] w-full drop-shadow-[0_14px_12px_rgba(0,0,0,.45)] transition-all duration-700" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mapa do Brasil com estados selecionáveis">
         <defs>
@@ -143,18 +153,19 @@ function RepresentativesMap(){
         {features.filter(f=>!selected||ufFrom(f.properties.sigla||f.properties.name||"")===selected).map((f,i)=>{
           const uf=ufFrom(f.properties.sigla||f.properties.name||"");
           const active=selected===uf;
-          return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-selected)":"url(#netinho-map-metal)"} stroke={active?"#fff3ba":"#8dc9ef"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();setSelected(uf);}}} onClick={()=>uf&&setSelected(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
+          return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-selected)":"url(#netinho-map-metal)"} stroke={active?"#fff3ba":"#8dc9ef"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();setSelected(uf);}}} onClick={()=>uf&&selectState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
         {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);return <text key={uf} x={x} y={y} textAnchor="middle" fontSize={selected?"8":"10"} fontWeight="900" fill={selected?"#132d4d":"#ffffff"} stroke={selected?"none":"#0c3359"} strokeWidth=".6" paintOrder="stroke" pointerEvents="none">{uf}</text>;})}
       </svg>
       {!features.length&&<p className="relative pb-4 text-center text-sm text-white">{mapError?"Não foi possível carregar as divisas estaduais. Use a seleção de estados abaixo.":"Carregando mapa do Brasil…"}</p>}
       {selected&&<p className="relative pb-3 text-center text-sm font-bold text-white">{selectedPeople.length} representante(s) · {states[selected]?.name}</p>}
     </section>
+    {mapExpanded&&<button type="button" aria-label="Fechar mapa ampliado" className="fixed inset-0 z-[109] bg-[#020b1d]/85" onClick={()=>setMapExpanded(false)}/>}
     <section aria-label="Seleção dos estados e Distrito Federal">
       <h2 className="mb-3 px-1 text-sm font-extrabold uppercase tracking-wider text-[#102a52]">Estados e Distrito Federal</h2>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        {labels.map(([uf,st])=><button key={uf} type="button" onClick={()=>setSelected(uf===selected?"":uf)} aria-pressed={selected===uf} className={`group flex min-h-14 items-center gap-2 rounded-xl bg-white px-3 py-2 text-left shadow-sm ring-1 ring-slate-200 transition duration-200 hover:-translate-y-0.5 hover:bg-[#e4f3ff] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2677b7] ${selected===uf?"bg-[#dceeff] ring-2 ring-[#2779b7]":""}`}>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#2d7eb5] to-[#092b56] text-xs font-black text-white shadow-sm">{uf}</span>
+        {labels.map(([uf,st])=><button key={uf} type="button" onClick={()=>selectState(uf===selected?"":uf)} aria-pressed={selected===uf} className={`group flex min-h-14 items-center gap-2 rounded-xl bg-white px-3 py-2 text-left shadow-sm ring-1 ring-slate-200 transition duration-200 hover:-translate-y-0.5 hover:bg-[#e4f3ff] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2677b7] ${selected===uf?"bg-[#dceeff] ring-2 ring-[#2779b7]":""}`}>
+          <img src={stateFlag(uf)} alt={`Bandeira de ${st.name}`} loading="lazy" className="h-8 w-11 shrink-0 rounded object-cover shadow-sm"/>
           <span className="min-w-0 flex-1 text-xs font-bold text-[#102a52] sm:text-sm">{st.name}</span>
           {(representativesByUf.get(uf)??0)>0&&<span className="rounded-full bg-[#e0edf8] px-2 py-0.5 text-xs font-black text-[#174d7d]">{representativesByUf.get(uf)}</span>}
         </button>)}
@@ -181,7 +192,7 @@ function RepresentativesMap(){
               {p.region&&<p className="text-xs text-slate-500"><MapPin size={13} className="mr-1 inline"/>{p.region}</p>}
             </div>
             <div className="flex flex-col items-center gap-2">
-              {photo?<img src={photo} alt={`Foto de ${p.name}`} loading="lazy" className="h-24 w-24 rounded-xl bg-slate-100 object-cover object-top shadow-md sm:h-36 sm:w-36" onError={e=>{e.currentTarget.style.display="none";}}/>:<div className="flex h-24 w-24 items-center justify-center rounded-xl bg-slate-100 sm:h-36 sm:w-36"><UserRound size={40} className="text-slate-400"/></div>}
+              {photo?<img src={photo} alt={`Foto de ${p.name}`} loading="lazy" className="h-24 w-24 rounded-xl bg-slate-100 object-cover object-top shadow-md sm:h-36 sm:w-36" onError={e=>{const fallback=fallbackPhoto(p.name);if(fallback&&e.currentTarget.src!==new URL(fallback,window.location.origin).href)e.currentTarget.src=fallback;else e.currentTarget.style.display="none";}}/>:<div className="flex h-24 w-24 items-center justify-center rounded-xl bg-slate-100 sm:h-36 sm:w-36"><UserRound size={40} className="text-slate-400"/></div>}
               {isAdmin&&<div className="w-full text-center text-xs font-bold"><span className="text-green-700">Ativo</span><span className="mx-1 text-slate-300">·</span><span>{commission==null?"Comissão não cadastrada":`${commission.toLocaleString("pt-BR")}%`}</span></div>}
             </div>
           </div>
