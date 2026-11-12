@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 import { MapPin, ArrowLeft, TrendingUp, UserRound, X, UserPlus, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -75,6 +76,8 @@ function RepresentativesMap(){
   const [mapError,setMapError]=useState(false);
   const [selected,setSelected]=useState("");
   const [mapExpanded,setMapExpanded]=useState(false);
+  const [editingRep,setEditingRep]=useState<Representative|null>(null);
+  const qc=useQueryClient();
   useEffect(()=>{
     let active=true;
     fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson")
@@ -202,7 +205,7 @@ function RepresentativesMap(){
         const values=adminData?.sales.get(p.photoId)??adminData?.sales.get(p.id);
         const commission=adminData?.commissions.get(p.photoId)??adminData?.commissions.get(p.id);
         const max=Math.max(1,...(values??[0,0,0]));
-        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">\n          {isAdmin&&editHash(p)&&<Link to="/pessoas" hash={editHash(p)!} title={`Abrir ficha completa de ${p.name} para edição`} className="mb-3 flex items-center justify-between rounded-lg bg-[#eaf2fa] px-3 py-2 text-xs font-bold text-[#153c68] hover:bg-[#dceafa]">Abrir ficha completa do representante <Pencil size={16}/></Link>}
+        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">\n
           <div className="grid grid-cols-[minmax(0,1fr)_100px] gap-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-5">
             <div className="min-w-0 space-y-2 text-sm sm:text-base">
               <p><strong>Representante:</strong> <span className="font-semibold">{p.name}</span></p>
@@ -213,6 +216,7 @@ function RepresentativesMap(){
             </div>
             <div className="flex flex-col items-center gap-2">
               {photo?<img src={photo} alt={`Foto de ${p.name}`} loading="lazy" className="h-24 w-24 rounded-xl bg-slate-100 object-cover object-top shadow-md sm:h-36 sm:w-36" onError={e=>{const fallback=fallbackPhoto(p.name);if(fallback&&e.currentTarget.src!==new URL(fallback,window.location.origin).href)e.currentTarget.src=fallback;else e.currentTarget.style.display="none";}}/>:<div className="flex h-24 w-24 items-center justify-center rounded-xl bg-slate-100 sm:h-36 sm:w-36"><UserRound size={40} className="text-slate-400"/></div>}
+              {isAdmin&&<button type="button" onClick={()=>setEditingRep(p)} aria-label={`Editar ficha de ${p.name}`} title={`Editar ficha de ${p.name}`} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f1fa] text-[#164575] shadow-sm transition hover:bg-[#cce3f5]"><Pencil size={19}/></button>}
               {isAdmin&&<div className="w-full text-center text-xs font-bold"><span className="text-green-700">Ativo</span><span className="mx-1 text-slate-300">·</span><span>{commission==null?"Comissão não cadastrada":`${commission.toLocaleString("pt-BR")}%`}</span></div>}
             </div>
           </div>
@@ -227,5 +231,100 @@ function RepresentativesMap(){
         </article>;
       })}
     </section>
+    {isAdmin&&editingRep&&<RepresentativeEditDialog representative={editingRep} target={editHash(editingRep)} onClose={()=>setEditingRep(null)} onSaved={()=>{void qc.invalidateQueries({queryKey:["public-representatives-map-v3"]});void qc.invalidateQueries({queryKey:["representatives-edit-targets"]});}}/>}
   </main>;
+}
+
+function RepresentativeEditDialog({representative,target,onClose,onSaved}:{representative:Representative;target:string|null;onClose:()=>void;onSaved:()=>void}){
+ const [name,setName]=useState(representative.name);
+ const [phone,setPhone]=useState(representative.phone);
+ const [uf,setUf]=useState(representative.uf);
+ const [city,setCity]=useState(representative.city);
+ const [region,setRegion]=useState(representative.region);
+ const [busy,setBusy]=useState(false);
+ const [rate,setRate]=useState("");
+ const [active,setActive]=useState(true);
+ const [email,setEmail]=useState("");
+ const [cities,setCities]=useState("");
+ const [initializing,setInitializing]=useState(true);
+ useEffect(()=>{
+  let mounted=true;
+  async function load(){
+   try{
+    if(!target)throw Error("Cadastro não vinculado a uma ficha editável.");
+    const [kind,id]=target.split(":");
+    if(kind==="person"){
+     const [profile,territory,commission]=await Promise.all([
+      supabase.from("profiles").select("full_name,phone,email,access_active,territory_uf,territory_cities").eq("id",id).single(),
+      supabase.from("person_territories" as never).select("city_base,region").eq("user_id",id).maybeSingle(),
+      supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",id).maybeSingle()
+     ]);
+     if(profile.error)throw profile.error;
+     if(mounted){
+      setName(profile.data.full_name??representative.name);setPhone(profile.data.phone??"");setEmail(profile.data.email??"");
+      setActive(profile.data.access_active);setUf(profile.data.territory_uf??representative.uf);
+      setCities(profile.data.territory_cities??"");
+      const t=territory.data as {city_base?:string;region?:string}|null;
+      setCity(t?.city_base??representative.city);setRegion(t?.region??representative.region);
+      setRate(String((commission.data as {rate?:number}|null)?.rate??""));
+     }
+    }else{
+     const [record,commission]=await Promise.all([
+      supabase.from("commercial_representatives").select("*").eq("id",id).single(),
+      supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",id).maybeSingle()
+     ]);
+     if(record.error)throw record.error;
+     if(mounted){const d=record.data as Record<string,unknown>;setName(String(d.full_name??representative.name));setPhone(String(d.phone??representative.phone));setEmail(String(d.email??""));setActive(d.active!==false);setUf(String(d.uf??representative.uf));setCity(String(d.city??representative.city));setRegion(String(d.region??representative.region));setRate(String((commission.data as {rate?:number}|null)?.rate??""));}
+    }
+   }catch(e){if(mounted)toast.error(e instanceof Error?e.message:"Não foi possível carregar a ficha.");}
+   finally{if(mounted)setInitializing(false);}
+  }
+  void load();return()=>{mounted=false;};
+ },[target,representative]);
+ async function save(){
+  if(!target||!name.trim()){toast.error("Confira o cadastro e o nome.");return;}
+  const rateNumber=rate.trim()===""?null:Number(rate.replace(",","."));
+  if(rateNumber!==null&&(!Number.isFinite(rateNumber)||rateNumber<0.5||rateNumber>3.5)){toast.error("Comissão permitida: 0,5% a 3,5%.");return;}
+  setBusy(true);
+  try{
+   const [kind,id]=target.split(":");
+   if(kind==="person"){
+    const contact=await supabase.rpc("admin_update_person_contact" as never,{p_user:id,p_name:name.trim(),p_phone:phone.trim()} as never);
+    if(contact.error)throw contact.error;
+    const profile=await supabase.from("profiles").select("site_role,supervisor_id").eq("id",id).single();
+    if(profile.error)throw profile.error;
+    const role=profile.data.site_role;
+    const permissions=await supabase.rpc("admin_set_person" as never,{p_user:id,p_role:role,p_active:active,p_uf:uf,p_cities:cities,p_supervisor:profile.data.supervisor_id} as never);
+    if(permissions.error)throw permissions.error;
+    const territory=await supabase.from("person_territories" as never).upsert({user_id:id,city_base:city.trim(),region:region.trim()} as never,{onConflict:"user_id"});
+    if(territory.error)throw territory.error;
+    const commission=await supabase.rpc("admin_set_salesperson_commission" as never,{p_user:id,p_rate:rateNumber} as never);
+    if(commission.error)throw commission.error;
+   }else{
+    const result=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim(),active} as never).eq("id",id);
+    if(result.error)throw result.error;
+    const commission=await supabase.rpc("admin_set_commercial_representative_commission" as never,{p_representative:id,p_rate:rateNumber} as never);
+    if(commission.error)throw commission.error;
+   }
+   toast.success("Ficha do representante atualizada.");onSaved();onClose();
+  }catch(e){toast.error(e instanceof Error?e.message:"Não foi possível salvar a ficha.");}
+  finally{setBusy(false);}
+ }
+ return <div role="dialog" aria-modal="true" aria-label={`Editar ficha de ${representative.name}`} className="fixed inset-0 z-[2000] flex items-center justify-center bg-[#06152e]/80 p-3">
+  <div className="max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-4 shadow-2xl sm:p-6">
+   <div className="mb-4 flex items-center justify-between gap-3"><div><h2 className="text-lg font-black">Ficha do representante</h2><p className="text-xs text-slate-500">Edição administrativa · {representative.name}</p></div><button type="button" onClick={onClose} aria-label="Fechar ficha" className="rounded-lg bg-slate-100 p-2"><X size={22}/></button></div>
+   {!target?<p className="rounded-lg bg-amber-50 p-3 text-sm">Não foi possível localizar o cadastro correspondente. Verifique o vínculo do representante no painel administrativo.</p>:initializing?<p>Carregando ficha completa…</p>:<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <label className="text-sm font-bold sm:col-span-2">Representante<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+    <label className="text-sm font-bold">Telefone<input value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+    <label className="text-sm font-bold">E-mail<input value={email} onChange={e=>setEmail(e.target.value)} disabled={target.startsWith("person:")} className="mt-1 w-full rounded-lg border border-slate-300 p-3 disabled:bg-slate-100"/></label>
+    <label className="text-sm font-bold">Estado<select value={uf} onChange={e=>setUf(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"><option value="">Selecione</option>{Object.entries(states).map(([key,st])=><option key={key} value={key}>{st.name}</option>)}</select></label>
+    <label className="text-sm font-bold">Cidade<input value={city} onChange={e=>setCity(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+    <label className="text-sm font-bold sm:col-span-2">Região de atuação<input value={region} onChange={e=>setRegion(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+    {target.startsWith("person:")&&<label className="text-sm font-bold sm:col-span-2">Cidades atendidas<input value={cities} onChange={e=>setCities(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>}
+    <label className="text-sm font-bold">Comissão (%)<input value={rate} onChange={e=>setRate(e.target.value)} inputMode="decimal" placeholder="0,5 a 3,5" className="mt-1 w-full rounded-lg border border-slate-300 p-3"/></label>
+    <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Ativo</label>
+    <div className="flex justify-end gap-2 sm:col-span-2"><button type="button" onClick={onClose} className="rounded-lg bg-slate-100 px-4 py-3 font-bold">Cancelar</button><button type="button" disabled={busy} onClick={()=>void save()} className="rounded-lg bg-[#102a52] px-5 py-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar alterações"}</button></div>
+   </div>}
+  </div>
+ </div>;
 }
