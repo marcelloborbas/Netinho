@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { MapPin, ArrowLeft, TrendingUp, UserRound, X } from "lucide-react";
+import { MapPin, ArrowLeft, TrendingUp, UserRound, X, UserPlus, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { pageHead } from "@/lib/page-head";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
+import { Link } from "@tanstack/react-router";
 
 
 export const Route = createFileRoute("/_authenticated/representantes-mapa")({
@@ -172,6 +173,7 @@ function RepresentativesMap(){
       </div>
     </section>
     <section aria-label="Representantes cadastrados" className="space-y-3">
+      {isAdmin&&<div className="flex justify-end"><Link to="/pessoas" hash="novo-representante" aria-label="Acrescentar representante" title="Acrescentar representante" className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#102a52] text-white shadow-md transition hover:scale-105 hover:bg-[#21588a]"><UserPlus size={20}/></Link></div>}
       <h2 className="px-1 text-base font-black text-[#102a52]">{selected?`Representantes · ${states[selected]?.name}`:"Representantes pelo Brasil"}</h2>
       {isLoading&&<p>Carregando representantes…</p>}
       {peopleError&&<p role="alert" className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">Não foi possível carregar os representantes cadastrados.</p>}
@@ -182,7 +184,7 @@ function RepresentativesMap(){
         const values=adminData?.sales.get(p.photoId)??adminData?.sales.get(p.id);
         const commission=adminData?.commissions.get(p.photoId)??adminData?.commissions.get(p.id);
         const max=Math.max(1,...(values??[0,0,0]));
-        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">
+        return <article key={p.id} className="overflow-hidden rounded-2xl bg-white p-3 shadow-[0_5px_20px_rgba(10,36,69,.10)] sm:p-4">\n          {isAdmin&&<Link to="/pessoas" hash={`person:${p.photoId}`} title={`Abrir ficha completa de ${p.name} para edição`} className="mb-3 flex items-center justify-between rounded-lg bg-[#eaf2fa] px-3 py-2 text-xs font-bold text-[#153c68] hover:bg-[#dceafa]">Abrir ficha completa do representante <Pencil size={16}/></Link>}
           <div className="grid grid-cols-[minmax(0,1fr)_100px] gap-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-5">
             <div className="min-w-0 space-y-2 text-sm sm:text-base">
               <p><strong>Representante:</strong> <span className="font-semibold">{p.name}</span></p>
