@@ -154,6 +154,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
  const [cities,setCities]=useState(person.territory_cities??"");
  const [cityBase,setCityBase]=useState("");
  const [region,setRegion]=useState("");
+ const [areaDdds,setAreaDdds]=useState("");
  const [mapUrl,setMapUrl]=useState("");
  const [mapFile,setMapFile]=useState<File|null>(null);
  const territoryInitialized=useRef(false);
@@ -174,6 +175,9 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   return value;
  }});
  useEffect(()=>{if(!territoryInitialized.current&&!territoryEdited.current&&territory!==undefined){setCityBase(territory?.city_base??"");setRegion(territory?.region??"");setMapUrl(territory?.map_url??"");territoryInitialized.current=true;}},[territory]);
+ const {data:storedDdds}=useQuery({queryKey:["representative-area-ddds",person.id],enabled:role==="Representante",queryFn:async()=>{const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",person.id).maybeSingle();if(error)throw error;return (data as {ddds?:string}|null)?.ddds??"";}});
+ const dddsInitialized=useRef(false);
+ useEffect(()=>{if(!dddsInitialized.current&&storedDdds!==undefined){setAreaDdds(storedDdds);dddsInitialized.current=true;}},[storedDdds]);
  const effectiveCity=cityBase;
  const effectiveRegion=region;
  const effectiveMap=mapUrl;
@@ -197,6 +201,13 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   const {data:savedTerritory,error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"}).select("user_id").maybeSingle();
   setBusy(false);
   if(territoryError||!savedTerritory){toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
+  if(role==="Representante"){
+   const ddds=Array.from(new Set(areaDdds.split(/[,;\\s]+/).map(x=>x.replace(/^0+(?=\\d)/,"")).filter(Boolean)));
+   if(ddds.some(x=>!/^\\d{2}$/.test(x))){toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
+   const {error:dddError}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:person.id,ddds:ddds.join(", ")} as never,{onConflict:"representative_id"});
+   if(dddError){toast.error("Dados pessoais salvos, mas os DDDs não foram gravados: "+dddError.message);return;}
+   void qc.invalidateQueries({queryKey:["representative-area-ddds",person.id]});
+  }
   setMapUrl(image);setMapFile(null);territoryEdited.current=false;
   await qc.invalidateQueries({queryKey:["person-territory",person.id]});
   // Comissões são independentes: falhas não impedem o salvamento do território.
@@ -290,6 +301,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
    {sales&&<div className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3">
     <strong>Área de atuação</strong>
     <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>{territoryEdited.current=true;setCityBase(e.target.value);}} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+    {role==="Representante"&&<label className="block text-sm font-bold">DDD(s) da área de atuação<input value={areaDdds} onChange={e=>setAreaDdds(e.target.value)} placeholder="Ex.: 11, 15, 19" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/><span className="text-xs font-normal text-slate-500">Separe múltiplos DDDs por vírgula.</span></label>}
     <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>{territoryEdited.current=true;setRegion(e.target.value);}} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Estado(s) — UF<input value={uf} onChange={e=>setUf(e.target.value)} placeholder="Ex.: SP, MG" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     <label className="block text-sm font-bold">Cidades atendidas<textarea value={cities} onChange={e=>setCities(e.target.value)} rows={2} placeholder="Ex.: Sorocaba, Itu, Votorantim" className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-3"/></label>
