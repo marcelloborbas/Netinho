@@ -107,7 +107,7 @@ function Home() {
     : access?.attribution === "Representante" ? "Representante"
     : access?.attribution === "Vendedor" ? "Vendedor"
     : access?.can_sell ? "Vendedor" : "Visitante";
-  if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><p className="text-base font-semibold">Verificando seu acesso…</p><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
+  if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><div role="status" aria-live="polite" className="flex flex-col items-center gap-4"><span className="h-11 w-11 animate-spin rounded-full border-4 border-[#f3cb58]/30 border-t-[#f3cb58]" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></div><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
     <div className="home-page flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-2 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-[82px] text-[#102a52] sm:gap-3 sm:pb-24">
