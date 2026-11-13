@@ -45,6 +45,21 @@ async function loadSalesEvolution(){
  return periods.map(p=>({...p,...totals.get(p.key)!}));
 }
 
+const visitorParts = [
+  { name: "Bomba de direção hidráulica", image: "/images/carrossel/carrossel-1.webp" },
+  { name: "Kit de embreagem", image: "/images/carrossel/carrossel-2.webp" },
+  { name: "Caixa de direção", image: "/images/carrossel/carrossel-3.webp" },
+];
+
+function VisitorPartsShowcase() {
+  return <section className="mx-3 mb-3 grid grid-cols-3 gap-2 rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-2 shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6 sm:gap-4 sm:p-4" aria-label="Peças automotivas em destaque">
+    {visitorParts.map(part=><figure key={part.image} className="min-w-0 overflow-hidden rounded-xl bg-white p-1.5 shadow-sm sm:p-3">
+      <img src={part.image} alt={part.name} loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-lg object-contain"/>
+      <figcaption className="mt-2 line-clamp-2 min-h-[2.5em] text-center text-[11px] font-bold leading-tight text-[#102a52] sm:text-base">{part.name}</figcaption>
+    </figure>)}
+  </section>;
+}
+
 export function HomeSalesEvolution() {
   const {data:me,isLoading:loadingMe}=useQuery(meQuery);
   const isAdmin=me?.isAdmin===true;
@@ -59,7 +74,7 @@ export function HomeSalesEvolution() {
   const previousTotal = history.length > 1 ? history[history.length - 2]?.total ?? 0 : 0;
   const currentTotal = history[history.length - 1]?.total ?? 0;
   const growth = previousTotal > 0 ? (currentTotal - previousTotal) / previousTotal * 100 : null;
-  if(!loadingMe&&!isAdmin)return null;
+  if(!loadingMe&&!isAdmin)return <VisitorPartsShowcase />;
   const totalSales=history.reduce((sum,p)=>sum+p.total,0);
   const totalCommissions=history.reduce((sum,p)=>sum+p.commission,0);
   return <section className="mx-3 mb-3 !min-h-0 !h-auto overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 text-white shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6" aria-label="Evolução das vendas da Netinho">
