@@ -199,13 +199,12 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
    image=supabase.storage.from("territory-maps").getPublicUrl(path).data.publicUrl;
   }
   const {data:savedTerritory,error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"}).select("user_id").maybeSingle();
-  setBusy(false);
-  if(territoryError||!savedTerritory){toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
+  if(territoryError||!savedTerritory){setBusy(false);toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
   if(role==="Representante"){
    const ddds=Array.from(new Set(areaDdds.split(/[,;\s]+/).map(x=>x.replace(/^0+(?=\d)/,"")).filter(Boolean)));
-   if(ddds.some(x=>!/^\d{2}$/.test(x))){toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
+   if(ddds.some(x=>!/^\d{2}$/.test(x))){setBusy(false);toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
    const {error:dddError}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:person.id,ddds:ddds.join(", ")} as never,{onConflict:"representative_id"});
-   if(dddError){toast.warning("Dados pessoais salvos, mas os DDDs ainda não foram gravados. Aplique a migração no Supabase: "+dddError.message);}
+   if(dddError){setBusy(false);toast.error("DDD não foi salvo. Aplique a migração representative_area_ddds no Supabase: "+dddError.message);return;}
    void qc.invalidateQueries({queryKey:["representative-area-ddds",person.id]});
   }
   setMapUrl(image);setMapFile(null);territoryEdited.current=false;
@@ -224,6 +223,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
     else void qc.invalidateQueries({queryKey:["person-commission",person.id]});
    }
   }
+  setBusy(false);
   if(commissionWarning)toast.warning("Pessoa e região salvas. "+commissionWarning);
   else toast.success("Pessoa e região atualizadas.");
   onSaved();setOpen(false);onClose?.();
