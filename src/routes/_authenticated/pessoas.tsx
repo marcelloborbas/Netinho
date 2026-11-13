@@ -202,10 +202,10 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   setBusy(false);
   if(territoryError||!savedTerritory){toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
   if(role==="Representante"){
-   const ddds=Array.from(new Set(areaDdds.split(/[,;\\s]+/).map(x=>x.replace(/^0+(?=\\d)/,"")).filter(Boolean)));
-   if(ddds.some(x=>!/^\\d{2}$/.test(x))){toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
+   const ddds=Array.from(new Set(areaDdds.split(/[,;\s]+/).map(x=>x.replace(/^0+(?=\d)/,"")).filter(Boolean)));
+   if(ddds.some(x=>!/^\d{2}$/.test(x))){toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
    const {error:dddError}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:person.id,ddds:ddds.join(", ")} as never,{onConflict:"representative_id"});
-   if(dddError){toast.error("Dados pessoais salvos, mas os DDDs não foram gravados: "+dddError.message);return;}
+   if(dddError){toast.warning("Dados pessoais salvos, mas os DDDs ainda não foram gravados. Aplique a migração no Supabase: "+dddError.message);}
    void qc.invalidateQueries({queryKey:["representative-area-ddds",person.id]});
   }
   setMapUrl(image);setMapFile(null);territoryEdited.current=false;
