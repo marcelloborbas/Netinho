@@ -111,7 +111,8 @@ function RepresentativesMap(){
     staleTime:60_000,
     queryFn:async()=>{
       const [{data,error},{data:areaRows,error:areaError}]=await Promise.all([supabase.rpc("list_public_representatives" as never),supabase.from("representative_area_ddds" as never).select("representative_id,ddds")]);
-      if(areaError)throw areaError;
+      // A tabela de DDDs pode ainda não ter sido migrada: nunca bloquear a lista pública.
+      if(areaError)console.warn("DDDs indisponíveis; mantendo representantes e mapa ativos.",areaError.message);
       const areaById=new Map(((areaRows??[]) as Array<{representative_id:string;ddds:string}>).map(row=>[row.representative_id,row.ddds]));
       if(error)throw error;
       return ((data??[]) as Array<{id:string;full_name:string;uf:string;city:string;region:string;phone:string;photo_id:string}>).map(p=>({
@@ -207,7 +208,7 @@ function RepresentativesMap(){
           const active=highlightedState===uf;
           return <path key={uf||i} d={pathOf(f.geometry)} fill={active?"url(#netinho-map-blue)":(representativesByUf.get(uf)??0)>0?"url(#netinho-map-represented)":"url(#netinho-map-metal)"} stroke={active?"#fff0a3":"#f8d74b"} strokeWidth={active?2.4:1.3} fillRule="evenodd" className={uf?"cursor-pointer transition-all duration-300 hover:brightness-150 focus:outline-none focus:brightness-150":""} style={{filter:active?"url(#netinho-map-glow)":undefined}} role="button" tabIndex={uf?0:undefined} aria-label={`Selecionar ${states[uf]?.name||uf}`} onKeyDown={e=>{if(uf&&(e.key==="Enter"||e.key===" ")){e.preventDefault();chooseMapState(uf);}}} onClick={()=>uf&&chooseMapState(uf)}><title>{states[uf]?.name||f.properties.name}</title></path>;
         })}
-        {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);const count=representativesByUf.get(uf)??0;return <g key={uf} pointerEvents="none"><text x={x} y={y-3} textAnchor="middle" fontSize="10" fontWeight="900" fill="#ffffff" stroke="#064b93" strokeWidth=".6" paintOrder="stroke">{uf}</text>{count>0&&<g><circle cx={x} cy={y+9} r={9} fill="#fff7d4" stroke="#e4b92d" strokeWidth="1.5"/><text x={x} y={y+12.5} textAnchor="middle" fontSize="10" fontWeight="900" fill="#123e72">{count}</text></g>}{(()=>{const codes=Array.from(new Set(people.filter(p=>p.uf===uf).flatMap(p=>p.ddds.split(/[,;\\s]+/).filter(Boolean))));return codes.length>0?<text x={x} y={y+(count>0?26:12)} textAnchor="middle" fontSize="7" fontWeight="900" fill="#102a52" stroke="#ffffff" strokeWidth="1.7" paintOrder="stroke">{codes.join("/")}</text>:null;})()}</g>;})}
+        {labels.filter(([uf])=>!selected||selected===uf).map(([uf,st])=>{const [x,y]=project([st.lon,st.lat]);const count=representativesByUf.get(uf)??0;return <g key={uf} pointerEvents="none"><text x={x} y={y-3} textAnchor="middle" fontSize="10" fontWeight="900" fill="#ffffff" stroke="#064b93" strokeWidth=".6" paintOrder="stroke">{uf}</text>{count>0&&<g><circle cx={x} cy={y+9} r={9} fill="#fff7d4" stroke="#e4b92d" strokeWidth="1.5"/><text x={x} y={y+12.5} textAnchor="middle" fontSize="10" fontWeight="900" fill="#123e72">{count}</text></g>}{(()=>{const codes=Array.from(new Set(people.filter(p=>p.uf===uf).flatMap(p=>p.ddds.split(/[,;\s]+/).filter(Boolean))));const displayedCodes=codes.length?codes:dddRows.filter(row=>row.uf===uf).map(row=>row.ddd);return displayedCodes.length>0?<text x={x} y={y+(count>0?26:12)} textAnchor="middle" fontSize={displayedCodes.length>3?"5":"7"} fontWeight="900" fill="#102a52" stroke="#ffffff" strokeWidth="1.7" paintOrder="stroke">{displayedCodes.map(code=>"0"+code).join("/")}</text>:null;})()}</g>;})}
       </svg>
       {!features.length&&<p className="relative pb-4 text-center text-sm text-[#102a52]">{mapError?"Não foi possível carregar as divisas estaduais. Use a seleção de estados abaixo.":"Carregando mapa do Brasil…"}</p>}
       {selected&&<p className="relative pb-3 text-center text-sm font-bold text-white">{selectedPeople.length} representante(s) · {states[selected]?.name}</p>}
@@ -278,7 +279,7 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
     if(!target)throw Error("Cadastro não vinculado a uma ficha editável.");
     const [kind,id]=target.split(":");
     const dddResult=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",id).maybeSingle();
-    if(dddResult.error)throw dddResult.error;
+    if(dddResult.error)console.warn("Cadastro de DDDs indisponível:",dddResult.error.message);
     if(mounted)setAreaDdds((dddResult.data as {ddds?:string}|null)?.ddds??"");
     if(kind==="person"){
      const [profile,territory,commission]=await Promise.all([
@@ -337,8 +338,8 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
     const commission=await supabase.rpc("admin_set_commercial_representative_commission" as never,{p_representative:id,p_rate:rateNumber} as never);
     if(commission.error)throw commission.error;
    }
-   const normalizedDdds=Array.from(new Set(areaDdds.split(/[,;\\s]+/).map(x=>x.replace(/^0+(?=\\d)/,"")).filter(Boolean)));
-   if(normalizedDdds.some(x=>!/^\\d{2}$/.test(x)))throw Error("Informe DDDs válidos de dois dígitos.");
+   const normalizedDdds=Array.from(new Set(areaDdds.split(/[,;\s]+/).map(x=>x.replace(/^0+(?=\d)/,"")).filter(Boolean)));
+   if(normalizedDdds.some(x=>!/^\d{2}$/.test(x)))throw Error("Informe DDDs válidos de dois dígitos.");
    const savedDdds=await supabase.from("representative_area_ddds" as never).upsert({representative_id:id,ddds:normalizedDdds.join(", ")} as never,{onConflict:"representative_id"});
    if(savedDdds.error)throw savedDdds.error;
    toast.success("Ficha do representante atualizada.");onSaved();onClose();
