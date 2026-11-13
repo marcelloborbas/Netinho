@@ -241,6 +241,7 @@ function AuthPage() {
     window.sessionStorage.removeItem("netinho-entry-approved");
     qc.clear();
   }
+  if (signedIn && !recovery && !previewMode) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-5 bg-[#0b1f3f] px-5 text-center text-white" role="status" aria-live="polite"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-36 max-w-full" /><LoaderCircle size={42} className="animate-spin text-[#f3cb58]" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></main>;
   if (previewMode) {
     const device = {
       phone: { label: "Celular", width: 390, height: 844, icon: Smartphone },
