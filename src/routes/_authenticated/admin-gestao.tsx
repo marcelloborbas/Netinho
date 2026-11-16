@@ -40,7 +40,13 @@ async function readAllRows(table: string): Promise<ExportRow[]> {
 async function exportAdminData(): Promise<number> {
   // Use the current authenticated Supabase connection; never write to the source database.
   const sources = [
-    { sheet: "Representantes", table: "profiles" },
+    { sheet: "Perfis com acesso", table: "profiles" },
+    { sheet: "Representantes comerciais", table: "commercial_representatives" },
+    { sheet: "Dados comerciais", table: "commercial_representative_details" },
+    { sheet: "Perfis representantes", table: "representative_profiles" },
+    { sheet: "Dados privados representantes", table: "representative_private_details" },
+    { sheet: "Comissões comerciais", table: "commercial_representative_commission_rates" },
+    { sheet: "Comissões usuários", table: "salesperson_commission_rates" },
     { sheet: "Clientes", table: "customers" },
     { sheet: "Produtos", table: "products" },
     { sheet: "Categorias", table: "categories" },
