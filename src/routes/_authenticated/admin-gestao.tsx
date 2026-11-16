@@ -43,6 +43,9 @@ async function exportAdminData(): Promise<number> {
     { sheet: "Representantes", table: "profiles" },
     { sheet: "Clientes", table: "customers" },
     { sheet: "Produtos", table: "products" },
+    { sheet: "Categorias", table: "categories" },
+    { sheet: "Pedidos", table: "orders" },
+    { sheet: "Itens dos pedidos", table: "order_items" },
     { sheet: "DDDs", table: "representative_area_ddds" },
     { sheet: "Áreas de atuação", table: "person_territories" },
   ];
@@ -131,7 +134,7 @@ function Admin() {
     </section>
     <section className="rounded-2xl border border-[#d9aa30]/60 bg-white p-4 shadow-sm">
       <h2 className="text-lg font-black">Exportação de cadastros</h2>
-      <p className="mt-1 text-sm">Baixe um único arquivo Excel com abas separadas para representantes, clientes, produtos, DDDs e áreas de atuação. Somente leitura; nenhuma alteração será feita no banco.</p>
+      <p className="mt-1 text-sm">Baixe um único arquivo Excel com abas separadas para representantes, clientes, produtos, categorias, pedidos, itens dos pedidos, DDDs e áreas de atuação. Somente leitura; nenhuma alteração será feita no banco.</p>
       <button type="button" disabled={exporting} onClick={handleExport} className="mt-3 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#102a52] px-5 py-3 font-black text-white disabled:opacity-60">
         {exporting ? <LoaderCircle size={20} className="animate-spin"/> : <Download size={20}/>}
         {exporting ? "Preparando Excel..." : "EXPORTAR DADOS"}
