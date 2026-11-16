@@ -37,26 +37,37 @@ async function readAllRows(table: string): Promise<ExportRow[]> {
   return rows;
 }
 
-async function exportAdminData() {
+async function exportAdminData(): Promise<number> {
   // Use the current authenticated Supabase connection; never write to the source database.
-  const [profiles, customers, products, ddds, territories] = await Promise.all([
-    readAllRows("profiles"),
-    readAllRows("customers"),
-    readAllRows("products"),
-    readAllRows("representative_area_ddds"),
-    readAllRows("person_territories"),
-  ]);
+  const sources = [
+    { sheet: "Representantes", table: "profiles" },
+    { sheet: "Clientes", table: "customers" },
+    { sheet: "Produtos", table: "products" },
+    { sheet: "DDDs", table: "representative_area_ddds" },
+    { sheet: "Áreas de atuação", table: "person_territories" },
+  ];
+  const results = await Promise.all(sources.map(async source => {
+    try { return { ...source, rows: await readAllRows(source.table), error: "" }; }
+    catch (error) { return { ...source, rows: [] as ExportRow[], error: error instanceof Error ? error.message : String(error) }; }
+  }));
+  if (results.every(result => result.error)) {
+    throw new Error("Não foi possível consultar nenhuma tabela. Verifique a conexão do site com o Supabase e as permissões de leitura.");
+  }
   const ExcelJS = (await import("exceljs")).default;
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Netinho Auto Parts";
   workbook.created = new Date();
-  const sheets: Array<[string, ExportRow[]]> = [
-    ["Representantes", profiles],
-    ["Clientes", customers],
-    ["Produtos", products],
-    ["DDDs", ddds],
-    ["Áreas de atuação", territories],
-  ];
+  const summary = workbook.addWorksheet("Resumo da exportação");
+  summary.addRow(["Cadastro", "Tabela", "Situação", "Registros", "Detalhes"]);
+  for (const result of results) summary.addRow([
+    result.sheet, result.table,
+    result.error ? "NÃO EXPORTADO" : result.rows.length ? "EXPORTADO" : "VAZIO",
+    result.error ? "" : result.rows.length, result.error,
+  ]);
+  summary.columns = [{ width: 24 }, { width: 34 }, { width: 20 }, { width: 14 }, { width: 95 }];
+  summary.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+  summary.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF102A52" } };
+  const sheets: Array<[string, ExportRow[]]> = results.filter(result => !result.error).map(result => [result.sheet, result.rows]);
   for (const [name, rows] of sheets) {
     const sheet = workbook.addWorksheet(name);
     const columns = Array.from(new Set(rows.flatMap(row => Object.keys(row))));
@@ -89,6 +100,7 @@ async function exportAdminData() {
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  return results.filter(result => result.error).length;
 }
 
 function Admin() {
@@ -97,7 +109,7 @@ function Admin() {
   async function handleExport() {
     if (!me?.isAdmin || exporting) return;
     setExporting(true);
-    try { await exportAdminData(); toast.success("Arquivo Excel preparado para download."); }
+    try { const missing = await exportAdminData(); if (missing) toast.warning(`Excel gerado parcialmente: ${missing} cadastro(s) indisponível(is). Consulte a aba Resumo da exportação.`); else toast.success("Arquivo Excel preparado para download."); }
     catch (error) { toast.error(error instanceof Error ? error.message : "Falha ao exportar cadastros."); }
     finally { setExporting(false); }
   }
