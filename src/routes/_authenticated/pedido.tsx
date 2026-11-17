@@ -345,11 +345,11 @@ function OrderPage() {
               setReview(false);
             }
           }}
-          className="inline-flex h-14 w-14 shrink-0 animate-pulse items-center justify-center rounded-2xl border-2 border-[#ffb2b2] bg-gradient-to-b from-[#dc2626] to-[#991b1b] text-white shadow-[0_0_18px_rgba(239,68,68,.45)] transition hover:scale-105 hover:from-[#ef4444] hover:to-[#b91c1c] focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300 motion-reduce:animate-none"
+          className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-[3px] border-white bg-[#b91c1c] text-white shadow-[0_0_0_2px_#7f1d1d,0_4px_12px_rgba(0,0,0,.3)] transition-transform hover:scale-105 hover:bg-[#991b1b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
           aria-label="Excluir pedido em aberto"
           title="Excluir pedido em aberto"
         >
-          <Trash2 className="h-8 w-8" strokeWidth={2.5} />
+          <Trash2 className="h-9 w-9 shrink-0 text-white" strokeWidth={3} aria-hidden="true" />
         </button>
       </div>
 
@@ -488,11 +488,13 @@ function OrderPage() {
                 </div>
                 {!review && (
                   <button
-                    aria-label="Remover"
+                    type="button"
+                    aria-label={`Remover peça ${i.code} do pedido`}
+                    title={`Remover peça ${i.code}`}
                     onClick={() => draftActions.removeItem(i.productId)}
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-200 bg-red-50 text-red-700 shadow-sm transition hover:scale-105 hover:bg-red-100"
+                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-white bg-[#b91c1c] text-white shadow-[0_0_0_2px_#991b1b,0_3px_9px_rgba(0,0,0,.25)] transition-transform hover:scale-105 hover:bg-[#991b1b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
                   >
-                    <Trash2 className="h-5 w-5" strokeWidth={2.4} />
+                    <Trash2 className="h-7 w-7 shrink-0 text-white" strokeWidth={3} aria-hidden="true" />
                   </button>
                 )}
               </div>
