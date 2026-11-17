@@ -10,7 +10,7 @@ export function RepresentativeDirectory({ product = "" }: { product?: string }) 
     queryKey: ["representative-directory"],
     queryFn: async () => {
       const { data, error } = await supabase
-         .rpc("list_public_representatives");
+         .rpc("list_public_representatives" as never);
       if (error) throw error;
       return ((data ?? []) as Array<{ id: string; full_name: string; region: string; phone: string | null }>).map(rep => ({ slug: rep.id, full_name: rep.full_name, region: rep.region || "Região a confirmar", phone: rep.phone }));
     },
