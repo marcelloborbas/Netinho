@@ -1,11 +1,8 @@
 name: Implantar senha dos representantes no Supabase
 
+# Desativado: função legada usa user_roles inexistente e e-mails de teste.
+# Não publicar automaticamente até revisão de autenticação.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'supabase/functions/set-representative-password/**'
-      - '.github/workflows/deploy-supabase-function.yml'
   workflow_dispatch:
 
 permissions:
