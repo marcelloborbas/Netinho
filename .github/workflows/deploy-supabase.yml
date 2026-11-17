@@ -30,4 +30,4 @@ jobs:
             echo "::error::Configure o segredo SUPABASE_ACCESS_TOKEN em Settings > Secrets and variables > Actions."
             exit 1
           fi
-          supabase functions deploy set-representative-password --project-ref ajopipjydbphhwgtjfki
+          supabase functions deploy set-representative-password --project-ref gmxojviqhpyqsaceftpb
