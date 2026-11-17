@@ -392,6 +392,29 @@ function RepresentativeDetails({name,email,representativeId,commercial=false}:{n
  const [values,setValues]=useState<Record<string,string>>({});
  const [initialized,setInitialized]=useState(false);
  const [saving,setSaving]=useState(false);
+ const [areaDdds,setAreaDdds]=useState("");
+ const [dddLoaded,setDddLoaded]=useState(false);
+ const {data:storedAreaDdds,isLoading:dddLoading,error:dddError}=useQuery({
+  queryKey:["commercial-representative-area-ddds",representativeId],
+  enabled:commercial,
+  queryFn:async()=>{
+   const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",representativeId).maybeSingle();
+   if(error)throw error;
+   return (data as {ddds?:string}|null)?.ddds??"";
+  }
+ });
+ useEffect(()=>{if(!dddLoaded&&storedAreaDdds!==undefined){setAreaDdds(storedAreaDdds);setDddLoaded(true);}},[dddLoaded,storedAreaDdds]);
+ async function saveAreaDdds(){
+  if(dddLoading||!dddLoaded){toast.error("Aguarde o carregamento dos DDDs.");return;}
+  const ddds=Array.from(new Set(areaDdds.split(/[,;\\s]+/).map(x=>x.replace(/^0+(?=\\d)/,"")).filter(Boolean)));
+  if(ddds.some(x=>!/^\\d{2}$/.test(x))){toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
+  setSaving(true);
+  const {error}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:representativeId,ddds:ddds.join(", ")} as never,{onConflict:"representative_id"});
+  setSaving(false);
+  if(error){toast.error("Não foi possível salvar os DDDs: "+error.message);return;}
+  toast.success("DDDs de atuação salvos.");
+  await qc.invalidateQueries({queryKey:["commercial-representative-area-ddds",representativeId]});
+ }
  const {data:record,isLoading,error}=useQuery({
   queryKey:["admin-representative-detail",name,email],
   queryFn:async()=>{
