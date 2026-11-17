@@ -4840,3 +4840,58 @@ html body .welcome-auth-stage .welcome-auth-art {
     font-size: 15px !important;
   }
 }
+
+
+/* Refinamento dos cartões: montadora, ficha, valor e carrinho alinhados. */
+.catalog-showcase .catalog-product-card--compact .catalog-card-image-col {
+  align-self: stretch !important;
+  justify-content: center !important;
+}
+.catalog-showcase .catalog-product-card--compact .product-visual.catalog-card-piece-image {
+  aspect-ratio: auto !important;
+  min-height: 125px !important;
+  height: 100% !important;
+  max-height: 185px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.catalog-showcase .catalog-product-card--compact .product-visual.catalog-card-piece-image img {
+  max-height: 175px !important;
+  object-fit: contain !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-top-actions {
+  min-height: 42px;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-montadora-logo > div {
+  margin: 0 !important;
+  gap: 3px !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-montadora-logo span {
+  padding: 3px !important;
+  font-size: 0 !important;
+  animation: none !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-montadora-logo img {
+  width: 39px !important;
+  height: 30px !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-brand-line {
+  font-size: 12px !important;
+  line-height: 1.3;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-featured-price {
+  color: #102a52 !important;
+  font-size: clamp(19px, 5.5vw, 30px) !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.045em;
+  text-shadow: 0 1px 0 #e2bb54;
+}
+@media (max-width: 390px) {
+  .catalog-showcase .catalog-product-card--compact .catalog-card-featured-price {
+    font-size: clamp(18px, 5.2vw, 22px) !important;
+  }
+  .catalog-showcase .catalog-product-card--compact .product-visual.catalog-card-piece-image {
+    min-height: 120px !important;
+  }
+}
