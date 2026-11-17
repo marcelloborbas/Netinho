@@ -5199,3 +5199,124 @@ html body .welcome-auth-stage .welcome-auth-art {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+
+/* Layout único e compacto: imagem da peça define a altura do cartão. */
+.catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+  --catalog-piece-height: 118px;
+  display: grid !important;
+  grid-template-columns: minmax(100px, 35%) minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  border-radius: 16px !important;
+  border-width: 2px !important;
+  background: #fff !important;
+  background-image: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col {
+  align-self: center !important;
+  min-height: 0 !important;
+  height: var(--catalog-piece-height) !important;
+  padding-right: 7px !important;
+  background: #fff !important;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: var(--catalog-piece-height) !important;
+  min-height: 0 !important;
+  max-height: var(--catalog-piece-height) !important;
+  padding: 0 !important;
+  background: #fff !important;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: var(--catalog-piece-height) !important;
+  object-fit: contain !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-self: center !important;
+  height: var(--catalog-piece-height) !important;
+  min-height: 0 !important;
+  gap: 5px !important;
+  padding: 0 !important;
+  background: #fff !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-top-actions {
+  min-height: 38px !important;
+  gap: 4px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos {
+  gap: 4px !important;
+  min-width: 0 !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-montadora-logo img {
+  width: 34px !important;
+  height: 28px !important;
+  object-fit: contain !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos img.catalog-card-fco-original-logo {
+  width: 53px !important;
+  max-width: 53px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  filter: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-icon-button {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-price-area {
+  margin-top: auto !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-price-plaque {
+  min-height: 45px !important;
+  padding: 3px 2px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price {
+  font-size: clamp(17px, 4.7vw, 24px) !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-cash-condition {
+  font-size: 9px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content:has([aria-expanded="true"]),
+.catalog-showcase .catalog-product-card--glossy:has([aria-expanded="true"]) .catalog-card-glossy-content {
+  height: auto !important;
+  min-height: var(--catalog-piece-height) !important;
+}
+.catalog-showcase .catalog-product-card--glossy:has([aria-expanded="true"]) {
+  align-items: start !important;
+}
+@media (max-width: 390px) {
+  .catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+    --catalog-piece-height: 112px;
+    grid-template-columns: minmax(94px, 34%) minmax(0, 1fr) !important;
+    padding: 6px !important;
+    gap: 6px !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price {
+    font-size: clamp(16px, 4.6vw, 19px) !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos img.catalog-card-fco-original-logo {
+    width: 46px !important;
+    max-width: 46px !important;
+  }
+}
+@media (min-width: 700px) {
+  .catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+    --catalog-piece-height: 136px;
+    grid-template-columns: minmax(125px, 28%) minmax(0, 1fr) !important;
+    padding: 10px !important;
+  }
+}
