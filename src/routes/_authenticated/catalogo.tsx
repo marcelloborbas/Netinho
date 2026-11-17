@@ -510,9 +510,8 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
   const brand = p.manufacturer ?? "FCO";
   const img = p.image_url || categoryPhoto(p.categories?.name ?? "") || partImage(p.categories?.name);
     return <li className="catalog-product-card catalog-product-card--compact surface-card grid min-w-0 grid-cols-[minmax(96px,32%)_minmax(0,1fr)] items-start gap-2 overflow-hidden rounded-xl p-2 sm:grid-cols-[minmax(135px,29%)_minmax(0,1fr)] sm:gap-3 sm:p-3">
-    <div className="catalog-card-image-col min-w-0 self-start">
+    <div className="catalog-card-image-col min-w-0 self-stretch">
       <div className="product-visual catalog-card-piece-image w-full" aria-label={`Imagem da peça ${p.code}`}>{img ? <img src={img} alt={`Peça ${brand} ${p.code}`} loading="lazy" decoding="async"/> : <PackageSearch size={45} className="text-zinc-400"/>}</div>
-      <div className="catalog-card-piece-brand mt-1.5 text-center text-xs font-extrabold text-[#102a52] sm:text-sm">{brand}</div>
     </div>
 
     {showContact && <div className="rounded-xl border-2 border-[#a7c1e5] bg-[#f4f8ff] p-3 text-[#102a52]" role="group" aria-label={"Contato para comprar " + p.code}>
@@ -526,12 +525,20 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
       {representativesError && <p className="mt-2 text-xs">A lista de representantes não está disponível. Utilize o atendimento Netinho.</p>}
     </div>}
     <div className="catalog-card-info flex min-w-0 flex-col gap-2 px-1 py-0.5">
-       <div className="flex items-start justify-start">
+       <div className="catalog-card-top-actions flex min-w-0 items-start justify-between gap-2">
+         <div className="catalog-card-montadora-logo min-w-0 flex-1"><VehicleBrandIcons application={p.application} /></div>
          <button type="button" disabled={!canSell} aria-label={`Ver ficha técnica da peça ${p.code}`} title="Ficha técnica" aria-expanded={canSell && details} onClick={() => { if (!canSell) return; if (!details) onView(); setDetails(!details); }} className={`catalog-card-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${canSell ? "border-[#102a52] bg-[#102a52] text-white" : "cursor-not-allowed border-slate-300 bg-slate-200 text-slate-400"}`}><ClipboardList size={21} aria-hidden="true" /></button>
        </div>
-       <div className="catalog-card-price-row mt-auto flex min-w-0 items-center justify-between gap-2">
-         <strong className="min-w-0 whitespace-nowrap text-base font-black leading-tight text-[#102a52] sm:text-xl">{p.price_cash != null && Number.isFinite(Number(p.price_cash)) && Number(p.price_cash) > 0 ? brl(Number(p.price_cash)) : "Sob consulta"}</strong>
-         <button type="button" onClick={buy} disabled={!canSell} aria-label={`Comprar peça ${p.code}`} title="Adicionar ao pedido" className={`catalog-card-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${canSell ? "bg-[#102a52] text-white" : "cursor-not-allowed bg-slate-200 text-slate-400"}`}><ShoppingCart size={22} aria-hidden="true" /></button>
+       <div className="catalog-card-price-area mt-auto min-w-0">
+         <div className="catalog-card-brand-line mb-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-extrabold text-[#102a52]">
+           <span>{brand}</span>
+           <span className="text-slate-500" aria-hidden="true">•</span>
+           <span>{vehicleBrands.filter((item) => item.pattern.test(p.application ?? "")).map((item) => item.name).join(" / ") || "Montadora não informada"}</span>
+         </div>
+         <div className="catalog-card-price-row flex min-w-0 items-center justify-between gap-2">
+           <strong className="catalog-card-featured-price min-w-0 whitespace-nowrap font-black leading-tight text-[#102a52]">{p.price_cash != null && Number.isFinite(Number(p.price_cash)) && Number(p.price_cash) > 0 ? brl(Number(p.price_cash)) : "Sob consulta"}</strong>
+           <button type="button" onClick={buy} disabled={!canSell} aria-label={`Comprar peça ${p.code}`} title="Adicionar ao pedido" className={`catalog-card-icon-button flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${canSell ? "bg-[#102a52] text-white" : "cursor-not-allowed bg-slate-200 text-slate-400"}`}><ShoppingCart size={22} aria-hidden="true" /></button>
+         </div>
        </div>
        {details && <div className="mb-3 space-y-2 rounded-xl border border-[#102a52] bg-[#f1f1f1] p-3 text-sm leading-6 text-[#102a52]" style={{ backgroundColor: "var(--netinho-page-bg, #f1f1f1)", color: "#102a52" }}>
         <p><strong>Código:</strong> {p.code}</p>
