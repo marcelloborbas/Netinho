@@ -275,6 +275,26 @@ function Catalog() {
     return [...counts].map(([name, count]) => ({name, count})).sort((a,b) => a.name.localeCompare(b.name,"pt-BR"));
   }, [combined, manufacturer, category, dq, vehicleBrand, selectedVehicleBrand]);
 
+  // Pesquisa independente dos filtros anteriores: código, peça, referências e veículo.
+  // Ordenação por relevância, com resultados atualizados a cada caractere.
+  const liveResults = useMemo(() => {
+    const term = searchInput.trim();
+    if (!term) return [];
+    const normalized = term.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
+    const matches = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && productMatches(p, term));
+    const rank = (p: CatalogProduct) => {
+      const code = (p.code ?? "").toLocaleLowerCase("pt-BR");
+      const text = [p.application, p.refs, p.categories?.name, p.search_text].filter(Boolean).join(" ").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
+      if (code === normalized) return 0;
+      if (code.startsWith(normalized)) return 1;
+      if (code.includes(normalized)) return 2;
+      if (text.startsWith(normalized)) return 3;
+      return 4;
+    };
+    return matches.sort((a, b) => rank(a) - rank(b) || a.code.localeCompare(b.code, "pt-BR"));
+  }, [combined, searchInput]);
+  const livePreview = useMemo(() => liveResults.slice(0, 8), [liveResults]);
+
   const list = useMemo(() => {
     // Índices temporários evitam percorrer favoritos e itens do pedido para cada peça.
     const favoriteIds = filterMode === "favoritos" ? new Set(favorites) : null;
@@ -302,8 +322,10 @@ function Catalog() {
     if (filterMode === "recentes") return [...selected].sort((a, b) => (recentPositions?.get(a.code) ?? Infinity) - (recentPositions?.get(b.code) ?? Infinity));
     return selected;
   }, [combined, manufacturer, category, vehicleBrand, vehicleModel, selectedVehicleBrand, dq, filterMode, favorites, draft.items, recentCodes]);
-  const showProducts = hasSelectedCategory || vehicleBrand !== "all" || q.trim().length > 0;
-  const pageCount = Math.max(1, Math.ceil(list.length / 24));
+  const searching = searchInput.trim().length > 0;
+  const visibleProducts = searching ? liveResults : list;
+  const showProducts = searching || hasSelectedCategory || vehicleBrand !== "all";
+  const pageCount = Math.max(1, Math.ceil(visibleProducts.length / 24));
   const currentPage = Math.min(page, pageCount);
   const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
@@ -326,6 +348,20 @@ function Catalog() {
           <button type="button" onClick={() => { setSearchFocused(true); document.getElementById("catalog-search")?.focus(); }} aria-label="Buscar peças" title="Buscar" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#d4af37] bg-white text-[#102a52] shadow-sm hover:bg-[#fff4c2]"><Search size={23}/></button>
         </div>
       </section>
+      {searchInput.trim() && !isLoading && <section aria-label="Sugestões instantâneas de peças" className="rounded-xl border border-[#c9d7e6] bg-[#f1f1f1] p-2 shadow-sm">
+        <div className="mb-2 flex items-center justify-between gap-2 px-1">
+          <span className="text-xs font-extrabold text-[#102a52]">Resultados enquanto você digita</span>
+          <span className="text-xs font-semibold text-[#42627e]">{liveResults.length} {liveResults.length === 1 ? "peça" : "peças"}</span>
+        </div>
+        {livePreview.length ? <ul className="divide-y divide-[#d7dfe8]">
+          {livePreview.map((p) => <li key={p.id} className="flex min-w-0 items-center gap-2 px-2 py-2">
+            <PackageSearch size={17} className="shrink-0 text-[#244e7b]" aria-hidden="true" />
+            <span className="min-w-0 flex-1 truncate text-sm text-[#102a52]"><strong>{p.code}</strong> <span className="text-[#53687f]">— {(p.application || p.categories?.name || "Peça automotiva").slice(0, 85)}</span></span>
+            <span className="shrink-0 text-xs font-bold text-[#102a52]">{p.price_cash != null && p.price_cash > 0 ? brl(p.price_cash) : "Consultar"}</span>
+          </li>)}
+        </ul> : <p className="px-2 py-2 text-sm text-[#102a52]">Nenhuma peça corresponde ao texto digitado.</p>}
+        {liveResults.length > livePreview.length && <p className="px-2 pt-2 text-xs font-semibold text-[#42627e]">Mais resultados disponíveis nos cartões abaixo.</p>}
+      </section>}
 
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
@@ -405,13 +441,13 @@ function Catalog() {
         </div> : <p className="text-xs text-[#102a52]">Nenhum modelo identificado nas aplicações cadastradas para esta marca.</p>}
       </section>}
       </>}
-      {searchInput.trim() && <p role="status" aria-live="polite" className="mt-3 mb-2 text-sm font-bold text-[#102a52]">{isLoading ? "Procurando peças..." : `${list.length} ${list.length === 1 ? "peça encontrada" : "peças encontradas"} para “${searchInput.trim()}”`}</p>}
+      {searchInput.trim() && <p role="status" aria-live="polite" className="mt-3 mb-2 text-sm font-bold text-[#102a52]">{isLoading ? "Procurando peças..." : `${visibleProducts.length} ${visibleProducts.length === 1 ? "peça encontrada" : "peças encontradas"} para “${searchInput.trim()}”`}</p>}
       {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
-      {showProducts && (list.length ? (
+      {showProducts && (visibleProducts.length ? (
         <ul className="catalog-product-grid grid grid-cols-1 gap-4">
-          {list.slice((currentPage - 1) * 24, currentPage * 24).map((p) => <CatalogCard key={p.id} p={p} isFavorite={favorites.includes(p.id)} onToggleFavorite={() => toggleFavorite(p.id)} isCompared={compared.includes(p.id)} onToggleCompare={() => toggleCompare(p.id)} onView={() => recordViewed(p.code)}/>)}
+          {visibleProducts.slice((currentPage - 1) * 24, currentPage * 24).map((p) => <CatalogCard key={p.id} p={p} isFavorite={favorites.includes(p.id)} onToggleFavorite={() => toggleFavorite(p.id)} isCompared={compared.includes(p.id)} onToggleCompare={() => toggleCompare(p.id)} onView={() => recordViewed(p.code)}/>)}
         </ul>
       ) : !isLoading && <div className="surface-card p-10 text-center"><PackageSearch className="mx-auto text-primary" size={36}/><p className="mt-3 font-bold">Nenhuma peça encontrada.</p><button type="button" className="mt-3 underline" onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}>Mostrar todas</button></div>)}
       {showProducts && pageCount > 1 && <nav aria-label="Páginas do catálogo" className="flex items-center justify-center gap-4 pb-5">
