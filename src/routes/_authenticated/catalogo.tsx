@@ -536,7 +536,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
            <span>{vehicleBrands.filter((item) => item.pattern.test(p.application ?? "")).map((item) => item.name).join(" / ") || "Montadora não informada"}</span>
          </div>
          <div className="catalog-card-price-row catalog-card-glossy-price-row flex min-w-0 items-center justify-between gap-2">
-           <strong className="catalog-card-featured-price catalog-card-glossy-price min-w-0 whitespace-nowrap font-black leading-tight text-[#102a52]">{p.price_cash != null && Number.isFinite(Number(p.price_cash)) && Number(p.price_cash) > 0 ? brl(Number(p.price_cash)) : "Sob consulta"}</strong>
+           <div className="catalog-card-price-plaque min-w-0"><strong className="catalog-card-featured-price catalog-card-glossy-price min-w-0 whitespace-nowrap font-black leading-tight" style={{ color: "#FFD54A", WebkitTextFillColor: "#FFD54A", textShadow: "0 1px 2px rgba(0,0,0,.6)" }}>{p.price_cash != null && Number.isFinite(Number(p.price_cash)) && Number(p.price_cash) > 0 ? brl(Number(p.price_cash)) : "Sob consulta"}</strong><span className="catalog-card-cash-condition">Condição à vista</span></div>
            <button type="button" onClick={buy} disabled={!canSell} aria-label={`Comprar peça ${p.code}`} title="Adicionar ao pedido" className={`catalog-card-icon-button catalog-card-glossy-cart flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${canSell ? "bg-[#102a52] text-white" : "cursor-not-allowed bg-slate-200 text-slate-400"}`}><ShoppingCart size={22} aria-hidden="true" /></button>
          </div>
        </div>
