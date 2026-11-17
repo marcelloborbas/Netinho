@@ -165,7 +165,7 @@ function Catalog() {
   const [vehicleBrand, setVehicleBrand] = useState("all");
   const [vehicleModel, setVehicleModel] = useState("all");
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
-  const dq = useDeferredValue(q);
+  const dq = q; // Filtra a cada tecla, sem aguardar confirmação.
   const [searchFocused, setSearchFocused] = useState(false);
   const [compared, setCompared] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -238,11 +238,6 @@ function Catalog() {
       ...localHd.filter((hd) => !hdCodes.has(hd.code)),
     ];
   }, [products, localFco]);
-  const searchSuggestions = useMemo(() => {
-    const term = searchInput.trim();
-    if (!term) return [];
-    return combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && productMatches(p, term)).slice(0, 8);
-  }, [combined, searchInput]);
   const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD" && p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
   const categoryCounts = useMemo(() => {
     const eligible = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq));
@@ -326,16 +321,13 @@ function Catalog() {
               placeholder="Busque pelo código, peça ou veículo..."
               style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-11 w-full rounded-xl border-2 border-[#8dbbe5] px-3 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
             {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-2.5 text-[#102a52]"><X size={20}/></button>}
-            {searchFocused && searchInput.trim() && <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-xl border-2 border-[#d4af37] bg-white shadow-2xl" role="listbox" aria-label="Resultados enquanto digita">
-              {searchSuggestions.length ? searchSuggestions.map((p) => <button key={p.id} type="button" role="option" aria-selected={false} onMouseDown={(e) => e.preventDefault()} onClick={() => { setSearchInput(p.code); setQ(p.code); setPage(1); setSearchFocused(false); document.getElementById("catalog-search")?.blur(); }} className="flex w-full items-center justify-between gap-3 border-b border-slate-200 px-3 py-3 text-left text-sm text-[#102a52] hover:bg-[#eaf2ff]">
-                <span className="min-w-0"><strong className="block">{p.code}</strong><span className="block truncate">{p.name}</span></span><Search size={17} className="shrink-0 text-[#1675d1]"/>
-              </button>) : <p className="p-3 text-sm font-medium text-[#102a52]">Nenhum item encontrado.</p>}
-            </div>}
+
           </div>
           <button type="button" onClick={() => { setSearchFocused(true); document.getElementById("catalog-search")?.focus(); }} aria-label="Buscar peças" title="Buscar" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#d4af37] bg-white text-[#102a52] shadow-sm hover:bg-[#fff4c2]"><Search size={23}/></button>
         </div>
       </section>
 
+      {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
         <nav className="grid grid-cols-1 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
@@ -412,6 +404,8 @@ function Catalog() {
           </button>)}
         </div> : <p className="text-xs text-[#102a52]">Nenhum modelo identificado nas aplicações cadastradas para esta marca.</p>}
       </section>}
+      </>}
+      {searchInput.trim() && <p role="status" aria-live="polite" className="mt-3 mb-2 text-sm font-bold text-[#102a52]">{isLoading ? "Procurando peças..." : `${list.length} ${list.length === 1 ? "peça encontrada" : "peças encontradas"} para “${searchInput.trim()}”`}</p>}
       {categoriesError && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as categorias. <button type="button" className="font-bold underline" onClick={() => void refetchCategories()}>Tentar novamente</button></div>}
       {error && <div role="alert" className="rounded-xl border border-amber-400/30 p-4 text-sm">Não foi possível carregar todas as peças. <button type="button" className="font-bold underline" onClick={() => refetch()}>Tentar novamente</button></div>}
       {(isLoading || campaignLoading) && <p role="status" className="text-sm">Carregando catálogo...</p>}
