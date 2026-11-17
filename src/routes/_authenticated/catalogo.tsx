@@ -531,7 +531,7 @@ function CatalogCard({ p, isFavorite, onToggleFavorite, isCompared, onToggleComp
        </div>
        <div className="catalog-card-price-area mt-auto min-w-0">
          <div className="catalog-card-brand-line catalog-card-glossy-brand mb-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-extrabold text-[#102a52]">
-           <span>{brand}</span>
+           <span className="catalog-card-original-brand">{brand.trim().toUpperCase() === "FCO" ? <img src="/images/brands/FCO_logo_web.webp" alt="FCO" width={300} height={165} className="catalog-card-fco-original-logo" loading="lazy" decoding="async" /> : brand}</span>
            <span className="text-slate-500" aria-hidden="true">•</span>
            <span>{vehicleBrands.filter((item) => item.pattern.test(p.application ?? "")).map((item) => item.name).join(" / ") || "Montadora não informada"}</span>
          </div>
