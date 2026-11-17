@@ -5042,3 +5042,118 @@ html body .welcome-auth-stage .welcome-auth-art {
   box-shadow: none !important;
   mix-blend-mode: normal !important;
 }
+
+
+/* Ajuste definitivo de legibilidade, escala da logo e altura do cartão. */
+.catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+  grid-template-columns: minmax(100px, 34%) minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  padding: 8px 10px !important;
+  gap: 9px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col {
+  min-height: 0 !important;
+  padding-right: 7px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  min-height: 0 !important;
+  height: 154px !important;
+  max-height: 154px !important;
+  aspect-ratio: auto !important;
+  padding: 0 !important;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+  max-height: 154px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content {
+  min-height: 154px !important;
+  gap: 4px !important;
+  justify-content: space-between !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-brand {
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  margin-bottom: 3px !important;
+  font-size: 11px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-original-brand {
+  width: 57px !important;
+  max-width: 57px !important;
+  flex: 0 0 57px !important;
+}
+.catalog-showcase .catalog-product-card--glossy img.catalog-card-fco-original-logo {
+  width: 57px !important;
+  max-width: 57px !important;
+  height: auto !important;
+  aspect-ratio: 300 / 165 !important;
+  object-fit: contain !important;
+  filter: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-price-plaque {
+  display: flex !important;
+  flex: 1 1 0 !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 53px !important;
+  padding: 3px 2px !important;
+  border: 2px solid #f1b619 !important;
+  border-radius: 12px !important;
+  background: radial-gradient(ellipse at 50% 0%, #173e83, #061d4a 72%) !important;
+  box-shadow: inset 0 0 0 1px #fff2a6, inset 0 -4px 7px rgba(0,0,0,.25), 0 3px 5px rgba(0,0,0,.16) !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price-row {
+  align-items: center !important;
+  gap: 6px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price {
+  display: block !important;
+  flex: 0 1 auto !important;
+  width: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffd54a !important;
+  -webkit-text-fill-color: #ffd54a !important;
+  opacity: 1 !important;
+  filter: none !important;
+  font-size: clamp(19px, 5.3vw, 26px) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -.035em !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.6) !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-cash-condition {
+  display: block !important;
+  margin-top: 2px !important;
+  color: #fff2c3 !important;
+  -webkit-text-fill-color: #fff2c3 !important;
+  font-size: 9px !important;
+  line-height: 1.1 !important;
+  font-weight: 600 !important;
+  letter-spacing: .01em;
+  text-align: center;
+}
+@media (max-width: 390px) {
+  .catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+    grid-template-columns: minmax(96px, 33%) minmax(0, 1fr) !important;
+    gap: 7px !important;
+    padding: 7px !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image,
+  .catalog-showcase .catalog-product-card--glossy .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+    height: 150px !important;
+    max-height: 150px !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content {
+    min-height: 150px !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price {
+    font-size: clamp(17px, 5vw, 21px) !important;
+  }
+}
