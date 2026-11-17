@@ -1,12 +1,8 @@
 name: Publicar função de senhas no Supabase
 
+# Desativado: função legada usa user_roles inexistente e e-mails de teste.
+# Não publicar automaticamente até revisão de autenticação.
 on:
-  push:
-    branches: [main]
-    paths:
-      - "supabase/functions/set-representative-password/**"
-      - "supabase/config.toml"
-      - ".github/workflows/deploy-supabase.yml"
   workflow_dispatch:
 
 permissions:
