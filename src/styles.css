@@ -5320,3 +5320,13 @@ html body .welcome-auth-stage .welcome-auth-art {
     padding: 10px !important;
   }
 }
+
+
+/* Fundo padronizado dos cartões de peças: RGB(241, 241, 241). */
+.catalog-showcase .catalog-product-card.catalog-product-card--glossy,
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col,
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content,
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  background: rgb(241, 241, 241) !important;
+  background-image: none !important;
+}
