@@ -5014,3 +5014,31 @@ html body .welcome-auth-stage .welcome-auth-art {
     font-size: 11px !important;
   }
 }
+
+
+/* Logomarca FCO: arquivo WebP original, sem filtros, recortes ou redesenho. */
+.catalog-showcase .catalog-product-card--glossy .catalog-card-original-brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  max-width: 48%;
+  min-width: 0;
+}
+.catalog-showcase .catalog-product-card--glossy img.catalog-card-fco-original-logo {
+  display: block !important;
+  width: clamp(82px, 24vw, 128px) !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  aspect-ratio: 300 / 165 !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  mix-blend-mode: normal !important;
+}
