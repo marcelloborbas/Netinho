@@ -34,8 +34,8 @@ import { Route as AuthenticatedPromocaoRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedRepresentantesRouteImport } from './routes/_authenticated/representantes'
 import { Route as AuthenticatedRepresentantesMapaRouteImport } from './routes/_authenticated/representantes-mapa'
 import { Route as AuthenticatedTransportadorasRouteImport } from './routes/_authenticated/transportadoras'
-import { Route as AuthenticatedVendasPorRepresentanteRouteImport } from './routes/_authenticated/vendas-por-representante'
 import { Route as AuthenticatedVendasRouteImport } from './routes/_authenticated/vendas'
+import { Route as AuthenticatedVendasPorRepresentanteRouteImport } from './routes/_authenticated/vendas-por-representante'
 import { Route as AuthenticatedVendedoresRouteImport } from './routes/_authenticated/vendedores'
 import { Route as EditarRepresentanteSlugRouteImport } from './routes/editar-representante.$slug'
 import { Route as AuthenticatedPedidosIndexRouteImport } from './routes/_authenticated/pedidos.index'
@@ -175,16 +175,17 @@ const AuthenticatedTransportadorasRoute =
     path: '/transportadoras',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedVendasPorRepresentanteRoute = AuthenticatedVendasPorRepresentanteRouteImport.update({
-  id: '/vendas-por-representante',
-  path: '/vendas-por-representante',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedVendasRoute = AuthenticatedVendasRouteImport.update({
   id: '/vendas',
   path: '/vendas',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVendasPorRepresentanteRoute =
+  AuthenticatedVendasPorRepresentanteRouteImport.update({
+    id: '/vendas-por-representante',
+    path: '/vendas-por-representante',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedVendedoresRoute = AuthenticatedVendedoresRouteImport.update({
   id: '/vendedores',
   path: '/vendedores',
@@ -238,8 +239,8 @@ export interface FileRoutesByFullPath {
   '/representantes': typeof AuthenticatedRepresentantesRoute
   '/representantes-mapa': typeof AuthenticatedRepresentantesMapaRoute
   '/transportadoras': typeof AuthenticatedTransportadorasRoute
-  '/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/vendas': typeof AuthenticatedVendasRoute
+  '/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
@@ -271,8 +272,8 @@ export interface FileRoutesByTo {
   '/representantes': typeof AuthenticatedRepresentantesRoute
   '/representantes-mapa': typeof AuthenticatedRepresentantesMapaRoute
   '/transportadoras': typeof AuthenticatedTransportadorasRoute
-  '/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/vendas': typeof AuthenticatedVendasRoute
+  '/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
@@ -306,8 +307,8 @@ export interface FileRoutesById {
   '/_authenticated/representantes': typeof AuthenticatedRepresentantesRoute
   '/_authenticated/representantes-mapa': typeof AuthenticatedRepresentantesMapaRoute
   '/_authenticated/transportadoras': typeof AuthenticatedTransportadorasRoute
-  '/_authenticated/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/_authenticated/vendas': typeof AuthenticatedVendasRoute
+  '/_authenticated/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/_authenticated/vendedores': typeof AuthenticatedVendedoresRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/_authenticated/pedidos/$id': typeof AuthenticatedPedidosIdRoute
@@ -341,8 +342,8 @@ export interface FileRouteTypes {
     | '/representantes'
     | '/representantes-mapa'
     | '/transportadoras'
-    | '/vendas-por-representante'
     | '/vendas'
+    | '/vendas-por-representante'
     | '/vendedores'
     | '/editar-representante/$slug'
     | '/pedidos/$id'
@@ -374,8 +375,8 @@ export interface FileRouteTypes {
     | '/representantes'
     | '/representantes-mapa'
     | '/transportadoras'
-    | '/vendas-por-representante'
     | '/vendas'
+    | '/vendas-por-representante'
     | '/vendedores'
     | '/editar-representante/$slug'
     | '/pedidos/$id'
@@ -408,8 +409,8 @@ export interface FileRouteTypes {
     | '/_authenticated/representantes'
     | '/_authenticated/representantes-mapa'
     | '/_authenticated/transportadoras'
-    | '/_authenticated/vendas-por-representante'
     | '/_authenticated/vendas'
+    | '/_authenticated/vendas-por-representante'
     | '/_authenticated/vendedores'
     | '/editar-representante/$slug'
     | '/_authenticated/pedidos/$id'
@@ -606,18 +607,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransportadorasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/vendas-por-representante': {
-      id: '/_authenticated/vendas-por-representante'
-      path: '/vendas-por-representante'
-      fullPath: '/vendas-por-representante'
-      preLoaderRoute: typeof AuthenticatedVendasPorRepresentanteRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/vendas': {
       id: '/_authenticated/vendas'
       path: '/vendas'
       fullPath: '/vendas'
       preLoaderRoute: typeof AuthenticatedVendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vendas-por-representante': {
+      id: '/_authenticated/vendas-por-representante'
+      path: '/vendas-por-representante'
+      fullPath: '/vendas-por-representante'
+      preLoaderRoute: typeof AuthenticatedVendasPorRepresentanteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/vendedores': {
@@ -676,8 +677,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRepresentantesRoute: typeof AuthenticatedRepresentantesRoute
   AuthenticatedRepresentantesMapaRoute: typeof AuthenticatedRepresentantesMapaRoute
   AuthenticatedTransportadorasRoute: typeof AuthenticatedTransportadorasRoute
-  AuthenticatedVendasPorRepresentanteRoute: typeof AuthenticatedVendasPorRepresentanteRoute
   AuthenticatedVendasRoute: typeof AuthenticatedVendasRoute
+  AuthenticatedVendasPorRepresentanteRoute: typeof AuthenticatedVendasPorRepresentanteRoute
   AuthenticatedVendedoresRoute: typeof AuthenticatedVendedoresRoute
   AuthenticatedPedidosIdRoute: typeof AuthenticatedPedidosIdRoute
   AuthenticatedPedidosRelatorioRoute: typeof AuthenticatedPedidosRelatorioRoute
@@ -702,8 +703,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRepresentantesRoute: AuthenticatedRepresentantesRoute,
   AuthenticatedRepresentantesMapaRoute: AuthenticatedRepresentantesMapaRoute,
   AuthenticatedTransportadorasRoute: AuthenticatedTransportadorasRoute,
-  AuthenticatedVendasPorRepresentanteRoute: AuthenticatedVendasPorRepresentanteRoute,
   AuthenticatedVendasRoute: AuthenticatedVendasRoute,
+  AuthenticatedVendasPorRepresentanteRoute:
+    AuthenticatedVendasPorRepresentanteRoute,
   AuthenticatedVendedoresRoute: AuthenticatedVendedoresRoute,
   AuthenticatedPedidosIdRoute: AuthenticatedPedidosIdRoute,
   AuthenticatedPedidosRelatorioRoute: AuthenticatedPedidosRelatorioRoute,
