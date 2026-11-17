@@ -15,6 +15,7 @@ const NetinhoAssistant = lazy(() => import("@/components/NetinhoAssistant").then
 import { supabase } from "@/integrations/supabase/client";
 import { draftActions } from "@/lib/order-store";
 import appCss from "../styles.css?url";
+import { homeShareImage } from "@/lib/home-share-image";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 let clickAudio: HTMLAudioElement | null = null;
@@ -88,7 +89,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Netinho Auto Parts | Catálogo de Peças e Representantes" },
       { property: "og:description", content: "Consulte peças, faça pedidos e encontre seu representante Netinho Auto Parts." },
       { property: "og:url", content: "https://www.netinhoautoparts.live/" },
+      { property: "og:image", content: homeShareImage.url },
+      { property: "og:image:secure_url", content: homeShareImage.url },
+      { property: "og:image:type", content: homeShareImage.type },
+      { property: "og:image:width", content: homeShareImage.width },
+      { property: "og:image:height", content: homeShareImage.height },
+      { property: "og:image:alt", content: "Netinho Auto Parts - Representações de Auto Peças - Acesse o Catálogo" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: homeShareImage.url },
       { name: "twitter:title", content: "Netinho Auto Parts | Catálogo de Peças e Representantes" },
       { name: "twitter:description", content: "Consulte peças, faça pedidos e encontre seu representante Netinho Auto Parts." },
     ],
