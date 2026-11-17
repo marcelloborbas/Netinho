@@ -4895,3 +4895,122 @@ html body .welcome-auth-stage .welcome-auth-art {
     min-height: 120px !important;
   }
 }
+
+
+/* Cartão catálogo: acabamento navy + dourado, inspirado na arte de referência. */
+.catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+  display: grid !important;
+  grid-template-columns: minmax(96px, 32%) minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  gap: clamp(8px, 2.2vw, 17px) !important;
+  position: relative;
+  padding: clamp(9px, 2.5vw, 16px) !important;
+  border: 3px solid #09245a !important;
+  border-radius: 24px !important;
+  background: linear-gradient(145deg, #fff 0%, #fff 76%, #f2f6fd 100%) !important;
+  box-shadow: inset 0 0 0 2px #e9edf4, 0 3px 0 #a8b6cd, 0 8px 16px rgba(3,24,69,.12) !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col {
+  border-right: 2px solid #e5aa16;
+  padding-right: clamp(5px, 1.7vw, 13px);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  min-height: 145px;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  min-height: 145px !important;
+  max-height: 235px !important;
+  height: 100% !important;
+  width: 100% !important;
+  padding: 1px !important;
+  background: transparent !important;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+  height: 100% !important;
+  width: 100% !important;
+  max-height: 230px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 6px 4px rgba(0,0,0,.2));
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content {
+  justify-content: space-between;
+  gap: 10px;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-top-actions {
+  align-items: center !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-montadora-logo img {
+  width: clamp(39px, 11vw, 75px) !important;
+  height: clamp(30px, 9vw, 53px) !important;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.18));
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-brand {
+  font-size: clamp(11px, 3.3vw, 17px) !important;
+  font-weight: 900 !important;
+  letter-spacing: .005em;
+  color: #061f54 !important;
+  text-transform: uppercase;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price-row {
+  align-items: stretch !important;
+  gap: 6px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price {
+  flex: 1;
+  min-width: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px solid #f1b619 !important;
+  border-radius: 13px !important;
+  padding: 5px 3px !important;
+  background: radial-gradient(ellipse at 50% 0%, #173e83, #061d4a 72%) !important;
+  box-shadow: inset 0 0 0 1px #fff2a6, inset 0 -4px 7px rgba(0,0,0,.25), 0 3px 5px rgba(0,0,0,.16);
+  color: #ffcf38 !important;
+  font-size: clamp(17px, 5.2vw, 30px) !important;
+  font-weight: 950 !important;
+  letter-spacing: -.055em;
+  text-shadow: 0 1px 0 #fff0a2, 0 3px 2px #8d4a00 !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-icon-button {
+  border-radius: 12px !important;
+  width: clamp(39px, 11vw, 52px) !important;
+  height: clamp(39px, 11vw, 52px) !important;
+  min-width: clamp(39px, 11vw, 52px) !important;
+  min-height: clamp(39px, 11vw, 52px) !important;
+  border: 2px solid #9bb6e5 !important;
+  background: linear-gradient(150deg,#2a67bb 0%,#0b337c 36%,#021b4b 90%) !important;
+  box-shadow: inset 0 2px 2px #b3d9ff, inset 0 -3px 3px #00143b, 0 3px 4px rgba(0,0,0,.22) !important;
+  color: #fff !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-cart:not(:disabled) {
+  border-color: #ffcd35 !important;
+  background: linear-gradient(150deg,#fff5a3,#ffcf20 38%,#f4a900 88%) !important;
+  box-shadow: inset 0 2px 2px #fff5c4, inset 0 -3px 3px #b97800, 0 3px 4px rgba(0,0,0,.2) !important;
+  color: #062358 !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-icon-button:disabled {
+  filter: grayscale(1);
+  opacity: .5;
+  cursor: not-allowed;
+}
+@media (max-width: 390px) {
+  .catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+    grid-template-columns: minmax(87px, 31%) minmax(0, 1fr) !important;
+    border-radius: 18px !important;
+    border-width: 2px !important;
+    padding: 8px !important;
+    gap: 7px !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-price {
+    font-size: clamp(15px, 4.8vw, 19px) !important;
+    padding: 5px 2px !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-brand {
+    font-size: 11px !important;
+  }
+}
