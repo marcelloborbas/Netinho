@@ -4757,3 +4757,86 @@ html body .welcome-auth-stage .welcome-auth-art {
     transform: translateX(-50%) !important;
   }
 }
+
+
+/* Catálogo — cards compactos proporcionais à miniatura da peça (nov/2026). */
+.catalog-showcase .catalog-product-card.catalog-product-card--compact {
+  display: grid !important;
+  grid-template-columns: minmax(90px, 31%) minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 10px !important;
+  padding: 10px !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-image-col {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  align-self: start !important;
+  min-width: 0;
+}
+.catalog-showcase .catalog-product-card--compact .product-visual.catalog-card-piece-image {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 4px !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-piece-image img,
+.catalog-showcase .catalog-product-card--compact .product-visual.catalog-card-piece-image img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  background: transparent !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-piece-brand {
+  display: block;
+  color: #102a52 !important;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-info {
+  min-height: 0 !important;
+  height: auto !important;
+  align-self: stretch;
+  justify-content: space-between;
+  gap: 8px;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-price-row {
+  flex-wrap: nowrap !important;
+  min-width: 0;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-price-row strong {
+  color: #102a52 !important;
+  font-size: clamp(14px, 4.1vw, 21px) !important;
+}
+.catalog-showcase .catalog-product-card--compact .catalog-card-icon-button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 390px) {
+  .catalog-showcase .catalog-product-card.catalog-product-card--compact {
+    grid-template-columns: minmax(86px, 30%) minmax(0, 1fr) !important;
+    gap: 7px !important;
+    padding: 8px !important;
+  }
+  .catalog-showcase .catalog-product-card--compact .catalog-card-price-row strong {
+    font-size: 15px !important;
+  }
+}
