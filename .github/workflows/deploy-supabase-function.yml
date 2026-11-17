@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      PROJECT_REF: ajopipjydbphhwgtjfki
+      PROJECT_REF: gmxojviqhpyqsaceftpb
     steps:
       - name: Verificar credencial de implantacao
         run: |
