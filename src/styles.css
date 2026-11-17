@@ -5157,3 +5157,45 @@ html body .welcome-auth-stage .welcome-auth-art {
     font-size: clamp(17px, 5vw, 21px) !important;
   }
 }
+
+
+/* Cartão uniforme: mesmo fundo branco da imagem da peça e logos lado a lado. */
+.catalog-showcase .catalog-product-card.catalog-product-card--glossy {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col,
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content,
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  min-width: 0;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos .catalog-card-montadora-logo {
+  flex: 0 1 auto !important;
+  min-width: 0;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos img.catalog-card-fco-original-logo {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: clamp(48px, 14vw, 65px) !important;
+  max-width: 65px !important;
+  height: auto !important;
+  aspect-ratio: 300 / 165 !important;
+  object-fit: contain !important;
+  filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
