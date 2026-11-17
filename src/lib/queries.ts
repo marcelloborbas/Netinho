@@ -122,15 +122,17 @@ export const meQuery = queryOptions({
   queryFn: async () => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return null;
-    const [p, r] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle(),
-      supabase.from("user_roles").select("role").eq("user_id", u.user.id),
-    ]);
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("full_name,site_role,access_active")
+      .eq("id", u.user.id)
+      .maybeSingle();
+    if (profileError) throw profileError;
     return {
       id: u.user.id,
       email: u.user.email ?? "",
-      name: p.data?.full_name || u.user.email || "",
-      isAdmin: (r.data ?? []).some((x) => x.role === "admin"),
+      name: profile?.full_name || u.user.email || "",
+      isAdmin: profile?.site_role === "Administrador" && profile?.access_active === true,
     };
   },
 });
