@@ -30,9 +30,17 @@ const photoFiles: Record<string,string> = {
  "burgato":"jose-burgato.webp",
 };
 const representativePhoto = (name:string, photo?:string|null) => {
+ if (photo?.trim()) return photo.trim();
  const key=Object.keys(photoFiles).find(k=>normalize(name).includes(k));
- return key?"/images/fotos-representantes/"+photoFiles[key]:photo||null;
+ return key?"/images/fotos-representantes/"+photoFiles[key]:null;
 };
+function RepresentativeImage({name,photo,className,alt}:{name:string;photo?:string|null;className:string;alt:string}) {
+ const [failed,setFailed]=useState(false);
+ const src=representativePhoto(name,photo);
+ useEffect(()=>setFailed(false),[src]);
+ if (!src || failed) return <div className={className+" flex items-center justify-center bg-[#e8edf4] text-[#102a52] font-black"} aria-label={alt}>{name.charAt(0)}</div>;
+ return <img src={src} alt={alt} className={className} loading="lazy" onError={()=>setFailed(true)}/>;
+}
 const stateFor = (text: string) => {
  const normalized = normalize(text);
  // Estados por extenso devem ser palavras inteiras: "Pará" não pode corresponder a "Paraná".
@@ -52,7 +60,7 @@ function Page() {
  const [geo,setGeo]=useState<GeoData|null>(null);
  const [mapError,setMapError]=useState(false);
  useEffect(()=>{let alive=true;fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson").then(r=>{if(!r.ok)throw new Error("Mapa indisponível");return r.json();}).then((data:GeoData)=>{if(alive)setGeo(data);}).catch(()=>{if(alive)setMapError(true);});return()=>{alive=false;};},[]);
- const {data:reps=[],isLoading,error}=useQuery({queryKey:["representative-directory-map"],queryFn:async()=>{const {data,error}=await supabase.rpc("list_public_representatives" as never);if(error)throw error;return ((data??[]) as Array<{id:string;full_name:string;region:string;phone:string|null;uf:string;city:string}>).map(r=>({slug:r.id,full_name:r.full_name,region:[r.region,r.uf].filter(Boolean).join(" - "),phone:r.phone}));}});
+ const {data:reps=[],isLoading,error}=useQuery({queryKey:["representative-directory-map"],queryFn:async()=>{const {data,error}=await supabase.rpc("list_public_representatives" as never);if(error)throw error;return ((data??[]) as Array<{id:string;full_name:string;region:string;phone:string|null;uf:string;city:string;photo_url?:string|null;avatar_url?:string|null}>).map(r=>({slug:r.id,full_name:r.full_name,region:[r.region,r.uf].filter(Boolean).join(" - "),phone:r.phone,photo_url:r.photo_url||r.avatar_url||null}));}});
  const {data:areas=[]}=useQuery({queryKey:["representative-service-areas"],queryFn:async()=>{const {data,error}=await supabase.from("representative_service_areas_public" as never).select("slug,service_cities");if(error)return [] as ServiceArea[];return (data??[]) as ServiceArea[];}});
  const enriched=useMemo(()=>reps.filter(r=>!normalize(r.region??"").includes("teste")).map(rep=>{const service=areas.find(a=>a.slug===rep.slug)?.service_cities??"";const cities=service.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);const regionUfs=stateFor(rep.region??"");const ufs=Array.from(new Set([...regionUfs,...cities.flatMap(c=>stateFor(c))]));return {...rep,cities,ufs};}),[reps,areas]);
  const active=selected?enriched.find(r=>r.slug===selected):null;
@@ -69,7 +77,7 @@ function Page() {
     {geo?<svg viewBox="0 0 480 390" className="mx-auto block w-full max-w-[720px]" aria-label="Mapa interativo do Brasil com fotos dos representantes" role="group">
      <defs><linearGradient id="netinho-state" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f8fafc"/><stop offset="1" stopColor="#a9bfd4"/></linearGradient><filter id="netinho-map-shadow"><feDropShadow dx="1" dy="3" stdDeviation="2" floodColor="#000" floodOpacity=".5"/></filter></defs>
      {geo.features.map((feature,i)=>{const name=feature.properties.name??"";const uf=Object.keys(stateAliases).find(key=>normalize(name)===stateAliases[key])??feature.properties.sigla??feature.properties.abbreviation??"";return <path key={i} d={polygonPath(feature)} fill={enriched.some(r=>r.ufs.includes(uf))?"url(#netinho-state)":"#8da8c5"} stroke="#d4af37" strokeWidth={1.1} filter="url(#netinho-map-shadow)"><title>{name||uf}</title></path>;})}
-     {enriched.flatMap(rep=>rep.ufs.filter(uf=>centroids[uf]).map(uf=>({rep,uf}))).map(({rep,uf},i,all)=>{const [cx,cy]=project(centroids[uf]);const order=all.slice(0,i).filter(p=>p.uf===uf).length;const x=cx+(order%3-1)*27;const y=cy+Math.floor(order/3)*28;const photo=rep.photo_url || representativePhoto(rep.full_name);return <g key={uf+"-"+rep.slug} transform={`translate(${x},${y})`} role="button" tabIndex={0} aria-label={`Abrir contato de ${rep.full_name} em ${uf}`} className="cursor-pointer outline-none" onClick={()=>setSelected(rep.slug)} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setSelected(rep.slug);}}}><path d="M0 20 L-9 7 L9 7 Z" fill="#e7b93f" stroke="#061b38" strokeWidth="1.5"/><circle r="16" fill="#d4af37" stroke="#071c38" strokeWidth="2.5"/>{photo?<><defs><clipPath id={`rep-photo-${i}`}><circle r="13"/></clipPath></defs><image href={photo} x="-13" y="-13" width="26" height="26" preserveAspectRatio="xMidYMid slice" clipPath={`url(#rep-photo-${i})`}/></>:<text textAnchor="middle" y="4" fontSize="12" fontWeight="bold" fill="#08254b">{rep.full_name.charAt(0)}</text>}<title>{rep.full_name} · {uf}</title></g>;})}
+     {enriched.flatMap(rep=>rep.ufs.filter(uf=>centroids[uf]).map(uf=>({rep,uf}))).map(({rep,uf},i,all)=>{const [cx,cy]=project(centroids[uf]);const order=all.slice(0,i).filter(p=>p.uf===uf).length;const x=cx+(order%3-1)*27;const y=cy+Math.floor(order/3)*28;const photo=representativePhoto(rep.full_name,rep.photo_url);return <g key={uf+"-"+rep.slug} transform={`translate(${x},${y})`} role="button" tabIndex={0} aria-label={`Abrir contato de ${rep.full_name} em ${uf}`} className="cursor-pointer outline-none" onClick={()=>setSelected(rep.slug)} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setSelected(rep.slug);}}}><path d="M0 20 L-9 7 L9 7 Z" fill="#e7b93f" stroke="#061b38" strokeWidth="1.5"/><circle r="16" fill="#d4af37" stroke="#071c38" strokeWidth="2.5"/>{photo?<><defs><clipPath id={`rep-photo-${i}`}><circle r="13"/></clipPath></defs><image href={photo} x="-13" y="-13" width="26" height="26" preserveAspectRatio="xMidYMid slice" clipPath={`url(#rep-photo-${i})`}/></>:<text textAnchor="middle" y="4" fontSize="12" fontWeight="bold" fill="#08254b">{rep.full_name.charAt(0)}</text>}<title>{rep.full_name} · {uf}</title></g>;})}
     </svg>:<div className="flex min-h-[45vh] items-center justify-center text-center text-white">{mapError?"Não foi possível carregar o mapa. Tente novamente mais tarde.":"Carregando mapa do Brasil..."}</div>}
    </div>
    <div className="relative z-10 mx-auto mt-4 flex max-w-sm items-center justify-center gap-3 rounded-2xl border border-[#d4af37]/65 bg-[#06172f]/85 px-4 py-3 text-center"><MousePointer2 className="shrink-0 text-[#e7c36a]" size={29}/><p className="text-sm font-bold leading-snug">Toque na foto para conhecer seu representante.</p></div>
@@ -85,7 +93,7 @@ function Page() {
   {active&&<div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/65 px-4" role="presentation" onClick={()=>setSelected(null)}>
    <section role="dialog" aria-modal="true" aria-label={`Contato de ${active.full_name}`} className="w-full max-w-sm rounded-2xl border-2 border-[#d4af37] bg-white p-5 shadow-2xl" onClick={e=>e.stopPropagation()}>
     <button type="button" onClick={()=>setSelected(null)} className="float-right rounded-lg bg-[#102a52] px-3 py-1 text-sm font-bold text-white" aria-label="Fechar ficha">Fechar ×</button>
-    {(active.photo_url || representativePhoto(active.full_name))&&<img src={(active.photo_url || representativePhoto(active.full_name))!} alt={`Cartão de ${active.full_name}`} className="mt-8 w-full rounded-xl object-contain"/>}
+    <RepresentativeImage name={active.full_name} photo={active.photo_url} alt={`Foto de ${active.full_name}`} className="mt-8 w-full rounded-xl object-contain"/>
     <h2 className="mt-3 text-xl font-black text-[#102a52]">{active.full_name}</h2>
     <p className="mt-2 text-sm text-slate-700">{active.cities.length?active.cities.join(" · "):active.region||"Região não informada"}</p>
     {active.phone&&<div className="mt-4 flex flex-wrap gap-3"><a href={`tel:${active.phone.replace(/[^\d+]/g,"")}`} className="rounded-lg border border-[#102a52] px-4 py-3 text-sm font-bold text-[#102a52]">Ligar: {active.phone}</a><a href={`https://wa.me/${active.phone.replace(/\D/g,"").replace(/^(?!55)(?=\d{10,11}$)/,"55")}`} target="_blank" rel="noreferrer" className="rounded-lg bg-green-700 px-4 py-3 text-sm font-bold text-white">WhatsApp</a></div>}
