@@ -85,21 +85,18 @@ const locations = [
 const cities = locations.map((location) => location.name);
 function RepresentativePage() {
   const { data: me } = useQuery(meQuery);
-  const { data: profile } = useQuery({ queryKey: ["representative-profile", "abdenego-eugenio"], queryFn: async () => { const { data, error } = await supabase.from("representative_profiles" as never).select("full_name,region").eq("slug", "abdenego-eugenio").maybeSingle(); if (error) return null; return data as { full_name: string; region: string } | null; } });
-  const { data: authorization, isPending: checkingAuthorization, isError: authorizationError } = useQuery({
-    queryKey: ["representative-authorization", "Abdenego Eugênio"],
+  const { data: profile, isPending: checkingAuthorization, isError: authorizationError } = useQuery({
+    queryKey: ["representative-profile", "abdenego-eugenio"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("commercial_representatives" as never)
-        .select("active")
-        .eq("full_name", "Abdenego Eugênio")
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("list_public_representatives" as never);
       if (error) throw error;
-      return data as { active: boolean } | null;
+      return ((data ?? []) as Array<{full_name:string;region:string}>).find(
+        r => r.full_name.toLocaleLowerCase("pt-BR").includes("abdenego")
+      ) ?? null;
     },
   });
-  const authorizationLabel = checkingAuthorization ? "Verificando autorização" : authorizationError ? "Status indisponível" : authorization?.active ? "Autorizado" : "Não autorizado";
-  const authorizationColor = authorizationError || checkingAuthorization ? "bg-slate-500/15 text-slate-600" : authorization?.active ? "bg-green-600 text-white" : "bg-red-600 text-white";
+  const authorizationLabel = checkingAuthorization ? "Verificando cadastro" : authorizationError ? "Cadastro indisponível" : profile ? "Cadastrado" : "Não encontrado";
+  const authorizationColor = authorizationError || checkingAuthorization ? "bg-slate-500/15 text-slate-600" : profile ? "bg-green-600 text-white" : "bg-red-600 text-white";
   return (
     <BrandPageLayout><main className="mx-auto max-w-4xl space-y-5 px-4 py-8">
       <Link to="/auth" className="inline-flex items-center gap-2 text-primary"><ArrowLeft size={18} /> Voltar</Link>
