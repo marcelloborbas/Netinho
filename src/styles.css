@@ -5553,3 +5553,76 @@ html body .home-page.home-visual-2026 .home-sales-panel .home-evolution-card {
   object-fit:contain !important;
  }
 }
+
+/* Netinho Premium 2026 — layout proporcional à referência aprovada.
+   Arte sempre em contain: jamais deformar imagens para preencher o viewport. */
+.home-page.home-visual-2026 .home-sales-card {
+ background:linear-gradient(145deg,#0758bb 0%,#063d87 48%,#061a45 100%) !important;
+ color:#fff !important;
+}
+.home-page.home-visual-2026 .home-commission-card {
+ background:linear-gradient(145deg,#fff 0%,#f6f9ff 65%,#dbe8f6 100%) !important;
+ color:#102a52 !important;
+}
+.home-page.home-visual-2026 .home-evolution-card {
+ background:linear-gradient(180deg,#fff 0%,#f5f9ff 100%) !important;
+}
+.home-page.home-visual-2026 .home-brand-row,
+.home-page.home-visual-2026 .home-shortcut-row {align-items:center !important;}
+.home-page.home-visual-2026 .home-brand-row .netinho-brand-tile,
+.home-page.home-visual-2026 .home-shortcut-row .netinho-quick-tile {
+ flex:initial !important;
+ min-height:0 !important;
+ max-height:none !important;
+ height:auto !important;
+ aspect-ratio:auto !important;
+ background:transparent !important;
+ border:0 !important;
+ box-shadow:none !important;
+ overflow:visible !important;
+}
+.home-page.home-visual-2026 .home-brand-row .netinho-brand-tile img,
+.home-page.home-visual-2026 .home-shortcut-row .netinho-quick-tile img {
+ display:block !important;
+ width:100% !important;
+ height:auto !important;
+ max-height:none !important;
+ aspect-ratio:auto !important;
+ object-fit:contain !important;
+}
+@media(max-width:639px) {
+ .home-page.home-visual-2026 > main {
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+  min-height:0 !important;
+  height:auto !important;
+  padding-bottom:94px !important;
+ }
+ .home-page.home-visual-2026 .home-brand-row {
+  flex:0 0 auto !important;
+  margin-inline:8px !important;
+  gap:5px !important;
+ }
+ .home-page.home-visual-2026 .home-shortcut-row {
+  flex:0 0 auto !important;
+  margin-inline:8px !important;
+  gap:7px !important;
+ }
+ .home-page.home-visual-2026 .home-brand-row .netinho-brand-tile,
+ .home-page.home-visual-2026 .home-shortcut-row .netinho-quick-tile {
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  aspect-ratio:auto !important;
+ }
+ .home-page.home-visual-2026 .home-brand-row .netinho-brand-tile img,
+ .home-page.home-visual-2026 .home-shortcut-row .netinho-quick-tile img {
+  width:100% !important;
+  height:auto !important;
+  max-height:none !important;
+  aspect-ratio:auto !important;
+  object-fit:contain !important;
+ }
+}
