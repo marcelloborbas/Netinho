@@ -111,6 +111,60 @@ function Pessoas() {
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
 }
+function SalesMiniChart({sellerId}:{sellerId:string}) {
+ const {data:series=[],isLoading}=useQuery({
+  queryKey:["admin-representative-sales-evolution",sellerId],
+  enabled:!!sellerId,
+  queryFn:async()=>{
+   const now=new Date();
+   const local=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(now);
+   const year=Number(local.find(x=>x.type==="year")?.value);
+   const month=Number(local.find(x=>x.type==="month")?.value);
+   const months=Array.from({length:4},(_,i)=>{const d=new Date(Date.UTC(year,month-4+i,1));return {key:d.toISOString().slice(0,7),label:new Intl.DateTimeFormat("pt-BR",{month:"short",timeZone:"UTC"}).format(d).replace(".",""),value:0};});
+   const start=new Date(Date.UTC(year,month-4,1)-86400000).toISOString();
+   const end=new Date(Date.UTC(year,month,1)+86400000).toISOString();
+   for(let offset=0;;offset+=500){
+    const {data,error}=await supabase.from("orders").select("seller_id,created_at,total,kind,status").eq("seller_id",sellerId).gte("created_at",start).lt("created_at",end).order("created_at").range(offset,offset+499);
+    if(error)throw error;
+    for(const order of data??[]){
+     if(order.kind==="orcamento"||order.status==="cancelled")continue;
+     const parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(new Date(order.created_at));
+     const key=parts.find(x=>x.type==="year")?.value+"-"+parts.find(x=>x.type==="month")?.value;
+     const target=months.find(m=>m.key===key);
+     if(target)target.value+=Number(order.total??0);
+    }
+    if((data??[]).length<500)break;
+   }
+   return months;
+  }
+ });
+ const max=Math.max(1,...series.map(x=>x.value));
+ const points=series.map((x,i)=>`${8+i*48},${63-x.value/max*49}`).join(" ");
+ const hasSales=series.some(x=>x.value>0);
+ return <div className="flex h-[112px] min-w-0 flex-col justify-between" aria-label="Evolução de Vendas nos últimos quatro meses">
+  <div className="text-right text-[10px] font-extrabold leading-tight text-[#102a52] sm:text-xs">Evolução de Vendas</div>
+  {isLoading?<span className="text-center text-[10px] text-slate-500">Carregando…</span>:!hasSales?<span className="text-center text-[10px] text-slate-500">Sem vendas no período</span>:<svg viewBox="0 0 160 72" className="h-[72px] w-full" role="img" aria-label="Gráfico de vendas por mês"><path d="M8 63 H152" stroke="#cbd5e1" strokeWidth="1"/><polyline points={points} fill="none" stroke="#c49a22" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>{series.map((x,i)=><circle key={x.key} cx={8+i*48} cy={63-x.value/max*49} r="3" fill="#c49a22"><title>{x.label}: {x.value.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</title></circle>)}</svg>}
+  <div className="flex justify-between text-[9px] text-slate-500">{series.map(x=><span key={x.key}>{x.label}</span>)}</div>
+ </div>;
+}
+function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;onEdit?:()=>void}) {
+ const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds",id],enabled:role==="Representante",retry:false,queryFn:async()=>{const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",id).maybeSingle();if(error)throw error;return (data as {ddds?:string}|null)?.ddds??"";}});
+ const {data:commercialDetails}=useQuery({queryKey:["commercial-representative-details",id],enabled:role==="Representante"&&!phone,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_details" as never).select("phone,state").eq("representative_id",id).maybeSingle();if(error)throw error;return data as {phone?:string;state?:string}|null;}});
+ const displayPhone=phone||commercialDetails?.phone||"—";
+ const displayUf=uf||commercialDetails?.state||"—";
+ return <div className="space-y-2">
+  <div className="grid grid-cols-[94px_minmax(0,1fr)_minmax(105px,0.9fr)] items-start gap-2 sm:grid-cols-[112px_minmax(0,1fr)_minmax(145px,1fr)] sm:gap-3">
+   <div className="h-[112px] w-[94px] sm:w-[112px]"><PersonPhoto id={id} name={name}/></div>
+   <div className="min-w-0">
+    <div className="flex items-center gap-1"><strong className="truncate text-sm font-black sm:text-lg" title={name}>{name.trim().split(/\\s+/)[0]||"Sem nome"}</strong><button type="button" onClick={onEdit} disabled={!onEdit} aria-label={`Editar ficha de ${name}`} title="Editar ficha" className="shrink-0 rounded-md p-1 text-[#c49a22] disabled:opacity-40"><Pencil size={17}/></button></div>
+    <div className="mt-1 text-[11px] font-semibold text-slate-600">{role}</div>
+    <div className="mt-2 flex flex-wrap items-center gap-1"><span className={`rounded-md px-2 py-1 text-[11px] font-extrabold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span><span className="rounded-md bg-amber-50 px-2 py-1 text-[11px] font-extrabold text-[#102a52]">{rate}</span></div>
+   </div>
+   <SalesMiniChart sellerId={sellerId}/>
+  </div>
+  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-slate-100 pt-2 text-[11px] font-semibold text-[#102a52]"><span>WhatsApp: {displayPhone}</span><span>DDD: {areaDdds||"—"}</span><span>UF: {displayUf}</span></div>
+ </div>;
+}
 function PersonPhoto({id,name}:{id:string;name:string}) {
  const [photo,setPhoto]=useState<string|null>(null);
  const [busy,setBusy]=useState(false);
@@ -136,7 +190,7 @@ function PersonPhoto({id,name}:{id:string;name:string}) {
   }catch(e){toast.error("Não foi possível salvar a foto: "+(e instanceof Error?e.message:String(e)));}
   finally{setBusy(false);}
  }
- return <label title="Escolher foto" className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]">
+ return <label title="Escolher foto" className="relative flex h-full w-full shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-[#d4af37] bg-slate-100 text-[#102a52]">
   {photo?<img src={photo} alt={`Foto de ${name}`} className="h-full w-full object-cover"/>:<UserRound size={33}/>}
   <span className="absolute bottom-0 left-0 right-0 bg-[#102a52]/90 py-0.5 text-center text-[9px] font-bold text-white">{busy?"Enviando…":"Foto +"}</span>
   <input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} aria-label={`Selecionar foto de ${name}`} className="sr-only" onChange={e=>{void choose(e.target.files?.[0]);e.target.value="";}}/>
@@ -228,18 +282,9 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   else toast.success("Pessoa e região atualizadas.");
   onSaved();setOpen(false);onClose?.();
  }
- return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <div className="flex items-start justify-between gap-3">
-    <div className="min-w-0 flex-1">
-      <div className="flex flex-wrap items-baseline gap-2"><strong className="break-words text-lg">{person.full_name||"Sem nome"}</strong>{(person.site_role==="Vendedor"||person.site_role==="Representante"||person.site_role==="Administrador")&&<span className="whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 text-sm font-black text-[#102a52]">{commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`}</span>}</div>
-      <div className="text-sm font-semibold text-[#102a52]">{person.site_role}</div>
-      <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
-    </div>
-    <PersonPhoto id={person.id} name={person.full_name||"usuário"}/>
-  </div>
-  <div className="mt-2 flex items-center justify-between gap-2">
-   <button type="button" onClick={()=>onEdit?.()} aria-label={`Editar ficha de ${person.full_name||person.email}`} title="Editar ficha (somente administrador)" className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900"><Pencil size={18}/> Editar ficha</button>
-   <span className={`rounded-lg px-3 py-1 text-xs font-bold ${person.access_active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{person.access_active?"Ativo":"Inativo"}</span>
+ return <article className="rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:p-4">
+  <PersonSummary id={person.id} name={person.full_name||"Sem nome"} active={person.access_active} rate={commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`} role={person.site_role} phone={person.phone} uf={person.territory_uf} sellerId={person.id} onEdit={editingPage?undefined:onEdit}/>
+  <div className="mt-2 flex justify-end">
    <Button type="button" variant="outline" size="icon" disabled={busy||ownAccount} onClick={async()=>{
     if(ownAccount||busy)return;
     const identity=person.full_name||person.email;
@@ -274,8 +319,8 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
       console.error("delete-person:",cause);
     } finally {setBusy(false);}
    }} title={ownAccount?"Não é permitido excluir a própria conta administrativa":"Excluir usuário permanentemente"} aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="border-destructive text-destructive disabled:opacity-40"><Trash2 size={19}/></Button>
-  </div>
 
+  </div>
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Ficha completa da pessoa</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">
    <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
     <h3 className="mb-4 text-base font-black">Identificação e acesso</h3>
@@ -352,21 +397,12 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
   if(!data?.length){toast.error("O cadastro não foi excluído. Verifique as permissões do administrador.");return;}
   toast.success("Cadastro comercial excluído.");onSaved();
  }
- return <article className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
-  <div className="flex items-start justify-between gap-3">
-    <div className="min-w-0 flex-1">
-      <div className="flex flex-wrap items-baseline gap-2"><strong className="break-words text-lg">{representative.full_name}</strong><span className="whitespace-nowrap rounded-md bg-amber-50 px-2 py-0.5 text-sm font-black text-[#102a52]">{commissionError?"—":commercialCommission==null?"—":`${Number(commercialCommission).toLocaleString("pt-BR")}%`}</span></div>
-      <div className="text-sm font-semibold text-[#102a52]">Representante</div>
-      <div className="mt-1 text-xs text-slate-600">Vendas do mês: {monthlySales}</div>
-    </div>
-    <PersonPhoto id={representative.id} name={representative.full_name}/>
-  </div>
-  <div className="mt-2 flex items-center justify-between gap-2">
-   <button type="button" onClick={()=>onEdit?.()} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-900" aria-label={`Editar ${representative.full_name}`}><Pencil size={18}/>Editar ficha</button>
-   <span className={`rounded-lg px-3 py-1 text-xs font-bold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span>
+ return <article className="rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:p-4">
+  <PersonSummary id={representative.id} name={representative.full_name} active={active} rate={commissionError?"—":commercialCommission==null?"—":`${Number(commercialCommission).toLocaleString("pt-BR")}%`} role="Representante" sellerId="" onEdit={editingPage?undefined:onEdit}/>
+  <div className="mt-2 flex justify-end">
    <button type="button" disabled={busy} onClick={()=>void remove()} title="Excluir cadastro comercial" aria-label={`Excluir cadastro comercial de ${representative.full_name}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
-  </div>
 
+  </div>
   {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Ficha do representante comercial</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
    <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
     <h3 className="mb-4 text-base font-black text-[#102a52]">Identificação e acesso</h3>
