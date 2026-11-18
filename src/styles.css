@@ -5557,3 +5557,85 @@ html body .welcome-auth-stage .welcome-auth-art {
   width:clamp(43px,12vw,52px) !important;
  }
 }
+
+/* Experimento aprovado: quatro quartos iguais da área útil, rodapé fixo. */
+.home-page.home-visual-2026 > main {
+ display:grid !important;
+ grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+ gap:0 !important;
+ padding:0 6px 4px !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 > main > section:first-child {height:100% !important;min-height:0 !important;}
+.home-page.home-visual-2026 .home-sales-carousel,
+.home-page.home-visual-2026 .home-sales-evolution {
+ display:flex !important;
+ flex-direction:column !important;
+ height:100% !important;
+ min-height:0 !important;
+ overflow:hidden !important;
+ margin:0 !important;
+ padding:4px 0 !important;
+}
+.home-page.home-visual-2026 .home-kpi-carousel {
+ display:flex !important;
+ flex:1 1 auto !important;
+ min-height:0 !important;
+ width:100% !important;
+ overflow-x:auto !important;
+ overflow-y:hidden !important;
+ scroll-snap-type:x mandatory !important;
+ overscroll-behavior-x:contain !important;
+ gap:8px !important;
+ scrollbar-width:thin;
+}
+.home-page.home-visual-2026 .home-kpi-carousel > * {
+ flex:0 0 min(84%,520px) !important;
+ min-width:0 !important;
+ height:100% !important;
+ scroll-snap-align:center !important;
+}
+.home-page.home-visual-2026 .home-kpi-carousel .home-kpi-icon {
+ flex-basis:clamp(50px,17vw,100px) !important;
+ width:clamp(50px,17vw,100px) !important;
+ height:80% !important;
+}
+.home-page.home-visual-2026 .home-kpi-carousel .home-kpi-title {font-size:clamp(14px,4vw,22px) !important;}
+.home-page.home-visual-2026 .home-kpi-carousel .home-kpi-value {font-size:clamp(18px,5vw,30px) !important;}
+.home-page.home-visual-2026 .home-sales-evolution .home-evolution-card {
+ flex:1 1 auto !important;
+ min-height:0 !important;
+ height:100% !important;
+ padding:clamp(5px,1dvh,12px) !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts {
+ display:grid !important;
+ grid-template-rows:1fr 1fr !important;
+ gap:clamp(3px,.7dvh,8px) !important;
+ height:100% !important;
+ min-height:0 !important;
+ padding:3px 0 5px !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts > section {
+ min-height:0 !important;
+ height:100% !important;
+ width:100% !important;
+ margin:0 !important;
+ align-items:stretch !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-brand-tile,
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-quick-tile {
+ min-height:0 !important;
+ height:100% !important;
+ width:100% !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts img {
+ display:block !important;
+ height:100% !important;
+ width:100% !important;
+ object-fit:contain !important;
+}
+@media(min-width:640px){
+ .home-page.home-visual-2026 .home-kpi-carousel > * {flex-basis:calc(50% - 4px) !important;}
+}
