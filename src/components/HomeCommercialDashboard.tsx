@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
-import { ChartNoAxesColumnIncreasing, Coins, TrendingUp } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, TrendingUp, ChevronRight } from "lucide-react";
 
 const periodKey=(date:Date)=>{const p=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(date);return p.find(x=>x.type==="year")?.value+"-"+p.find(x=>x.type==="month")?.value;};
 const names=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -42,12 +42,12 @@ export function HomeCommercialDashboard(){
  return <section className="home-sales-panel mx-3 space-y-2 bg-transparent sm:mx-6" aria-label="Painel comercial">
   <div className="grid grid-cols-2 gap-2 sm:gap-4">
    <Link to="/vendas" search={{modo:"venda",q:"",promo:""}} className="home-sales-card flex min-h-[92px] items-center gap-2 rounded-[24px] border-[3px] border-[#e7bb45] bg-gradient-to-br from-[#0754b5] via-[#063879] to-[#071c49] px-2 py-2 text-white shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
-    <span className="flex h-12 w-12 shrink-0 items-center justify-center sm:h-16 sm:w-16" aria-hidden="true"><img src="/images/home-premium/icone-vendas.webp" alt="" className="block h-full w-full object-contain"/></span>
-    <span className="min-w-0 flex-1"><span className="block text-[11px] font-black leading-tight sm:text-lg">Vendas do Mês</span><strong className="mt-1 block break-words text-[15px] font-black leading-tight sm:text-2xl">{isLoading?"…":isError?"Indisponível":brl(data?.currentTotal??0)}</strong></span>
+    <span className="home-kpi-icon" aria-hidden="true"><img src="/images/home-premium/icone-pedido.webp" alt="" /></span>
+    <span className="home-kpi-copy"><span className="home-kpi-title">Vendas do Mês</span><strong className="home-kpi-value">{isLoading?"…":isError?"Indisponível":brl(data?.currentTotal??0)}</strong></span><ChevronRight className="home-kpi-chevron" aria-hidden="true"/>
    </Link>
    <div className="home-commission-card flex min-h-[92px] items-center gap-2 rounded-[24px] border-[3px] border-[#e7bb45] bg-gradient-to-br from-white via-[#f5f9ff] to-[#dbe7f4] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
-    <span className="flex h-12 w-12 shrink-0 items-center justify-center sm:h-16 sm:w-16" aria-hidden="true"><Coins className="h-10 w-10 text-[#d49a00] drop-shadow-sm sm:h-14 sm:w-14" strokeWidth={2.5}/></span>
-    <span className="min-w-0 flex-1"><span className="block text-[11px] font-black leading-tight sm:text-lg">Comissão Estimada{data?.rate!=null?<span className="ml-1 text-[9px] font-medium opacity-70">({data.rate.toLocaleString("pt-BR")}%)</span>:null}</span><strong className="mt-1 block break-words text-[15px] font-black leading-tight sm:text-2xl">{isLoading?"…":isError?"Indisponível":data?.commission==null?"—":brl(data.commission)}</strong></span>
+    <span className="home-kpi-icon home-coin-icon" aria-hidden="true"><img src="/images/home-premium/cartao-comissao.webp" alt="" /></span>
+    <span className="home-kpi-copy"><span className="home-kpi-title">Comissão Estimada{data?.rate!=null?<small className="home-kpi-rate"> ({data.rate.toLocaleString("pt-BR")}%)</small>:null}</span><strong className="home-kpi-value">{isLoading?"…":isError?"Indisponível":data?.commission==null?"—":brl(data.commission)}</strong></span>
    </div>
   </div>
   <div className="home-evolution-card rounded-[26px] border-[2px] border-white bg-gradient-to-b from-white to-[#f0f6ff] p-3 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_5px_10px_#34577944] sm:p-5">
