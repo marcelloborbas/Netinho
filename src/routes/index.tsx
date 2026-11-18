@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
 import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
-import { ChevronRight, FileDown } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -124,7 +123,6 @@ function Home() {
     {userName || "usuário"}!
   </span>
 </p>
-<p className="mt-2 text-[clamp(19px,5vw,22px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
 <p className="text-[clamp(15px,4vw,21px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold italic text-white drop-shadow-lg">
   Que seu dia seja abençoado!
 </p>
@@ -133,19 +131,16 @@ function Home() {
         </section>
         <HomeCommercialDashboard />
         <section className="mx-3 grid grid-cols-4 gap-1.5 sm:mx-6 sm:gap-4" aria-label="Montadoras">
-          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-square min-w-0 items-center justify-center rounded-[22px] border-[3px] border-[#e3b83d] bg-gradient-to-b from-[#ffffff] via-[#eef4fa] to-[#b5c8dc] p-1.5 shadow-[inset_0_2px_3px_#fff,0_4px_0_#c18d1d,0_7px_14px_#26496d55] transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
-            <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
+          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.2] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
+            <img src={`/images/home-premium/montadora-${brand}.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
           </button>)}
         </section>
         <section className="mx-3 grid grid-cols-2 gap-2 sm:mx-6 sm:gap-4" aria-label="Acessos rápidos">
           {[
-            {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/logos-montadoras/representantes-3d.webp",alt:"Representantes pelo Brasil"},
-            {label:"Downloads",to:"/downloads",image:"",alt:"Downloads"}
-          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative flex min-h-[80px] flex-row items-center justify-between overflow-hidden rounded-[22px] border-[3px] border-[#e8b83e] bg-gradient-to-b from-[#1680d6] via-[#064b9b] to-[#061b4b] px-2 py-2 text-left text-white shadow-[inset_0_2px_2px_#ffffff88,0_4px_0_#bb8019,0_8px_16px_#12355d66] sm:min-h-[135px]">
-            <span className="pointer-events-none absolute inset-x-2 top-1 h-6 rounded-full bg-white/10 blur-lg"/>
-            {item.image?<img src={item.image} alt={item.alt} loading="lazy" className="relative h-[62px] w-[43%] shrink-0 object-contain drop-shadow-[0_5px_5px_#0008] sm:h-[85px]"/>:<span className="relative flex h-[62px] w-[43%] shrink-0 items-center justify-center sm:h-[85px]"><FileDown className="h-10 w-10 text-[#ffde67] drop-shadow-[0_3px_4px_#0008] sm:h-14 sm:w-14"/></span>}
-            <span className="relative block flex-1 text-[11px] font-black leading-tight drop-shadow-[0_2px_3px_#0009] sm:text-base">{item.label}</span>
-            <ChevronRight className="absolute bottom-1 right-0 h-4 w-4 text-[#ffdc5b] sm:h-6 sm:w-6"/>
+            {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/home-premium/representantes-brasil.webp",alt:"Representantes pelo Brasil"},
+            {label:"Downloads",to:"/downloads",image:"/images/home-premium/downloads-pdf.webp",alt:"Downloads"}
+          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative block min-w-0 overflow-hidden rounded-[18px] bg-transparent p-0 transition hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={item.label}>
+            <img src={item.image} alt={item.alt} loading="lazy" className="block h-auto w-full object-contain"/>
           </button>)}
         </section>
       </main>
