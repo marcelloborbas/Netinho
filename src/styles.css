@@ -5810,3 +5810,64 @@ html body .welcome-auth-stage .welcome-auth-art {
  .home-page.home-visual-2026 .home-greeting-secondary,
  .home-page.home-visual-2026 .home-greeting-blessing {font-size:clamp(16px,4.3vw,19px) !important;}
 }
+
+/* Home: saudação maior, carrossel em largura total, gráfico sem KPIs,
+   e atalhos alinhados ao topo do rodapé. */
+.home-page.home-visual-2026 .home-greeting-secondary,
+.home-page.home-visual-2026 .home-greeting-blessing {
+ font-size:clamp(19px,4.9vw,29px) !important;
+ line-height:1.08 !important;
+ font-style:italic !important;
+ font-weight:800 !important;
+}
+.home-page.home-visual-2026 .home-cover-anchor {
+ width:calc(100% + 12px) !important;
+ max-width:none !important;
+ margin-left:-6px !important;
+ margin-right:-6px !important;
+ border-radius:0 !important;
+}
+.home-page.home-visual-2026 .home-sales-evolution {
+ display:flex !important;
+ height:100% !important;
+ min-height:0 !important;
+ margin:0 !important;
+ padding:3px 0 !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-sales-evolution .home-evolution-card {
+ display:flex !important;
+ flex-direction:column !important;
+ flex:1 1 auto !important;
+ height:100% !important;
+ min-height:0 !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-sales-evolution .home-chart-bars {
+ height:auto !important;
+ min-height:0 !important;
+ flex:1 1 auto !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts {
+ grid-template-rows:minmax(0,.66fr) minmax(0,1.34fr) !important;
+ padding:0 !important;
+ gap:clamp(2px,.4dvh,5px) !important;
+ align-items:stretch !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts .home-shortcut-row {
+ align-self:end !important;
+ align-items:end !important;
+ padding:0 !important;
+ margin-bottom:0 !important;
+ height:100% !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts .home-shortcut-row > .netinho-quick-tile {
+ align-self:end !important;
+ height:100% !important;
+ max-height:100% !important;
+}
+.home-page.home-visual-2026 > main {padding-bottom:0 !important;}
+@media(max-width:400px){
+ .home-page.home-visual-2026 .home-greeting-secondary,
+ .home-page.home-visual-2026 .home-greeting-blessing {font-size:clamp(18px,4.7vw,21px) !important;}
+}
