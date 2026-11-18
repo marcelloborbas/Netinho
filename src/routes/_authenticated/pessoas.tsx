@@ -149,7 +149,7 @@ function SalesMiniChart({sellerId}:{sellerId:string}) {
  </div>;
 }
 function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,commercialId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;commercialId?:string;onEdit?:()=>void}) {
- const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds",commercialId||id],enabled:role==="Representante",retry:false,queryFn:async()=>{const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",commercialId||id).maybeSingle();if(error)throw error;return (data as {ddds?:string}|null)?.ddds??"";}});
+ const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds-summary",id,commercialId],enabled:role==="Representante",retry:false,queryFn:async()=>{for(const representativeId of [id,commercialId].filter(Boolean) as string[]){const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",representativeId).maybeSingle();if(error)throw error;const value=(data as {ddds?:string}|null)?.ddds?.trim();if(value)return value;}return "";}});
  const {data:commercialDetails}=useQuery({queryKey:["commercial-representative-details",commercialId||id],enabled:role==="Representante"&&!!commercialId,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_details" as never).select("phone,state").eq("representative_id",commercialId||id).maybeSingle();if(error)throw error;return data as {phone?:string;state?:string}|null;}});
  const displayPhone=phone||commercialDetails?.phone||"—";
  const displayUf=uf||commercialDetails?.state||"—";
