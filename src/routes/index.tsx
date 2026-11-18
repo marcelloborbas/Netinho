@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { HomeSalesEvolution } from "@/components/HomeSalesEvolution";
-import { MapPinned } from "lucide-react";
+import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
+import { MapPinned, ShoppingCart, Wallet, BarChart3, UsersRound, Download, Search, ChevronRight, PackageSearch } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/page-head";
@@ -134,19 +135,26 @@ function Home() {
 
           </div>
         </section>
-        <section className="mx-3 h-[24dvh] min-h-[155px] shrink-0 overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6 sm:h-[clamp(190px,25vw,310px)] sm:min-h-0" aria-label="Promoções em destaque">
-          <HomePartsCarousel />
+        <HomeCommercialDashboard />
+        <section className="mx-3 grid grid-cols-4 gap-2 sm:mx-6 sm:gap-4" aria-label="Montadoras">
+          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{marca:brand} as never})} className="flex aspect-square min-w-0 items-center justify-center rounded-[20px] border-2 border-[#d6a52b] bg-gradient-to-b from-white via-[#e5ebf3] to-[#c7d4e5] p-2 shadow-[0_3px_8px_#9b720044] transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
+            <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain" onError={event=>{event.currentTarget.style.display="none";event.currentTarget.parentElement?.append(document.createTextNode(brand.toUpperCase()));}}/>
+          </button>)}
         </section>
-        <HomeSalesEvolution />
-        <section className="mx-3 flex items-center justify-between gap-3 px-1 py-3 sm:mx-6 sm:gap-6 sm:px-3" aria-label="Representantes e logotipos das montadoras">
-          <style>{`@keyframes netinho-chrome-pulse {0%,100% {filter:drop-shadow(0 0 2px rgba(212,175,55,.5)) drop-shadow(0 3px 3px rgba(0,0,0,.55))} 50% {filter:drop-shadow(0 0 9px rgba(255,225,117,.95)) drop-shadow(0 0 3px rgba(255,255,255,.85)) drop-shadow(0 3px 5px rgba(0,0,0,.65))}} @media (prefers-reduced-motion:reduce){.netinho-chrome-pulse{animation:none!important}}`}</style>
-          <a href="/representantes-mapa" className="flex min-w-0 flex-1 items-center justify-center transition hover:scale-105 focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]" aria-label="Abrir mapa dos representantes pelo Brasil" title="Representantes pelo Brasil">
-            <img src="/images/logos-montadoras/representantes-3d.webp" alt="Representantes pelo Brasil" loading="lazy" decoding="async" className="netinho-chrome-pulse block h-14 w-full max-w-[88px] object-contain sm:h-20 sm:max-w-28" style={{animation:"netinho-chrome-pulse 2.8s ease-in-out infinite"}}/>
-          </a>
-          {(["volkswagen","fiat"] as const).map((brand,index)=><div key={brand} className="flex min-w-0 flex-1 items-center justify-center" title={brand.charAt(0).toUpperCase()+brand.slice(1)}>
-            <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={`Logotipo 3D ${brand}`} loading="lazy" decoding="async" className="netinho-chrome-pulse block h-14 w-full max-w-[88px] object-contain sm:h-20 sm:max-w-28" style={{animation:`netinho-chrome-pulse 2.8s ease-in-out ${(index+1)*0.3}s infinite`}}/>
-          </div>)}
+        <section className="mx-3 grid grid-cols-3 gap-2 sm:mx-6 sm:gap-4" aria-label="Acessos rápidos">
+          <button type="button" onClick={()=>void navigate({to:"/catalogo"})} className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[#e2b542] bg-gradient-to-b from-[#1162b3] to-[#071f49] p-2 text-center text-white shadow-md">
+            <PackageSearch className="h-9 w-9 text-[#ffdb69]"/><span className="text-[11px] font-black leading-tight sm:text-lg">Catálogo de Peças</span>
+          </button>
+          <button type="button" onClick={()=>void navigate({to:"/representantes-mapa"})} className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[#e2b542] bg-gradient-to-b from-[#1162b3] to-[#071f49] p-2 text-center text-white shadow-md">
+            <UsersRound className="h-9 w-9 text-[#ffdb69]"/><span className="text-[11px] font-black leading-tight sm:text-lg">Representantes pelo Brasil</span>
+          </button>
+          <button type="button" onClick={()=>void navigate({to:"/downloads"})} className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[#e2b542] bg-gradient-to-b from-[#1162b3] to-[#071f49] p-2 text-center text-white shadow-md">
+            <Download className="h-9 w-9 text-[#ffdb69]"/><span className="text-[11px] font-black leading-tight sm:text-lg">Downloads</span>
+          </button>
         </section>
+        <button type="button" onClick={()=>void navigate({to:access?.can_sell?"/pedido":"/catalogo"})} className="mx-3 mb-4 flex min-h-[90px] items-center justify-between gap-3 rounded-[22px] border-[3px] border-[#ff8585] bg-gradient-to-b from-[#e11c24] to-[#8d0008] px-4 text-white shadow-[0_5px_14px_#92000055] sm:mx-6 sm:min-h-[110px] sm:px-8">
+          <ShoppingCart className="h-10 w-10 shrink-0"/><span className="flex-1 text-left"><strong className="block text-xl font-black sm:text-3xl">Fazer Pedido</strong><small className="text-xs sm:text-base">{access?.can_sell?"Monte seu pedido agora!":"Consulte o catálogo de peças"}</small></span><ChevronRight className="h-8 w-8 shrink-0 text-[#ffe078]"/>
+        </button>
       </main>
       <PublicFooter />
     </div>
