@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
-import { ChartNoAxesColumnIncreasing, Coins } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, Coins, TrendingUp } from "lucide-react";
 
 const periodKey=(date:Date)=>{const p=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(date);return p.find(x=>x.type==="year")?.value+"-"+p.find(x=>x.type==="month")?.value;};
 const names=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -41,19 +41,20 @@ export function HomeCommercialDashboard(){
  const max=Math.max(1,...(data?.periods??[]).map(x=>x.total));
  return <section className="home-sales-panel mx-3 space-y-2 bg-transparent sm:mx-6" aria-label="Painel comercial">
   <div className="grid grid-cols-2 gap-2 sm:gap-4">
-   <Link to="/vendas" search={{modo:"venda",q:"",promo:""}} className="home-sales-card flex min-h-[84px] items-center gap-1.5 rounded-[24px] border-[3px] border-[#e7bb45] bg-[#fafafa] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
+   <Link to="/vendas" search={{modo:"venda",q:"",promo:""}} className="home-sales-card flex min-h-[92px] items-center gap-2 rounded-[24px] border-[3px] border-[#e7bb45] bg-gradient-to-br from-[#0754b5] via-[#063879] to-[#071c49] px-2 py-2 text-white shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
     <span className="flex h-12 w-12 shrink-0 items-center justify-center sm:h-16 sm:w-16" aria-hidden="true"><img src="/images/home-premium/icone-vendas.webp" alt="" className="block h-full w-full object-contain"/></span>
     <span className="min-w-0 flex-1"><span className="block text-[11px] font-black leading-tight sm:text-lg">Vendas do Mês</span><strong className="mt-1 block break-words text-[15px] font-black leading-tight sm:text-2xl">{isLoading?"…":isError?"Indisponível":brl(data?.currentTotal??0)}</strong></span>
    </Link>
-   <div className="home-commission-card flex min-h-[84px] items-center gap-1.5 rounded-[24px] border-[3px] border-[#e7bb45] bg-[#fafafa] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
+   <div className="home-commission-card flex min-h-[92px] items-center gap-2 rounded-[24px] border-[3px] border-[#e7bb45] bg-gradient-to-br from-white via-[#f5f9ff] to-[#dbe7f4] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
     <span className="flex h-12 w-12 shrink-0 items-center justify-center sm:h-16 sm:w-16" aria-hidden="true"><Coins className="h-10 w-10 text-[#d49a00] drop-shadow-sm sm:h-14 sm:w-14" strokeWidth={2.5}/></span>
     <span className="min-w-0 flex-1"><span className="block text-[11px] font-black leading-tight sm:text-lg">Comissão Estimada{data?.rate!=null?<span className="ml-1 text-[9px] font-medium opacity-70">({data.rate.toLocaleString("pt-BR")}%)</span>:null}</span><strong className="mt-1 block break-words text-[15px] font-black leading-tight sm:text-2xl">{isLoading?"…":isError?"Indisponível":data?.commission==null?"—":brl(data.commission)}</strong></span>
    </div>
   </div>
-  <div className="home-evolution-card rounded-[26px] border-[3px] border-[#ffffff] bg-[#f9f9f9] p-3 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_5px_10px_#34577944] sm:p-5">
+  <div className="home-evolution-card rounded-[26px] border-[2px] border-white bg-gradient-to-b from-white to-[#f0f6ff]" p-3 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_5px_10px_#34577944] sm:p-5">
    <div className="mb-3 flex items-center justify-between gap-2"><div className="flex items-center gap-2"><ChartNoAxesColumnIncreasing className="h-6 w-6 text-[#d5a020]"/><h2 className="text-base font-black sm:text-xl">Evolução das Vendas</h2></div><span className="text-[10px] font-bold sm:text-sm">Últimos 3 meses</span></div>
-   {isLoading?<p className="py-8 text-center text-sm">Carregando vendas…</p>:isError?<p role="alert" className="py-8 text-center text-sm">Não foi possível consultar as vendas.</p>:<div className="relative grid h-[112px] grid-cols-3 items-end gap-5 border-b border-[#9fb5cf] px-4 sm:h-[160px]">
+   {isLoading?<p className="py-8 text-center text-sm">Carregando vendas…</p>:isError?<p role="alert" className="py-8 text-center text-sm">Não foi possível consultar as vendas.</p>:<div className="relative grid h-[136px] grid-cols-3 items-end gap-3 border-b border-[#9fb5cf] px-3 sm:h-[180px]">
     {(data?.periods??[]).map(p=><div key={p.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1"><span className="text-[10px] font-black sm:text-sm">{p.total>=1000?`R$ ${(p.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})} mil`:brl(p.total)}</span><div className="w-full max-w-24 rounded-t-md bg-gradient-to-t from-[#0c3c87] to-[#22b6f4] shadow-md" style={{height:`${Math.max(3,p.total/max*100)}%`}} title={brl(p.total)}/><span className="text-xs font-bold">{p.label}</span></div>)}
+    <TrendingUp aria-hidden="true" className="pointer-events-none absolute bottom-7 right-0 h-10 w-20 text-[#e7aa00] opacity-80 sm:h-14 sm:w-28" strokeWidth={2.5}/>
    </div>}
    {isAdmin&&<Link to="/vendas-por-representante" className="mt-3 block text-right text-xs font-bold text-[#175d9d]">Ver por representante ›</Link>}
   </div>
