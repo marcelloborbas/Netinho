@@ -115,7 +115,7 @@ function Home() {
           <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/90 via-[#06152e]/25 to-transparent px-4 pb-4 pt-12 text-white sm:px-7 sm:pb-6 lg:px-10">
 
 <p className="flex w-full min-w-0 flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-[clamp(13px,3.6vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
-  <span className="shrink-0">{salutation}, Sr.</span>
+  <span className="home-greeting-secondary shrink-0 italic">{salutation}, Sr.</span>
   <span
     className="inline-block min-w-0 truncate text-[clamp(25px,7vw,38px)] leading-[1.05] sm:text-[clamp(2.2rem,4.5vw,4.8rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
     style={{ color: dailyNameColor }}
@@ -124,14 +124,14 @@ function Home() {
     {userName || "usuário"}!
   </span>
 </p>
-<p className="text-[clamp(15px,4vw,21px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold italic text-white drop-shadow-lg">
+<p className="home-greeting-blessing leading-tight font-bold italic text-white drop-shadow-lg">
   Que seu dia seja abençoado!
 </p>
 
           </div>
         </section>
         <HomePartsCarousel />
-        <HomeCommercialDashboard mode="all" />
+        <HomeCommercialDashboard mode="carousel" />
         <div className="home-brands-and-shortcuts">
         <section className="home-brand-row mx-2 grid grid-cols-4 gap-1 sm:mx-6 sm:gap-4" aria-label="Montadoras">
           {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.05] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
