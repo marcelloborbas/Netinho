@@ -129,8 +129,8 @@ function Home() {
 
           </div>
         </section>
-        <HomeCommercialDashboard mode="carousel" />
-        <HomeCommercialDashboard mode="evolution" />
+        <HomePartsCarousel />
+        <HomeCommercialDashboard mode="all" />
         <div className="home-brands-and-shortcuts">
         <section className="home-brand-row mx-2 grid grid-cols-4 gap-1 sm:mx-6 sm:gap-4" aria-label="Montadoras">
           {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.05] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
