@@ -148,7 +148,7 @@ function SalesMiniChart({sellerId}:{sellerId:string}) {
   <div className="flex justify-between text-[9px] text-slate-500">{series.map(x=><span key={x.key}>{x.label}</span>)}</div>
  </div>;
 }
-function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,commercialId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;commercialId?:string;onEdit?:()=>void}) {
+function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,commercialId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;commercialId?:string|undefined;onEdit?:(()=>void)|undefined}) {
  const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds-summary",id,commercialId],enabled:role==="Representante",retry:false,queryFn:async()=>{for(const representativeId of [id,commercialId].filter(Boolean) as string[]){const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",representativeId).maybeSingle();if(error)throw error;const value=(data as {ddds?:string}|null)?.ddds?.trim();if(value)return value;}return "";}});
  const {data:commercialDetails}=useQuery({queryKey:["commercial-representative-details",commercialId||id],enabled:role==="Representante"&&!!commercialId,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_details" as never).select("phone,state").eq("representative_id",commercialId||id).maybeSingle();if(error)throw error;return data as {phone?:string;state?:string}|null;}});
  const displayPhone=phone||commercialDetails?.phone||"—";
@@ -197,7 +197,7 @@ function PersonPhoto({id,name}:{id:string;name:string}) {
   <input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} aria-label={`Selecionar foto de ${name}`} className="sr-only" onChange={e=>{void choose(e.target.files?.[0]);e.target.value="";}}/>
  </label>;
 }
-function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];monthlySales:string;linkedCommercial?:CommercialRepresentative;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];monthlySales:string;linkedCommercial?:CommercialRepresentative|undefined;onSaved:()=>void;onEdit?:(()=>void)|undefined;editingPage?:boolean;onClose?:()=>void}) {
  const {data:me}=useQuery(meQuery);
  const qc=useQueryClient();
  const ownAccount=me?.id===person.id;
@@ -369,7 +369,7 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
 }
 
 type CommercialRepresentative = {id:string;user_id?:string|null;full_name:string;email:string;active:boolean};
-function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;monthlySales:string;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;monthlySales:string;onSaved:()=>void;onEdit?:(()=>void)|undefined;editingPage?:boolean;onClose?:()=>void}) {
  const [open,setOpen]=useState(editingPage);
  const [busy,setBusy]=useState(false);
  const [name,setName]=useState(representative.full_name);

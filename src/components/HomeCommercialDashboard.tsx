@@ -11,7 +11,7 @@ async function loadDashboard(isAdmin:boolean){
  const {data:auth,error:authError}=await supabase.auth.getUser();
  if(authError)throw authError;
  if(!auth.user)return null;
- const now=new Date();const current=periodKey(now);const [year,month]=current.split("-").map(Number);
+ const now=new Date();const current=periodKey(now);const [year=now.getFullYear(),month=now.getMonth()+1]=current.split("-").map(Number);
  const periods=Array.from({length:3},(_,i)=>{const d=new Date(Date.UTC(year,month-3+i,15));return {key:d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0"),label:names[d.getUTCMonth()],total:0};});
  const start=new Date(Date.UTC(year,month-3,1)-86400000).toISOString();
  const end=new Date(Date.UTC(year,month,1)+86400000).toISOString();
@@ -41,7 +41,7 @@ export function HomeCommercialDashboard(){
  const max=Math.max(1,...(data?.periods??[]).map(x=>x.total));
  return <section className="home-sales-panel mx-3 space-y-2 bg-transparent sm:mx-6" aria-label="Painel comercial">
   <div className="grid grid-cols-2 gap-2 sm:gap-4">
-   <Link to="/vendas" className="home-sales-card flex min-h-[84px] items-center gap-1.5 rounded-[24px] border-[3px] border-[#e7bb45] bg-[#fafafa] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
+   <Link to="/vendas" search={{modo:"venda",q:"",promo:""}} className="home-sales-card flex min-h-[84px] items-center gap-1.5 rounded-[24px] border-[3px] border-[#e7bb45] bg-[#fafafa] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
     <span className="relative block h-12 w-12 shrink-0 overflow-hidden sm:h-16 sm:w-16" aria-hidden="true"><img src="/images/home-premium/cartao-vendas.webp" alt="" className="absolute left-0 top-1/2 h-auto w-[180px] max-w-none -translate-y-1/2 sm:w-[235px]"/></span>
     <span className="min-w-0 flex-1"><span className="block text-[11px] font-black leading-tight sm:text-lg">Vendas do Mês</span><strong className="mt-1 block break-words text-[15px] font-black leading-tight sm:text-2xl">{isLoading?"…":isError?"Indisponível":brl(data?.currentTotal??0)}</strong></span>
    </Link>
@@ -50,7 +50,7 @@ export function HomeCommercialDashboard(){
     <span className="min-w-0 flex-1"><span className="block text-[11px] font-black leading-tight sm:text-lg">Comissão Estimada{data?.rate!=null?<span className="ml-1 text-[9px] font-medium opacity-70">({data.rate.toLocaleString("pt-BR")}%)</span>:null}</span><strong className="mt-1 block break-words text-[15px] font-black leading-tight sm:text-2xl">{isLoading?"…":isError?"Indisponível":data?.commission==null?"—":brl(data.commission)}</strong></span>
    </div>
   </div>
-  <div className="home-evolution-card rounded-[26px] border-[3px] border-[#ffffff] bg-[#f9f9f9]" p-3 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_5px_10px_#34577944] sm:p-5">
+  <div className="home-evolution-card rounded-[26px] border-[3px] border-[#ffffff] bg-[#f9f9f9] p-3 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_5px_10px_#34577944] sm:p-5">
    <div className="mb-3 flex items-center justify-between gap-2"><div className="flex items-center gap-2"><ChartNoAxesColumnIncreasing className="h-6 w-6 text-[#d5a020]"/><h2 className="text-base font-black sm:text-xl">Evolução das Vendas</h2></div><span className="text-[10px] font-bold sm:text-sm">Últimos 3 meses</span></div>
    {isLoading?<p className="py-8 text-center text-sm">Carregando vendas…</p>:isError?<p role="alert" className="py-8 text-center text-sm">Não foi possível consultar as vendas.</p>:<div className="relative grid h-[112px] grid-cols-3 items-end gap-5 border-b border-[#9fb5cf] px-4 sm:h-[160px]">
     {(data?.periods??[]).map(p=><div key={p.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1"><span className="text-[10px] font-black sm:text-sm">{p.total>=1000?`R$ ${(p.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})} mil`:brl(p.total)}</span><div className="w-full max-w-24 rounded-t-md bg-gradient-to-t from-[#0c3c87] to-[#22b6f4] shadow-md" style={{height:`${Math.max(3,p.total/max*100)}%`}} title={brl(p.total)}/><span className="text-xs font-bold">{p.label}</span></div>)}
