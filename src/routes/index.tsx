@@ -109,10 +109,10 @@ function Home() {
   return (
     <div className="home-page home-visual-2026 flex min-h-[100dvh] flex-col">
       <main className="relative mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#d7e8fb] via-[#e8f2fd] to-[#dceafa] pb-[100px] text-[#102a52] sm:gap-4 sm:pb-24">
-        <section className="relative isolate h-[29dvh] min-h-[210px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-[clamp(260px,30vw,380px)] sm:min-h-0" aria-label="Boas-vindas">
+        <section className="relative isolate h-[25dvh] min-h-[175px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-[clamp(260px,30vw,380px)] sm:min-h-0" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-[center_40%]" decoding="async" fetchPriority="high" />
 
-          <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/85 via-[#06152e]/45 to-transparent px-4 pb-6 pt-12 text-white sm:px-7 sm:pb-6 lg:px-10">
+          <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/90 via-[#06152e]/25 to-transparent px-4 pb-4 pt-12 text-white sm:px-7 sm:pb-6 lg:px-10">
 
 <p className="flex w-full min-w-0 flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-[clamp(13px,3.6vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
   <span className="shrink-0">{salutation}, Sr.</span>
@@ -125,9 +125,7 @@ function Home() {
   </span>
 </p>
 <p className="mt-2 text-[clamp(19px,5vw,22px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
-  É bom tê-lo conosco.
-</p>
-<p className="text-[clamp(19px,5vw,22px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-[#ffe083] drop-shadow-lg">
+<p className="text-[clamp(15px,4vw,21px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold italic text-white drop-shadow-lg">
   Que seu dia seja abençoado!
 </p>
 
@@ -143,11 +141,11 @@ function Home() {
           {[
             {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/logos-montadoras/representantes-3d.webp",alt:"Representantes pelo Brasil"},
             {label:"Downloads",to:"/downloads",image:"",alt:"Downloads"}
-          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative flex min-h-[92px] flex-col items-center justify-between overflow-hidden rounded-[22px] border-[3px] border-[#e8b83e] bg-gradient-to-b from-[#1680d6] via-[#064b9b] to-[#061b4b] px-1 pb-1.5 pt-1.5 text-center text-white shadow-[inset_0_2px_2px_#ffffff88,0_4px_0_#bb8019,0_8px_16px_#12355d66] sm:min-h-[135px]">
+          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative flex min-h-[80px] flex-row items-center justify-between overflow-hidden rounded-[22px] border-[3px] border-[#e8b83e] bg-gradient-to-b from-[#1680d6] via-[#064b9b] to-[#061b4b] px-2 py-2 text-left text-white shadow-[inset_0_2px_2px_#ffffff88,0_4px_0_#bb8019,0_8px_16px_#12355d66] sm:min-h-[135px]">
             <span className="pointer-events-none absolute inset-x-2 top-1 h-6 rounded-full bg-white/10 blur-lg"/>
-            {item.image?<img src={item.image} alt={item.alt} loading="lazy" className="relative h-[49px] w-full object-contain drop-shadow-[0_5px_5px_#0008] sm:h-[85px]"/>:<span className="relative flex h-[49px] items-center justify-center sm:h-[110px]"><FileDown className="h-10 w-10 text-[#ffde67] drop-shadow-[0_3px_4px_#0008] sm:h-14 sm:w-14"/></span>}
-            <span className="relative block min-h-[2.4em] text-[10px] font-black leading-tight drop-shadow-[0_2px_3px_#0009] sm:text-base">{item.label}</span>
-            <ChevronRight className="absolute bottom-3 right-1 h-4 w-4 text-[#ffdc5b] sm:h-6 sm:w-6"/>
+            {item.image?<img src={item.image} alt={item.alt} loading="lazy" className="relative h-[62px] w-[43%] shrink-0 object-contain drop-shadow-[0_5px_5px_#0008] sm:h-[85px]"/>:<span className="relative flex h-[62px] w-[43%] shrink-0 items-center justify-center sm:h-[85px]"><FileDown className="h-10 w-10 text-[#ffde67] drop-shadow-[0_3px_4px_#0008] sm:h-14 sm:w-14"/></span>}
+            <span className="relative block flex-1 text-[11px] font-black leading-tight drop-shadow-[0_2px_3px_#0009] sm:text-base">{item.label}</span>
+            <ChevronRight className="absolute bottom-1 right-0 h-4 w-4 text-[#ffdc5b] sm:h-6 sm:w-6"/>
           </button>)}
         </section>
       </main>
