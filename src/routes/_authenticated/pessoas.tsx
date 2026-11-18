@@ -143,7 +143,7 @@ function SalesMiniChart({sellerId}:{sellerId:string}) {
  const hasSales=series.some(x=>x.value>0);
  return <div className="flex h-[112px] min-w-0 flex-col justify-between" aria-label="Evolução de Vendas nos últimos quatro meses">
   <div className="text-right text-[10px] font-extrabold leading-tight text-[#102a52] sm:text-xs">Evolução de Vendas</div>
-  {isLoading?<span className="text-center text-[10px] text-slate-500">Carregando…</span>:!hasSales?<span className="text-center text-[10px] text-slate-500">Sem vendas no período</span>:<svg viewBox="0 0 160 72" className="h-[72px] w-full" role="img" aria-label="Gráfico de vendas por mês"><path d="M8 63 H152" stroke="#cbd5e1" strokeWidth="1"/><polyline points={points} fill="none" stroke="#c49a22" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>{series.map((x,i)=><circle key={x.key} cx={8+i*48} cy={63-x.value/max*49} r="3" fill="#c49a22"><title>{x.label}: {x.value.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</title></circle>)}</svg>}
+  {!sellerId?<span className="text-center text-[10px] text-slate-500">Sem vínculo com pedidos</span>:isLoading?<span className="text-center text-[10px] text-slate-500">Carregando…</span>:!hasSales?<span className="text-center text-[10px] text-slate-500">Sem vendas no período</span>:<svg viewBox="0 0 160 72" className="h-[72px] w-full" role="img" aria-label="Gráfico de vendas por mês"><path d="M8 63 H152" stroke="#cbd5e1" strokeWidth="1"/><polyline points={points} fill="none" stroke="#c49a22" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>{series.map((x,i)=><circle key={x.key} cx={8+i*48} cy={63-x.value/max*49} r="3" fill="#c49a22"><title>{x.label}: {x.value.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</title></circle>)}</svg>}
   <div className="flex justify-between text-[9px] text-slate-500">{series.map(x=><span key={x.key}>{x.label}</span>)}</div>
  </div>;
 }
@@ -156,7 +156,7 @@ function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,onEdit}:{id:s
   <div className="grid grid-cols-[94px_minmax(0,1fr)_minmax(105px,0.9fr)] items-start gap-2 sm:grid-cols-[112px_minmax(0,1fr)_minmax(145px,1fr)] sm:gap-3">
    <div className="h-[112px] w-[94px] sm:w-[112px]"><PersonPhoto id={id} name={name}/></div>
    <div className="min-w-0">
-    <div className="flex items-center gap-1"><strong className="truncate text-sm font-black sm:text-lg" title={name}>{name.trim().split(/\\s+/)[0]||"Sem nome"}</strong><button type="button" onClick={onEdit} disabled={!onEdit} aria-label={`Editar ficha de ${name}`} title="Editar ficha" className="shrink-0 rounded-md p-1 text-[#c49a22] disabled:opacity-40"><Pencil size={17}/></button></div>
+    <div className="flex items-center gap-1"><strong className="truncate text-sm font-black sm:text-lg" title={name}>{name.trim().split(/\s+/)[0]||"Sem nome"}</strong><button type="button" onClick={onEdit} disabled={!onEdit} aria-label={`Editar ficha de ${name}`} title="Editar ficha" className="shrink-0 rounded-md p-1 text-[#c49a22] disabled:opacity-40"><Pencil size={17}/></button></div>
     <div className="mt-1 text-[11px] font-semibold text-slate-600">{role}</div>
     <div className="mt-2 flex flex-wrap items-center gap-1"><span className={`rounded-md px-2 py-1 text-[11px] font-extrabold ${active?"bg-green-100 text-green-800":"bg-red-100 text-red-800"}`}>{active?"Ativo":"Inativo"}</span><span className="rounded-md bg-amber-50 px-2 py-1 text-[11px] font-extrabold text-[#102a52]">{rate}</span></div>
    </div>
