@@ -21,13 +21,44 @@ const dddRows = "SP|11|Grande São Paulo|São Paulo, Guarulhos, Osasco, Santo An
 function DddDirectory(){
  const [uf,setUf]=useState("SP");
  const [search,setSearch]=useState("");
+ const {data:reps=[],isLoading:loadingReps}=useQuery({
+  queryKey:["ddd-directory-representatives"],
+  staleTime:60_000,
+  queryFn:async()=>{
+   const [{data,error},{data:areas,error:areaError}]=await Promise.all([
+    supabase.rpc("list_public_representatives" as never),
+    supabase.from("representative_area_ddds" as never).select("representative_id,ddds")
+   ]);
+   if(error)throw error;
+   if(areaError)console.warn("Áreas de DDD indisponíveis:",areaError.message);
+   const byId=new Map(((areas??[]) as Array<{representative_id:string;ddds:string}>).map(x=>[x.representative_id,x.ddds]));
+   return ((data??[]) as Array<{id:string;full_name:string;uf:string;photo_id?:string}>).map(x=>({
+    id:x.id,name:x.full_name,uf:ufFrom(x.uf||""),ddds:byId.get(x.id)||""
+   }));
+  }
+ });
  const rows=dddRows.filter(item=>(uf==="TODOS"||item.uf===uf)&&[item.uf,item.ddd,item.region,item.cities].join(" ").toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR").trim()));
+ const matchDdd=(value:string,ddd:string)=>value.split(/[^0-9]+/).some(part=>part.replace(/^0+/,"")===ddd);
  return <section className="mx-auto max-w-5xl space-y-4 px-3 py-5 text-[#102a52]">
   <div className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-xl font-black sm:text-2xl">Consulta de DDDs do Brasil</h1><a href="/representantes-mapa" className="rounded-xl bg-[#102a52] px-4 py-2 font-bold text-white">Voltar aos representantes</a></div>
   <p className="text-sm text-slate-600">Prefixos e exemplos de cidades por região. A relação de cidades é ilustrativa, não inclui todos os municípios.</p>
   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><label className="text-sm font-bold">Estado<select value={uf} onChange={e=>setUf(e.target.value)} className="mt-1 w-full rounded-lg border p-3"><option value="TODOS">Todos os estados</option>{Object.entries(states).sort((a,b)=>a[1].name.localeCompare(b[1].name,"pt-BR")).map(([key,state])=><option key={key} value={key}>{state.name} ({key})</option>)}</select></label><label className="text-sm font-bold">Buscar DDD, cidade ou região<input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Ex.: 015, Sorocaba" className="mt-1 w-full rounded-lg border p-3"/></label></div>
-  <div className="space-y-2">{rows.map(item=><article key={item.uf+item.ddd} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"><div className="flex items-center gap-3"><strong className="rounded-lg bg-[#102a52] px-3 py-2 text-lg text-[#f6d56b]">0{item.ddd}</strong><div><p className="font-bold">{states[item.uf]?.name} ({item.uf})</p><p className="text-sm text-slate-600">{item.region}</p></div></div><p className="mt-2 text-sm"><strong>Principais cidades:</strong> {item.cities}</p></article>)}{rows.length===0&&<p className="py-8 text-center">Nenhum DDD encontrado para esta busca.</p>}</div>
-  <p className="text-xs text-slate-500">O DDD não comprova a localização atual de um número celular.</p>
+  <div className="space-y-2">{rows.map(item=>{
+   const matches=reps.filter(rep=>matchDdd(rep.ddds,item.ddd));
+   return <article key={item.uf+item.ddd} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+    <div className="flex items-start justify-between gap-3">
+     <div className="min-w-0 flex-1"><div className="flex items-center gap-3"><strong className="rounded-lg bg-[#102a52] px-3 py-2 text-lg text-[#f6d56b]">0{item.ddd}</strong><div><p className="font-bold">{states[item.uf]?.name} ({item.uf})</p><p className="text-sm text-slate-600">{item.region}</p></div></div><p className="mt-2 text-sm"><strong>Principais cidades:</strong> {item.cities}</p></div>
+     {matches.length>0&&<div className="flex max-w-[45%] shrink-0 flex-wrap justify-end gap-2" aria-label={`Representantes do DDD ${item.ddd}`}>
+      {matches.map(rep=><div key={rep.id} className="flex w-16 flex-col items-center gap-1 text-center sm:w-20">
+       <img src={representativePhoto(rep.name)||fallbackPhoto(rep.name)||"/images/Logo%20Netinho.webp"} alt={`Foto de ${rep.name}`} loading="lazy" className="h-12 w-12 rounded-full border-2 border-[#d7a62c] bg-slate-100 object-cover object-top sm:h-14 sm:w-14" onError={e=>{const fallback=fallbackPhoto(rep.name);if(fallback&&e.currentTarget.src!==new URL(fallback,window.location.origin).href)e.currentTarget.src=fallback;else e.currentTarget.src="/images/Logo%20Netinho.webp";}}/>
+       <span className="line-clamp-2 text-[10px] font-bold leading-tight text-[#102a52]">{rep.name.split(" ")[0]}</span>
+      </div>)}
+     </div>}
+    </div>
+    {loadingReps&&<p className="mt-2 text-xs text-slate-500">Consultando representantes…</p>}
+   </article>;
+  })}{rows.length===0&&<p className="py-8 text-center">Nenhum DDD encontrado para esta busca.</p>}</div>
+  <p className="text-xs text-slate-500">As fotos são exibidas quando há representante cadastrado para o DDD de atuação. O DDD não comprova a localização atual de um número celular.</p>
  </section>;
 }
 
