@@ -1,0 +1,51 @@
+import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { meQuery } from "@/lib/queries";
+import { brl } from "@/lib/brand";
+import { ShoppingCart, Coins, ChartNoAxesColumnIncreasing } from "lucide-react";
+
+const periodKey=(date:Date)=>{const p=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(date);return p.find(x=>x.type==="year")?.value+"-"+p.find(x=>x.type==="month")?.value;};
+const names=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+async function loadDashboard(isAdmin:boolean){
+ const {data:auth,error:authError}=await supabase.auth.getUser();
+ if(authError)throw authError;
+ if(!auth.user)return null;
+ const now=new Date();const current=periodKey(now);const [year,month]=current.split("-").map(Number);
+ const periods=Array.from({length:3},(_,i)=>{const d=new Date(Date.UTC(year,month-3+i,15));return {key:d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0"),label:names[d.getUTCMonth()],total:0};});
+ const start=new Date(Date.UTC(year,month-3,1)-86400000).toISOString();
+ const end=new Date(Date.UTC(year,month,1)+86400000).toISOString();
+ let rate=0;
+ if(!isAdmin){const {data}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",auth.user.id).maybeSingle();rate=Number((data as {rate?:number}|null)?.rate??0);}
+ const allOrders=[] as Array<{seller_id:string|null;created_at:string;total:number|null;kind:string|null;status:string|null}>;
+ for(let offset=0;;offset+=500){
+  let query=supabase.from("orders").select("seller_id,created_at,total,kind,status").gte("created_at",start).lt("created_at",end).order("created_at").range(offset,offset+499);
+  if(!isAdmin)query=query.eq("seller_id",auth.user.id);
+  const {data,error}=await query;
+  if(error)throw error;
+  allOrders.push(...(data??[]));
+  if((data??[]).length<500)break;
+ }
+ for(const order of allOrders){if(order.kind==="orcamento"||order.status==="cancelled")continue;const p=periods.find(x=>x.key===periodKey(new Date(order.created_at)));if(p)p.total+=Number(order.total??0);}
+ const currentTotal=periods[2]?.total??0;
+ return {periods,currentTotal,commission:isAdmin?null:currentTotal*rate/100};
+}
+export function HomeCommercialDashboard(){
+ const {data:me}=useQuery(meQuery);
+ const isAdmin=me?.isAdmin===true;
+ const {data,isLoading,isError}=useQuery({queryKey:["netinho-home-commercial-dashboard",isAdmin],queryFn:()=>loadDashboard(isAdmin),enabled:!!me,staleTime:120000,retry:false});
+ const max=Math.max(1,...(data?.periods??[]).map(x=>x.total));
+ return <section className="mx-3 space-y-3 sm:mx-6" aria-label="Painel comercial">
+  <div className="grid grid-cols-2 gap-2 sm:gap-4">
+   <Link to="/vendas" className="flex min-h-[100px] items-center gap-2 rounded-[22px] border-2 border-[#e7bb45] bg-gradient-to-br from-[#0b4e98] to-[#071a3d] p-3 text-white shadow-lg sm:p-5"><ShoppingCart className="h-8 w-8 shrink-0 text-[#ffdc6c] sm:h-11 sm:w-11"/><span className="min-w-0"><span className="block text-xs font-bold sm:text-lg">Vendas do Mês</span><strong className="block break-words text-base font-black sm:text-2xl">{isLoading?"…":isError?"Indisponível":brl(data?.currentTotal??0)}</strong></span></Link>
+   <div className="flex min-h-[100px] items-center gap-2 rounded-[22px] border-2 border-[#e7bb45] bg-gradient-to-br from-white to-[#dce7f5] p-3 text-[#102a52] shadow-lg sm:p-5"><Coins className="h-8 w-8 shrink-0 text-[#bb8714] sm:h-11 sm:w-11"/><span className="min-w-0"><span className="block text-xs font-bold sm:text-lg">Comissão Estimada</span><strong className="block break-words text-base font-black sm:text-2xl">{isLoading?"…":isError?"Indisponível":data?.commission==null?"—":brl(data.commission)}</strong></span></div>
+  </div>
+  <div className="rounded-[24px] border-2 border-[#c3d8ee] bg-gradient-to-b from-white to-[#dce9f8] p-3 text-[#102a52] shadow-md sm:p-5">
+   <div className="mb-3 flex items-center justify-between gap-2"><div className="flex items-center gap-2"><ChartNoAxesColumnIncreasing className="h-6 w-6 text-[#d5a020]"/><h2 className="text-base font-black sm:text-xl">Evolução das Vendas</h2></div><span className="text-[10px] font-bold sm:text-sm">Últimos 3 meses</span></div>
+   {isLoading?<p className="py-8 text-center text-sm">Carregando vendas…</p>:isError?<p role="alert" className="py-8 text-center text-sm">Não foi possível consultar as vendas.</p>:<div className="grid h-[145px] grid-cols-3 items-end gap-5 border-b border-[#9fb5cf] px-4 sm:h-[190px]">
+    {(data?.periods??[]).map(p=><div key={p.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1"><span className="text-[10px] font-black sm:text-sm">{p.total>=1000?`R$ ${(p.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})} mil`:brl(p.total)}</span><div className="w-full max-w-24 rounded-t-md bg-gradient-to-t from-[#0c3c87] to-[#22b6f4] shadow-md" style={{height:`${Math.max(3,p.total/max*100)}%`}} title={brl(p.total)}/><span className="text-xs font-bold">{p.label}</span></div>)}
+   </div>}
+   {isAdmin&&<Link to="/vendas-por-representante" className="mt-3 block text-right text-xs font-bold text-[#175d9d]">Ver por representante ›</Link>}
+  </div>
+ </section>;
+}
