@@ -6025,3 +6025,28 @@ html body .welcome-auth-stage .welcome-auth-art {
  object-fit:contain !important;
  object-position:center bottom !important;
 }
+
+/* Carrossel full-bleed: imagens cobrem toda a faixa, sem laterais vazias.
+   Recorte central preserva a proporção original. */
+.home-page.home-visual-2026 .home-cover-anchor {
+ width:100vw !important;
+ max-width:100vw !important;
+ margin-left:calc(50% - 50vw) !important;
+ margin-right:calc(50% - 50vw) !important;
+ padding:0 !important;
+ border-radius:0 !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-cover-anchor .home-parts-slide {
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-cover-anchor .home-parts-slide > img {
+ display:block !important;
+ width:100% !important;
+ min-width:100% !important;
+ height:100% !important;
+ min-height:100% !important;
+ max-height:none !important;
+ object-fit:cover !important;
+ object-position:center center !important;
+}
