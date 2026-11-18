@@ -36,8 +36,24 @@ function RepresentativeSales(){
   const directoryRows=(directory.data??[]) as Array<{id:string;full_name:string;photo_id?:string}>;
   const add=(id:string,name:string,userId:string|null,rate:number)=>{
    const normalized=normalizeName(name);
-   const existing=[...people.values()].find(p=>(userId&&p.userId===userId)||normalizeName(p.name)===normalized);
-   if(existing){if(!existing.userId&&userId)existing.userId=userId;if(!existing.rate&&rate)existing.rate=rate;return;}
+   // Nomes com sobrenome adicional podem vir de duas fontes do mesmo representante.
+   // Só agrupar por nome quando pelo menos dois termos completos coincidirem;
+   // identificadores de usuário vinculados continuam sendo a prioridade.
+   const samePerson=(other:Rep)=>{
+    if(userId&&other.userId&&userId===other.userId)return true;
+    const otherName=normalizeName(other.name);
+    if(otherName===normalized)return true;
+    const shorter=otherName.length<normalized.length?otherName:normalized;
+    const longer=otherName.length<normalized.length?normalized:otherName;
+    return shorter.split(/\s+/).length>=2&&longer.startsWith(shorter+" ");
+   };
+   const existing=[...people.values()].find(samePerson);
+   if(existing){
+    if(!existing.userId&&userId)existing.userId=userId;
+    if(rate>existing.rate)existing.rate=rate;
+    if(normalized.length>normalizeName(existing.name).length)existing.name=name;
+    return;
+   }
    people.set(id,{id,name,userId,rate});
   };
   for(const p of directoryRows){
