@@ -5429,3 +5429,62 @@ html body .home-page.home-visual-2026 > main {
    object-fit:contain !important;
  }
 }
+
+/* Home premium: sem placa azul por trás dos cartões; ampliar artes na área livre. */
+html body .home-page.home-visual-2026 .home-sales-panel,
+html body .home-page.home-visual-2026 .home-sales-panel::before,
+html body .home-page.home-visual-2026 .home-sales-panel::after {
+ background:transparent !important;
+ background-image:none !important;
+ box-shadow:none !important;
+}
+html body .home-page.home-visual-2026 .home-sales-panel .home-sales-card,
+html body .home-page.home-visual-2026 .home-sales-panel .home-commission-card,
+html body .home-page.home-visual-2026 .home-sales-panel .home-evolution-card {
+ background:#fafafa !important;
+ background-image:none !important;
+}
+@media(max-width:639px) {
+ html body .home-page.home-visual-2026 > main {
+  justify-content:flex-start !important;
+  gap:9px !important;
+  min-height:calc(100dvh - 84px) !important;
+  padding-bottom:90px !important;
+ }
+ html body .home-page.home-visual-2026 .home-sales-panel {margin-top:0 !important;margin-bottom:0 !important;}
+ html body .home-page.home-visual-2026 .home-brand-row {
+  flex:1 1 auto !important;
+  align-items:stretch !important;
+  min-height:88px !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+ }
+ html body .home-page.home-visual-2026 .home-brand-row > .netinho-brand-tile {
+  aspect-ratio:auto !important;
+  min-height:88px !important;
+  height:100% !important;
+ }
+ html body .home-page.home-visual-2026 .home-brand-row > .netinho-brand-tile img {
+  width:100% !important;
+  height:100% !important;
+  object-fit:fill !important;
+ }
+ html body .home-page.home-visual-2026 .home-shortcut-row {
+  flex:1 1 auto !important;
+  align-items:stretch !important;
+  min-height:94px !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+ }
+ html body .home-page.home-visual-2026 .home-shortcut-row > .netinho-quick-tile {
+  height:100% !important;
+  min-height:94px !important;
+  display:flex !important;
+  align-items:center !important;
+ }
+ html body .home-page.home-visual-2026 .home-shortcut-row > .netinho-quick-tile img {
+  width:100% !important;
+  height:100% !important;
+  object-fit:fill !important;
+ }
+}
