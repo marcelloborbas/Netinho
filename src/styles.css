@@ -5362,3 +5362,23 @@ html body .welcome-auth-stage .welcome-auth-art {
  html body .home-visual-2026 .netinho-quick-tile {min-height:0 !important;max-height:none !important;height:auto !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;background:transparent !important;padding:0 !important;}
  html body .home-visual-2026 .netinho-quick-tile > img {height:auto !important;width:100% !important;max-height:none !important;object-fit:contain !important;}
 }
+
+/* Fundo padrão Netinho: prata claro uniforme em toda a página inicial. */
+html body .home-page.home-visual-2026,
+html body .home-page.home-visual-2026 > main {
+  background: #f1f1f1 !important;
+  background-image: none !important;
+}
+html body .home-page.home-visual-2026 > main {
+  min-height: 0 !important;
+}
+@media (max-width:639px) {
+ html body .home-page.home-visual-2026,
+ html body .home-page.home-visual-2026 > main {
+  background: #f1f1f1 !important;
+  background-image: none !important;
+ }
+ html body .home-page.home-visual-2026 > main {
+  min-height: 0 !important;
+ }
+}
