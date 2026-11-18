@@ -38,7 +38,7 @@ function Pessoas() {
   void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});
  }
 
- const {data:representatives=[],isLoading:loadingRepresentatives,error:representativesError}=useQuery({queryKey:["admin-commercial-representatives"],enabled:!!me?.isAdmin,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representatives").select("id,full_name,email,active").order("full_name");if(error)throw error;return data??[];}});
+ const {data:representatives=[],isLoading:loadingRepresentatives,error:representativesError}=useQuery({queryKey:["admin-commercial-representatives"],enabled:!!me?.isAdmin,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representatives").select("id,user_id,full_name,email,active").order("full_name");if(error)throw error;return data??[];}});
  const {data:people=[],isLoading,error}=useQuery({queryKey:["admin-people"],enabled:!!me?.isAdmin,queryFn:async()=>{
   const {data,error}=await supabase.from("profiles").select("id,full_name,email,site_role,access_active,territory_uf,territory_cities,supervisor_id,phone").order("full_name");
   if(error)throw error;return (data??[]) as Person[];
@@ -74,6 +74,7 @@ function Pessoas() {
  const monthlySalesFor=(id:string)=>monthTotalsLoading?"Calculando…":monthTotalsError?"Indisponível":(monthTotals[id]??0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
  const rateForPerson=(id:string)=>commissionRows.find(x=>x.user_id===id)?.rate;
  const rateForRepresentative=(id:string)=>commercialRates.find(x=>x.representative_id===id)?.rate;
+ const linkedCommercialFor=(person:Person)=>representatives.find(rep=>(rep.user_id&&rep.user_id===person.id)||(!!person.email&&rep.email?.trim().toLowerCase()===person.email.trim().toLowerCase()));
  const matchesRate=(rate:number|undefined)=>commissionFilter==="Todas"||(commissionFilter==="Definida"?rate!=null:commissionFilter==="Não definida"?rate==null:rate!=null&&Number(rate)===Number(commissionFilter));
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
@@ -84,7 +85,7 @@ function Pessoas() {
       <AdminPageNavigation/>
   <button type="button" onClick={()=>setEditing(null)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-bold"><ArrowLeft size={19}/>Voltar para PESSOAL</button>
   
-  {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} monthlySales={monthlySalesFor(selectedPerson.id)} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} monthlySales="Sem vínculo com pedidos" editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
+  {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} monthlySales={monthlySalesFor(selectedPerson.id)} linkedCommercial={linkedCommercialFor(selectedPerson)} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} monthlySales="Sem vínculo com pedidos" editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
  </main>;
 
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
@@ -103,8 +104,8 @@ function Pessoas() {
    {(ratesError||commercialRatesError)&&<p role="alert" className="text-xs font-semibold text-red-700">Não foi possível consultar todas as comissões. O filtro por comissão pode estar incompleto.</p>}
   </div>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
-  {[...people.filter(p=>(filterRole==="Todos"||p.site_role===filterRole)&&matchesRate(rateForPerson(p.id))).map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>(filterRole==="Todos"||filterRole==="Representante")&&matchesRate(rateForRepresentative(rep.id))&&!people.some(p=>p.email?.trim().toLowerCase()===rep.email?.trim().toLowerCase())).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
-   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
+  {[...people.filter(p=>(filterRole==="Todos"||p.site_role===filterRole)&&matchesRate(rateForPerson(p.id))).map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>(filterRole==="Todos"||filterRole==="Representante")&&matchesRate(rateForRepresentative(rep.id))&&!people.some(p=>(!!rep.user_id&&p.id===rep.user_id)||(!!p.email&&p.email.trim().toLowerCase()===rep.email?.trim().toLowerCase()))).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
+   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} linkedCommercial={linkedCommercialFor(entry.record)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
    : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} monthlySales="Sem vínculo com pedidos" onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
   {loadingRepresentatives&&<p>Carregando representantes…</p>}
   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
@@ -147,9 +148,9 @@ function SalesMiniChart({sellerId}:{sellerId:string}) {
   <div className="flex justify-between text-[9px] text-slate-500">{series.map(x=><span key={x.key}>{x.label}</span>)}</div>
  </div>;
 }
-function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;onEdit?:()=>void}) {
- const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds",id],enabled:role==="Representante",retry:false,queryFn:async()=>{const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",id).maybeSingle();if(error)throw error;return (data as {ddds?:string}|null)?.ddds??"";}});
- const {data:commercialDetails}=useQuery({queryKey:["commercial-representative-details",id],enabled:role==="Representante"&&!phone,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_details" as never).select("phone,state").eq("representative_id",id).maybeSingle();if(error)throw error;return data as {phone?:string;state?:string}|null;}});
+function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,commercialId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;commercialId?:string;onEdit?:()=>void}) {
+ const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds",commercialId||id],enabled:role==="Representante",retry:false,queryFn:async()=>{const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",commercialId||id).maybeSingle();if(error)throw error;return (data as {ddds?:string}|null)?.ddds??"";}});
+ const {data:commercialDetails}=useQuery({queryKey:["commercial-representative-details",commercialId||id],enabled:role==="Representante"&&!!commercialId,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_details" as never).select("phone,state").eq("representative_id",commercialId||id).maybeSingle();if(error)throw error;return data as {phone?:string;state?:string}|null;}});
  const displayPhone=phone||commercialDetails?.phone||"—";
  const displayUf=uf||commercialDetails?.state||"—";
  return <div className="space-y-2">
@@ -196,7 +197,7 @@ function PersonPhoto({id,name}:{id:string;name:string}) {
   <input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} aria-label={`Selecionar foto de ${name}`} className="sr-only" onChange={e=>{void choose(e.target.files?.[0]);e.target.value="";}}/>
  </label>;
 }
-function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];monthlySales:string;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
+function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,editingPage=false,onClose}:{person:Person;people:Person[];monthlySales:string;linkedCommercial?:CommercialRepresentative;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
  const {data:me}=useQuery(meQuery);
  const qc=useQueryClient();
  const ownAccount=me?.id===person.id;
@@ -283,7 +284,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
   onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:p-4">
-  <PersonSummary id={person.id} name={person.full_name||"Sem nome"} active={person.access_active} rate={commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`} role={person.site_role} phone={person.phone} uf={person.territory_uf} sellerId={person.id} onEdit={editingPage?undefined:onEdit}/>
+  <PersonSummary id={person.id} name={person.full_name||"Sem nome"} active={person.access_active} rate={commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`} role={person.site_role} phone={person.phone} uf={person.territory_uf} sellerId={person.id} commercialId={linkedCommercial?.id} onEdit={editingPage?undefined:onEdit}/>
   <div className="mt-2 flex justify-end">
    <Button type="button" variant="outline" size="icon" disabled={busy||ownAccount} onClick={async()=>{
     if(ownAccount||busy)return;
@@ -334,6 +335,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
      <label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     </div>
    </section>
+   {linkedCommercial&&<section className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-3"><h3 className="font-black">Cadastro comercial vinculado</h3><p className="text-xs text-slate-600">Dados comerciais da mesma pessoa, preservados no cadastro existente. Atualize WhatsApp, UF, região e DDD aqui sem criar outro representante.</p><RepresentativeDetails name={linkedCommercial.full_name} email={linkedCommercial.email} representativeId={linkedCommercial.id} commercial /></section>}
    <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-[#102a52]">Este usuário possui uma conta de acesso. Seus dados de contato e região devem ser editados nos campos da ficha acima. A ficha comercial complementar só pode ser salva para representantes vinculados ao cadastro comercial.</p>
    <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
    <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
@@ -366,7 +368,7 @@ function PersonCard({person,people,monthlySales,onSaved,onEdit,editingPage=false
  </article>;
 }
 
-type CommercialRepresentative = {id:string;full_name:string;email:string;active:boolean};
+type CommercialRepresentative = {id:string;user_id?:string|null;full_name:string;email:string;active:boolean};
 function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;monthlySales:string;onSaved:()=>void;onEdit?:()=>void;editingPage?:boolean;onClose?:()=>void}) {
  const [open,setOpen]=useState(editingPage);
  const [busy,setBusy]=useState(false);
