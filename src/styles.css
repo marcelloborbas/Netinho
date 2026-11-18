@@ -5734,3 +5734,79 @@ html body .welcome-auth-stage .welcome-auth-art {
  margin-top:1px !important;
  font-size:clamp(9px,2.5vw,12px) !important;
 }
+
+/* Revisão da home: carrossel deslizante sem fundo, sem gráfico, atalhos altos. */
+.home-page.home-visual-2026 .home-cover-anchor,
+.home-page.home-visual-2026 .home-cover-anchor > div:first-child,
+.home-page.home-visual-2026 .home-parts-track,
+.home-page.home-visual-2026 .home-parts-slide {
+ background:transparent !important;
+ background-image:none !important;
+ min-height:0 !important;
+}
+.home-page.home-visual-2026 .home-cover-anchor .home-parts-track {
+ display:flex !important;
+ width:100% !important;
+ height:100% !important;
+}
+.home-page.home-visual-2026 .home-parts-slide {width:100% !important;min-width:100% !important;flex:0 0 100% !important;}
+.home-page.home-visual-2026 .home-parts-slide img {
+ width:100% !important;
+ height:100% !important;
+ object-fit:contain !important;
+ object-position:center !important;
+}
+.home-page.home-visual-2026 .home-sales-carousel {
+ display:flex !important;
+ align-items:stretch !important;
+ height:100% !important;
+ min-height:0 !important;
+ margin:0 !important;
+ padding:clamp(4px,1dvh,12px) 0 !important;
+}
+.home-page.home-visual-2026 .home-sales-carousel .home-kpi-carousel {
+ display:grid !important;
+ grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+ flex:1 1 auto !important;
+ width:100% !important;
+ height:100% !important;
+ min-height:0 !important;
+ gap:7px !important;
+ overflow:hidden !important;
+ scroll-snap-type:none !important;
+}
+.home-page.home-visual-2026 .home-sales-carousel .home-kpi-carousel > * {
+ flex:none !important;
+ width:100% !important;
+ min-width:0 !important;
+ min-height:0 !important;
+ height:100% !important;
+ border-radius:clamp(12px,2.2dvh,24px) !important;
+}
+.home-page.home-visual-2026 .home-sales-carousel .home-kpi-icon {
+ width:clamp(40px,12vw,80px) !important;
+ flex-basis:clamp(40px,12vw,80px) !important;
+ height:75% !important;
+}
+.home-page.home-visual-2026 .home-sales-carousel .home-kpi-title {font-size:clamp(10px,2.7vw,18px) !important;}
+.home-page.home-visual-2026 .home-sales-carousel .home-kpi-value {font-size:clamp(12px,3.5vw,24px) !important;}
+.home-page.home-visual-2026 .home-brands-and-shortcuts {
+ grid-template-rows:minmax(0,.7fr) minmax(0,1.3fr) !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-quick-tile,
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-quick-tile img {
+ height:100% !important;
+ max-height:100% !important;
+ width:100% !important;
+ object-fit:contain !important;
+}
+.home-page.home-visual-2026 .home-greeting-secondary,
+.home-page.home-visual-2026 .home-greeting-blessing {
+ font-size:clamp(17px,4.4vw,24px) !important;
+ line-height:1.12 !important;
+ font-style:italic !important;
+}
+@media(max-width:400px) {
+ .home-page.home-visual-2026 .home-greeting-secondary,
+ .home-page.home-visual-2026 .home-greeting-blessing {font-size:clamp(16px,4.3vw,19px) !important;}
+}
