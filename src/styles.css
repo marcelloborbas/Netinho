@@ -5382,3 +5382,50 @@ html body .home-page.home-visual-2026 > main {
   min-height: 0 !important;
  }
 }
+
+/* Home premium: aproveitar a altura útil do celular, sem cortar as artes WebP. */
+@media (max-width:639px) {
+ html body .home-page.home-visual-2026 > main {
+   min-height:100dvh !important;
+   height:auto !important;
+   justify-content:space-between !important;
+   gap:8px !important;
+   padding-bottom:92px !important;
+ }
+ html body .home-visual-2026 .home-brand-row {
+   margin-left:6px !important;
+   margin-right:6px !important;
+   gap:3px !important;
+ }
+ html body .home-visual-2026 .home-brand-row > .netinho-brand-tile {
+   min-height:0 !important;
+   height:auto !important;
+   padding:0 !important;
+   overflow:visible !important;
+   aspect-ratio:1 / 1 !important;
+ }
+ html body .home-visual-2026 .home-brand-row > .netinho-brand-tile img {
+   display:block !important;
+   width:100% !important;
+   height:100% !important;
+   object-fit:contain !important;
+ }
+ html body .home-visual-2026 .home-shortcut-row {
+   margin-left:7px !important;
+   margin-right:7px !important;
+   gap:6px !important;
+ }
+ html body .home-visual-2026 .home-shortcut-row > .netinho-quick-tile {
+   min-height:0 !important;
+   max-height:none !important;
+   height:auto !important;
+   overflow:visible !important;
+ }
+ html body .home-visual-2026 .home-shortcut-row > .netinho-quick-tile img {
+   display:block !important;
+   width:100% !important;
+   height:auto !important;
+   max-height:none !important;
+   object-fit:contain !important;
+ }
+}
