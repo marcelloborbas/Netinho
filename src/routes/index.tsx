@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
 import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
-import { Download, ChevronRight, Search, FileDown } from "lucide-react";
+import { ChevronRight, FileDown } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -33,7 +33,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const navigate = useNavigate();
   const [hour, setHour] = useState<number | null>(null);
-  const [partsSearch, setPartsSearch] = useState("");
   useEffect(() => {
     const refreshGreeting = () => setHour(new Date().getHours());
     refreshGreeting();
@@ -135,14 +134,7 @@ function Home() {
           </div>
         </section>
         <HomeCommercialDashboard />
-        <section className="mx-3 rounded-[25px] border-[3px] border-white bg-gradient-to-b from-white to-[#e6f0fc] px-3 py-3 text-[#102a52] shadow-[0_5px_14px_#254c7840] sm:mx-6 sm:px-6" aria-label="Encontre sua peça">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black sm:text-2xl"><Search className="h-7 w-7 text-[#09599f]"/>Encontre sua peça</h2>
-          <form className="flex min-h-[52px] overflow-hidden rounded-full border-2 border-[#93b3d8] bg-[#edf5ff] shadow-inner" onSubmit={event=>{event.preventDefault();void navigate({to:"/catalogo",search:{q:partsSearch.trim()} });}}>
-            <input aria-label="Buscar por código, peça ou veículo" value={partsSearch} onChange={event=>setPartsSearch(event.target.value)} placeholder="Busque por código, peça ou veículo..." className="min-w-0 flex-1 bg-transparent px-4 text-sm font-medium text-[#102a52] outline-none placeholder:text-[#69819c] sm:text-base"/>
-            <button type="submit" aria-label="Pesquisar peças" className="flex w-16 shrink-0 items-center justify-center bg-gradient-to-b from-[#ffe98a] to-[#bd7e05] text-[#102a52] shadow-inner"><Search className="h-7 w-7"/></button>
-          </form>
-        </section>
-        <section className="mx-3 grid grid-cols-4 gap-2 sm:mx-6 sm:gap-4" aria-label="Montadoras">
+        <section className="mx-3 grid grid-cols-4 gap-1.5 sm:mx-6 sm:gap-4" aria-label="Montadoras">
           {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-square min-w-0 items-center justify-center rounded-[22px] border-[3px] border-[#e3b83d] bg-gradient-to-b from-[#ffffff] via-[#eef4fa] to-[#b5c8dc] p-1.5 shadow-[inset_0_2px_3px_#fff,0_4px_0_#c18d1d,0_7px_14px_#26496d55] transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
             <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
           </button>)}
@@ -151,10 +143,10 @@ function Home() {
           {[
             {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/logos-montadoras/representantes-3d.webp",alt:"Representantes pelo Brasil"},
             {label:"Downloads",to:"/downloads",image:"",alt:"Downloads"}
-          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative flex min-h-[125px] flex-col items-center justify-between overflow-hidden rounded-[22px] border-[3px] border-[#e8b83e] bg-gradient-to-b from-[#1680d6] via-[#064b9b] to-[#061b4b] px-1 pb-3 pt-2 text-center text-white shadow-[inset_0_2px_2px_#ffffff88,0_4px_0_#bb8019,0_8px_16px_#12355d66] sm:min-h-[185px]">
+          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative flex min-h-[92px] flex-col items-center justify-between overflow-hidden rounded-[22px] border-[3px] border-[#e8b83e] bg-gradient-to-b from-[#1680d6] via-[#064b9b] to-[#061b4b] px-1 pb-1.5 pt-1.5 text-center text-white shadow-[inset_0_2px_2px_#ffffff88,0_4px_0_#bb8019,0_8px_16px_#12355d66] sm:min-h-[135px]">
             <span className="pointer-events-none absolute inset-x-2 top-1 h-6 rounded-full bg-white/10 blur-lg"/>
-            {item.image?<img src={item.image} alt={item.alt} loading="lazy" className="relative h-[76px] w-full object-contain drop-shadow-[0_5px_5px_#0008] sm:h-[110px]"/>:<span className="relative flex h-[76px] items-center justify-center sm:h-[110px]"><FileDown className="h-14 w-14 text-[#ffde67] drop-shadow-[0_3px_4px_#0008] sm:h-20 sm:w-20"/></span>}
-            <span className="relative block min-h-[2.6em] text-[11px] font-black leading-tight drop-shadow-[0_2px_3px_#0009] sm:text-lg">{item.label}</span>
+            {item.image?<img src={item.image} alt={item.alt} loading="lazy" className="relative h-[49px] w-full object-contain drop-shadow-[0_5px_5px_#0008] sm:h-[85px]"/>:<span className="relative flex h-[49px] items-center justify-center sm:h-[110px]"><FileDown className="h-10 w-10 text-[#ffde67] drop-shadow-[0_3px_4px_#0008] sm:h-14 sm:w-14"/></span>}
+            <span className="relative block min-h-[2.4em] text-[10px] font-black leading-tight drop-shadow-[0_2px_3px_#0009] sm:text-base">{item.label}</span>
             <ChevronRight className="absolute bottom-3 right-1 h-4 w-4 text-[#ffdc5b] sm:h-6 sm:w-6"/>
           </button>)}
         </section>
