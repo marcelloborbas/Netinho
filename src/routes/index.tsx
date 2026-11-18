@@ -143,7 +143,7 @@ function Home() {
         <section className="home-shortcut-row mx-2 grid grid-cols-2 gap-2 sm:mx-6 sm:gap-4" aria-label="Acessos rápidos">
           {[
             {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/home-premium/representantes-brasil.webp",alt:"Representantes pelo Brasil"},
-            {label:"Ofertas Especiais",to:"/ofertas",image:"",alt:"Ofertas Especiais"}
+            {label:"Ofertas Especiais",to:"/ofertas",image:"/images/home-premium/ofertas-especiais.webp",alt:"Ofertas Especiais"}
           ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative block min-w-0 overflow-hidden rounded-[18px] bg-transparent p-0 transition hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={item.label}>
             {item.image ? <img src={item.image} alt={item.alt} loading="lazy" className="block h-auto w-full object-contain"/> : <span className="home-special-offers-tile flex h-full w-full flex-col items-center justify-center gap-1 text-center" aria-hidden="true"><BadgePercent className="home-special-offers-icon" strokeWidth={1.8}/><span className="home-special-offers-label">OFERTAS<br/>ESPECIAIS</span></span>}
           </button>)}
