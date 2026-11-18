@@ -15,27 +15,37 @@ const parts = [
 export function HomePartsCarousel() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [animate, setAnimate] = useState(true);
   useEffect(() => {
     if (paused || (typeof document !== "undefined" && document.hidden)) return;
-    const id = window.setInterval(() => { if (!document.hidden) setIndex(i => (i + 1) % parts.length); }, 3200);
+    const id = window.setInterval(() => setIndex(i => i + 1), 3600);
     return () => window.clearInterval(id);
   }, [paused]);
-  // Antecipar apenas a próxima imagem evita atraso visual sem baixar as nove de uma vez.
-  useEffect(() => {
-    const next = parts[(index + 1) % parts.length];
-    const image = new Image();
-    image.decoding = "async";
-    if (!next) return;
-    image.src = `${next.image}?v=20261102-2`;
-  }, [index]);
+  const select = (next: number) => {
+    setAnimate(true);
+    setIndex(next);
+  };
   return (
-    <section className="home-cover-anchor relative h-full w-full overflow-hidden" aria-label="Peças em destaque" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
-
-      <div className="relative h-full min-h-[155px] w-full overflow-hidden bg-[#061a36]">
-        <img src={`${parts[index]?.image ?? ""}?v=20261102-2`} alt={parts[index]?.title ?? ""} decoding="async" fetchPriority={index === 0 ? "high" : "auto"} className="absolute inset-0 block h-full w-full object-cover object-center" />
+    <section className="home-cover-anchor relative h-full w-full overflow-hidden bg-transparent" aria-label="Carrossel de peças em destaque"
+      onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
+      <div className="home-parts-track flex h-full w-full bg-transparent"
+        style={{ transform: `translateX(-${index * 100}%)`, transition: animate ? "transform 650ms ease-in-out" : "none" }}
+        onTransitionEnd={() => {
+          if (index >= parts.length) {
+            setAnimate(false);
+            setIndex(0);
+            requestAnimationFrame(() => requestAnimationFrame(() => setAnimate(true)));
+          }
+        }}>
+        {[...parts, parts[0]].map((part, i) =>
+          <div key={i} className="home-parts-slide flex h-full min-w-full shrink-0 items-center justify-center bg-transparent">
+            <img src={part.image} alt={part.title} decoding="async" loading={i <= 1 ? "eager" : "lazy"} className="block h-full w-full object-contain" />
+          </div>
+        )}
       </div>
-      <div className="absolute bottom-1.5 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-[#071e3bcc] px-2 py-1" aria-label="Selecionar imagem">
-        {parts.map((part,i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i+1}: ${part.title}`} aria-current={i===index ? "true" : undefined} onClick={() => setIndex(i)} className={`h-2 rounded-full transition-all ${i===index ? "w-5 bg-[#f3c75d]" : "w-2 bg-white/70 hover:bg-white"}`}/>)}
+      <div className="absolute bottom-1 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-white/65 px-2 py-1" aria-label="Selecionar imagem">
+        {parts.map((part,i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i+1}: ${part.title}`} aria-current={index % parts.length===i ? "true" : undefined} onClick={() => select(i)} className={`h-1.5 rounded-full transition-all ${index % parts.length===i ? "w-4 bg-[#d9a91c]" : "w-1.5 bg-[#61748c]"}`}/>)}
       </div>
     </section>
   );
