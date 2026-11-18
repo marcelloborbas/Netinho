@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
-import { ChartNoAxesColumnIncreasing, TrendingUp, ChevronRight, ClipboardList, Users } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, TrendingUp, ClipboardList, Users } from "lucide-react";
 
 const periodKey=(date:Date)=>{const p=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(date);return p.find(x=>x.type==="year")?.value+"-"+p.find(x=>x.type==="month")?.value;};
 const names=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -21,7 +21,7 @@ async function loadDashboard(isAdmin:boolean){
  if(rateError)throw rateError;
  const registeredRate=(rateRow as {rate?:number}|null)?.rate;
  const rate=registeredRate==null?(isAdmin?3.5:null):Number(registeredRate);
- const allOrders=[] as Array<{seller_id:string|null;created_at:string;total:number|null;kind:string|null;status:string|null}>;
+ const allOrders=[] as Array<{id:string;number:number;seller_id:string|null;customer_id:string|null;customer_snapshot:Record<string, unknown>|null;created_at:string;total:number|null;kind:string|null;status:string|null}>;
  for(let offset=0;;offset+=500){
   let query=supabase.from("orders").select("id,number,seller_id,customer_id,customer_snapshot,created_at,total,kind,status").gte("created_at",start).lt("created_at",end).order("created_at").range(offset,offset+499);
   if(!isAdmin)query=query.eq("seller_id",auth.user.id);
