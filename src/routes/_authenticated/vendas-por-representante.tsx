@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
-import { TrendingUp, UsersRound, ChevronDown, UserRound, Wallet, BarChart3 } from "lucide-react";
+import { TrendingUp, UsersRound, ChevronDown, UserRound, Wallet, BarChart3, Trash2 } from "lucide-react";
 
 const photoFiles:Record<string,string>={abdnego:"Abdnego.webp",abdenego:"Abdnego.webp",abednego:"Abdnego.webp",domingos:"Domingos.webp",jhonatas:"Jhonatas.webp",justino:"José Justino.webp",livaldo:"Livaldo.webp",luciano:"Luciano.webp",marcello:"Marcello.webp",romullo:"Romullo.webp",romulo:"Romullo.webp",burgato:"José Burgato.webp",osmair:"Osmair.webp"};
 const normalizeName=(name:string)=>name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
@@ -112,6 +112,7 @@ function RepresentativeSales(){
       <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[#e6edf5]"><div className="h-full rounded-full bg-gradient-to-r from-[#247ab7] to-[#5cc5ef] transition-all duration-500" style={{width:`${result.total/highest*100}%`}}/></div>
       <p className="mt-1 text-right text-[10px] font-medium text-slate-500">Participação relativa ao maior volume</p>
      </button>
+     <div className="flex justify-end px-4 pb-3 sm:px-5"><Link to="/pessoas" hash={`#${p.userId?"person":"representative"}:${p.userId||p.id}`} onClick={event=>event.stopPropagation()} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-bold text-red-700 hover:bg-red-100" aria-label={`Abrir ficha para excluir ${p.name}`} title="Abrir ficha administrativa para confirmar exclusão"><Trash2 size={16}/> Apagar</Link></div>
      {isOpen&&<div className="border-t border-[#e7eef5] bg-[#f7faff] px-4 pb-4 pt-3 sm:px-5">
       <div className="mb-3 flex items-center justify-between"><strong className="text-xs uppercase tracking-wide text-[#315f86]">Evolução mensal</strong><span className="text-[11px] text-slate-500">6 meses</span></div>
       <div className="grid h-40 grid-cols-6 gap-2 border-b border-[#d6e3ef]">{data!.periods.map(m=><div key={m.key} className="flex min-w-0 flex-col items-center justify-end gap-1"><span className="max-w-full truncate text-[10px] font-bold" title={brl(result.months[m.key]??0)}>{(result.months[m.key]??0)>=1000?`${((result.months[m.key]??0)/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k`:Math.round(result.months[m.key]??0)}</span><div className="w-full max-w-10 rounded-t-lg bg-gradient-to-t from-[#124578] to-[#46b1e7] transition-all duration-500" style={{height:Math.max(3,(result.months[m.key]??0)/max*100)+"%"}} title={brl(result.months[m.key]??0)}/><span className="text-[10px] font-bold uppercase">{m.label.split(" ")[0]}</span></div>)}</div>
