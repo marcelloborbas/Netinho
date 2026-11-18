@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/representantes-mapa")({
   component: RepresentativesMap,
 });
 
-const dddRows = "SP|11|Grande São Paulo|São Paulo, Guarulhos, Osasco, Santo André, Jundiaí, Itu\nSP|12|Vale do Paraíba e Litoral Norte|São José dos Campos, Taubaté, Jacareí, Ubatuba\nSP|13|Baixada Santista e Vale do Ribeira|Santos, Guarujá, Praia Grande, Registro\nSP|14|Centro-Oeste paulista|Bauru, Marília, Jaú, Botucatu\nSP|15|Sorocaba e sudoeste|Sorocaba, Votorantim, Tatuí, Itapetininga\nSP|16|Ribeirão Preto e região|Ribeirão Preto, Franca, Araraquara, São Carlos\nSP|17|Noroeste paulista|São José do Rio Preto, Catanduva, Barretos, Olímpia\nSP|18|Oeste paulista|Presidente Prudente, Araçatuba, Birigui, Assis\nSP|19|Campinas e Piracicaba|Campinas, Piracicaba, Americana, Limeira\nRJ|21|Rio de Janeiro e região metropolitana|Rio de Janeiro, Niterói, São Gonçalo, Duque de Caxias\nRJ|22|Norte fluminense e Região dos Lagos|Campos dos Goytacazes, Macaé, Cabo Frio, Nova Friburgo\nRJ|24|Sul fluminense e Costa Verde|Volta Redonda, Resende, Angra dos Reis, Petrópolis\nES|27|Grande Vitória e norte|Vitória, Vila Velha, Serra, Linhares\nES|28|Sul capixaba|Cachoeiro de Itapemirim, Guarapari, Alegre\nMG|31|Belo Horizonte e região|Belo Horizonte, Contagem, Betim, Sete Lagoas\nMG|32|Zona da Mata|Juiz de Fora, Barbacena, Ubá, Viçosa\nMG|33|Leste e nordeste|Governador Valadares, Teófilo Otoni, Caratinga\nMG|34|Triângulo Mineiro|Uberlândia, Uberaba, Patos de Minas, Araxá\nMG|35|Sul de Minas|Poços de Caldas, Pouso Alegre, Varginha, Passos\nMG|37|Centro-Oeste mineiro|Divinópolis, Itaúna, Formiga\nMG|38|Norte de Minas|Montes Claros, Januária, Pirapora\nPR|41|Curitiba e litoral|Curitiba, São José dos Pinhais, Paranaguá\nPR|42|Campos Gerais|Ponta Grossa, Guarapuava, Irati\nPR|43|Norte pioneiro|Londrina, Apucarana, Arapongas\nPR|44|Noroeste|Maringá, Umuarama, Paranavaí\nPR|45|Oeste|Foz do Iguaçu, Cascavel, Toledo\nPR|46|Sudoeste|Pato Branco, Francisco Beltrão, Palmas\nSC|47|Norte e Vale do Itajaí|Joinville, Blumenau, Itajaí\nSC|48|Grande Florianópolis e sul|Florianópolis, São José, Criciúma\nSC|49|Oeste e planalto|Chapecó, Lages, Concórdia\nRS|51|Porto Alegre e entorno|Porto Alegre, Canoas, Novo Hamburgo\nRS|53|Sul gaúcho|Pelotas, Rio Grande, Bagé\nRS|54|Serra e norte|Caxias do Sul, Bento Gonçalves, Passo Fundo\nRS|55|Centro-oeste|Santa Maria, Uruguaiana, Santo Ângelo\nDF|61|Distrito Federal|Brasília, Taguatinga, Ceilândia\nGO|62|Goiânia e centro-norte|Goiânia, Aparecida de Goiânia, Anápolis\nGO|64|Sul e sudoeste|Rio Verde, Jataí, Catalão\nTO|63|Tocantins|Palmas, Araguaína, Gurupi\nMT|65|Cuiabá e centro-sul|Cuiabá, Várzea Grande, Cáceres\nMT|66|Norte e leste|Rondonópolis, Sinop, Sorriso\nMS|67|Mato Grosso do Sul|Campo Grande, Dourados, Três Lagoas\nAC|68|Acre|Rio Branco, Cruzeiro do Sul, Sena Madureira\nRO|69|Rondônia|Porto Velho, Ji-Paraná, Ariquemes\nBA|71|Salvador e entorno|Salvador, Lauro de Freitas, Camaçari\nBA|73|Sul e extremo sul|Ilhéus, Itabuna, Porto Seguro\nBA|74|Norte|Juazeiro, Jacobina, Irecê\nBA|75|Feira de Santana e Recôncavo|Feira de Santana, Alagoinhas, Santo Antônio de Jesus\nBA|77|Oeste e sudoeste|Vitória da Conquista, Barreiras, Guanambi\nSE|79|Sergipe|Aracaju, Lagarto, Itabaiana\nPE|81|Recife e Zona da Mata|Recife, Olinda, Caruaru\nPE|87|Sertão|Petrolina, Garanhuns, Serra Talhada\nAL|82|Alagoas|Maceió, Arapiraca, Penedo\nPB|83|Paraíba|João Pessoa, Campina Grande, Patos\nRN|84|Rio Grande do Norte|Natal, Mossoró, Caicó\nCE|85|Fortaleza e entorno|Fortaleza, Caucaia, Maracanaú\nCE|88|Interior|Juazeiro do Norte, Sobral, Crato\nPI|86|Centro-norte|Teresina, Altos, Campo Maior\nPI|89|Sul|Picos, Floriano, Bom Jesus\nPA|91|Belém e nordeste|Belém, Ananindeua, Castanhal\nPA|93|Oeste|Santarém, Altamira, Itaituba\nPA|94|Sudeste|Marabá, Parauapebas, Redenção\nAM|92|Manaus e entorno|Manaus, Iranduba, Manacapuru\nAM|97|Interior|Coari, Tefé, Parintins\nRR|95|Roraima|Boa Vista, Rorainópolis, Caracaraí\nAP|96|Amapá|Macapá, Santana, Oiapoque\nMA|98|São Luís e norte|São Luís, São José de Ribamar, Pinheiro\nMA|99|Sul e leste|Imperatriz, Caxias, Timon".split("\n").map(line=>{const [uf,ddd,region,cities]=line.split("|");return {uf,ddd,region,cities};});
+const dddRows = "SP|11|Grande São Paulo|São Paulo, Guarulhos, Osasco, Santo André, Jundiaí, Itu\nSP|12|Vale do Paraíba e Litoral Norte|São José dos Campos, Taubaté, Jacareí, Ubatuba\nSP|13|Baixada Santista e Vale do Ribeira|Santos, Guarujá, Praia Grande, Registro\nSP|14|Centro-Oeste paulista|Bauru, Marília, Jaú, Botucatu\nSP|15|Sorocaba e sudoeste|Sorocaba, Votorantim, Tatuí, Itapetininga\nSP|16|Ribeirão Preto e região|Ribeirão Preto, Franca, Araraquara, São Carlos\nSP|17|Noroeste paulista|São José do Rio Preto, Catanduva, Barretos, Olímpia\nSP|18|Oeste paulista|Presidente Prudente, Araçatuba, Birigui, Assis\nSP|19|Campinas e Piracicaba|Campinas, Piracicaba, Americana, Limeira\nRJ|21|Rio de Janeiro e região metropolitana|Rio de Janeiro, Niterói, São Gonçalo, Duque de Caxias\nRJ|22|Norte fluminense e Região dos Lagos|Campos dos Goytacazes, Macaé, Cabo Frio, Nova Friburgo\nRJ|24|Sul fluminense e Costa Verde|Volta Redonda, Resende, Angra dos Reis, Petrópolis\nES|27|Grande Vitória e norte|Vitória, Vila Velha, Serra, Linhares\nES|28|Sul capixaba|Cachoeiro de Itapemirim, Guarapari, Alegre\nMG|31|Belo Horizonte e região|Belo Horizonte, Contagem, Betim, Sete Lagoas\nMG|32|Zona da Mata|Juiz de Fora, Barbacena, Ubá, Viçosa\nMG|33|Leste e nordeste|Governador Valadares, Teófilo Otoni, Caratinga\nMG|34|Triângulo Mineiro|Uberlândia, Uberaba, Patos de Minas, Araxá\nMG|35|Sul de Minas|Poços de Caldas, Pouso Alegre, Varginha, Passos\nMG|37|Centro-Oeste mineiro|Divinópolis, Itaúna, Formiga\nMG|38|Norte de Minas|Montes Claros, Januária, Pirapora\nPR|41|Curitiba e litoral|Curitiba, São José dos Pinhais, Paranaguá\nPR|42|Campos Gerais|Ponta Grossa, Guarapuava, Irati\nPR|43|Norte pioneiro|Londrina, Apucarana, Arapongas\nPR|44|Noroeste|Maringá, Umuarama, Paranavaí\nPR|45|Oeste|Foz do Iguaçu, Cascavel, Toledo\nPR|46|Sudoeste|Pato Branco, Francisco Beltrão, Palmas\nSC|47|Norte e Vale do Itajaí|Joinville, Blumenau, Itajaí\nSC|48|Grande Florianópolis e sul|Florianópolis, São José, Criciúma\nSC|49|Oeste e planalto|Chapecó, Lages, Concórdia\nRS|51|Porto Alegre e entorno|Porto Alegre, Canoas, Novo Hamburgo\nRS|53|Sul gaúcho|Pelotas, Rio Grande, Bagé\nRS|54|Serra e norte|Caxias do Sul, Bento Gonçalves, Passo Fundo\nRS|55|Centro-oeste|Santa Maria, Uruguaiana, Santo Ângelo\nDF|61|Distrito Federal|Brasília, Taguatinga, Ceilândia\nGO|62|Goiânia e centro-norte|Goiânia, Aparecida de Goiânia, Anápolis\nGO|64|Sul e sudoeste|Rio Verde, Jataí, Catalão\nTO|63|Tocantins|Palmas, Araguaína, Gurupi\nMT|65|Cuiabá e centro-sul|Cuiabá, Várzea Grande, Cáceres\nMT|66|Norte e leste|Rondonópolis, Sinop, Sorriso\nMS|67|Mato Grosso do Sul|Campo Grande, Dourados, Três Lagoas\nAC|68|Acre|Rio Branco, Cruzeiro do Sul, Sena Madureira\nRO|69|Rondônia|Porto Velho, Ji-Paraná, Ariquemes\nBA|71|Salvador e entorno|Salvador, Lauro de Freitas, Camaçari\nBA|73|Sul e extremo sul|Ilhéus, Itabuna, Porto Seguro\nBA|74|Norte|Juazeiro, Jacobina, Irecê\nBA|75|Feira de Santana e Recôncavo|Feira de Santana, Alagoinhas, Santo Antônio de Jesus\nBA|77|Oeste e sudoeste|Vitória da Conquista, Barreiras, Guanambi\nSE|79|Sergipe|Aracaju, Lagarto, Itabaiana\nPE|81|Recife e Zona da Mata|Recife, Olinda, Caruaru\nPE|87|Sertão|Petrolina, Garanhuns, Serra Talhada\nAL|82|Alagoas|Maceió, Arapiraca, Penedo\nPB|83|Paraíba|João Pessoa, Campina Grande, Patos\nRN|84|Rio Grande do Norte|Natal, Mossoró, Caicó\nCE|85|Fortaleza e entorno|Fortaleza, Caucaia, Maracanaú\nCE|88|Interior|Juazeiro do Norte, Sobral, Crato\nPI|86|Centro-norte|Teresina, Altos, Campo Maior\nPI|89|Sul|Picos, Floriano, Bom Jesus\nPA|91|Belém e nordeste|Belém, Ananindeua, Castanhal\nPA|93|Oeste|Santarém, Altamira, Itaituba\nPA|94|Sudeste|Marabá, Parauapebas, Redenção\nAM|92|Manaus e entorno|Manaus, Iranduba, Manacapuru\nAM|97|Interior|Coari, Tefé, Parintins\nRR|95|Roraima|Boa Vista, Rorainópolis, Caracaraí\nAP|96|Amapá|Macapá, Santana, Oiapoque\nMA|98|São Luís e norte|São Luís, São José de Ribamar, Pinheiro\nMA|99|Sul e leste|Imperatriz, Caxias, Timon".split("\n").map(line=>{const [uf,ddd,region,cities]=line.split("|");return {uf:uf??"",ddd:ddd??"",region:region??"",cities:cities??""};});
 
 function DddDirectory(){
  const [uf,setUf]=useState("SP");
@@ -75,7 +75,7 @@ const photoFiles: Record<string,string> = {
 };
 const representativePhoto = (name:string) => {
   const key=Object.keys(photoFiles).find(k=>normalize(name).includes(k));
-  return key ? "/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]) : null;
+  return key ? "/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]??"") : null;
 };
 const fallbackPhoto = (name:string) => {
   const key=normalize(name);
@@ -125,8 +125,11 @@ function RepresentativesMap(){
     enabled:isAdmin,
     queryFn:async()=>{
       const months=lastThreeMonths();
-      const start=months[0].toISOString();
-      const end=new Date(Date.UTC(months[2].getUTCFullYear(),months[2].getUTCMonth()+1,1)).toISOString();
+      const firstMonth=months[0];
+      const lastMonth=months[2];
+      if(!firstMonth||!lastMonth)throw Error("Período de vendas inválido.");
+      const start=firstMonth.toISOString();
+      const end=new Date(Date.UTC(lastMonth.getUTCFullYear(),lastMonth.getUTCMonth()+1,1)).toISOString();
       const [{data:rates,error:rateError},{data:commercial,error:commercialError}]=await Promise.all([
         supabase.from("salesperson_commission_rates" as never).select("user_id,rate"),
         supabase.from("commercial_representative_commission_rates" as never).select("representative_id,rate")
@@ -150,7 +153,7 @@ function RepresentativesMap(){
         const monthIndex=months.findIndex(m=>m.getUTCFullYear()===date.getUTCFullYear()&&m.getUTCMonth()===date.getUTCMonth());
         if(monthIndex<0)continue;
         const values=sales.get(order.seller_id)??[0,0,0];
-        values[monthIndex]+=Number(order.total??0);
+        values[monthIndex]=(values[monthIndex]??0)+Number(order.total??0);
         sales.set(order.seller_id,values);
       }
       return {commissions,sales,months};
@@ -278,6 +281,7 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
    try{
     if(!target)throw Error("Cadastro não vinculado a uma ficha editável.");
     const [kind,id]=target.split(":");
+    if(!id)throw Error("Cadastro não vinculado a uma ficha editável.");
     const dddResult=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",id).maybeSingle();
     if(dddResult.error)console.warn("Cadastro de DDDs indisponível:",dddResult.error.message);
     if(mounted)setAreaDdds((dddResult.data as {ddds?:string}|null)?.ddds??"");
@@ -304,7 +308,7 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
      ]);
      if(record.error)throw record.error;
      if(details.error)throw details.error;
-     if(mounted){const d=record.data as Record<string,unknown>;const detail=(details.data??{}) as {phone?:string;state?:string;city?:string;region?:string;service_cities?:string};setName(String(d.full_name??representative.name));setPhone(detail.phone||representative.phone||"");setEmail(String(d.email??""));setActive(d.active!==false);setUf(ufFrom(detail.state||representative.uf));setCity(detail.city||representative.city);setRegion(detail.region||representative.region);setCities(detail.service_cities||"");setRate(String((commission.data as {rate?:number}|null)?.rate??""));}
+     if(mounted){const d=record.data as Record<string,unknown>;const detail=(details.data??{}) as {phone?:string;state?:string;city?:string;region?:string;service_cities?:string};setName(String(d["full_name"]??representative.name));setPhone(detail.phone||representative.phone||"");setEmail(String(d["email"]??""));setActive(d["active"]!==false);setUf(ufFrom(detail.state||representative.uf));setCity(detail.city||representative.city);setRegion(detail.region||representative.region);setCities(detail.service_cities||"");setRate(String((commission.data as {rate?:number}|null)?.rate??""));}
     }
    }catch(e){if(mounted)toast.error(e instanceof Error?e.message:"Não foi possível carregar a ficha.");}
    finally{if(mounted)setInitializing(false);}
@@ -318,6 +322,7 @@ function RepresentativeEditDialog({representative,target,onClose,onSaved}:{repre
   setBusy(true);
   try{
    const [kind,id]=target.split(":");
+    if(!id)throw Error("Cadastro não vinculado a uma ficha editável.");
    if(kind==="person"){
     const contact=await supabase.rpc("admin_update_person_contact" as never,{p_user:id,p_name:name.trim(),p_phone:phone.trim()} as never);
     if(contact.error)throw contact.error;

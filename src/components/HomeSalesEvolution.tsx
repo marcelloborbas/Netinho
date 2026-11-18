@@ -12,7 +12,8 @@ const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "
 
 async function loadSalesEvolution(){
  const now=monthKey(new Date());
- const [year,month]=now.split("-").map(Number);
+ const today=new Date();
+ const [year=today.getUTCFullYear(),month=today.getUTCMonth()+1]=now.split("-").map(Number);
  const periods=Array.from({length:6},(_,i)=>{const d=new Date(Date.UTC(year,month-1-(5-i),15));return {key:d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0"),label:months[d.getUTCMonth()]};});
  const start=new Date(Date.UTC(year,month-6,1)-86400000).toISOString();
  const end=new Date(Date.UTC(year,month,1)+86400000).toISOString();
