@@ -5964,3 +5964,64 @@ html body .welcome-auth-stage .welcome-auth-art {
  margin:0 !important;
  padding:0 !important;
 }
+
+/* Ajuste de composição: montadoras imediatamente sobre os atalhos,
+   espaço recuperado entregue ao gráfico, sem rolagem ou imagens deformadas. */
+.home-page.home-visual-2026 > main {
+ grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1.22fr) minmax(0,.78fr) !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts {
+ position:relative !important;
+ display:grid !important;
+ grid-template-rows:minmax(0,44fr) minmax(0,56fr) !important;
+ align-items:stretch !important;
+ gap:clamp(2px,.35dvh,5px) !important;
+ height:100% !important;
+ min-height:0 !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts > .home-brand-row {
+ display:grid !important;
+ position:static !important;
+ grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+ align-items:end !important;
+ align-self:end !important;
+ width:100% !important;
+ height:100% !important;
+ min-height:0 !important;
+ max-height:100% !important;
+ margin:0 !important;
+ padding:0 !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts > .home-shortcut-row {
+ position:static !important;
+ display:grid !important;
+ grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+ align-items:end !important;
+ align-self:end !important;
+ width:100% !important;
+ height:100% !important;
+ min-height:0 !important;
+ max-height:100% !important;
+ margin:0 !important;
+ padding:0 !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-brand-tile,
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-quick-tile {
+ display:flex !important;
+ align-items:end !important;
+ justify-content:center !important;
+ height:100% !important;
+ max-height:100% !important;
+ min-height:0 !important;
+ overflow:hidden !important;
+}
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-brand-tile img,
+.home-page.home-visual-2026 .home-brands-and-shortcuts .netinho-quick-tile img {
+ display:block !important;
+ width:100% !important;
+ height:100% !important;
+ max-height:100% !important;
+ object-fit:contain !important;
+ object-position:center bottom !important;
+}
