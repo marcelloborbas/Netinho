@@ -588,6 +588,24 @@ export type Database = {
           },
         ]
       }
+      representative_area_ddds: {
+        Row: {
+          ddds: string
+          representative_id: string
+          updated_at: string
+        }
+        Insert: {
+          ddds?: string
+          representative_id: string
+          updated_at?: string
+        }
+        Update: {
+          ddds?: string
+          representative_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       representative_private_details: {
         Row: {
           city: string | null
