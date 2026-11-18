@@ -20,3 +20,4 @@
 - Home-screen installation UI is isolated in InstallAppButton using the browser's one-use install event and a manual-instructions fallback; no worker is needed for this control.
 - Keep page-specific share metadata on leaf routes; pageHead supplies consistent metadata without private data, and the homepage head and homepage-only server fallback share one asset definition to prevent divergent images.
 - Sitemap is router-derived (`src/lib/sitemap.ts` + `src/routes/sitemap[.]xml.ts`); every route declares `staticData.sitemap`, the logged-in area uses "exclude-subtree", and `/` stays out because it redirects visitors to login.
+- Home (`/`) uses the `netinho-home` root, not the legacy `home-page`/`home-visual-2026` classes, and stacks sections in normal flow with Lucide icons through `HomeIconTile`; the old global overrides used fixed grids and absolute layers that made blocks overlap.

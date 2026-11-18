@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
 import { BRAND } from "@/lib/brand";
+import { HOME_ICON_SIZE, HOME_ICON_STROKE } from "@/components/HomeIconTile";
 
 function clickSound() {
   try {
@@ -109,14 +110,19 @@ export function PublicFooter() {
       {user && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); clickSound(); void logout(); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-red-700 hover:bg-red-50"><LogOut size={19}/> Sair</button>}
       {!user && <Link role="menuitem" to="/auth" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><ShieldCheck size={19}/> Entrar</Link>}
     </div>}
-    <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-[#215c9b] !bg-gradient-to-b !from-[#092b57] !via-[#061c3b] !to-[#031126] !shadow-[0_-5px_22px_rgba(0,58,132,0.24)]" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
-      {links.map(({to,label,icon:Icon}) => <Link key={label} to={to} preload="intent"  onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={pathname === to ? "page" : undefined} className={`group relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] sm:text-[13px] font-semibold transition-all duration-200 ${isVisitor && label === "Vendas" ? "text-slate-400" : `hover:bg-[#174e9b]/30 hover:text-[#ffdc55] ${pathname === to ? "text-[#ffdc55]" : "text-white"}`}`}>
-        <Icon size={23} strokeWidth={pathname === to ? 2.7 : 2.1} className={isVisitor && label === "Vendas" ? "text-slate-400" : "text-[#ffd43b] drop-shadow-[0_0_5px_rgba(255,212,59,0.28)]"} />{label}
-        {pathname === to && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#ffd43b] shadow-[0_0_9px_2px_rgba(255,212,59,0.65)]"/>}
-      </Link>)}
-      <button type="button" aria-label="Abrir menu do usuário" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="group flex min-h-[66px] flex-col items-center justify-center gap-0.5 py-1 text-[12px] font-semibold text-white hover:text-[#ffdc55]">
-        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-[49px] w-[49px] rounded-full border-2 border-[#ffd43b] object-cover shadow-[0_0_9px_rgba(255,212,59,0.5)]"/> : <UserRound size={39} className="rounded-full border border-[#ffd43b] p-1 text-[#ffd43b]"/>}
-        <span>Usuário</span>
+    {/* Navegação fixa: ícones Lucide dourados, mesmo tamanho e traço, sobre azul-marinho. */}
+    <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-gold/40 !bg-navy-deep" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+      {links.map(({to,label,icon:Icon}) => {
+        const disabled = isVisitor && label === "Vendas";
+        const current = pathname === to;
+        return <Link key={label} to={to} preload="intent" onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={current ? "page" : undefined} className={`relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold transition-colors sm:text-[13px] ${disabled ? "!text-muted-foreground" : "hover:bg-navy-soft/40"}`}>
+          <Icon size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className={disabled ? "text-muted-foreground" : "text-gold"} />{label}
+          {current && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-gold"/>}
+        </Link>;
+      })}
+      <button type="button" aria-label="Abrir menu do perfil" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold hover:bg-navy-soft/40 sm:text-[13px]">
+        <UserRound size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className="text-gold" />
+        <span>Perfil</span>
       </button>
     </nav>
   </>;

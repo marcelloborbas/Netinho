@@ -25,27 +25,33 @@ export function HomePartsCarousel() {
     setAnimate(true);
     setIndex(next);
   };
+  // Cópia do primeiro slide no fim permite o retorno contínuo ao início.
+  const slides = parts.concat(parts.slice(0, 1));
+  const active = index % parts.length;
   return (
-    <section className="home-cover-anchor relative h-full w-full overflow-hidden bg-transparent" aria-label="Carrossel de peças em destaque"
+    <section className="mx-auto w-full max-w-3xl space-y-2" aria-label="Carrossel de peças em destaque"
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
-      <div className="home-parts-track flex h-full w-full bg-transparent"
-        style={{ transform: `translateX(-${index * 100}%)`, transition: animate ? "transform 650ms ease-in-out" : "none" }}
-        onTransitionEnd={() => {
-          if (index >= parts.length) {
-            setAnimate(false);
-            setIndex(0);
-            requestAnimationFrame(() => requestAnimationFrame(() => setAnimate(true)));
-          }
-        }}>
-        {[...parts, parts[0]].map((part, i) =>
-          <div key={i} className="home-parts-slide flex h-full min-w-full shrink-0 items-center justify-center bg-transparent">
-            <img src={part.image} alt={part.title} decoding="async" loading={i <= 1 ? "eager" : "lazy"} className="block h-full w-full object-contain" />
-          </div>
-        )}
+      <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl border border-gold/60 bg-navy-deep shadow-home-card">
+        <div className="flex h-full w-full"
+          style={{ transform: `translateX(-${index * 100}%)`, transition: animate ? "transform 650ms ease-in-out" : "none" }}
+          onTransitionEnd={() => {
+            if (index >= parts.length) {
+              setAnimate(false);
+              setIndex(0);
+              requestAnimationFrame(() => requestAnimationFrame(() => setAnimate(true)));
+            }
+          }}>
+          {slides.map((part, i) =>
+            <div key={`${part.image}-${i}`} className="h-full min-w-full shrink-0" aria-hidden={i % parts.length !== active || i === parts.length}>
+              <img src={part.image} alt={part.title} width={1201} height={676} decoding="async" loading={i <= 1 ? "eager" : "lazy"} className="block h-full w-full object-cover" />
+            </div>
+          )}
+        </div>
       </div>
-      <div className="absolute bottom-1 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full bg-white/65 px-2 py-1" aria-label="Selecionar imagem">
-        {parts.map((part,i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i+1}: ${part.title}`} aria-current={index % parts.length===i ? "true" : undefined} onClick={() => select(i)} className={`h-1.5 rounded-full transition-all ${index % parts.length===i ? "w-4 bg-[#d9a91c]" : "w-1.5 bg-[#61748c]"}`}/>)}
+      {/* Indicadores abaixo da imagem, no fluxo normal, sem cobrir o banner. */}
+      <div className="flex justify-center gap-1.5" role="group" aria-label="Selecionar imagem">
+        {parts.map((part, i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i + 1}: ${part.title}`} aria-current={active === i ? "true" : undefined} onClick={() => select(i)} className={`h-2 rounded-full transition-all ${active === i ? "w-5 bg-gold-deep" : "w-2 bg-navy/30"}`} />)}
       </div>
     </section>
   );

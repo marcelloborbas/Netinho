@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
-import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
+import { HomeRecentOrders, HomeSalesPanel } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { HomeQuickActions, HomeWhatsAppBanner } from "@/components/HomeQuickActions";
 import { PublicFooter } from "@/components/PublicFooter";
@@ -107,44 +107,44 @@ function Home() {
     : access?.attribution === "Representante" ? "Representante"
     : access?.attribution === "Vendedor" ? "Vendedor"
     : access?.can_sell ? "Vendedor" : "Visitante";
-  if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><div role="status" aria-live="polite" className="flex flex-col items-center gap-4"><span className="h-11 w-11 animate-spin rounded-full border-4 border-[#f3cb58]/30 border-t-[#f3cb58]" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></div><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
+  if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-navy-deep px-6 text-center text-navy-foreground"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><div role="status" aria-live="polite" className="flex flex-col items-center gap-4"><span className="h-11 w-11 animate-spin rounded-full border-4 border-gold/30 border-t-gold" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></div><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-gold px-5 py-3 font-bold text-gold-foreground">Ir para o login</button></main>;
+  // Fluxo vertical único: cada bloco ocupa o próprio espaço, sem posicionamento sobreposto.
+  // O espaço inferior reserva a altura da navegação fixa e da área segura do celular.
   return (
-    <div className="home-page home-visual-2026 flex min-h-[100dvh] flex-col">
-      <main className="relative mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#d7e8fb] via-[#e8f2fd] to-[#dceafa] pb-[100px] text-[#102a52] sm:gap-4 sm:pb-24">
-        <section className="relative isolate h-[25dvh] min-h-[175px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-[clamp(260px,30vw,380px)] sm:min-h-0" aria-label="Boas-vindas">
-          <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-[center_40%]" decoding="async" fetchPriority="high" />
-
-          <div className="absolute left-4 top-3 z-20 sm:left-7 sm:top-5"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="h-auto w-28 drop-shadow-lg sm:w-40" /></div>
-          <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/90 via-[#06152e]/25 to-transparent px-4 pb-4 pt-12 text-white sm:px-7 sm:pb-6 lg:px-10">
-
-<p className="flex w-full min-w-0 flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-[clamp(13px,3.6vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
-  <span className="home-greeting-secondary shrink-0 italic">{salutation} Sr.</span>
-  <span
-    className="inline-block min-w-0 truncate text-[clamp(25px,7vw,38px)] leading-[1.05] sm:text-[clamp(2.2rem,4.5vw,4.8rem)] font-black animate-pulse motion-reduce:animate-none drop-shadow-[0_0_16px_currentColor]"
-    style={{ color: dailyNameColor }}
-    title={userName || "usuário"}
-  >
-    {userName || "usuário"}!
-  </span>
-</p>
-<p className="home-greeting-blessing leading-tight font-bold italic text-white drop-shadow-lg">
-  {periodBlessing}
-</p>
-
+    <div className="netinho-home flex min-h-[100dvh] flex-col bg-background text-navy">
+      <main className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-6 overflow-x-clip pb-[calc(7rem+env(safe-area-inset-bottom))]">
+        <header className="relative isolate overflow-hidden bg-navy-deep text-navy-foreground sm:mx-6 sm:mt-4 sm:rounded-3xl" aria-label="Boas-vindas">
+          {/* A arte de fundo já contém a logo oficial; fica restrita ao próprio cabeçalho. */}
+          <img src="/images/fundo-saudacao-novo.webp" alt="Netinho Auto Parts — estrada ao pôr do sol com caminhão e automóvel" width={2001} height={1071} className="absolute inset-0 -z-10 h-full w-full object-cover object-top" decoding="async" fetchPriority="high" />
+          <div className="flex min-h-[200px] flex-col justify-end bg-gradient-to-t from-navy-deep via-navy-deep/30 to-transparent px-4 pb-5 pt-20 sm:min-h-[340px] sm:px-8 sm:pb-8">
+            <div className="min-w-0 space-y-1">
+              <p className="flex min-w-0 flex-wrap items-baseline gap-x-2 font-bold leading-tight drop-shadow-lg">
+                <span className="shrink-0 text-lg italic sm:text-3xl">{salutation} Sr.</span>
+                <span className="min-w-0 max-w-full truncate text-3xl font-black leading-[1.05] animate-pulse motion-reduce:animate-none sm:text-6xl" style={{ color: dailyNameColor }} title={userName || "usuário"}>
+                  {userName || "usuário"}!
+                </span>
+              </p>
+              <p className="text-base font-bold italic drop-shadow-lg sm:text-2xl">{periodBlessing}</p>
+            </div>
           </div>
-        </section>
-        <HomePartsCarousel />
-        <HomeQuickActions />
-        <HomeCommercialDashboard mode="evolution" />
-        <section className="mx-3 space-y-2 sm:mx-6" aria-label="Montadoras">
-          <h2 className="px-1 text-base font-black text-[#102a52] sm:text-xl">Encontre peças por montadora</h2>
-          <div className="home-brand-row home-brands-only grid grid-cols-4 gap-1 sm:gap-4">
-          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.05] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
-            <img src={`/images/home-premium/montadora-${brand}.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
-          </button>)}
-          </div>
-        </section>
-        <HomeWhatsAppBanner />
+        </header>
+        <div className="flex flex-col gap-6 px-4 sm:px-6">
+          <HomePartsCarousel />
+          <HomeQuickActions />
+          <HomeSalesPanel />
+          <section className="space-y-3" aria-labelledby="home-brands-title">
+            <h2 id="home-brands-title" className="text-lg font-black text-navy sm:text-xl">Encontre peças por montadora</h2>
+            <ul className="grid grid-cols-4 gap-2 sm:gap-4">
+              {(["volkswagen", "fiat", "chevrolet", "ford"] as const).map(brand => <li key={brand} className="min-w-0">
+                <button type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })} className="block w-full rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy" aria-label={`Ver peças da montadora ${brand}`}>
+                  <img src={`/images/home-premium/montadora-${brand}.webp`} alt="" width={400} height={248} loading="lazy" className="block aspect-[400/248] h-auto w-full object-contain" />
+                </button>
+              </li>)}
+            </ul>
+          </section>
+          <HomeRecentOrders />
+          <HomeWhatsAppBanner />
+        </div>
       </main>
       <PublicFooter />
     </div>

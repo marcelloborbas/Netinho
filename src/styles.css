@@ -36,6 +36,14 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-surface: var(--surface);
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-soft: var(--navy-soft);
+  --color-navy-foreground: var(--navy-foreground);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-foreground: var(--gold-foreground);
 }
 
 :root {
@@ -67,6 +75,16 @@
   --gradient-red: linear-gradient(135deg, oklch(0.62 0.22 27), oklch(0.52 0.21 25));
   --shadow-card: 0 1px 0 oklch(1 0 0 / 5%) inset, 0 8px 24px -12px oklch(0 0 0 / 60%);
   --shadow-glow: 0 10px 30px -10px oklch(0.6 0.22 27 / 55%);
+  /* Identidade premium da página inicial: azul-marinho, dourado e branco. */
+  --navy: #102a52;
+  --navy-deep: #071a36;
+  --navy-soft: #1d4275;
+  --navy-foreground: #ffffff;
+  --gold: #f2c14e;
+  --gold-soft: #fbe7a6;
+  --gold-deep: #a87a12;
+  --gold-foreground: #102a52;
+  --shadow-home-card: 0 1px 0 #ffffff inset, 0 8px 20px -12px color-mix(in oklab, var(--navy) 45%, transparent);
 }
 
 @layer base {
@@ -104,6 +122,9 @@
 }
 @utility shadow-glow {
   box-shadow: var(--shadow-glow);
+}
+@utility shadow-home-card {
+  box-shadow: var(--shadow-home-card);
 }
 @utility font-display {
   font-family: var(--font-display);
