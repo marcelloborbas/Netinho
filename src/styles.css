@@ -5344,3 +5344,13 @@ html body .welcome-auth-stage .welcome-auth-art {
  html body .home-page > main > section:nth-child(3) > button {height:auto !important;min-height:78px !important;padding:8px !important;overflow:hidden !important;}
  html body .home-page > main > section:nth-child(3) > button > img {width:100% !important;height:100% !important;object-fit:contain !important;}
 }
+
+/* Netinho: proporções da arte de referência aprovada, preservando componentes clicáveis. */
+@media (max-width:639px) {
+ html body .home-visual-2026 > main {gap:8px !important;padding-bottom:84px !important;}
+ html body .home-visual-2026 > main > section:first-child {height:195px !important;min-height:195px !important;}
+ html body .home-visual-2026 > main > section:first-child > div:last-child {padding-bottom:12px !important;}
+ html body .home-visual-2026 .netinho-brand-tile {border-radius:17px !important;}
+ html body .home-visual-2026 .netinho-quick-tile {min-height:82px !important;max-height:94px !important;border-radius:18px !important;}
+ html body .home-visual-2026 .netinho-quick-tile > img {height:66px !important;width:42% !important;}
+}
