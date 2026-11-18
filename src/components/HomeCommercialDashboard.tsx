@@ -42,7 +42,7 @@ export function HomeCommercialDashboard(){
  return <section className="home-sales-panel mx-3 space-y-2 bg-transparent sm:mx-6" aria-label="Painel comercial">
   <div className="grid grid-cols-2 gap-2 sm:gap-4">
    <Link to="/vendas" search={{modo:"venda",q:"",promo:""}} className="home-sales-card flex min-h-[92px] items-center gap-2 rounded-[24px] border-[3px] border-[#e7bb45] bg-gradient-to-br from-[#0754b5] via-[#063879] to-[#071c49] px-2 py-2 text-white shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
-    <span className="home-kpi-icon" aria-hidden="true"><img src="/images/home-premium/icone-pedido.webp" alt="" /></span>
+    <span className="home-kpi-icon" aria-hidden="true"><img src="/images/home-premium/cartao-vendas.webp" alt="" /></span>
     <span className="home-kpi-copy"><span className="home-kpi-title">Vendas do Mês</span><strong className="home-kpi-value">{isLoading?"…":isError?"Indisponível":brl(data?.currentTotal??0)}</strong></span><ChevronRight className="home-kpi-chevron" aria-hidden="true"/>
    </Link>
    <div className="home-commission-card flex min-h-[92px] items-center gap-2 rounded-[24px] border-[3px] border-[#e7bb45] bg-gradient-to-br from-white via-[#f5f9ff] to-[#dbe7f4] px-2 py-2 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_4px_0_#b78216,0_7px_14px_#12355d55] sm:gap-3 sm:p-4">
