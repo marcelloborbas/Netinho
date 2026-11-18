@@ -130,12 +130,12 @@ function Home() {
           </div>
         </section>
         <HomeCommercialDashboard />
-        <section className="mx-3 grid grid-cols-4 gap-1.5 sm:mx-6 sm:gap-4" aria-label="Montadoras">
-          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.2] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
+        <section className="home-brand-row mx-2 grid grid-cols-4 gap-1 sm:mx-6 sm:gap-4" aria-label="Montadoras">
+          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.05] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
             <img src={`/images/home-premium/montadora-${brand}.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
           </button>)}
         </section>
-        <section className="mx-3 grid grid-cols-2 gap-2 sm:mx-6 sm:gap-4" aria-label="Acessos rápidos">
+        <section className="home-shortcut-row mx-2 grid grid-cols-2 gap-2 sm:mx-6 sm:gap-4" aria-label="Acessos rápidos">
           {[
             {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/home-premium/representantes-brasil.webp",alt:"Representantes pelo Brasil"},
             {label:"Downloads",to:"/downloads",image:"/images/home-premium/downloads-pdf.webp",alt:"Downloads"}
