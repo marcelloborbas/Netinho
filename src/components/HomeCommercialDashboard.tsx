@@ -52,11 +52,11 @@ export function HomeCommercialDashboard(){
   </div>
   <div className="home-evolution-card rounded-[26px] border-[2px] border-white bg-gradient-to-b from-white to-[#f0f6ff] p-3 text-[#102a52] shadow-[inset_0_2px_2px_#ffffff,0_5px_10px_#34577944] sm:p-5">
    <div className="mb-3 flex items-center justify-between gap-2"><div className="flex items-center gap-2"><ChartNoAxesColumnIncreasing className="h-6 w-6 text-[#d5a020]"/><h2 className="text-base font-black sm:text-xl">Evolução das Vendas</h2></div><span className="text-[10px] font-bold sm:text-sm">Últimos 3 meses</span></div>
-   {isLoading?<p className="py-8 text-center text-sm">Carregando vendas…</p>:isError?<p role="alert" className="py-8 text-center text-sm">Não foi possível consultar as vendas.</p>:<div className="relative grid h-[136px] grid-cols-3 items-end gap-3 border-b border-[#9fb5cf] px-3 sm:h-[180px]">
+   {isLoading?<p className="py-8 text-center text-sm">Carregando vendas…</p>:isError?<p role="alert" className="py-8 text-center text-sm">Não foi possível consultar as vendas.</p>:<div className="home-chart-bars relative grid h-[136px] grid-cols-3 items-end gap-3 border-b border-[#9fb5cf] px-3 sm:h-[180px]">
     {(data?.periods??[]).map(p=><div key={p.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1"><span className="text-[10px] font-black sm:text-sm">{p.total>=1000?`R$ ${(p.total/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})} mil`:brl(p.total)}</span><div className="w-full max-w-24 rounded-t-md bg-gradient-to-t from-[#0c3c87] to-[#22b6f4] shadow-md" style={{height:`${Math.max(3,p.total/max*100)}%`}} title={brl(p.total)}/><span className="text-xs font-bold">{p.label}</span></div>)}
     <TrendingUp aria-hidden="true" className="pointer-events-none absolute bottom-7 right-0 h-10 w-20 text-[#e7aa00] opacity-80 sm:h-14 sm:w-28" strokeWidth={2.5}/>
    </div>}
-   {isAdmin&&<Link to="/vendas-por-representante" className="mt-3 block text-right text-xs font-bold text-[#175d9d]">Ver por representante ›</Link>}
+   {isAdmin&&<Link to="/vendas-por-representante" className="home-chart-link mt-3 block text-right text-xs font-bold text-[#175d9d]">Ver por representante ›</Link>}
   </div>
  </section>;
 }
