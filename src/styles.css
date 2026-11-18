@@ -5527,3 +5527,33 @@ html body .welcome-auth-stage .welcome-auth-art {
  .home-page.home-visual-2026 .home-kpi-value {font-size:clamp(12px,3.6vw,15px) !important;}
  .home-page.home-visual-2026 .home-kpi-chevron {width:13px !important;}
 }
+
+/* Corrige imagens dos KPIs: arte completa, nunca ampliada e recortada. */
+.home-page.home-visual-2026 .home-kpi-icon,
+.home-page.home-visual-2026 .home-coin-icon {
+ overflow:visible !important;
+ flex:0 0 clamp(45px,12vw,90px) !important;
+ width:clamp(45px,12vw,90px) !important;
+ height:clamp(38px,7dvh,70px) !important;
+ max-height:100% !important;
+}
+.home-page.home-visual-2026 .home-kpi-icon img,
+.home-page.home-visual-2026 .home-kpi-icon:not(.home-coin-icon) img,
+.home-page.home-visual-2026 .home-coin-icon img {
+ position:static !important;
+ display:block !important;
+ transform:none !important;
+ width:100% !important;
+ height:100% !important;
+ max-width:100% !important;
+ max-height:100% !important;
+ object-fit:contain !important;
+ object-position:center !important;
+}
+@media(max-width:400px) {
+ .home-page.home-visual-2026 .home-kpi-icon,
+ .home-page.home-visual-2026 .home-coin-icon {
+  flex-basis:clamp(43px,12vw,52px) !important;
+  width:clamp(43px,12vw,52px) !important;
+ }
+}
