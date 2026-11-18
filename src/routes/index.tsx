@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
+import { HomeQuickActions, HomeWhatsAppBanner } from "@/components/HomeQuickActions";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -113,6 +114,7 @@ function Home() {
         <section className="relative isolate h-[25dvh] min-h-[175px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-[clamp(260px,30vw,380px)] sm:min-h-0" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-[center_40%]" decoding="async" fetchPriority="high" />
 
+          <div className="absolute left-4 top-3 z-20 sm:left-7 sm:top-5"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="h-auto w-28 drop-shadow-lg sm:w-40" /></div>
           <div className="relative z-10 flex h-full min-h-0 w-full flex-col justify-end gap-1 bg-gradient-to-t from-[#06152e]/90 via-[#06152e]/25 to-transparent px-4 pb-4 pt-12 text-white sm:px-7 sm:pb-6 lg:px-10">
 
 <p className="flex w-full min-w-0 flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-[clamp(13px,3.6vw,19px)] sm:text-[clamp(1.2rem,3vw,2.8rem)] leading-tight font-bold text-white drop-shadow-lg">
@@ -132,12 +134,17 @@ function Home() {
           </div>
         </section>
         <HomePartsCarousel />
+        <HomeQuickActions />
         <HomeCommercialDashboard mode="evolution" />
-        <section className="home-brand-row home-brands-only mx-2 grid grid-cols-4 gap-1 sm:mx-6 sm:gap-4" aria-label="Montadoras">
+        <section className="mx-3 space-y-2 sm:mx-6" aria-label="Montadoras">
+          <h2 className="px-1 text-base font-black text-[#102a52] sm:text-xl">Encontre peças por montadora</h2>
+          <div className="home-brand-row home-brands-only grid grid-cols-4 gap-1 sm:gap-4">
           {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{q:brand}})} className="netinho-brand-tile flex aspect-[1.05] min-w-0 items-center justify-center rounded-[18px] bg-transparent p-0 transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
             <img src={`/images/home-premium/montadora-${brand}.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
           </button>)}
+          </div>
         </section>
+        <HomeWhatsAppBanner />
       </main>
       <PublicFooter />
     </div>
