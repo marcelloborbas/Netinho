@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
 import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
-import { ShoppingCart, UsersRound, Download, ChevronRight, PackageSearch } from "lucide-react";
+import { ShoppingCart, Download, ChevronRight } from "lucide-react";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -107,8 +107,8 @@ function Home() {
     : access?.can_sell ? "Vendedor" : "Visitante";
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-[#0b1f3f] px-6 text-center text-white"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><div role="status" aria-live="polite" className="flex flex-col items-center gap-4"><span className="h-11 w-11 animate-spin rounded-full border-4 border-[#f3cb58]/30 border-t-[#f3cb58]" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></div><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-[#facc15] px-5 py-3 font-bold text-[#102a52]">Ir para o login</button></main>;
   return (
-    <div className="home-page flex min-h-[100dvh] flex-col">
-      <main className="relative mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-2 overflow-x-hidden bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e7edf4] pb-[82px] text-[#102a52] sm:gap-3 sm:pb-24">
+    <div className="home-page home-visual-2026 flex min-h-[100dvh] flex-col">
+      <main className="relative mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-3 overflow-x-hidden bg-gradient-to-b from-[#d7e8fb] via-[#e8f2fd] to-[#dceafa] pb-[100px] text-[#102a52] sm:gap-4 sm:pb-24">
         <section className="relative isolate h-[29dvh] min-h-[210px] shrink-0 overflow-hidden bg-[#071e3c] sm:h-[clamp(260px,30vw,380px)] sm:min-h-0" aria-label="Boas-vindas">
           <img src="/images/fundo-saudacao-novo.webp" alt="Estrada ao pôr do sol com caminhão e automóvel" className="absolute inset-0 h-full w-full object-cover object-[center_40%]" decoding="async" fetchPriority="high" />
 
@@ -135,22 +135,23 @@ function Home() {
         </section>
         <HomeCommercialDashboard />
         <section className="mx-3 grid grid-cols-4 gap-2 sm:mx-6 sm:gap-4" aria-label="Montadoras">
-          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{marca:brand} as never})} className="flex aspect-square min-w-0 items-center justify-center rounded-[20px] border-2 border-[#d6a52b] bg-gradient-to-b from-white via-[#e5ebf3] to-[#c7d4e5] p-2 shadow-[0_3px_8px_#9b720044] transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
-            <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain" />
+          {(["volkswagen","fiat","chevrolet","ford"] as const).map(brand=><button key={brand} type="button" onClick={()=>void navigate({to:"/catalogo",search:{marca:brand} as never})} className="netinho-brand-tile flex aspect-square min-w-0 items-center justify-center rounded-[22px] border-[3px] border-[#e3b83d] bg-gradient-to-b from-[#ffffff] via-[#eef4fa] to-[#b5c8dc] p-1.5 shadow-[inset_0_2px_3px_#fff,0_4px_0_#c18d1d,0_7px_14px_#26496d55] transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]" aria-label={`Ver peças da montadora ${brand}`}>
+            <img src={`/images/logos-montadoras/${brand}-3d.webp`} alt={brand} loading="lazy" className="h-full w-full object-contain drop-shadow-[0_4px_3px_#0006]" />
           </button>)}
         </section>
         <section className="mx-3 grid grid-cols-3 gap-2 sm:mx-6 sm:gap-4" aria-label="Acessos rápidos">
-          <button type="button" onClick={()=>void navigate({to:"/catalogo"})} className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[#e2b542] bg-gradient-to-b from-[#1162b3] to-[#071f49] p-2 text-center text-white shadow-md">
-            <PackageSearch className="h-9 w-9 text-[#ffdb69]"/><span className="text-[11px] font-black leading-tight sm:text-lg">Catálogo de Peças</span>
-          </button>
-          <button type="button" onClick={()=>void navigate({to:"/representantes-mapa"})} className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[#e2b542] bg-gradient-to-b from-[#1162b3] to-[#071f49] p-2 text-center text-white shadow-md">
-            <UsersRound className="h-9 w-9 text-[#ffdb69]"/><span className="text-[11px] font-black leading-tight sm:text-lg">Representantes pelo Brasil</span>
-          </button>
-          <button type="button" onClick={()=>void navigate({to:"/downloads"})} className="flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[#e2b542] bg-gradient-to-b from-[#1162b3] to-[#071f49] p-2 text-center text-white shadow-md">
-            <Download className="h-9 w-9 text-[#ffdb69]"/><span className="text-[11px] font-black leading-tight sm:text-lg">Downloads</span>
-          </button>
+          {[
+            {label:"Catálogo de Peças",to:"/catalogo",image:"/images/logo%20catalogo%20de%20pe%C3%A7as.webp",alt:"Catálogo de peças"},
+            {label:"Representantes pelo Brasil",to:"/representantes-mapa",image:"/images/logos-montadoras/representantes-3d.webp",alt:"Representantes pelo Brasil"},
+            {label:"Downloads",to:"/downloads",image:"",alt:"Downloads"}
+          ].map(item=><button key={item.to} type="button" onClick={()=>void navigate({to:item.to as "/catalogo"})} className="netinho-quick-tile relative flex min-h-[138px] flex-col items-center justify-between overflow-hidden rounded-[22px] border-[3px] border-[#e8b83e] bg-gradient-to-b from-[#1680d6] via-[#064b9b] to-[#061b4b] px-1 pb-3 pt-2 text-center text-white shadow-[inset_0_2px_2px_#ffffff88,0_4px_0_#bb8019,0_8px_16px_#12355d66] sm:min-h-[185px]">
+            <span className="pointer-events-none absolute inset-x-2 top-1 h-6 rounded-full bg-white/10 blur-lg"/>
+            {item.image?<img src={item.image} alt={item.alt} loading="lazy" className="relative h-[76px] w-full object-contain drop-shadow-[0_5px_5px_#0008] sm:h-[110px]"/>:<span className="relative flex h-[76px] items-center justify-center sm:h-[110px]"><Download className="h-14 w-14 text-[#ffde67] drop-shadow-[0_3px_4px_#0008] sm:h-20 sm:w-20"/></span>}
+            <span className="relative block min-h-[2.6em] text-[11px] font-black leading-tight drop-shadow-[0_2px_3px_#0009] sm:text-lg">{item.label}</span>
+            <ChevronRight className="absolute bottom-3 right-1 h-4 w-4 text-[#ffdc5b] sm:h-6 sm:w-6"/>
+          </button>)}
         </section>
-        <button type="button" onClick={()=>void navigate({to:access?.can_sell?"/pedido":"/catalogo"})} className="mx-3 mb-4 flex min-h-[90px] items-center justify-between gap-3 rounded-[22px] border-[3px] border-[#ff8585] bg-gradient-to-b from-[#e11c24] to-[#8d0008] px-4 text-white shadow-[0_5px_14px_#92000055] sm:mx-6 sm:min-h-[110px] sm:px-8">
+        <button type="button" onClick={()=>void navigate({to:access?.can_sell?"/pedido":"/catalogo"})} className="mx-3 mb-4 flex min-h-[100px] items-center justify-between gap-3 rounded-[24px] border-[3px] border-[#ff8585] bg-gradient-to-b from-[#f9232d] via-[#d30c19] to-[#830009] px-4 text-white shadow-[inset_0_2px_2px_#ffffff88,0_5px_0_#8c0711,0_9px_16px_#92000055] sm:mx-6 sm:min-h-[120px] sm:px-8">
           <ShoppingCart className="h-10 w-10 shrink-0"/><span className="flex-1 text-left"><strong className="block text-xl font-black sm:text-3xl">Fazer Pedido</strong><small className="text-xs sm:text-base">{access?.can_sell?"Monte seu pedido agora!":"Consulte o catálogo de peças"}</small></span><ChevronRight className="h-8 w-8 shrink-0 text-[#ffe078]"/>
         </button>
       </main>
