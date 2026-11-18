@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
 import { HomeCommercialDashboard } from "@/components/HomeCommercialDashboard";
+import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
