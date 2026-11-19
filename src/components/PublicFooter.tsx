@@ -115,13 +115,13 @@ export function PublicFooter() {
       {links.map(({to,label,icon:Icon}) => {
         const disabled = isVisitor && label === "Vendas";
         const current = pathname === to;
-        return <Link key={label} to={to} preload="intent" onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={current ? "page" : undefined} className={`relative flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold transition-colors sm:text-[13px] ${disabled ? "!text-muted-foreground" : "hover:bg-navy-soft/40"}`}>
+        return <Link key={label} to={to} preload="intent" onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={current ? "page" : undefined} className={`relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-1 text-[10px] font-semibold transition-colors sm:text-[13px] ${disabled ? "!text-muted-foreground" : "hover:bg-navy-soft/40"}`}>
           <Icon size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className={disabled ? "text-muted-foreground" : "text-gold"} />{label}
           {current && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-gold"/>}
         </Link>;
       })}
-      <button type="button" aria-label="Abrir menu do perfil" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="flex min-h-[66px] flex-col items-center justify-center gap-1 py-2 text-[11px] font-semibold hover:bg-navy-soft/40 sm:text-[13px]">
-        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-9 w-9 rounded-full border-2 border-gold object-cover shadow-sm" onError={(event) => { event.currentTarget.style.display = "none"; event.currentTarget.nextElementSibling?.classList.remove("hidden"); }} /> : null}<UserRound size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className={user?.picture ? "hidden text-gold" : "text-gold"} />
+      <button type="button" aria-label="Abrir menu do perfil" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-1 text-[10px] font-semibold hover:bg-navy-soft/40 sm:text-[13px]">
+        {user?.picture ? <img src={user.picture} alt="" referrerPolicy="no-referrer" className="h-7 w-7 rounded-full border-2 border-gold object-cover shadow-sm" onError={(event) => { event.currentTarget.style.display = "none"; event.currentTarget.nextElementSibling?.classList.remove("hidden"); }} /> : null}<UserRound size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className={user?.picture ? "hidden text-gold" : "text-gold"} />
         <span>Perfil</span>
       </button>
     </nav>
