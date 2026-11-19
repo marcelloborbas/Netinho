@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Region = { city: string; uf: string };
@@ -69,13 +70,49 @@ async function readWeather(region: Region): Promise<Weather | null> {
  return {label:region.city ? region.city : state,temperature:weather.current.temperature_2m,code:weather.current.weather_code};
 }
 
+async function weatherAt(latitude:number, longitude:number): Promise<Weather> {
+ const url = new URL("https://api.open-meteo.com/v1/forecast");
+ url.searchParams.set("latitude", String(latitude));
+ url.searchParams.set("longitude", String(longitude));
+ url.searchParams.set("current", "temperature_2m,weather_code");
+ url.searchParams.set("timezone", "auto");
+ const response = await fetch(url);
+ if (!response.ok) throw new Error("Serviço meteorológico indisponível");
+ const result = await response.json() as {current?:{temperature_2m?:number;weather_code?:number}};
+ if (typeof result.current?.temperature_2m !== "number" || typeof result.current?.weather_code !== "number") throw new Error("Resposta incompleta");
+ return {label:"sua localização",temperature:result.current.temperature_2m,code:result.current.weather_code};
+}
+
 export function HomeLocalWeather({enabled}:{enabled:boolean}) {
+ const [coords,setCoords] = useState<{latitude:number;longitude:number}|null>(null);
+ const [locating,setLocating] = useState(false);
+ useEffect(()=>{
+  if (!enabled || typeof navigator === "undefined" || !navigator.geolocation) return;
+  let active=true;
+  // Respeita a permissão: não exibe solicitação inesperada quando ainda não concedida.
+  const read=()=>{
+   if(!active)return;
+   setLocating(true);
+   navigator.geolocation.getCurrentPosition(
+    p=>{if(active){setCoords({latitude:p.coords.latitude,longitude:p.coords.longitude});setLocating(false);}},
+    ()=>{if(active)setLocating(false);},
+    {enableHighAccuracy:false,timeout:7000,maximumAge:15*60_000}
+   );
+  };
+  if(navigator.permissions?.query){
+   void navigator.permissions.query({name:"geolocation"}).then(p=>{if(active&&p.state==="granted")read();}).catch(()=>{});
+  }
+  return ()=>{active=false;};
+ },[enabled]);
+ const {data:geoWeather,isPending:geoPending} = useQuery({queryKey:["home-weather-geolocation",coords?.latitude,coords?.longitude],queryFn:()=>weatherAt(coords!.latitude,coords!.longitude),enabled:enabled&&!!coords,staleTime:15*60_000,retry:1});
  const {data:region} = useQuery({queryKey:["home-weather-user-region"],queryFn:readRegion,enabled,staleTime:10*60_000});
  const {data:weather} = useQuery({queryKey:["home-weather-current",region?.city,region?.uf],queryFn:()=>readWeather(region!),enabled:enabled && !!region,staleTime:15*60_000,retry:1});
- if (!weather) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold" title="Confira sua cidade e UF cadastradas">🌤️ Clima indisponível ·</span>;
- return <span title={`Clima atual na região cadastrada: ${weather.label} — ${condition(weather.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
+ const displayed = geoWeather ?? weather;
+ if (!displayed && (locating || (enabled && geoPending && !!coords))) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold">🌤️ Consultando clima ·</span>;
+ if (!displayed) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold" title="Confira sua cidade e UF cadastradas">🌤️ Clima indisponível ·</span>;
+ return <span title={`Clima atual na região cadastrada: ${displayed.label} — ${condition(displayed.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
    <span aria-hidden="true">{weather.code <= 3 ? "☀️" : weather.code >= 95 ? "⛈️" : "🌤️"}</span>
-   <span>{Math.round(weather.temperature)}°C</span>
+   <span>{Math.round(displayed.temperature)}°C</span>
    <span className="hidden sm:inline">{condition(weather.code)}</span>
    <span aria-hidden="true">·</span>
  </span>;
