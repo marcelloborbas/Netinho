@@ -258,7 +258,7 @@ function Home() {
           className="netinho-home-brands min-w-0 lg:col-span-4 lg:flex lg:flex-col lg:rounded-2xl lg:border lg:border-border lg:bg-card lg:p-3 lg:shadow-home-card"
           aria-label="Montadoras"
         >
-          <ul className="grid grid-cols-4 gap-2 sm:gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:content-center">
+          <ul className="grid h-full grid-cols-4 items-center gap-1 sm:gap-2 lg:min-h-0 lg:flex-1 lg:grid-cols-4 lg:content-center">
             {brands.map((brand) => (
               <li key={brand} className="min-w-0">
                 <div className="grid w-full place-items-center" aria-label={`Montadora ${brand}`}>
@@ -268,7 +268,7 @@ function Home() {
                     width={400}
                     height={248}
                     loading="lazy"
-                    className="block h-12 w-auto max-w-full object-contain sm:h-14 xl:h-16"
+                    className="netinho-brand-image block h-[58px] w-auto max-w-full object-contain sm:h-[67px] xl:h-[77px]"
                   />
                 </div>
               </li>
