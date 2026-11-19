@@ -6408,3 +6408,30 @@ html body .welcome-auth-stage .welcome-auth-art {
 @media(max-width:420px) {
  .netinho-home-refresh .netinho-home-hero-greeting {font-size:clamp(23px,6vw,29px) !important;}
 }
+
+/* Saudação: reforçar a leitura sem modificar o arquivo da imagem. */
+.netinho-home-refresh .netinho-home-hero-greeting {
+ font-size:clamp(30px,8vw,70px) !important;
+ line-height:1.05 !important;
+}
+.netinho-home-refresh .netinho-home-hero-blessing {
+ font-size:clamp(18px,4.2vw,34px) !important;
+}
+.netinho-home-refresh .netinho-home-hero-copy > p:first-child {
+ font-size:clamp(15px,3.1vw,24px) !important;
+}
+@media(max-width:420px) {
+ .netinho-home-refresh .netinho-home-hero-greeting {font-size:clamp(29px,7.6vw,38px) !important;}
+ .netinho-home-refresh .netinho-home-hero-blessing {font-size:clamp(16px,4vw,20px) !important;}
+ .netinho-home-refresh .netinho-home-hero-copy > p:first-child {font-size:clamp(14px,3.6vw,18px) !important;}
+}
+@keyframes netinho-whatsapp-bright-halo {
+ 0%,100% {transform:scale(1);filter:drop-shadow(0 0 7px #ffe29ecc) drop-shadow(0 0 15px #d9af36bb);}
+ 50% {transform:scale(1.12);filter:drop-shadow(0 0 14px #fff0b4) drop-shadow(0 0 27px #e5b937);}
+}
+.netinho-home-refresh .netinho-home-whatsapp {
+ animation:netinho-whatsapp-bright-halo 1.8s ease-in-out infinite !important;
+}
+@media(prefers-reduced-motion:reduce) {
+ .netinho-home-refresh .netinho-home-whatsapp {animation:none !important;}
+}
