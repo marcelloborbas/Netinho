@@ -35,7 +35,7 @@ const FIELDS: { key: keyof Customer; label: string; full?: boolean; type?: strin
 type Representative = { user_id: string; full_name: string; email: string; active: boolean };
 
 export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; onSaved: (c: Customer) => void }) {
-  const { data: access } = useQuery(accessQuery);
+  const { data: access, isLoading: accessLoading } = useQuery(accessQuery);
   const isAdmin = access?.level === 1;
   const { data: representatives = [], isLoading: repsLoading } = useQuery({
     queryKey: ["customer-assignment-representatives"],
@@ -60,6 +60,10 @@ export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; 
     const parsed = schema.safeParse(v);
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Dados inválidos");
+      return;
+    }
+    if (accessLoading || !access) {
+      toast.error("Aguarde a confirmação do seu acesso e tente novamente.");
       return;
     }
     if (isAdmin && !sellerId) {
@@ -125,7 +129,7 @@ export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; 
           <option value="3">Classe 3 · R$ 1.000,00</option>
         </select>
       </label>
-      <Button type="submit" disabled={busy || (isAdmin && repsLoading)} className="col-span-2 h-12 bg-gradient-red font-semibold">
+      <Button type="submit" disabled={busy || accessLoading || !access || (isAdmin && repsLoading)} className="col-span-2 h-12 bg-gradient-red font-semibold">
         {busy ? "Salvando..." : "Salvar cliente"}
       </Button>
     </form>
