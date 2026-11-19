@@ -70,7 +70,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false);
       }}
     >
-      <div className="relative min-h-0 flex-1 overflow-hidden border-y border-gold/60 bg-navy-deep shadow-home-card">
+      <div className="relative min-h-0 flex-1 overflow-hidden border-y border-gold/60 bg-[rgb(241,241,241)] shadow-home-card">
         <div
           className="flex h-full w-full"
           style={{
