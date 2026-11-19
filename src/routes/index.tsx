@@ -228,7 +228,7 @@ function Home() {
             aria-hidden="true"
             width={2001}
             height={1071}
-            className="absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-100"
+            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-100"
             decoding="async"
             fetchPriority="high"
           />
@@ -238,7 +238,7 @@ function Home() {
               alt="Netinho Auto Parts"
               width={618}
               height={309}
-              className="h-10 w-auto sm:h-14"
+              className="netinho-hero-logo relative z-10 h-10 w-auto sm:h-14"
             />
             <div className="netinho-home-hero-copy min-w-0 leading-tight">
               <p className="truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
