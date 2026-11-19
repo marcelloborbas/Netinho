@@ -165,16 +165,7 @@ function Home() {
   ];
   const dailyNameColor =
     dailyNameColors[Math.floor(Date.now() / 86_400_000) % dailyNameColors.length];
-  const status =
-    access?.level === 1 || access?.attribution === "Administrador"
-      ? "Administrador"
-      : access?.attribution === "Representante"
-        ? "Representante"
-        : access?.attribution === "Vendedor"
-          ? "Vendedor"
-          : access?.can_sell
-            ? "Vendedor"
-            : "Visitante";
+  
   if (!entryApproved)
     return (
       <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-navy-deep px-6 text-center text-navy-foreground">
@@ -238,7 +229,7 @@ function Home() {
               <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
-                <span className="hidden sm:inline">{todayLabel}</span> · {status}
+                <span className="hidden sm:inline">{todayLabel}</span>
               </p>
               <p className="netinho-home-hero-greeting line-clamp-2 break-words font-display text-xl font-black leading-tight sm:truncate sm:text-3xl lg:text-[34px]">
                 {salutation}, Sr.{" "}
