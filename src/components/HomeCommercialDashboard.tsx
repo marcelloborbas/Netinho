@@ -5,15 +5,13 @@ import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import {
   ChartNoAxesColumnIncreasing,
-  ChevronRight,
   ClipboardList,
   TrendingUp,
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { HOME_ICON_SIZE, HOME_ICON_STROKE, HomeIconTile } from "@/components/HomeIconTile";
+import { HomeIconTile } from "@/components/HomeIconTile";
 
 const periodKey = (date: Date) => {
   const p = new Intl.DateTimeFormat("en-US", {
@@ -237,8 +235,6 @@ function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
 }
 
 const panelTitle = "truncate text-sm font-black leading-tight lg:text-base";
-const panelLink =
-  "flex shrink-0 items-center justify-end gap-1 text-xs font-bold text-navy-soft hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy";
 
 function SalesSummary() {
   const { data, isPending, isError, isAdmin } = useHomeDashboard();
@@ -267,81 +263,6 @@ function SalesSummary() {
     </div>
   );
 }
-
-const statusLabels: Record<string, string> = {
-  sent: "Enviado",
-  received: "Recebido",
-  processing: "Em separação",
-  invoiced: "Faturado",
-  cancelled: "Cancelado",
-};
-
-function RecentOrders() {
-  const { data, isPending, isError, isAdmin } = useHomeDashboard();
-  const orders = data?.recentOrders ?? [];
-  return (
-    <div className="flex h-full min-h-0 flex-col gap-1">
-      <h3 className={cn(panelTitle, "hidden lg:block")}>Últimos pedidos</h3>
-      {isPending ? (
-        <p role="status" className="grid flex-1 place-items-center text-xs text-muted-foreground">
-          Carregando pedidos…
-        </p>
-      ) : isError ? (
-        <p role="alert" className="grid flex-1 place-items-center text-xs">
-          Não foi possível carregar os pedidos.
-        </p>
-      ) : orders.length ? (
-        <ul
-          className="min-h-0 flex-1 divide-y divide-border overflow-y-auto overscroll-contain pr-1"
-          aria-label="Pedidos recentes"
-        >
-          {orders.map((order) => {
-            const snapshot = order.customer_snapshot ?? {};
-            const customerName = String(
-              snapshot["trade_name"] ?? snapshot["company_name"] ?? snapshot["name"] ?? "Cliente",
-            );
-            return (
-              <li
-                key={order.id}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 py-1.5"
-              >
-                <div className="min-w-0 leading-tight">
-                  <strong className="block truncate text-xs">Pedido #{order.number}</strong>
-                  <span
-                    className="block truncate text-[11px] text-muted-foreground"
-                    title={`${customerName} · ${new Date(order.created_at).toLocaleDateString("pt-BR")}`}
-                  >
-                    {new Date(order.created_at).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                    })}{" "}
-                    · {customerName}
-                  </span>
-                </div>
-                <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-navy">
-                  {statusLabels[order.status ?? ""] ?? "Registrado"}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p className="grid flex-1 place-items-center text-center text-xs text-muted-foreground">
-          Ainda não há pedidos registrados neste período.
-        </p>
-      )}
-      {isAdmin && <Link to="/pedidos" className={panelLink}>
-        Ver todos os pedidos{" "}
-        <ChevronRight size={14} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" />
-      </Link>}
-    </div>
-  );
-}
-
-const tabTrigger =
-  "h-7 rounded-md px-2.5 text-xs font-bold text-navy-foreground/80 data-[state=active]:bg-gold data-[state=active]:text-gold-foreground data-[state=active]:shadow-none";
-// No celular, uma aba por vez; no computador, as duas áreas ficam visíveis lado a lado.
-const tabPanel = "mt-0 min-h-0 flex-1 data-[state=inactive]:hidden lg:data-[state=inactive]:block";
 
 /** Painel inicial dedicado à evolução, sem abas de Vendas e Pedidos. */
 export function HomeSalesPanel({ className }: { className?: string }) {
