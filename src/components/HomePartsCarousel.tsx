@@ -98,7 +98,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
                 height={676}
                 decoding="async"
                 loading={i <= 1 ? "eager" : "lazy"}
-                className="block h-full w-full object-contain object-center"
+                className="block h-full w-full object-cover object-center"
               />
             </div>
           ))}
