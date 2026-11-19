@@ -189,10 +189,17 @@ function RootComponent() {
     document.addEventListener("click", playControlClick, true);
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       draftActions.switchAccount(session?.user.id ?? null);
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        // Customer and order data is account-scoped by Supabase RLS.
+        // Remove cached private records when the authenticated account changes
+        // so a second representative on the same device never sees stale UI data.
+        void queryClient.removeQueries({
+          predicate: (query) =>
+            ["customers", "customer", "orders", "order", "me"].includes(String(query.queryKey[0] ?? "")),
+        });
+      }
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      // Invalidate cached access without deleting an in-flight query.
-      // Clearing the entire query client during SIGNED_IN can strand the
-      // OAuth callback at "Verificando seu acesso..." indefinitely.
+      // Keep the access query itself intact during OAuth sign-in.
       void queryClient.invalidateQueries({ queryKey: ["access"] });
       void router.invalidate();
     });
