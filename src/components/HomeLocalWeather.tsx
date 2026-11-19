@@ -56,7 +56,7 @@ async function readWeather(region: Region): Promise<Weather | null> {
  const geoResponse = await fetch(geoUrl);
  if (!geoResponse.ok) throw new Error("Geocodificação indisponível");
  const geo = await geoResponse.json() as {results?: Array<{latitude:number;longitude:number;name:string;admin1?:string;country_code?:string}>};
- const found = geo.results?.find((item) => item.country_code === "BR" && (!state || item.admin1?.toLocaleLowerCase("pt-BR") === state.toLocaleLowerCase("pt-BR")));
+ const found = geo.results?.find((item) => item.country_code === "BR" && (!state || item.admin1?.toLocaleLowerCase("pt-BR") === state.toLocaleLowerCase("pt-BR"))) ?? geo.results?.find((item) => item.country_code === "BR");
  if (!found) return null;
  const weatherUrl = new URL("https://api.open-meteo.com/v1/forecast");
  weatherUrl.searchParams.set("latitude",String(found.latitude));
@@ -86,6 +86,13 @@ async function weatherAt(latitude:number, longitude:number): Promise<Weather> {
 export function HomeLocalWeather({enabled}:{enabled:boolean}) {
  const [coords,setCoords] = useState<{latitude:number;longitude:number}|null>(null);
  const [locating,setLocating] = useState(false);
+ const [locationError,setLocationError] = useState("");
+ const [permissionNeeded,setPermissionNeeded] = useState(false);
+ const requestLocation=()=>{
+  if(typeof navigator==="undefined"||!navigator.geolocation){setLocationError("Localização não disponível neste navegador.");return;}
+  setLocating(true);setLocationError("");
+  navigator.geolocation.getCurrentPosition(p=>{setCoords({latitude:p.coords.latitude,longitude:p.coords.longitude});setLocating(false);setPermissionNeeded(false);},e=>{setLocating(false);setLocationError(e.code===1?"Permissão negada. Autorize a localização nas configurações do site.":"Não foi possível obter sua localização.");},{enableHighAccuracy:false,timeout:10000,maximumAge:15*60_000});
+ };
  useEffect(()=>{
   if (!enabled || typeof navigator === "undefined" || !navigator.geolocation) return;
   let active=true;
@@ -100,7 +107,7 @@ export function HomeLocalWeather({enabled}:{enabled:boolean}) {
    );
   };
   if(navigator.permissions?.query){
-   void navigator.permissions.query({name:"geolocation"}).then(p=>{if(active&&p.state==="granted")read();}).catch(()=>{});
+   void navigator.permissions.query({name:"geolocation"}).then(p=>{if(active){if(p.state==="granted")read();else setPermissionNeeded(true);}}).catch(()=>{});
   }
   return ()=>{active=false;};
  },[enabled]);
@@ -109,7 +116,7 @@ export function HomeLocalWeather({enabled}:{enabled:boolean}) {
  const {data:weather} = useQuery({queryKey:["home-weather-current",region?.city,region?.uf],queryFn:()=>readWeather(region!),enabled:enabled && !!region,staleTime:15*60_000,retry:1});
  const displayed = geoWeather ?? weather;
  if (!displayed && (locating || (enabled && geoPending && !!coords))) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold">🌤️ Consultando clima ·</span>;
- if (!displayed) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold" title="Confira sua cidade e UF cadastradas">🌤️ Clima indisponível ·</span>;
+ if (!displayed) return <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold"><button type="button" onClick={requestLocation} disabled={locating} className="rounded-md border border-gold/60 px-2 py-0.5 text-gold underline-offset-2 hover:underline disabled:opacity-60" title={locationError || (permissionNeeded ? "Autorizar localização para mostrar o clima" : "Consultar clima pela sua localização")}>🌤️ {locating ? "Localizando..." : "Ativar clima local"}</button><span aria-hidden="true">·</span></span>;
  return <span title={`Clima atual em: ${displayed.label} — ${condition(displayed.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
    <span aria-hidden="true">{displayed.code <= 3 ? "☀️" : displayed.code >= 95 ? "⛈️" : "🌤️"}</span>
    <span>{Math.round(displayed.temperature)}°C</span>
