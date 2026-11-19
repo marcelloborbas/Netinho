@@ -42,9 +42,21 @@ function Customers() {
   const [deleting, setDeleting] = useState<Customer | null>(null);
   const [deletingBusy, setDeletingBusy] = useState(false);
   const { data, isLoading } = useQuery(customersQuery);
+  const { data: representatives = [] } = useQuery({
+    queryKey: ["customer-list-representatives"],
+    enabled: isAdmin,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("commercial_representatives")
+        .select("user_id,full_name").not("user_id", "is", null);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
   const [editing, setEditing] = useState<Customer | null | "new">(null);
 
   const list = data ?? [];
+  const representativeNames = new Map(representatives.filter((r) => r.user_id).map((r) => [r.user_id!, r.full_name]));
 
   async function toggleFav(c: Customer) {
     const { error } = await supabase.from("customers").update({ favorite: !c.favorite }).eq("id", c.id);
@@ -78,7 +90,7 @@ function Customers() {
       <AdminPageNavigation/>
       <section className="space-y-3 rounded-2xl border border-[#b8cee8] bg-white p-4 shadow-sm" aria-label="Cadastro e lista de clientes">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p role="status" className="text-sm font-bold text-[#102a52]">{list.length} {list.length === 1 ? "cliente cadastrado" : "clientes cadastrados"}</p>
+        <p role="status" className="text-sm font-bold text-[#102a52]">{list.length} {list.length === 1 ? "cliente na carteira" : "clientes na carteira"}{isAdmin ? " · visão geral" : " · sua carteira"}</p>
         <Button onClick={() => setEditing("new")} className="min-h-11 rounded-xl border border-[#a7c1e5] bg-[#eaf2ff] px-4 font-extrabold text-[#102a52] shadow-sm hover:bg-[#dbeafe]"><Plus className="h-4 w-4" /> Novo cliente</Button>
       </div>
       </section>
@@ -95,7 +107,7 @@ function Customers() {
               </button>
               <button onClick={() => setEditing(c)} className="min-w-0 flex-1 rounded-lg text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#174e9b]">
                 <p className="truncate text-base font-extrabold text-[#102a52]">{c.trade_name || c.company_name}</p>
-                <p className="truncate text-xs text-muted-foreground">{[c.cnpj, c.city && `${c.city}/${c.state ?? ""}`].filter(Boolean).join(" · ")}</p>
+                <p className="truncate text-xs text-muted-foreground">{[c.cnpj, c.city && `${c.city}/${c.state ?? ""}`, isAdmin ? `Resp.: ${representativeNames.get(c.seller_id) ?? "Não identificado"}` : null].filter(Boolean).join(" · ")}</p>
               </button>
               <button type="button" onClick={() => void downloadCustomerXlsx(c).catch(() => toast.error("Não foi possível gerar a ficha Excel."))} title="Baixar ficha cadastral Excel" aria-label={`Baixar ficha cadastral de ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:border-[#174e9b] hover:bg-[#dbeafe] focus-visible:outline focus-visible:outline-4 focus-visible:outline-[#174e9b]"><FileSpreadsheet className="h-4 w-4" /></button>
               <button onClick={() => setEditing(c)} aria-label={`Editar ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:bg-[#dbeafe]"><Pencil className="h-4 w-4" /></button>
