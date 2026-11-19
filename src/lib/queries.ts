@@ -40,17 +40,22 @@ export const productsQuery = queryOptions({
     // Recuperação segura caso a função RPC falhe: consultar somente peças
     // ativas já permitidas pelas políticas de leitura do Supabase.
     console.warn("catalog_products indisponível; tentando leitura alternativa", error.message);
-    const { data: fallback, error: fallbackError } = await supabase
-      .from("products")
-      .select("*, categories(name)")
-      .eq("active", true)
-      .order("code")
-      .limit(1000);
-    if (fallbackError) {
-      console.error("Falha também na leitura alternativa do catálogo", fallbackError);
-      throw error;
+    const allProducts: Product[] = [];
+    for (let offset = 0; ; offset += 1000) {
+      const { data: fallback, error: fallbackError } = await supabase
+        .from("products")
+        .select("*, categories(name)")
+        .eq("active", true)
+        .order("code")
+        .range(offset, offset + 999);
+      if (fallbackError) {
+        console.error("Falha também na leitura alternativa do catálogo", fallbackError);
+        throw error;
+      }
+      allProducts.push(...((fallback ?? []) as unknown as Product[]));
+      if ((fallback ?? []).length < 1000) break;
     }
-    return (fallback ?? []) as unknown as Product[];
+    return allProducts;
   },
 });
 
