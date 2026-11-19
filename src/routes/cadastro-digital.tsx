@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/cadastro-digital")({
   component: CadastroDigital,
   ssr: false,
+  staticData: { sitemap: true },
 });
 
 type Tipo = "cliente" | "vendedor" | "representante";
@@ -31,7 +32,7 @@ function CadastroDigital() {
   const [erroEnvio, setErroEnvio] = useState("");
   const sections = Object.entries(campos).filter(([titulo]) => tipo === "cliente" ? titulo !== "Atuação profissional" : !["Contato financeiro","Nota fiscal eletrônica (NFe)","Referências bancárias"].includes(titulo));
   const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setProtocolo(""); };
-  const valido = () => !!(dados.razao_social?.trim() && dados.documento?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.comercial_email || "") && consentimento);
+  const valido = () => !!(dados["razao_social"]?.trim() && dados["documento"]?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados["comercial_email"] || "") && consentimento);
   const enviar = async () => {
     setErroEnvio("");
     if (!valido()) { setErroEnvio("Preencha nome, documento, e-mail válido e aceite o aviso de privacidade."); return; }

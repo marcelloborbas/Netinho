@@ -16,7 +16,7 @@ function RepresentativePortrait({name}:{name:string}){
  return <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#d9e7f6] to-[#b2cce7] shadow-md ring-2 ring-white sm:h-24 sm:w-24">{src&&!failed?<img src={src} alt={`Foto de ${name}`} loading="lazy" onError={()=>setFailed(true)} className="h-full w-full object-cover object-top"/>:<UserRound size={40} className="text-[#345e86]"/>}</div>;
 }
 export const Route=createFileRoute("/_authenticated/vendas-por-representante")({component:RepresentativeSales,staticData:{sitemap:false}});
-const dueDate=(key:string)=>{const [year,month]=key.split("-").map(Number);return new Date(Date.UTC(year,month,15)).toLocaleDateString("pt-BR",{timeZone:"UTC"});};
+const dueDate=(key:string)=>{const [year=0,month=0]=key.split("-").map(Number);return new Date(Date.UTC(year,month,15)).toLocaleDateString("pt-BR",{timeZone:"UTC"});};
 const monthKey=(d:Date)=>{const parts=new Intl.DateTimeFormat("en-US",{year:"numeric",month:"2-digit",timeZone:"America/Sao_Paulo"}).formatToParts(d);return `${parts.find(p=>p.type==="year")?.value}-${parts.find(p=>p.type==="month")?.value}`;};
 function RepresentativeSales(){
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
@@ -124,7 +124,7 @@ function RepresentativeSales(){
    </section>
    <div className="flex items-center justify-between gap-2 px-1"><h2 className="text-base font-black sm:text-lg">Desempenho da equipe</h2><span className="text-xs text-slate-500">Toque no cartão para ver os meses</span></div>
    <div className="grid gap-3 lg:grid-cols-2">
-    {ranked.map((p,index)=>{const result=data!.results.get(p.id)!;const max=Math.max(1,...data!.periods.map(m=>result.months[m.key]??0));const isOpen=expanded===p.id;return <article key={p.id} className="relative overflow-hidden rounded-[22px] bg-white shadow-[0_6px_22px_rgba(13,45,79,.09)] transition-shadow hover:shadow-[0_9px_28px_rgba(13,45,79,.16)]">
+    {ranked.map((p,index)=>{const result=data!.results.get(p.id)!;const max=Math.max(1,...data!.periods.map(m=>result.months[m.key]?.gross??0));const isOpen=expanded===p.id;return <article key={p.id} className="relative overflow-hidden rounded-[22px] bg-white shadow-[0_6px_22px_rgba(13,45,79,.09)] transition-shadow hover:shadow-[0_9px_28px_rgba(13,45,79,.16)]">
      <button type="button" aria-expanded={isOpen} onClick={()=>setExpanded(isOpen?null:p.id)} className="w-full p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1c75b3] sm:p-5">
       <div className="flex items-center gap-3">
        <div className="shrink-0 self-start pb-10"><RepresentativePortrait name={p.name}/></div>

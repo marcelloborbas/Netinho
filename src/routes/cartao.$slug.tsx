@@ -17,7 +17,7 @@ const cards: Record<string,string> = {
  "jose-burgato":"jose-burgato.webp",
 };
 const slugify=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-export const Route=createFileRoute("/cartao/$slug")({component:PublicCard});
+export const Route=createFileRoute("/cartao/$slug")({component:PublicCard,staticData:{sitemap:false}});
 function PublicCard(){
  const {slug}=Route.useParams();
  const [failed,setFailed]=useState(false);

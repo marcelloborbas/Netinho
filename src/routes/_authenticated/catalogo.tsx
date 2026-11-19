@@ -209,7 +209,7 @@ function Catalog() {
     staleTime: 120000,
     queryFn: async () => {
       const { data } = await supabase.auth.getUser();
-      const picture = data.user?.user_metadata?.avatar_url ?? data.user?.user_metadata?.picture;
+      const picture = data.user?.user_metadata?.["avatar_url"] ?? data.user?.user_metadata?.["picture"];
       return typeof picture === "string" && picture.startsWith("https://") ? picture : null;
     },
   });
