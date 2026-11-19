@@ -220,7 +220,7 @@ function Home() {
             aria-hidden="true"
             width={2001}
             height={1071}
-            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-100"
+            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full scale-[1.3] origin-left object-cover object-[35%_center] opacity-100"
             decoding="async"
             fetchPriority="high"
           />
