@@ -6475,3 +6475,13 @@ html body .welcome-auth-stage .welcome-auth-art {
   grid-template-rows:minmax(0,1.28fr) minmax(0,1fr) minmax(0,.9fr) !important;
  }
 }
+
+/* Saudação: preservar as duas extremidades da arte (logo e carro).
+   Sem zoom, distorção ou deslocamento que corte a logo. */
+.netinho-home-refresh .netinho-home-hero > .netinho-hero-photo {
+ object-fit:contain !important;
+ object-position:left center !important;
+}
+.netinho-home-refresh .netinho-home-hero {
+ background-color:#071e3c !important;
+}
