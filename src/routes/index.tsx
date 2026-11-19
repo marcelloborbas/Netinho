@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -238,6 +238,7 @@ function Home() {
                 </span>
                 !
               </p>
+              <Link to="/cadastro-digital" className="inline-flex rounded-lg border border-gold/80 bg-navy-deep/70 px-3 py-1 text-xs font-bold text-white hover:bg-navy-deep">Cadastre-se na Netinho</Link>
               <p className="netinho-home-hero-blessing truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">
                 {periodBlessing}
               </p>
