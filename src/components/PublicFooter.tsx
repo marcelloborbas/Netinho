@@ -80,8 +80,8 @@ export function PublicFooter() {
   };
   const links = [
     { to: "/" as const, label: "Início", icon: Home },
-    { to: "/catalogo" as const, label: "Pedido", icon: ShoppingCart },
-    { to: "/pedidos" as const, label: "Vendas", icon: ClipboardList },
+    { to: "/catalogo" as const, label: "Fazer Pedido", icon: ShoppingCart },
+    { to: "/pedidos" as const, label: "Minhas Vendas", icon: ClipboardList },
   ];
   async function logout() {
     const { error } = await supabase.auth.signOut();
@@ -113,16 +113,16 @@ export function PublicFooter() {
     {/* Navegação fixa: ícones Lucide dourados, mesmo tamanho e traço, sobre azul-marinho. */}
     <nav aria-label="Menu inferior" className="mobile-nav !border-t !border-gold/40 !bg-navy-deep" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
       {links.map(({to,label,icon:Icon}) => {
-        const disabled = isVisitor && label === "Vendas";
+        const disabled = isVisitor && label === "Minhas Vendas";
         const current = pathname === to;
-        return <Link key={label} to={to} preload="intent" onClick={() => { clickSound(); if (label === "Pedido") prepareCatalog(); }} aria-current={current ? "page" : undefined} className={`relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-1 text-[10px] font-semibold transition-colors sm:text-[13px] ${disabled ? "!text-muted-foreground" : "hover:bg-navy-soft/40"}`}>
+        return <Link key={label} to={to} preload="intent" onClick={() => { clickSound(); if (label === "Fazer Pedido") prepareCatalog(); }} aria-current={current ? "page" : undefined} className={`relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-1 text-[10px] font-semibold transition-colors sm:text-[13px] ${disabled ? "!text-muted-foreground" : "hover:bg-navy-soft/40"}`}>
           <Icon size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className={disabled ? "text-muted-foreground" : "text-gold"} />{label}
           {current && <span aria-hidden="true" className="absolute bottom-1 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-gold"/>}
         </Link>;
       })}
       <button type="button" aria-label="Abrir menu do perfil" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-1 text-[10px] font-semibold hover:bg-navy-soft/40 sm:text-[13px]">
-        {user?.picture ? <img src={user.picture} alt="Foto do usuário" referrerPolicy="no-referrer" className="h-10 w-10 rounded-full border-2 border-gold object-cover shadow-sm" onError={(event) => { event.currentTarget.src = "/images/Logo%20Netinho.webp"; }} /> : <UserRound size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className="text-gold" />}
-        <span>Perfil</span>
+        {user?.picture ? <img src={user.picture} alt="Foto do usuário" referrerPolicy="no-referrer" className="netinho-footer-avatar h-10 w-10 rounded-full border-2 border-gold object-cover shadow-sm" onError={(event) => { event.currentTarget.src = "/images/Logo%20Netinho.webp"; }} /> : <UserRound size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className="text-gold" />}
+
       </button>
     </nav>
   </>;
