@@ -238,7 +238,6 @@ function Home() {
                 </span>
                 !
               </p>
-              <div className="flex flex-wrap items-center gap-2"><Link to="/cadastro-digital" className="inline-flex rounded-lg border border-gold/80 bg-navy-deep/70 px-3 py-1 text-xs font-bold text-white hover:bg-navy-deep">Cadastre-se na Netinho</Link>{access?.level === 1 && <Link to="/cadastros-pendentes" className="rounded-lg border border-gold/80 bg-navy-deep/70 px-3 py-1 text-xs font-bold text-white">Cadastros recebidos</Link>}</div>
               <p className="netinho-home-hero-blessing truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">
                 {periodBlessing}
               </p>
