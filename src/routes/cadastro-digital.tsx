@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { jsPDF } from "jspdf";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/cadastro-digital")({
   component: CadastroDigital,
@@ -27,10 +28,27 @@ function CadastroDigital() {
   const [dados, setDados] = useState<Record<string, string>>({});
   const [consentimento, setConsentimento] = useState(false);
   const [gerado, setGerado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [protocolo, setProtocolo] = useState("");
+  const [erroEnvio, setErroEnvio] = useState("");
   const sections = Object.entries(campos).filter(([titulo]) => tipo !== "cliente" || titulo !== "Atuação profissional");
   const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setGerado(false); };
+  const valido = () => !!(dados.razao_social?.trim() && dados.documento?.trim() && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(dados.comercial_email || "") && consentimento);
+  const enviar = async () => {
+    setErroEnvio("");
+    if (!valido()) { setErroEnvio("Preencha nome, documento, e-mail válido e aceite o aviso de privacidade."); return; }
+    setEnviando(true);
+    try {
+      const { data: auth, error: authError } = await supabase.auth.getUser();
+      if (authError || !auth.user) { setErroEnvio("Entre na sua conta, inclusive como visitante, antes de enviar a ficha."); return; }
+      const { data, error } = await supabase.from("registration_requests" as never).insert({user_id: auth.user.id, applicant_type: tipo, form_data: dados, status: "recebido"} as never).select("id").single();
+      if (error) throw error;
+      setProtocolo(String((data as {id:string}).id));
+    } catch { setErroEnvio("Não foi possível registrar o cadastro. Tente novamente."); }
+    finally { setEnviando(false); }
+  };
   const pdf = () => {
-    if (!dados.razao_social?.trim() || !dados.documento?.trim() || !dados.comercial_email?.trim() || !consentimento) {
+    if (!valido()) {
       window.alert("Preencha nome, CPF/CNPJ, e-mail comercial e confirme o aviso de privacidade.");
       return;
     }
@@ -45,6 +63,7 @@ function CadastroDigital() {
     doc.setFontSize(16); line("NETINHO AUTO PARTS", true);
     doc.setFontSize(12); line("FICHA CADASTRAL - " + tipo.toUpperCase(), true);
     line("Gerado em: " + new Date().toLocaleString("pt-BR"));
+    if (protocolo) line("Protocolo: " + protocolo);
     sections.forEach(([titulo, fields]) => {
       y += 4; line(titulo.toUpperCase(), true);
       fields.forEach(([key, label]) => line(label + ": " + (dados[key] || "-")));
@@ -80,10 +99,13 @@ function CadastroDigital() {
         <input type="checkbox" checked={consentimento} onChange={e => setConsentimento(e.target.checked)} className="mt-1" />
         Estou ciente de que os dados informados serão utilizados para análise do cadastro pela Netinho Auto Parts. Não há aprovação automática.
       </label>
+      <button type="button" disabled={enviando || !!protocolo} onClick={() => void enviar()} className="mt-5 w-full rounded-xl bg-amber-600 p-4 font-bold text-white disabled:opacity-60">{enviando ? "Enviando..." : protocolo ? "Solicitação registrada" : "Enviar cadastro para análise"}</button>
+      {erroEnvio && <p role="alert" className="mt-2 text-red-700">{erroEnvio}</p>}
+      {protocolo && <p role="status" className="mt-3 break-all text-sm text-green-800">Cadastro recebido para análise. Protocolo: {protocolo}. Nenhuma permissão de vendas foi liberada automaticamente.</p>}
       <button type="button" onClick={pdf} className="mt-5 w-full rounded-xl bg-blue-950 p-4 font-bold text-white">Gerar e baixar ficha em PDF</button>
       {gerado && <div className="mt-4 rounded-xl border p-4 text-sm">
         <p className="font-semibold">PDF gerado no seu dispositivo.</p>
-        <p>Para encaminhar, anexe o arquivo baixado ao e-mail ou compartilhe-o pelo WhatsApp da Netinho. Esta versão ainda não realiza envio automático nem registra uma solicitação no banco de dados.</p>
+        <p>Para encaminhar, anexe o arquivo baixado ao e-mail ou compartilhe-o pelo WhatsApp da Netinho. O PDF é uma cópia local; o envio cadastral é realizado separadamente pelo botão acima.</p>
       </div>}
     </div>
   </main>;
