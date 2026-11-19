@@ -6142,3 +6142,78 @@ html body .welcome-auth-stage .welcome-auth-art {
  object-fit:contain !important;
  object-position:center center !important;
 }
+
+/* Netinho Home Refresh — componentes funcionais, sem imagem estática da tela.
+   Escopo isolado para não afetar outras rotas ou estilos antigos. */
+.netinho-home-refresh {
+ background:linear-gradient(180deg,#edf3fb 0%,#f8fafc 55%,#e6edf6 100%);
+}
+.netinho-home-refresh .netinho-home-refresh-grid {
+ grid-template-rows:minmax(175px,1.45fr) minmax(150px,1fr) minmax(135px,.9fr) minmax(66px,.45fr);
+ align-content:stretch;
+ gap:clamp(7px,1dvh,12px);
+}
+.netinho-home-refresh .netinho-home-hero {
+ border:2px solid #d9af36;
+ border-radius:clamp(14px,2.2vw,22px);
+ box-shadow:0 3px 12px #102a5233,inset 0 0 0 1px #ffe59c66;
+}
+.netinho-home-refresh .netinho-home-hero > img {
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ object-position:center center;
+ opacity:1;
+}
+.netinho-home-refresh .netinho-home-hero-content {
+ background:linear-gradient(90deg,rgba(5,22,47,.84) 0%,rgba(5,22,47,.42) 48%,transparent 85%);
+}
+.netinho-home-refresh .netinho-home-hero-greeting {
+ font-size:clamp(22px,4.4vw,44px);
+ line-height:1.1;
+ text-shadow:0 2px 7px #06172f;
+}
+.netinho-home-refresh .netinho-home-hero-blessing {
+ font-size:clamp(13px,2.2vw,20px);
+ text-shadow:0 2px 6px #06172f;
+}
+.netinho-home-refresh .netinho-home-sales {
+ border:2px solid #d9af36;
+ border-radius:18px;
+ box-shadow:0 3px 10px #102a5226;
+}
+.netinho-home-refresh .netinho-home-brands {
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:1px solid #d9af3655;
+ border-radius:16px;
+ background:linear-gradient(180deg,#f8fbff,#e8eff8);
+}
+.netinho-home-refresh .netinho-home-brands ul {
+ width:100%;
+ align-items:center;
+}
+.netinho-home-refresh .netinho-home-brands img {
+ filter:drop-shadow(0 3px 4px #102a5240);
+}
+@media(min-width:1024px) {
+ .netinho-home-refresh .netinho-home-refresh-grid {
+  grid-template-rows:minmax(190px,1.25fr) minmax(180px,1fr) minmax(180px,.9fr);
+ }
+ .netinho-home-refresh .netinho-home-brands {align-items:stretch;}
+}
+@media(max-width:420px) {
+ .netinho-home-refresh .netinho-home-refresh-grid {
+  grid-template-rows:minmax(165px,1.5fr) minmax(130px,1fr) minmax(140px,.9fr) minmax(64px,.45fr);
+  padding-inline:8px;
+ }
+ .netinho-home-refresh .netinho-home-hero-content {gap:6px;padding-inline:9px;}
+ .netinho-home-refresh .netinho-home-hero-content > img {width:auto;height:34px;}
+ .netinho-home-refresh .netinho-home-hero-greeting {font-size:clamp(19px,5.2vw,25px);}
+ .netinho-home-refresh .netinho-home-hero-blessing {font-size:12px;}
+ .netinho-home-refresh .netinho-home-brands img {max-height:60px;}
+}
+@media(max-height:650px) and (max-width:1023px) {
+ .netinho-home-refresh .netinho-home-refresh-grid {height:auto;min-height:100dvh;}
+}
