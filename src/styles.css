@@ -6521,3 +6521,12 @@ html body .welcome-auth-stage .welcome-auth-art {
   position:relative; z-index:2; align-self:flex-end !important; margin-bottom:19px !important;
  }
 }
+
+/* Fazer Pedido: preencher toda a altura livre abaixo de Montadora com RGB 241. */
+html:has(.catalog-showcase), body:has(.catalog-showcase), body:has(.catalog-showcase) #root {
+ background-color:rgb(241,241,241) !important;
+}
+body:has(.catalog-showcase) .catalog-showcase {
+ min-height:calc(100dvh - 68px) !important;
+ background-color:rgb(241,241,241) !important;
+}
