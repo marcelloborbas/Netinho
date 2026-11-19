@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { categoriesQuery, productsQuery } from "@/lib/queries";
-import { Home, Search, ShoppingCart, ClipboardList, CircleHelp, LogOut, UserRound, Settings, ShieldCheck, Download, Contact, MessageCircle } from "lucide-react";
+import { Home, Search, ShoppingCart, ClipboardList, CircleHelp, LogOut, UserRound, Settings, ShieldCheck, Download, Contact, MessageCircle, UserPlus, ClipboardCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -102,6 +102,8 @@ export function PublicFooter() {
         </div>
         <p className="mt-1 text-xs font-semibold text-[#8a6516]">{status}</p>
       </div>
+      <Link role="menuitem" to="/cadastro-digital" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><UserPlus size={19}/> Cadastre-se na Netinho</Link>
+      {access?.level === 1 && <Link role="menuitem" to="/cadastros-pendentes" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><ClipboardCheck size={19}/> Cadastros recebidos</Link>}
       <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold ${isVisitor ? "text-slate-400" : "hover:bg-slate-100"}`}><Contact size={19}/> Cartão de visita</Link>
       <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold ${isVisitor ? "text-slate-400" : "hover:bg-slate-100"}`}><Download size={19}/> Downloads</Link>
       <a role="menuitem" href={`https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Gostaria de atendimento.")}`} target="_blank" rel="noopener noreferrer" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold text-[#147c40] hover:bg-green-50"><MessageCircle size={19} fill="#25D366" stroke="#147c40"/> WhatsApp</a>
