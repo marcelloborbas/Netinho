@@ -279,7 +279,7 @@ const statusLabels: Record<string, string> = {
 };
 
 function RecentOrders() {
-  const { data, isPending, isError } = useHomeDashboard();
+  const { data, isPending, isError, isAdmin } = useHomeDashboard();
   const orders = data?.recentOrders ?? [];
   return (
     <div className="flex h-full min-h-0 flex-col gap-1">
@@ -332,10 +332,10 @@ function RecentOrders() {
           Ainda não há pedidos registrados neste período.
         </p>
       )}
-      <Link to="/pedidos" className={panelLink}>
+      {isAdmin && <Link to="/pedidos" className={panelLink}>
         Ver todos os pedidos{" "}
         <ChevronRight size={14} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" />
-      </Link>
+      </Link>}
     </div>
   );
 }
@@ -347,6 +347,7 @@ const tabPanel = "mt-0 min-h-0 flex-1 data-[state=inactive]:hidden lg:data-[stat
 
 /** Painel de atividade: vendas e últimos pedidos. Abas no celular, duas colunas no computador. */
 export function HomeSalesPanel({ className }: { className?: string }) {
+  const { isAdmin } = useHomeDashboard();
   return (
     <section
       className={cn(
@@ -358,7 +359,7 @@ export function HomeSalesPanel({ className }: { className?: string }) {
       <Tabs defaultValue="vendas" className="flex min-h-0 flex-1 flex-col gap-2">
         <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 lg:hidden">
           <h2 className={panelTitle}>
-            Evolução das vendas{" "}
+            {isAdmin ? "Evolução das vendas" : "Minhas vendas"}{" "}
             <span className="text-[11px] font-bold text-gold-deep">· 3 meses</span>
           </h2>
           <TabsList className="h-8 rounded-lg bg-navy p-0.5">
