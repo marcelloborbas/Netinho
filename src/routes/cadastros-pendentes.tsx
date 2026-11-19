@@ -21,7 +21,7 @@ function CadastrosPendentes(){
  };
  useEffect(()=>{void load();},[]);
  const update=async(id:string,status:string)=>{
-  const {error}=await supabase.from("registration_requests" as never).update({status} as never).eq("id",id);
+  const {error}=await supabase.rpc("review_registration_request" as never, {p_request_id:id,p_status:status} as never);
   if(error){setError("Não foi possível alterar o status.");return;}
   setRows(old=>old.map(x=>x.id===id?{...x,status}:x));
  };
@@ -38,7 +38,7 @@ function CadastrosPendentes(){
    <label className="mt-4 block text-sm font-semibold">Situação
     <select value={r.status} onChange={e=>void update(r.id,e.target.value)} className="mt-1 block w-full rounded-lg border p-2">{statuses.map(s=><option key={s} value={s}>{s.replaceAll("_"," ")}</option>)}</select>
    </label>
-   <p className="mt-2 text-xs text-slate-500">Aprovar esta solicitação não altera automaticamente o perfil nem as comissões do usuário.</p>
+   <p className="mt-2 text-xs text-slate-500">A aprovação libera o perfil correspondente para acesso. Comissões e demais condições comerciais são definidas separadamente pelo Administrador.</p>
   </article>)}</>}
  </div></main>;
 }
