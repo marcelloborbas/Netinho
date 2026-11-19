@@ -31,7 +31,14 @@ async function readRegion(): Promise<Region | null> {
    .select("territory_cities,territory_uf").eq("id",auth.user.id).maybeSingle();
  if (error) throw error;
  const uf = (data?.territory_uf ?? "").trim().toUpperCase();
- const firstCity = (data?.territory_cities ?? "").split(/[,;\n]/)[0]?.trim() ?? "";
+ let firstCity = (data?.territory_cities ?? "").split(/[,;\n]/)[0]?.trim() ?? "";
+ if (auth.user.email) {
+   const { data: rep } = await supabase.from("representative_profiles").select("slug").eq("email",auth.user.email.toLowerCase()).maybeSingle();
+   if (rep?.slug) {
+     const { data: details } = await supabase.from("representative_private_details").select("city").eq("slug",rep.slug).maybeSingle();
+     if (details?.city?.trim()) firstCity = details.city.trim();
+   }
+ }
  if (!firstCity && !stateNames[uf]) return null;
  return { city:firstCity, uf };
 }
@@ -65,7 +72,7 @@ async function readWeather(region: Region): Promise<Weather | null> {
 export function HomeLocalWeather({enabled}:{enabled:boolean}) {
  const {data:region} = useQuery({queryKey:["home-weather-user-region"],queryFn:readRegion,enabled,staleTime:10*60_000});
  const {data:weather} = useQuery({queryKey:["home-weather-current",region?.city,region?.uf],queryFn:()=>readWeather(region!),enabled:enabled && !!region,staleTime:15*60_000,retry:1});
- if (!weather) return null;
+ if (!weather) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold" title="Confira sua cidade e UF cadastradas">🌤️ Clima indisponível ·</span>;
  return <span title={`Clima atual na região cadastrada: ${weather.label} — ${condition(weather.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
    <span aria-hidden="true">{weather.code <= 3 ? "☀️" : weather.code >= 95 ? "⛈️" : "🌤️"}</span>
    <span>{Math.round(weather.temperature)}°C</span>
