@@ -59,7 +59,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
   const active = index % parts.length;
   return (
     // Faixa de ponta a ponta: as margens negativas anulam o recuo lateral da página e a faixa
-    // encosta nas duas bordas da tela. As imagens preenchem a faixa (object-cover), sem distorção.
+    // encosta nas duas bordas da tela. As artes permanecem inteiras para preservar os textos.
     <section
       className={cn("flex min-h-0 min-w-0 flex-col gap-1 mx-[calc(50%-50vw)]", className)}
       aria-label="Carrossel de peças em destaque"
@@ -98,7 +98,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
                 height={676}
                 decoding="async"
                 loading={i <= 1 ? "eager" : "lazy"}
-                className="block h-full w-full object-cover object-center"
+                className="block h-full w-full object-contain object-center"
               />
             </div>
           ))}
