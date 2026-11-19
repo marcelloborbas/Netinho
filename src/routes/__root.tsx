@@ -48,8 +48,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: ErrorComponentProps) {
-  const router = useRouter();
+function ErrorComponent({ error }: ErrorComponentProps) {
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -58,17 +57,18 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
       <div className="max-w-md text-center">
         <h1 className="text-2xl font-semibold text-foreground">Esta página não carregou</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Verifique sua conexão e tente novamente.
+          O aplicativo encontrou uma falha ao abrir esta página. Tente atualizar a versão do aplicativo.
         </p>
         <button
           onClick={() => {
-            router.invalidate();
-            reset();
+            // Recarrega o documento inteiro para recuperar módulos e estado de navegação após uma atualização do PWA.
+            window.location.reload();
           }}
           className="mt-6 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
         >
-          Tentar novamente
+          Atualizar aplicativo
         </button>
+        <a href="/auth" className="mt-4 block text-sm font-semibold text-primary underline">Abrir página de entrada</a>
       </div>
     </div>
   );
