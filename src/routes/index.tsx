@@ -224,8 +224,8 @@ function Home() {
             decoding="async"
             fetchPriority="high"
           />
-          <div className="netinho-home-hero-content grid h-full min-h-[140px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep/85 via-navy-deep/20 to-transparent px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
-            <div className="netinho-home-hero-copy min-w-0 rounded-xl bg-navy-deep/60 px-3 py-2 leading-tight backdrop-blur-[2px] sm:px-4">
+          <div className="netinho-home-hero-content relative grid h-full min-h-[140px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 before:pointer-events-none before:absolute before:inset-0 before:z-0 before:bg-navy-deep/60 sm:gap-4 sm:px-5 lg:py-2">
+            <div className="netinho-home-hero-copy relative z-10 min-w-0 px-3 py-2 leading-tight sm:px-4">
               <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
@@ -242,7 +242,7 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-            <HomeWhatsAppButton />
+            <div className="relative z-20"><HomeWhatsAppButton /></div>
           </div>
         </header>
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
@@ -251,8 +251,8 @@ function Home() {
           className="netinho-home-brands relative min-w-0 overflow-hidden bg-transparent border-0 shadow-none lg:col-span-4"
           aria-label="Montadoras"
         >
-          <div className="grid h-full min-h-[100px] grid-cols-4 items-center gap-2 px-1 sm:gap-3">
-            {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="mx-auto h-auto max-h-[100px] w-full object-contain" loading="lazy" />)}
+          <div className="grid h-full min-h-[100px] grid-cols-4 items-center justify-items-center gap-3 px-0 sm:gap-5">
+            {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />)}
           </div>
         </section>
       </main>
