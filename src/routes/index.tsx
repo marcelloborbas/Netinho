@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
-import { HomeKpis, HomeSalesPanel } from "@/components/HomeCommercialDashboard";
+import { HomeSalesPanel } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { HomeWhatsAppButton } from "@/components/HomeWhatsAppButton";
 import { PublicFooter } from "@/components/PublicFooter";
@@ -259,28 +259,16 @@ function Home() {
             <HomeWhatsAppButton />
           </div>
         </header>
-        <HomeKpis className="lg:col-span-12" />
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
-        <HomeSalesPanel className="lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[300px]" />
+        <HomeSalesPanel className="lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[230px]" />
         <section
           className="min-w-0 lg:col-span-4 lg:flex lg:flex-col lg:rounded-2xl lg:border lg:border-border lg:bg-card lg:p-3 lg:shadow-home-card"
-          aria-labelledby="home-brands-title"
+          aria-label="Montadoras"
         >
-          <h2
-            id="home-brands-title"
-            className="mb-1 text-sm font-black leading-tight text-navy lg:mb-2 lg:text-base"
-          >
-            Encontre peças por montadora
-          </h2>
           <ul className="grid grid-cols-4 gap-2 sm:gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:content-center">
             {brands.map((brand) => (
               <li key={brand} className="min-w-0">
-                <button
-                  type="button"
-                  onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })}
-                  className="grid w-full place-items-center rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
-                  aria-label={`Ver peças da montadora ${brand}`}
-                >
+                <div className="grid w-full place-items-center" aria-label={`Montadora ${brand}`}>
                   <img
                     src={`/images/home-premium/montadora-${brand}.webp`}
                     alt=""
@@ -289,7 +277,7 @@ function Home() {
                     loading="lazy"
                     className="block h-12 w-auto max-w-full object-contain sm:h-14 xl:h-16"
                   />
-                </button>
+                </div>
               </li>
             ))}
           </ul>
