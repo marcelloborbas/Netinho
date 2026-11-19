@@ -203,6 +203,16 @@ function Catalog() {
   const { data: registeredCategories = [], error: categoriesError, refetch: refetchCategories } = useQuery(categoriesQuery);
   const { data: access } = useQuery(accessQuery);
   const canSell = access?.can_sell === true || access?.level === 1;
+  const { data: visitorAvatar } = useQuery({
+    queryKey: ["catalog-visitor-avatar"],
+    enabled: !canSell,
+    staleTime: 120000,
+    queryFn: async () => {
+      const { data } = await supabase.auth.getUser();
+      const picture = data.user?.user_metadata?.avatar_url ?? data.user?.user_metadata?.picture;
+      return typeof picture === "string" && picture.startsWith("https://") ? picture : null;
+    },
+  });
   const visibleFilterOptions = filterOptions;
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
@@ -334,12 +344,13 @@ function Catalog() {
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 bg-[#f1f1f1] px-2 pt-1 pb-28 text-[#102a52] sm:px-6 sm:pt-4 sm:pb-32">
       {!canSell && (
-        <aside role="note" aria-label="Orientação para visitantes" className="netinho-visitor-notice relative isolate w-full overflow-hidden rounded-2xl border border-[#d7b45b] bg-white px-4 py-3 shadow-[0_6px_22px_rgba(16,42,82,0.13)] sm:px-5 sm:py-4">
-          <div className="absolute inset-y-0 left-0 w-[5px] bg-[#d4af37]" aria-hidden="true" />
+        <aside role="note" aria-label="Orientação para visitantes" className="netinho-visitor-notice relative isolate w-full overflow-hidden rounded-xl border-2 border-[#ffd447] bg-[#b31320] px-3 py-3 shadow-[0_5px_18px_rgba(140,0,15,0.3)] sm:px-5 sm:py-4" style={{ backgroundColor: "#b31320", color: "#ffe45c" }}>
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#102a52] text-[#f7d979] shadow-sm sm:h-12 sm:w-12" aria-hidden="true"><UserRound size={25} strokeWidth={2.2} /></div>
-            <p className="min-w-0 flex-1 text-[13px] font-medium leading-relaxed text-[#102a52] sm:text-[15px]">
-              <strong className="font-black text-[#102a52]">Visitante:</strong> Catálogo liberado para consulta.<br />Para vender, toque em <strong className="font-black text-[#102a52]">Usuário e Cadastre-se.</strong>
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#ffe45c] bg-[#fff5cc] shadow-sm sm:h-14 sm:w-14" aria-label="Foto do usuário visitante">
+              {visitorAvatar ? <img src={visitorAvatar} alt="Foto do usuário visitante" referrerPolicy="no-referrer" className="h-full w-full object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /> : <UserRound size={28} strokeWidth={2} className="text-[#b31320]" aria-hidden="true" />}
+            </div>
+            <p className="min-w-0 flex-1 text-[13px] font-semibold leading-relaxed text-[#ffe45c] sm:text-base">
+              <strong className="font-black text-[#fff2a0]">Visitante:</strong> Catálogo liberado para consulta.<br />Para vender, toque em <strong className="font-black text-[#fff2a0]">Usuário e Cadastre-se.</strong>
             </p>
           </div>
         </aside>
