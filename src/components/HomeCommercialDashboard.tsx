@@ -206,32 +206,41 @@ export function HomeKpis({ className }: { className?: string }) {
   );
 }
 
-/** Evolução mensal com curva direcional: verde em alta, vermelho em queda. */
+/** Tipo 1: painel compacto com velocímetro e barras, sem deformar no mobile. */
 function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
-  const max = Math.max(1, ...periods.map((p) => p.total));
+  const max = Math.max(1, ...periods.map(p => p.total));
   const previous = periods[periods.length - 2]?.total ?? 0;
   const current = periods[periods.length - 1]?.total ?? 0;
   const rising = current > previous;
   const falling = current < previous;
-  const trendColor = rising ? "#159447" : falling ? "#d32f2f" : "#b28a21";
-  const points = periods.map((p, i) => ({ x: 12 + i * 38, y: 78 - (p.total / max) * 58 }));
-  const a = points[0] ?? { x: 12, y: 78 };
-  const b = points[1] ?? a;
-  const d = points[2] ?? b;
-  const path = `M ${a.x} ${a.y} Q ${(a.x+b.x)/2} ${Math.min(a.y,b.y)-12} ${b.x} ${b.y} Q ${(b.x+d.x)/2} ${Math.min(b.y,d.y)-12} ${d.x} ${d.y}`;
-  const angle = Math.atan2(d.y-b.y,d.x-b.x);
-  const headA = {x:d.x-10*Math.cos(angle-0.55),y:d.y-10*Math.sin(angle-0.55)};
-  const headB = {x:d.x-10*Math.cos(angle+0.55),y:d.y-10*Math.sin(angle+0.55)};
-  return <div className="flex min-h-0 flex-1 flex-col justify-center gap-1" role="img" aria-label={`Evolução de vendas: ${periods.map(p=>`${p.label}: ${brl(p.total)}`).join("; ")}. ${rising?"Em alta":falling?"Em queda":"Estável"} em relação ao mês anterior.`}>
-    <svg viewBox="0 0 100 92" preserveAspectRatio="none" className="h-full min-h-[75px] max-h-[180px] w-full overflow-visible" aria-hidden="true">
-      <path d="M 0 82 H 100" stroke="#d4af37" strokeOpacity=".45" strokeWidth=".8" />
-      {points.map((pt,i)=><rect key={periods[i]?.key} x={pt.x-7} y={pt.y} width="14" height={82-pt.y} rx="2" fill={i===2?"#d4af37":"#93b1d0"} opacity=".6" />)}
-      <path d={path} fill="none" stroke={trendColor} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-      <path d={`M ${headA.x} ${headA.y} L ${d.x} ${d.y} L ${headB.x} ${headB.y}`} fill="none" stroke={trendColor} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-      {points.map((pt,i)=><circle key={periods[i]?.key} cx={pt.x} cy={pt.y} r="2.3" fill={trendColor} stroke="white" strokeWidth=".8" />)}
-    </svg>
-    <div className="grid grid-cols-3 gap-1 text-center">{periods.map(p=><div key={p.key} className="min-w-0"><span className="block text-[10px] font-bold">{p.label}</span><strong className="block truncate text-[10px] tabular-nums sm:text-xs" title={brl(p.total)}>{shortMoney(p.total)}</strong></div>)}</div>
-    <p className="text-center text-xs font-black" style={{color:trendColor}}>{rising?"↗ Vendas em alta":falling?"↘ Vendas em queda":"→ Vendas estáveis"}{previous>0?` · ${((current-previous)/previous*100).toLocaleString("pt-BR",{maximumFractionDigits:1})}%`:""}</p>
+  const color = rising ? "#168544" : falling ? "#c62c35" : "#a37b1b";
+  const variation = previous > 0 ? (current - previous) / previous * 100 : null;
+  const label = rising ? "Em crescimento" : falling ? "Em queda" : "Estável";
+  // Ponteiro: indicador de tendência, não escala monetária ou percentual absoluto.
+  const needleAngle = rising ? 55 : falling ? -55 : 0;
+  return <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] items-center gap-2 sm:gap-4" aria-label={`Evolução das vendas. ${periods.map(p => `${p.label}: ${brl(p.total)}`).join("; ")}. ${label}.`}>
+    <div className="flex min-w-0 flex-col items-center justify-center gap-0.5">
+      <div className="relative w-full max-w-[145px]">
+        <svg viewBox="0 0 180 112" className="block h-auto w-full" role="img" aria-label={`Indicador de tendência: ${label}`}>
+          <defs><linearGradient id="netinho-gauge" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#c62c35"/><stop offset="47%" stopColor="#e9bb42"/><stop offset="100%" stopColor="#168544"/></linearGradient></defs>
+          <path d="M 22 94 A 68 68 0 0 1 158 94" fill="none" stroke="#d7dce5" strokeWidth="15" strokeLinecap="round"/>
+          <path d="M 22 94 A 68 68 0 0 1 158 94" fill="none" stroke="url(#netinho-gauge)" strokeWidth="12" strokeLinecap="round"/>
+          <g transform={`rotate(${needleAngle} 90 94)`}><path d="M 90 94 L 84 85 L 90 32 L 96 85 Z" fill="#102a52" stroke="#fff" strokeWidth="1.5"/><circle cx="90" cy="94" r="7" fill="#d4af37" stroke="#102a52" strokeWidth="2"/></g>
+        </svg>
+      </div>
+      <strong className="text-[17px] font-black leading-none tabular-nums sm:text-2xl" style={{color}}>{variation == null ? "—" : `${variation > 0 ? "+" : ""}${variation.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</strong>
+      <span className="text-center text-[10px] font-extrabold leading-tight sm:text-xs" style={{color}}>{label}</span>
+      <span className="text-center text-[9px] leading-tight text-[#50617a]">Em relação ao mês anterior</span>
+    </div>
+    <div className="flex h-full min-h-0 flex-col justify-end gap-1.5">
+      <div className="flex min-h-[82px] flex-1 items-end justify-around gap-2 border-b border-[#d4af37]/60 pb-0.5">
+        {periods.map((p,i) => <div key={p.key} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
+          <strong className="max-w-full truncate text-center text-[10px] font-black tabular-nums text-[#102a52] sm:text-xs" title={brl(p.total)}>{shortMoney(p.total)}</strong>
+          <div className="relative w-full max-w-[48px] rounded-t-md border border-[#d4af37]/40 shadow-[inset_-5px_0_9px_rgba(0,0,0,.1)]" style={{height:`${Math.max(p.total>0?9:3,(p.total/max)*70)}%`,background:i===periods.length-1?"linear-gradient(105deg,#b78116,#ffe17a 55%,#c6962b)":"linear-gradient(105deg,#6b8db4,#c2d3e6 55%,#819fbe)"}}/>
+        </div>)}
+      </div>
+      <div className="grid grid-cols-3 gap-1 text-center">{periods.map(p=><span key={p.key} className="text-[10px] font-bold text-[#102a52] sm:text-xs">{p.label}</span>)}</div>
+    </div>
   </div>;
 }
 
@@ -242,8 +251,8 @@ function SalesSummary() {
   const { data, isPending, isError, isAdmin } = useHomeDashboard();
   return (
     <div className="flex h-full min-h-0 flex-col gap-1.5">
-      <h3 className={cn(panelTitle, "hidden lg:block")}>
-        {isAdmin ? "Evolução de todas as vendas" : "Evolução das minhas vendas"} <span className="text-[11px] font-bold text-gold-deep">· 3 meses</span>
+      <h3 className={cn(panelTitle, "block text-center text-[#102a52]")}>
+        {isAdmin ? "Evolução das Vendas" : "Minhas Vendas"} <span className="text-[11px] font-bold text-gold-deep">· últimos 3 meses</span>
       </h3>
       {isPending ? (
         <p role="status" className="grid flex-1 place-items-center text-xs text-muted-foreground">
