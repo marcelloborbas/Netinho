@@ -6360,3 +6360,17 @@ html body .welcome-auth-stage .welcome-auth-art {
 @media(prefers-reduced-motion:reduce) {
  .netinho-home-refresh .netinho-home-whatsapp {animation:none !important;}
 }
+
+/* Correções pontuais da captura mobile de 19/11:
+   imagem de saudação inteira sem corte da marca embutida;
+   carrossel cinza RGB(241,241,241), inclusive sobras laterais. */
+.netinho-home-refresh .netinho-home-hero > .netinho-hero-photo {
+ object-fit:contain !important;
+ object-position:left center !important;
+}
+.netinho-home-refresh .netinho-home-refresh-grid > section[aria-label="Carrossel de peças em destaque"] > div:first-child {
+ background:rgb(241,241,241) !important;
+}
+.netinho-home-refresh .netinho-home-refresh-grid > section[aria-label="Carrossel de peças em destaque"] img {
+ background:rgb(241,241,241) !important;
+}
