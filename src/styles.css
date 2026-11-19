@@ -6459,3 +6459,19 @@ html body .welcome-auth-stage .welcome-auth-art {
 .netinho-home-refresh .netinho-footer-avatar {
  flex-shrink:0;
 }
+
+/* Rodapé da página inicial 20% mais alto, com a grade compensada.
+   A saudação cede uma pequena parcela da altura para manter a tela única. */
+.netinho-home.netinho-home-refresh .mobile-nav {
+ height:calc(67.2px + env(safe-area-inset-bottom)) !important;
+ min-height:calc(67.2px + env(safe-area-inset-bottom)) !important;
+}
+.netinho-home.netinho-home-refresh .netinho-home-refresh-grid {
+ height:calc(100dvh - 67.2px - env(safe-area-inset-bottom)) !important;
+ grid-template-rows:minmax(0,1.50fr) minmax(0,1.15fr) minmax(0,.85fr) minmax(0,.43fr) !important;
+}
+@media(min-width:1024px) {
+ .netinho-home.netinho-home-refresh .netinho-home-refresh-grid {
+  grid-template-rows:minmax(0,1.28fr) minmax(0,1fr) minmax(0,.9fr) !important;
+ }
+}
