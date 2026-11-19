@@ -6485,3 +6485,6 @@ html body .welcome-auth-stage .welcome-auth-art {
 .netinho-home-refresh .netinho-home-hero {
  background-color:#071e3c !important;
 }
+
+/* Garantir contraste da orientação de cadastro no catálogo, mesmo com estilos legados. */
+.catalog-showcase > .netinho-visitor-notice[role="note"] { background: #fff2bd !important; color: #102a52 !important; border-color: #c99d34 !important; opacity: 1 !important; visibility: visible !important; }
