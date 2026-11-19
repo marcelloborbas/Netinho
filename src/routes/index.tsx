@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -205,12 +205,7 @@ function Home() {
   // teto baixo (banner até 300px, painel até 380px) para não gerar blocos gigantes; em monitores
   // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
-  const brands = ["volkswagen", "fiat", "chevrolet", "ford", "renault", "toyota", "honda", "hyundai", "nissan", "jeep", "peugeot", "citroen"] as const;
-  const [brandIndex,setBrandIndex] = useState(0);
-  useEffect(()=>{
-    const timer=window.setInterval(()=>setBrandIndex(i=>(i+1)%brands.length),3200);
-    return ()=>window.clearInterval(timer);
-  },[]);
+  const brands = ["volkswagen", "fiat", "chevrolet", "ford"] as const;
   return (
     <div className="netinho-home netinho-home-refresh min-h-[100dvh] overflow-x-clip bg-background text-navy">
       <main className="netinho-home-refresh-grid mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[minmax(140px,1.45fr)_minmax(140px,1fr)_minmax(130px,0.8fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[minmax(140px,1.25fr)_minmax(170px,1fr)_minmax(170px,0.9fr)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
@@ -257,12 +252,8 @@ function Home() {
           className="netinho-home-brands relative min-w-0 overflow-hidden bg-transparent border-0 shadow-none lg:col-span-4"
           aria-label="Montadoras"
         >
-          <div className="flex h-full min-h-[100px] items-center justify-center overflow-hidden" aria-live="off">
-            {brands.map((brand,index)=>(
-              <div key={brand} aria-hidden={index!==brandIndex} className={`absolute flex items-center justify-center transition-all duration-700 ${index===brandIndex?"opacity-100 translate-x-0":"pointer-events-none opacity-0 translate-x-8"}`}>
-                {index<4 ? <img src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="h-[90px] w-auto max-w-[240px] object-contain sm:h-[110px]" loading="lazy"/> : <span className="text-center font-display text-3xl font-black uppercase tracking-wider text-navy drop-shadow-sm sm:text-4xl">{brand}</span>}
-              </div>
-            ))}
+          <div className="grid h-full min-h-[100px] grid-cols-4 items-center gap-2 px-1 sm:gap-3">
+            {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="mx-auto h-auto max-h-[100px] w-full object-contain" loading="lazy" />)}
           </div>
         </section>
       </main>
