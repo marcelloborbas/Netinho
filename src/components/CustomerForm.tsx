@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Customer } from "@/lib/queries";
+import { accessQuery } from "@/lib/access";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -30,17 +32,27 @@ const FIELDS: { key: keyof Customer; label: string; full?: boolean; type?: strin
   { key: "notes", label: "Observações", full: true },
 ];
 
-export function CustomerForm({
-  initial,
-  onSaved,
-}: {
-  initial?: Customer | null;
-  onSaved: (c: Customer) => void;
-}) {
+type Representative = { user_id: string; full_name: string; email: string; active: boolean };
+
+export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; onSaved: (c: Customer) => void }) {
+  const { data: access } = useQuery(accessQuery);
+  const isAdmin = access?.level === 1;
+  const { data: representatives = [], isLoading: repsLoading } = useQuery({
+    queryKey: ["customer-assignment-representatives"],
+    enabled: isAdmin,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("commercial_representatives")
+        .select("user_id,full_name,email,active").not("user_id", "is", null).order("full_name");
+      if (error) throw error;
+      return (data ?? []).filter((r) => r.user_id !== null);
+    },
+  });
   const [v, setV] = useState<Record<string, string>>(() =>
     Object.fromEntries(FIELDS.map((f) => [f.key, (initial?.[f.key] as string | null) ?? ""])),
   );
   const [orderClass, setOrderClass] = useState(initial?.order_class?.toString() ?? "");
+  const [sellerId, setSellerId] = useState(initial?.seller_id ?? "");
   const [busy, setBusy] = useState(false);
 
   async function submit(e: FormEvent) {
@@ -50,18 +62,26 @@ export function CustomerForm({
       toast.error(parsed.error.issues[0]?.message ?? "Dados inválidos");
       return;
     }
+    if (isAdmin && !sellerId) {
+      toast.error("Selecione o representante responsável por este cliente.");
+      return;
+    }
+    if (isAdmin && !representatives.some((r) => r.user_id === sellerId && r.active)) {
+      toast.error("O cliente precisa ser atribuído a um representante ativo e vinculado a uma conta.");
+      return;
+    }
     setBusy(true);
-    const payload = Object.fromEntries(
-      Object.entries(v).map(([k, x]) => [k, x.trim() || null]),
-    ) as unknown as Partial<Customer> & { company_name: string };
+    const payload = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, x.trim() || null])) as unknown as Partial<Customer> & { company_name: string };
     payload.order_class = orderClass ? Number(orderClass) : null;
+    // Representantes não escolhem o responsável: o banco atribui auth.uid().
+    if (isAdmin) payload.seller_id = sellerId;
     const q = initial
       ? supabase.from("customers").update(payload).eq("id", initial.id).select().single()
       : supabase.from("customers").insert(payload).select().single();
     const { data, error } = await q;
     setBusy(false);
     if (error) {
-      toast.error("Não foi possível salvar o cliente.");
+      toast.error(error.code === "42501" ? "Sem permissão para alterar a carteira deste cliente." : "Não foi possível salvar o cliente.");
       return;
     }
     toast.success("Cliente salvo");
@@ -70,41 +90,42 @@ export function CustomerForm({
 
   return (
     <form onSubmit={submit} className="grid grid-cols-2 gap-3">
+      {isAdmin && (
+        <div className="col-span-2 space-y-1">
+          <Label htmlFor="customer-representative" className="text-xs font-bold">Representante responsável *</Label>
+          <select id="customer-representative" required disabled={repsLoading || busy}
+            className="h-11 w-full rounded-lg border bg-white px-3 text-sm" value={sellerId}
+            onChange={(e) => setSellerId(e.target.value)}>
+            <option value="">{repsLoading ? "Carregando representantes..." : "Selecione o representante"}</option>
+            {initial?.seller_id && !representatives.some((r) => r.user_id === initial.seller_id) && (
+              <option value={initial.seller_id}>Responsável atual (inativo ou sem vínculo)</option>
+            )}
+            {representatives.map((r) => (
+              <option key={r.user_id} value={r.user_id}>{r.full_name} · {r.email}{r.active ? "" : " (inativo)"}</option>
+            ))}
+          </select>
+          <p className="text-xs text-muted-foreground">Cada cliente fica vinculado a apenas um representante. O administrador pode transferir essa responsabilidade.</p>
+        </div>
+      )}
+      {!isAdmin && <p className="col-span-2 rounded-lg border border-blue-100 bg-blue-50 p-3 text-xs text-blue-900">Este cliente ficará automaticamente vinculado à sua carteira e somente você e o administrador poderão acessá-lo.</p>}
       {FIELDS.map((f) => (
-        <div
-          key={f.key}
-          className={f.full ? "col-span-2 space-y-1" : "col-span-2 space-y-1 sm:col-span-1"}
-        >
-          <Label htmlFor={f.key} className="text-xs">
-            {f.label}
-          </Label>
-          <Input
-            id={f.key}
-            type={f.type ?? "text"}
-            value={v[f.key]}
-            onChange={(e) => setV({ ...v, [f.key]: e.target.value })}
-            className="h-11"
-          />
+        <div key={f.key} className={f.full ? "col-span-2 space-y-1" : "col-span-2 space-y-1 sm:col-span-1"}>
+          <Label htmlFor={f.key} className="text-xs">{f.label}</Label>
+          <Input id={f.key} type={f.type ?? "text"} value={v[f.key]}
+            onChange={(e) => setV({ ...v, [f.key]: e.target.value })} className="h-11" />
         </div>
       ))}
       <label className="col-span-2 space-y-1 text-sm">
         Classe de pedido mínimo
-        <select
-          className="h-11 w-full rounded-lg border bg-secondary px-3"
-          value={orderClass}
-          onChange={(e) => setOrderClass(e.target.value)}
-        >
+        <select className="h-11 w-full rounded-lg border bg-secondary px-3" value={orderClass}
+          onChange={(e) => setOrderClass(e.target.value)}>
           <option value="">Sem classe definida</option>
           <option value="1">Classe 1 · R$ 5.000,00</option>
           <option value="2">Classe 2 · R$ 10.000,00</option>
           <option value="3">Classe 3 · R$ 1.000,00</option>
         </select>
       </label>
-      <Button
-        type="submit"
-        disabled={busy}
-        className="col-span-2 h-12 bg-gradient-red font-semibold"
-      >
+      <Button type="submit" disabled={busy || (isAdmin && repsLoading)} className="col-span-2 h-12 bg-gradient-red font-semibold">
         {busy ? "Salvando..." : "Salvar cliente"}
       </Button>
     </form>
