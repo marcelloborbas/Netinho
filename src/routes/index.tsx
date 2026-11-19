@@ -233,13 +233,6 @@ function Home() {
             fetchPriority="high"
           />
           <div className="netinho-home-hero-content grid h-full min-h-[140px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep/85 via-navy-deep/20 to-transparent px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
-            <img
-              src="/images/Logo%20Netinho.webp"
-              alt="Netinho Auto Parts"
-              width={618}
-              height={309}
-              className="netinho-hero-logo relative z-10 h-10 w-auto sm:h-14"
-            />
             <div className="netinho-home-hero-copy min-w-0 leading-tight">
               <p className="truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <span className="sm:hidden">{shortDate}</span>
