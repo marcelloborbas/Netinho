@@ -333,7 +333,7 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 bg-[#f1f1f1] px-2 pt-1 pb-28 text-[#102a52] sm:px-6 sm:pt-4 sm:pb-32">
-      {!canSell && <div role="note" className="w-full rounded-lg border border-[#d4af37] bg-[#102a52] px-3 py-2 text-center text-xs font-bold text-[#ffe19a] sm:text-sm">Visitante: consulte o catálogo. Para vender, toque em Usuário (sua foto) → Cadastre-se.</div>}
+      {!canSell && <div role="note" className="netinho-visitor-notice w-full rounded-lg border-2 border-[#c99d34] bg-[#fff2bd] px-3 py-3 text-center text-sm font-extrabold leading-relaxed text-[#102a52] shadow-sm sm:text-base" style={{ backgroundColor: "#fff2bd", color: "#102a52" }}>Visitante: consulte o catálogo. Para vender, toque em Usuário (sua foto) → Cadastre-se.</div>}
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
