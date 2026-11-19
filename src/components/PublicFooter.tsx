@@ -121,7 +121,7 @@ export function PublicFooter() {
         </Link>;
       })}
       <button type="button" aria-label="Abrir menu do perfil" aria-expanded={menuOpen} onClick={() => { clickSound(); setMenuOpen(v => !v); }} className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-1 text-[10px] font-semibold hover:bg-navy-soft/40 sm:text-[13px]">
-        {user?.picture ? <img src={user.picture} alt="Foto do usuário" referrerPolicy="no-referrer" className="netinho-footer-avatar h-10 w-10 rounded-full border-2 border-gold object-cover shadow-sm" onError={(event) => { event.currentTarget.src = "/images/Logo%20Netinho.webp"; }} /> : <UserRound size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className="text-gold" />}
+        {user?.picture ? <img src={user.picture} alt="Foto do usuário" referrerPolicy="no-referrer" className="netinho-footer-avatar h-[52px] w-[52px] rounded-full border-2 border-gold object-cover shadow-sm" onError={(event) => { event.currentTarget.src = "/images/Logo%20Netinho.webp"; }} /> : <UserRound size={Math.round(HOME_ICON_SIZE * 1.3)} strokeWidth={HOME_ICON_STROKE} absoluteStrokeWidth aria-hidden="true" className="text-gold" />}
 
       </button>
     </nav>
