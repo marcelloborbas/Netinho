@@ -218,7 +218,7 @@ function Home() {
     <div className="netinho-home min-h-[100dvh] overflow-x-clip bg-background text-navy">
       <main className="mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[minmax(140px,1.45fr)_minmax(140px,1fr)_minmax(130px,0.8fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[minmax(140px,1.25fr)_minmax(170px,1fr)_minmax(170px,0.9fr)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
         <header
-          className="relative isolate overflow-hidden rounded-2xl border border-gold/40 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-12"
+          className="relative isolate w-full overflow-hidden rounded-none border-0 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-12"
           aria-label="Boas-vindas"
         >
           {/* Arte decorativa restrita ao próprio cabeçalho, sob uma camada azul-marinho. */}
@@ -228,11 +228,11 @@ function Home() {
             aria-hidden="true"
             width={2001}
             height={1071}
-            className="absolute inset-0 -z-10 h-full w-full object-cover object-[center_70%] opacity-60"
+            className="absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-100"
             decoding="async"
             fetchPriority="high"
           />
-          <div className="grid h-full min-h-[140px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
+          <div className="grid h-full min-h-[140px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep/80 via-navy-deep/30 to-transparent px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
             <img
               src="/images/Logo%20Netinho.webp"
               alt="Netinho Auto Parts"
