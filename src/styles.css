@@ -6497,3 +6497,27 @@ html body .welcome-auth-stage .welcome-auth-art {
 .catalog-showcase > .netinho-visitor-notice[role="note"] { background: #b31320 !important; background-image: none !important; color: #ffe45c !important; border-color: #ffd447 !important; }
 .catalog-showcase > .netinho-visitor-notice[role="note"] p { color: #ffe45c !important; }
 .catalog-showcase > .netinho-visitor-notice[role="note"] strong { color: #fff2a0 !important; }
+
+/* Home mobile: liberar a legenda dos meses e reduzir apenas a saudação. */
+@media (max-width:1023px) {
+ .netinho-home.netinho-home-refresh .netinho-home-refresh-grid {
+  grid-template-rows:minmax(0,1.38fr) minmax(0,1.12fr) minmax(0,1.02fr) minmax(0,.43fr) !important;
+ }
+ .netinho-home-refresh .netinho-home-sales {overflow:hidden !important;}
+ .netinho-home-refresh .netinho-home-sales > div {min-height:0 !important;}
+ /* Película única atrás de todos os textos, de ponta a ponta. */
+ .netinho-home-refresh .netinho-home-hero-content {position:relative !important; isolation:isolate;}
+ .netinho-home-refresh .netinho-home-hero-content::before {
+  content:""; position:absolute; bottom:0; left:0; right:0; height:90px;
+  background:linear-gradient(90deg,rgba(5,22,48,.82),rgba(5,22,48,.66));
+  z-index:0; pointer-events:none;
+ }
+ .netinho-home-refresh .netinho-home-hero-copy {
+  background:transparent !important; box-shadow:none !important;
+  position:relative !important; z-index:1 !important;
+  padding:4px 3px !important; border-radius:0 !important;
+ }
+ .netinho-home-refresh .netinho-home-hero-content > div:last-child {
+  position:relative; z-index:2; align-self:flex-end !important; margin-bottom:19px !important;
+ }
+}
