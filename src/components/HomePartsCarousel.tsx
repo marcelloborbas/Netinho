@@ -61,7 +61,8 @@ export function HomePartsCarousel({ className }: { className?: string }) {
     // Faixa de ponta a ponta: as margens negativas anulam o recuo lateral da página e a faixa
     // encosta nas duas bordas da tela. As artes permanecem inteiras para preservar os textos.
     <section
-      className={cn("relative left-1/2 flex min-h-0 w-screen min-w-0 max-w-none -translate-x-1/2 flex-col gap-1", className)}
+      className={cn("relative flex min-h-0 min-w-0 flex-col gap-1", className)}
+      style={{ width: "100vw", maxWidth: "none", marginLeft: "calc(50% - 50vw)" }}
       aria-label="Carrossel de peças em destaque"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -88,7 +89,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
           {slides.map((part, i) => (
             <div
               key={`${part.image}-${i}`}
-              className="h-full min-w-full shrink-0"
+              className="h-full min-w-full w-full shrink-0"
               aria-hidden={i % parts.length !== active || i === parts.length}
             >
               <img
@@ -98,7 +99,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
                 height={676}
                 decoding="async"
                 loading={i <= 1 ? "eager" : "lazy"}
-                className="block h-full w-full object-cover object-center"
+                className="block h-full w-full max-w-none object-cover object-center"
               />
             </div>
           ))}
