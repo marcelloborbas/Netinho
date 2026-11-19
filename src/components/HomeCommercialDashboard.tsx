@@ -207,35 +207,33 @@ export function HomeKpis({ className }: { className?: string }) {
   );
 }
 
-/** Gráfico de barras compacto: ocupa o espaço restante do painel, sem altura fixa. */
+/** Evolução mensal com curva direcional: verde em alta, vermelho em queda. */
 function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
   const max = Math.max(1, ...periods.map((p) => p.total));
-  return (
-    <ol
-      className="grid min-h-0 flex-1 grid-cols-3 items-end gap-3 px-1"
-      aria-label={`Vendas dos últimos 3 meses: ${periods.map((p) => `${p.label}: ${brl(p.total)}`).join("; ")}`}
-    >
-      {periods.map((p, index) => (
-        <li
-          key={p.key}
-          className="flex h-full min-h-0 min-w-0 flex-col items-center justify-end gap-0.5"
-        >
-          <span
-            className="max-w-full truncate text-[10px] font-black tabular-nums xl:text-xs"
-            title={brl(p.total)}
-          >
-            {shortMoney(p.total)}
-          </span>
-          <span
-            aria-hidden="true"
-            className={`block min-h-[3px] w-full max-w-14 rounded-t-md ${index === periods.length - 1 ? "bg-gold" : "bg-navy-soft"}`}
-            style={{ height: `${Math.max(4, (p.total / max) * 72)}%` }}
-          />
-          <span className="text-[10px] font-bold leading-none lg:text-xs">{p.label}</span>
-        </li>
-      ))}
-    </ol>
-  );
+  const previous = periods[periods.length - 2]?.total ?? 0;
+  const current = periods[periods.length - 1]?.total ?? 0;
+  const rising = current > previous;
+  const falling = current < previous;
+  const trendColor = rising ? "#159447" : falling ? "#d32f2f" : "#b28a21";
+  const points = periods.map((p, i) => ({ x: 12 + i * 38, y: 78 - (p.total / max) * 58 }));
+  const a = points[0] ?? { x: 12, y: 78 };
+  const b = points[1] ?? a;
+  const d = points[2] ?? b;
+  const path = `M ${a.x} ${a.y} Q ${(a.x+b.x)/2} ${Math.min(a.y,b.y)-12} ${b.x} ${b.y} Q ${(b.x+d.x)/2} ${Math.min(b.y,d.y)-12} ${d.x} ${d.y}`;
+  const angle = Math.atan2(d.y-b.y,d.x-b.x);
+  const headA = {x:d.x-10*Math.cos(angle-0.55),y:d.y-10*Math.sin(angle-0.55)};
+  const headB = {x:d.x-10*Math.cos(angle+0.55),y:d.y-10*Math.sin(angle+0.55)};
+  return <div className="flex min-h-0 flex-1 flex-col justify-center gap-1" role="img" aria-label={`Evolução de vendas: ${periods.map(p=>`${p.label}: ${brl(p.total)}`).join("; ")}. ${rising?"Em alta":falling?"Em queda":"Estável"} em relação ao mês anterior.`}>
+    <svg viewBox="0 0 100 92" preserveAspectRatio="none" className="h-full min-h-[75px] max-h-[180px] w-full overflow-visible" aria-hidden="true">
+      <path d="M 0 82 H 100" stroke="#d4af37" strokeOpacity=".45" strokeWidth=".8" />
+      {points.map((pt,i)=><rect key={periods[i]?.key} x={pt.x-7} y={pt.y} width="14" height={82-pt.y} rx="2" fill={i===2?"#d4af37":"#93b1d0"} opacity=".6" />)}
+      <path d={path} fill="none" stroke={trendColor} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      <path d={`M ${headA.x} ${headA.y} L ${d.x} ${d.y} L ${headB.x} ${headB.y}`} fill="none" stroke={trendColor} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      {points.map((pt,i)=><circle key={periods[i]?.key} cx={pt.x} cy={pt.y} r="2.3" fill={trendColor} stroke="white" strokeWidth=".8" />)}
+    </svg>
+    <div className="grid grid-cols-3 gap-1 text-center">{periods.map(p=><div key={p.key} className="min-w-0"><span className="block text-[10px] font-bold">{p.label}</span><strong className="block truncate text-[10px] tabular-nums sm:text-xs" title={brl(p.total)}>{shortMoney(p.total)}</strong></div>)}</div>
+    <p className="text-center text-xs font-black" style={{color:trendColor}}>{rising?"↗ Vendas em alta":falling?"↘ Vendas em queda":"→ Vendas estáveis"}{previous>0?` · ${((current-previous)/previous*100).toLocaleString("pt-BR",{maximumFractionDigits:1})}%`:""}</p>
+  </div>;
 }
 
 const panelTitle = "truncate text-sm font-black leading-tight lg:text-base";
@@ -345,41 +343,9 @@ const tabTrigger =
 // No celular, uma aba por vez; no computador, as duas áreas ficam visíveis lado a lado.
 const tabPanel = "mt-0 min-h-0 flex-1 data-[state=inactive]:hidden lg:data-[state=inactive]:block";
 
-/** Painel de atividade: vendas e últimos pedidos. Abas no celular, duas colunas no computador. */
+/** Painel inicial dedicado à evolução, sem abas de Vendas e Pedidos. */
 export function HomeSalesPanel({ className }: { className?: string }) {
-  const { isAdmin } = useHomeDashboard();
-  return (
-    <section
-      className={cn(
-        "flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card p-2.5 text-navy shadow-home-card lg:p-3",
-        className,
-      )}
-      aria-label="Vendas e pedidos recentes"
-    >
-      <Tabs defaultValue="vendas" className="flex min-h-0 flex-1 flex-col gap-2">
-        <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 lg:hidden">
-          <h2 className={panelTitle}>
-            {isAdmin ? "Evolução das vendas" : "Minhas vendas"}{" "}
-            <span className="text-[11px] font-bold text-gold-deep">· 3 meses</span>
-          </h2>
-          <TabsList className="h-8 rounded-lg bg-navy p-0.5">
-            <TabsTrigger value="vendas" className={tabTrigger}>
-              Vendas
-            </TabsTrigger>
-            <TabsTrigger value="pedidos" className={tabTrigger}>
-              Pedidos
-            </TabsTrigger>
-          </TabsList>
-        </div>
-        <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-2 lg:gap-4 lg:divide-x lg:divide-border">
-          <TabsContent forceMount value="vendas" className={tabPanel}>
-            <SalesSummary />
-          </TabsContent>
-          <TabsContent forceMount value="pedidos" className={cn(tabPanel, "lg:pl-4")}>
-            <RecentOrders />
-          </TabsContent>
-        </div>
-      </Tabs>
-    </section>
-  );
+  return <section className={cn("flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card p-2.5 text-navy shadow-home-card lg:p-3",className)} aria-label="Evolução das vendas">
+    <SalesSummary />
+  </section>;
 }
