@@ -3,7 +3,7 @@ import { CatalogDownload } from "@/components/CatalogDownload";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Search, PackageSearch, X, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, ClipboardList, GitCompareArrows, History } from "lucide-react";
+import { Search, PackageSearch, X, UserRound, ShoppingCart, MessageCircle, Grid2X2, Disc3, Cog, Zap, Filter, Gauge, CarFront, BatteryCharging, CircleDot, Settings2, ClipboardList, GitCompareArrows, History } from "lucide-react";
 import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 import { productsQuery, categoriesQuery, productMatches, type Product } from "@/lib/queries";
@@ -333,7 +333,17 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 bg-[#f1f1f1] px-2 pt-1 pb-28 text-[#102a52] sm:px-6 sm:pt-4 sm:pb-32">
-      {!canSell && <div role="note" className="netinho-visitor-notice relative w-full overflow-hidden rounded-xl border-[3px] border-[#d4af37] bg-[#fff2bd] px-4 py-3 text-center text-sm font-semibold leading-relaxed text-[#102a52] shadow-[0_4px_18px_rgba(16,42,82,0.22)] ring-2 ring-[#d4af37]/30 sm:px-6 sm:py-4 sm:text-base" style={{ backgroundColor: "#fff2bd", color: "#102a52" }}><span className="font-black text-[#8b5700]">Visitante:</span> Catálogo liberado para consulta. Para vender, toque em <strong className="font-black text-[#102a52]">Usuário e Cadastre-se.</strong></div>}
+      {!canSell && (
+        <aside role="note" aria-label="Orientação para visitantes" className="netinho-visitor-notice relative isolate w-full overflow-hidden rounded-2xl border border-[#d7b45b] bg-white px-4 py-3 shadow-[0_6px_22px_rgba(16,42,82,0.13)] sm:px-5 sm:py-4">
+          <div className="absolute inset-y-0 left-0 w-[5px] bg-[#d4af37]" aria-hidden="true" />
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#102a52] text-[#f7d979] shadow-sm sm:h-12 sm:w-12" aria-hidden="true"><UserRound size={25} strokeWidth={2.2} /></div>
+            <p className="min-w-0 flex-1 text-[13px] font-medium leading-relaxed text-[#102a52] sm:text-[15px]">
+              <strong className="font-black text-[#102a52]">Visitante:</strong> Catálogo liberado para consulta. Para vender, toque em <strong className="font-black text-[#102a52]">Usuário e Cadastre-se.</strong>
+            </p>
+          </div>
+        </aside>
+      )}
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
