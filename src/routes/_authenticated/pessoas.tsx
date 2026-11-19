@@ -2,7 +2,7 @@ import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Trash2, Pencil, X, UserPlus, ArrowLeft, UserRound } from "lucide-react";
+import { Trash2, Pencil, X, UserPlus, ArrowLeft, UserRound, Search, Users, ShieldCheck, UserCheck, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -23,6 +23,7 @@ function Pessoas() {
  const [adding,setAdding]=useState(()=>location.hash==="#novo-representante");
  const [filterRole,setFilterRole]=useState<Role | "Todos">(() => location.hash === "#representantes" ? "Representante" : "Todos");
  const [commissionFilter,setCommissionFilter]=useState("Todas");
+ const [search,setSearch]=useState("");
  const [editing,setEditing]=useState<string|null>(()=>{const match=location.hash.match(/^#(person|representative):([0-9a-f-]{36})$/i);return match?match[1]+":"+match[2]:null;});
  const [newName,setNewName]=useState("");
  const [newEmail,setNewEmail]=useState("");
@@ -76,17 +77,36 @@ function Pessoas() {
  const rateForRepresentative=(id:string)=>commercialRates.find(x=>x.representative_id===id)?.rate;
  const linkedCommercialFor=(person:Person)=>representatives.find(rep=>(rep.user_id&&rep.user_id===person.id)||(!!person.email&&rep.email?.trim().toLowerCase()===person.email.trim().toLowerCase()));
  const matchesRate=(rate:number|undefined)=>commissionFilter==="Todas"||(commissionFilter==="Definida"?rate!=null:commissionFilter==="Não definida"?rate==null:rate!=null&&Number(rate)===Number(commissionFilter));
+ const activePeople=people.filter(p=>p.access_active).length;
+ const activeRepresentatives=representatives.filter(r=>r.active).length;
+ const visibleEntries=[...people.filter(p=>(filterRole==="Todos"||p.site_role===filterRole)&&matchesRate(rateForPerson(p.id))&&(!search.trim()||[p.full_name,p.email,p.phone].some(v=>v?.toLowerCase().includes(search.trim().toLowerCase())))).map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>(filterRole==="Todos"||filterRole==="Representante")&&matchesRate(rateForRepresentative(rep.id))&&!people.some(p=>(!!rep.user_id&&p.id===rep.user_id)||(!!p.email&&p.email.trim().toLowerCase()===rep.email?.trim().toLowerCase()))&&(!search.trim()||[rep.full_name,rep.email].some(v=>v?.toLowerCase().includes(search.trim().toLowerCase())))).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR"));
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
 
- return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
+ return <main className="mx-auto max-w-6xl space-y-5 px-3 py-5 text-[#102a52] sm:px-5 lg:py-8">
   
   {adding&&<div role="dialog" aria-modal="true" aria-label="Adicionar nova pessoa" className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 p-3"><div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-5 text-[#102a52] shadow-2xl"><div className="flex items-center justify-between"><h2 className="text-xl font-black">Adicionar pessoa</h2><button type="button" aria-label="Fechar" onClick={()=>setAdding(false)}><X size={22}/></button></div><p className="text-sm text-slate-600">Este formulário cria apenas um contato comercial, sem login nem permissões. Para atribuir Visitante, Vendedor, Representante ou Administrador, edite uma conta já cadastrada na lista de usuários.</p><label className="block text-sm font-bold">Nome completo<input value={newName} onChange={e=>setNewName(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><label className="block text-sm font-bold">E-mail<input type="email" value={newEmail} onChange={e=>setNewEmail(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 p-3"/></label><button type="button" disabled={creating} onClick={()=>void addPerson()} className="min-h-12 w-full rounded-lg bg-[#102a52] px-4 font-bold text-white disabled:opacity-50">{creating?"Adicionando…":"Adicionar pessoa"}</button></div></div>}
   
-  <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-3">
-   <div className="flex items-center justify-between gap-3"><h1 className="text-xl font-black">Pessoas e Comissões</h1><button type="button" onClick={()=>setAdding(true)} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border-2 border-[#d4af37] bg-[#102a52] px-3 text-sm font-bold text-white"><UserPlus size={18}/>Adicionar</button></div>
-   <div className="text-sm font-bold">Perfil e comissão</div>
-   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+  <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2144] via-[#123461] to-[#1b4770] p-5 text-white shadow-xl sm:p-7">
+   <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full border-[28px] border-white/5"/>
+   <div className="relative flex flex-wrap items-start justify-between gap-4">
+    <div><div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[.18em] text-amber-200"><ShieldCheck size={14}/> Painel administrativo</div><h1 className="text-2xl font-black tracking-tight sm:text-3xl">Gestão de equipe</h1><p className="mt-1 max-w-xl text-sm text-blue-100">Pessoas, representantes, acessos e comissões em um só lugar.</p></div>
+    <button type="button" onClick={()=>setAdding(true)} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-[#d9b34c] px-4 text-sm font-extrabold text-[#102a52] shadow-lg transition hover:bg-amber-300"><UserPlus size={18}/>Adicionar pessoa</button>
+   </div>
+   <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div className="flex items-center gap-2 text-xs font-semibold text-blue-100"><Users size={15}/>Pessoas cadastradas</div><div className="mt-1 text-2xl font-black">{people.length}</div></div>
+    <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur"><div className="flex items-center gap-2 text-xs font-semibold text-blue-100"><UserCheck size={15}/>Acessos ativos</div><div className="mt-1 text-2xl font-black">{activePeople}</div></div>
+    <div className="col-span-2 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur sm:col-span-1"><div className="flex items-center gap-2 text-xs font-semibold text-blue-100"><ShieldCheck size={15}/>Representantes ativos</div><div className="mt-1 text-2xl font-black">{activeRepresentatives}</div></div>
+   </div>
+  </section>
+  <section className="space-y-4 rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
+   <div className="flex items-center gap-2"><SlidersHorizontal size={18} className="text-[#bd9229]"/><h2 className="text-base font-black">Localizar e filtrar</h2></div>
+   <label className="relative block"><Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><input aria-label="Buscar pessoa" placeholder="Buscar por nome, e-mail ou WhatsApp..." value={search} onChange={e=>setSearch(e.target.value)} className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm outline-none transition focus:border-[#c49a22] focus:bg-white focus:ring-2 focus:ring-amber-100"/></label>
+   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <label className="text-xs font-bold uppercase tracking-wide text-slate-500">Perfil<select aria-label="Filtrar por perfil" value={filterRole} onChange={e=>setFilterRole(e.target.value as Role|"Todos")} className="mt-1 min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-[#102a52]"><option value="Todos">Todos</option>{roles.map(role=><option key={role} value={role}>{role}</option>)}</select></label>
+    <label className="text-xs font-bold uppercase tracking-wide text-slate-500">Comissão<select aria-label="Filtrar por comissão" value={commissionFilter} onChange={e=>setCommissionFilter(e.target.value)} className="mt-1 min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-[#102a52]"><option>Todas</option><option>Definida</option><option>Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(n=><option key={n} value={n}>{n.toLocaleString("pt-BR")}%</option>)}</select></label>
+    <div className="col-span-2 flex items-end sm:col-span-1"><div className="w-full rounded-xl bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-500"><span className="font-black text-[#102a52]">{visibleEntries.length}</span> resultado(s) encontrado(s)</div></div>
+   </div>
     <label className="text-xs font-bold">Perfil<select aria-label="Filtrar por perfil" value={filterRole} onChange={e=>setFilterRole(e.target.value as Role|"Todos")} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option value="Todos">Todos</option>{roles.map(role=><option key={role} value={role}>{role}</option>)}</select></label>
     <label className="text-xs font-bold">Comissão<select aria-label="Filtrar por comissão" value={commissionFilter} onChange={e=>setCommissionFilter(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option>Todas</option><option>Definida</option><option>Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(n=><option key={n} value={n}>{n.toLocaleString("pt-BR")}%</option>)}</select></label>
 
@@ -95,10 +115,10 @@ function Pessoas() {
    {(ratesError||commercialRatesError)&&<p role="alert" className="text-xs font-semibold text-red-700">Não foi possível consultar todas as comissões. O filtro por comissão pode estar incompleto.</p>}
   </div>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
-  {[...people.filter(p=>(filterRole==="Todos"||p.site_role===filterRole)&&matchesRate(rateForPerson(p.id))).map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>(filterRole==="Todos"||filterRole==="Representante")&&matchesRate(rateForRepresentative(rep.id))&&!people.some(p=>(!!rep.user_id&&p.id===rep.user_id)||(!!p.email&&p.email.trim().toLowerCase()===rep.email?.trim().toLowerCase()))).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
+  <section className="space-y-3"><div className="flex items-center justify-between px-1"><h2 className="text-lg font-black">Equipe e representantes</h2><span className="text-xs font-semibold text-slate-500">Selecione editar para abrir a ficha</span></div>{visibleEntries.map(entry=>entry.kind==="person"
    ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} linkedCommercial={linkedCommercialFor(entry.record)} editingPage={editing===`person:${entry.id}`} onClose={()=>setEditing(null)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
    : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} monthlySales="Sem vínculo com pedidos" editingPage={editing===`representative:${entry.id}`} onClose={()=>setEditing(null)} onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
-  {loadingRepresentatives&&<p>Carregando representantes…</p>}
+  </section>\n  {loadingRepresentatives&&<p>Carregando representantes…</p>}
   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;
@@ -303,7 +323,7 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
   else toast.success("Pessoa e região atualizadas.");
   onSaved();setOpen(false);onClose?.();
  }
- return <article className="rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:p-4">
+ return <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md sm:p-5">
   <PersonSummary id={person.id} name={person.full_name||"Sem nome"} email={person.email} active={person.access_active} rate={commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`} role={person.site_role} phone={person.phone} uf={person.territory_uf} sellerId={person.id} commercialId={linkedCommercial?.id} onEdit={editingPage?undefined:onEdit}/>
   <div className="mt-2 flex justify-end">
    <Button type="button" variant="outline" size="icon" disabled={busy||ownAccount} onClick={async()=>{
