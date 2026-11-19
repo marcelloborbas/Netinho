@@ -6530,3 +6530,12 @@ body:has(.catalog-showcase) .catalog-showcase {
  min-height:calc(100dvh - 68px) !important;
  background-color:rgb(241,241,241) !important;
 }
+
+/* Carrossel inicial: eliminar margens laterais vazias sem deformar a arte. */
+.netinho-home.netinho-home-refresh .netinho-home-refresh-grid > section[aria-label="Carrossel de peças em destaque"] img {
+ width:100% !important;
+ height:100% !important;
+ max-width:none !important;
+ object-fit:cover !important;
+ object-position:center center !important;
+}
