@@ -5,14 +5,13 @@ import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import {
   ChartNoAxesColumnIncreasing,
-  ChevronRight,
   ClipboardList,
   TrendingUp,
   Users,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HOME_ICON_STROKE, HomeIconTile } from "@/components/HomeIconTile";
+import { HomeIconTile } from "@/components/HomeIconTile";
 
 const periodKey = (date: Date) => {
   const p = new Intl.DateTimeFormat("en-US", {
@@ -245,7 +244,6 @@ function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
 }
 
 const panelTitle = "truncate text-sm font-black leading-tight lg:text-base";
-const panelLink = "flex shrink-0 items-center justify-end gap-1 text-xs font-bold text-navy-soft hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy";
 
 function SalesSummary() {
   const { data, isPending, isError, isAdmin } = useHomeDashboard();
@@ -265,19 +263,15 @@ function SalesSummary() {
       ) : (
         <SalesChart periods={data?.periods ?? []} />
       )}
-      {isAdmin && (
-        <Link to="/vendas-por-representante" className={panelLink}>
-          Ver por representante{" "}
-          <ChevronRight size={14} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" />
-        </Link>
-      )}
+
     </div>
   );
 }
 
 /** Painel inicial dedicado à evolução, sem abas de Vendas e Pedidos. */
 export function HomeSalesPanel({ className }: { className?: string }) {
-  return <section className={cn("flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card p-2.5 text-navy shadow-home-card lg:p-3",className)} aria-label="Evolução das vendas">
+  return <section className={cn("relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card p-2.5 text-navy shadow-home-card lg:p-3",className)} aria-label="Evolução das vendas">
     <SalesSummary />
+    <Link to="/evolucao-vendas" aria-label="Abrir página de evolução das vendas" className="absolute inset-0 z-10 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]" />
   </section>;
 }
