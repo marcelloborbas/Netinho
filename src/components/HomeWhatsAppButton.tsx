@@ -1,5 +1,5 @@
 import { BRAND } from "@/lib/brand";
-import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+
 
 /**
  * Atendimento pelo WhatsApp no cabeçalho da página inicial, no fluxo normal (sem sobrepor
@@ -16,7 +16,7 @@ export function HomeWhatsAppButton() {
       title="Conversar pelo WhatsApp"
       className="netinho-home-whatsapp relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-whatsapp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
     >
-      <WhatsAppIcon size={38} />
+      <img src="/images/Netinho%20Whatsapp.webp" alt="" width={44} height={44} className="block h-11 w-11 object-contain" />
     </a>
   );
 }
