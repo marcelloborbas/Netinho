@@ -162,6 +162,27 @@ export type Database = {
         }
         Relationships: []
       }
+      commercial_settings: {
+        Row: {
+          id: boolean
+          max_discount_pct: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: boolean
+          max_discount_pct?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: boolean
+          max_discount_pct?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address: string | null
@@ -769,6 +790,7 @@ export type Database = {
         Args: { p_rate: number; p_representative: string }
         Returns: undefined
       }
+      admin_set_max_discount: { Args: { p_max: number }; Returns: undefined }
       admin_set_person: {
         Args: {
           p_active: boolean
@@ -817,6 +839,7 @@ export type Database = {
           uf: string
         }[]
       }
+      order_discount_limit: { Args: never; Returns: number }
       save_supplier_commission: {
         Args: {
           p_manufacturer: string

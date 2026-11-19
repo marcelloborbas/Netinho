@@ -42,6 +42,18 @@ function OrderPage() {
   const d = useDraft();
   const t = draftTotals(d);
   const { data: customers } = useQuery(customersQuery);
+  // Desconto máximo por item conferido no servidor; nulo para administradores (sem limite).
+  const { data: discountLimit = null } = useQuery({
+    queryKey: ["order-discount-limit"],
+    staleTime: 5 * 60_000,
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("order_discount_limit");
+      if (error) throw error;
+      return data == null ? null : Number(data);
+    },
+  });
+  const maxDiscount = discountLimit ?? 100;
   const selectedCustomer = customers?.find((x) => x.id === d.customerId);
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -172,9 +184,14 @@ function OrderPage() {
       }
       setSentResult(emailSent ? "sent" : "failed");
     } catch (error) {
-      toast.error(
-        error instanceof Error
+      // Erros do banco chegam como objeto com "message" (por exemplo, desconto acima do máximo).
+      const serverMessage =
+        error && typeof error === "object" && "message" in error && typeof error.message === "string"
           ? error.message
+          : "";
+      toast.error(
+        serverMessage
+          ? `${serverMessage} Seu rascunho foi preservado.`
           : "Não foi possível registrar. Seu rascunho foi preservado.",
       );
     } finally {
@@ -543,11 +560,12 @@ function OrderPage() {
                       <Input
                         inputMode="decimal"
                         value={i.discount}
+                        title={discountLimit != null ? `Máximo de ${String(discountLimit).replace(".", ",")}%` : undefined}
                         className="h-10 w-16"
                         onChange={(e) =>
                           draftActions.updateItem(i.productId, {
                             discount: Math.min(
-                              100,
+                              maxDiscount,
                               Math.max(0, parseFloat(e.target.value.replace(",", ".")) || 0),
                             ),
                           })
