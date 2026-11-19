@@ -6435,3 +6435,27 @@ html body .welcome-auth-stage .welcome-auth-art {
 @media(prefers-reduced-motion:reduce) {
  .netinho-home-refresh .netinho-home-whatsapp {animation:none !important;}
 }
+
+/* Montadoras sem recipientes individuais: quatro marcas em linha, 1,2x. */
+.netinho-home-refresh .netinho-home-brands,
+.netinho-home-refresh .netinho-home-brands li,
+.netinho-home-refresh .netinho-home-brands li > div {
+ border:0 !important;
+ background:transparent !important;
+ box-shadow:none !important;
+ border-radius:0 !important;
+ padding:0 !important;
+}
+.netinho-home-refresh .netinho-home-brands ul {
+ grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+ gap:4px !important;
+}
+.netinho-home-refresh .netinho-home-brands .netinho-brand-image {
+ width:auto !important;
+ max-width:100% !important;
+ height:min(9dvh,77px) !important;
+ filter:none !important;
+}
+.netinho-home-refresh .netinho-footer-avatar {
+ flex-shrink:0;
+}
