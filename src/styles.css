@@ -6539,3 +6539,61 @@ body:has(.catalog-showcase) .catalog-showcase {
  object-fit:cover !important;
  object-position:center center !important;
 }
+
+
+/* Catálogo: cartões de categoria maiores para que as artes e seus títulos
+   fiquem inteiros e legíveis em celulares. */
+.catalog-showcase .catalog-category-filters {
+  gap: 12px;
+  padding: 8px 3px 14px;
+}
+.catalog-showcase .catalog-category-item {
+  flex: 0 0 148px;
+  width: 148px;
+  min-width: 148px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button {
+  box-sizing: border-box;
+  width: 148px;
+  min-width: 148px;
+  max-width: 148px;
+  height: 138px;
+  min-height: 138px;
+  padding: 5px !important;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fff !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center;
+}
+.catalog-showcase .catalog-category-item .catalog-category-count {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 18px;
+  overflow: visible;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 800;
+  color: #102a52;
+}
+@media (max-width: 420px) {
+  .catalog-showcase .catalog-category-item {
+    flex-basis: 148px;
+    width: 148px;
+    min-width: 148px;
+  }
+}
