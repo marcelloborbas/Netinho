@@ -1967,7 +1967,7 @@ main input::placeholder, main textarea::placeholder { color: #64748b; }
    Uma grade consistente, sem medidas fixas que cortem conteúdo.
    ================================================================ */
 :root { --netinho-navy: #06152c; --netinho-blue: #174e9b; --netinho-line: #d7e2f0; }
-html, body { max-width: 100%; overflow-x: hidden; }
+html, body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
 .home-page {
   display: flex !important;
   flex-direction: column !important;
@@ -3245,7 +3245,7 @@ button[aria-label*="Excluir" i]:hover, button[aria-label*="Remover" i]:hover, bu
 
 /* Layout consistente: telas pequenas, tablets e desktops. */
 html, body, #root { max-width: 100%; }
-body { overflow-x: hidden; }
+body { overflow-x: hidden; overflow-x: clip; }
 img, video, svg { max-width: 100%; }
 main, section, article { min-width: 0; }
 .netinho-assistant.netinho-assistant-auth .netinho-assistant-panel {
