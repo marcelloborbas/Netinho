@@ -24,10 +24,10 @@ const periodKey = (date: Date) => {
   return p.find((x) => x.type === "year")?.value + "-" + p.find((x) => x.type === "month")?.value;
 };
 const names = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-async function loadDashboard(isAdmin: boolean) {
+async function loadDashboard(isAdmin: boolean, expectedUserId: string) {
   const { data: auth, error: authError } = await supabase.auth.getUser();
   if (authError) throw authError;
-  if (!auth.user) return null;
+  if (!auth.user || auth.user.id !== expectedUserId) return null;
   const now = new Date();
   const current = periodKey(now);
   const [year = now.getFullYear(), month = now.getMonth() + 1] = current.split("-").map(Number);
@@ -115,9 +115,9 @@ function useHomeDashboard() {
   const { data: me } = useQuery(meQuery);
   const isAdmin = me?.isAdmin === true;
   const query = useQuery({
-    queryKey: ["netinho-home-commercial-dashboard", isAdmin],
-    queryFn: () => loadDashboard(isAdmin),
-    enabled: !!me,
+    queryKey: ["netinho-home-commercial-dashboard", me?.id, isAdmin],
+    queryFn: () => loadDashboard(isAdmin, me!.id),
+    enabled: !!me?.id,
     staleTime: 120000,
     retry: false,
   });
@@ -247,7 +247,7 @@ function SalesSummary() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-1.5">
       <h3 className={cn(panelTitle, "hidden lg:block")}>
-        Evolução das vendas <span className="text-[11px] font-bold text-gold-deep">· 3 meses</span>
+        {isAdmin ? "Evolução de todas as vendas" : "Evolução das minhas vendas"} <span className="text-[11px] font-bold text-gold-deep">· 3 meses</span>
       </h3>
       {isPending ? (
         <p role="status" className="grid flex-1 place-items-center text-xs text-muted-foreground">
