@@ -71,6 +71,13 @@
       "when": 1795083702300,
       "tag": "0009_lock_profile_privilege_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795086538016,
+      "tag": "0010_tighten_access_rules_representatives_roles_photos",
+      "breakpoints": true
     }
   ]
 }
