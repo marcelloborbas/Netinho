@@ -206,6 +206,7 @@ function Home() {
   // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
   const brands = ["volkswagen", "fiat", "chevrolet", "ford"] as const;
+  const isVisitor = !!access && access.level !== 1 && !access.can_sell && access.attribution !== "Administrador" && access.attribution !== "Representante" && access.attribution !== "Vendedor";
   return (
     <div className="netinho-home netinho-home-refresh min-h-[100dvh] overflow-x-clip bg-background text-navy">
       <main className="netinho-home-refresh-grid mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[minmax(140px,1.45fr)_minmax(140px,1fr)_minmax(130px,0.8fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[minmax(140px,1.25fr)_minmax(170px,1fr)_minmax(170px,0.9fr)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
@@ -220,12 +221,12 @@ function Home() {
             aria-hidden="true"
             width={2001}
             height={1071}
-            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full scale-[1.3] origin-left object-cover object-[35%_center] opacity-100"
+            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-100"
             decoding="async"
             fetchPriority="high"
           />
-          <div className="netinho-home-hero-content relative grid h-full min-h-[140px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 before:pointer-events-none before:absolute before:inset-0 before:z-0 before:bg-navy-deep/60 sm:gap-4 sm:px-5 lg:py-2">
-            <div className="netinho-home-hero-copy relative z-10 min-w-0 px-3 py-2 leading-tight sm:px-4">
+          <div className="netinho-home-hero-content relative grid h-full min-h-[140px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
+            <div className="netinho-home-hero-copy relative z-10 min-w-0 rounded-lg bg-navy-deep/60 px-3 py-2 leading-tight sm:px-4">
               <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
@@ -244,6 +245,7 @@ function Home() {
             </div>
             <div className="relative z-20"><HomeWhatsAppButton /></div>
           </div>
+          {isVisitor && <div role="note" className="absolute inset-x-0 bottom-0 z-30 bg-[#071e3c]/95 px-3 py-1.5 text-center text-[10px] font-bold leading-snug text-[#ffe19a] sm:text-xs">Catálogo liberado para consulta. Para vender, toque em Usuário → Cadastre-se.</div>}
         </header>
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
         <HomeSalesPanel className="netinho-home-sales lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[230px]" />
