@@ -110,10 +110,10 @@ export function HomeLocalWeather({enabled}:{enabled:boolean}) {
  const displayed = geoWeather ?? weather;
  if (!displayed && (locating || (enabled && geoPending && !!coords))) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold">🌤️ Consultando clima ·</span>;
  if (!displayed) return <span className="inline-flex shrink-0 whitespace-nowrap text-gold" title="Confira sua cidade e UF cadastradas">🌤️ Clima indisponível ·</span>;
- return <span title={`Clima atual na região cadastrada: ${displayed.label} — ${condition(displayed.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
-   <span aria-hidden="true">{weather.code <= 3 ? "☀️" : weather.code >= 95 ? "⛈️" : "🌤️"}</span>
+ return <span title={`Clima atual em: ${displayed.label} — ${condition(displayed.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
+   <span aria-hidden="true">{displayed.code <= 3 ? "☀️" : displayed.code >= 95 ? "⛈️" : "🌤️"}</span>
    <span>{Math.round(displayed.temperature)}°C</span>
-   <span className="hidden sm:inline">{condition(weather.code)}</span>
+   <span className="hidden sm:inline">{condition(displayed.code)}</span>
    <span aria-hidden="true">·</span>
  </span>;
 }
