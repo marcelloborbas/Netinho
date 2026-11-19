@@ -64,6 +64,13 @@
       "when": 1794419152085,
       "tag": "0008_lock_products_backup_table",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795083702300,
+      "tag": "0009_lock_profile_privilege_columns",
+      "breakpoints": true
     }
   ]
 }
