@@ -281,7 +281,7 @@ function Catalog() {
     const term = searchInput.trim();
     if (!term) return [];
     const normalized = term.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
-    const matches = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && productMatches(p, term));
+    const matches = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (productMatches(p, term) || (p.code ?? "").toLocaleLowerCase("pt-BR").startsWith(normalized)));
     const rank = (p: CatalogProduct) => {
       const code = (p.code ?? "").toLocaleLowerCase("pt-BR");
       const text = [p.application, p.refs, p.categories?.name, p.search_text].filter(Boolean).join(" ").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
