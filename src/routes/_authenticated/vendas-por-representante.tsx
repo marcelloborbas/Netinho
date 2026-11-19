@@ -8,7 +8,9 @@ import { TrendingUp, UsersRound, ChevronDown, UserRound, Wallet, BarChart3, Tras
 
 const photoFiles:Record<string,string>={abdnego:"Abdnego.webp",abdenego:"Abdnego.webp",abednego:"Abdnego.webp",domingos:"Domingos.webp",jhonatas:"Jhonatas.webp",justino:"José Justino.webp",livaldo:"Livaldo.webp",luciano:"Luciano.webp",marcello:"Marcello.webp",romullo:"Romullo.webp",romulo:"Romullo.webp",burgato:"José Burgato.webp",osmair:"Osmair.webp"};
 const normalizeName=(name:string)=>name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+const whatsAppUrl=(phone:string|null)=>{const digits=(phone??"").replace(/\D/g,"");if(digits.length===10||digits.length===11)return `https://wa.me/55${digits}`;if(digits.startsWith("55")&&(digits.length===12||digits.length===13))return `https://wa.me/${digits}`;return null;};
 const representativePhoto=(name:string)=>{const key=Object.keys(photoFiles).find(k=>normalizeName(name).includes(k));return key?"/images/public/images/representantes/"+encodeURIComponent(photoFiles[key]??""):null;};
+function WhatsAppContact({phone,name}:{phone:string|null;name:string}){const url=whatsAppUrl(phone);return url?<a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Conversar com ${name} pelo WhatsApp`} title={`WhatsApp de ${name}`} className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#25d366] text-white shadow-md ring-2 ring-white hover:bg-[#1da851] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.5 11.5 0 0 0 2.2 17.2L.5 23.5l6.5-1.7A11.5 11.5 0 1 0 20.5 3.5ZM12 21a9.5 9.5 0 0 1-4.8-1.3l-.3-.2-3.8 1 1-3.7-.2-.4A9.5 9.5 0 1 1 12 21Zm5.2-7.1c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a7.8 7.8 0 0 1-3.8-3.3c-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.6l-.9-2.1c-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.4-1.2 1.2-1.2 2.8s1.2 3.2 1.4 3.4a11 11 0 0 0 4.2 3.7 3.7 0 0 0 2.6.5c.8-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></svg></a>:null;}
 function RepresentativePortrait({name}:{name:string}){
  const [failed,setFailed]=useState(false);const src=representativePhoto(name);
  return <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#d9e7f6] to-[#b2cce7] shadow-md ring-2 ring-white sm:h-24 sm:w-24">{src&&!failed?<img src={src} alt={`Foto de ${name}`} loading="lazy" onError={()=>setFailed(true)} className="h-full w-full object-cover object-top"/>:<UserRound size={40} className="text-[#345e86]"/>}</div>;
@@ -21,21 +23,21 @@ function RepresentativeSales(){
  const [expanded,setExpanded]=useState<string|null>(null);
  const {data,isLoading,isError}=useQuery({queryKey:["netinho-representative-sales"],enabled:me?.isAdmin===true,queryFn:async()=>{
   const [profiles,commercial,rates,commercialRates,directory]=await Promise.all([
-   supabase.from("profiles").select("id,full_name,site_role"),
-   supabase.from("commercial_representatives").select("id,user_id,full_name,active"),
+   supabase.from("profiles").select("id,full_name,site_role,phone"),
+   supabase.from("commercial_representatives").select("id,user_id,full_name,active,phone"),
    supabase.from("salesperson_commission_rates" as never).select("user_id,rate"),
    supabase.from("commercial_representative_commission_rates" as never).select("representative_id,rate"),
    supabase.rpc("list_public_representatives" as never)
   ]);
   for(const result of [profiles,commercial,rates,commercialRates,directory])if(result.error)throw result.error;
-  type Rep={id:string;name:string;rate:number;userId:string|null};
+  type Rep={id:string;name:string;rate:number;userId:string|null;phone:string|null};
   const people=new Map<string,Rep>();
   const userRates=new Map(((rates.data??[]) as Array<{user_id:string;rate:number}>).map(x=>[x.user_id,Number(x.rate)]));
   const repRates=new Map(((commercialRates.data??[]) as Array<{representative_id:string;rate:number}>).map(x=>[x.representative_id,Number(x.rate)]));
   const profileById=new Map((profiles.data??[]).map(p=>[p.id,p]));
   const commercialById=new Map((commercial.data??[]).map(p=>[p.id,p]));
-  const directoryRows=(directory.data??[]) as Array<{id:string;full_name:string;photo_id?:string}>;
-  const add=(id:string,name:string,userId:string|null,rate:number)=>{
+  const directoryRows=(directory.data??[]) as Array<{id:string;full_name:string;photo_id?:string;phone?:string|null}>;
+  const add=(id:string,name:string,userId:string|null,rate:number,phone:string|null)=>{
    const normalized=normalizeName(name);
    // Nomes com sobrenome adicional podem vir de duas fontes do mesmo representante.
    // Só agrupar por nome quando pelo menos dois termos completos coincidirem;
@@ -52,19 +54,20 @@ function RepresentativeSales(){
    if(existing){
     if(!existing.userId&&userId)existing.userId=userId;
     if(rate>existing.rate)existing.rate=rate;
+    if(!existing.phone&&phone)existing.phone=phone;
     if(normalized.length>normalizeName(existing.name).length)existing.name=name;
     return;
    }
-   people.set(id,{id,name,userId,rate});
+   people.set(id,{id,name,userId,rate,phone});
   };
   for(const p of directoryRows){
    const commercialRep=commercialById.get(p.id);
    const userId=commercialRep?.user_id||((p.photo_id&&profileById.has(p.photo_id))?p.photo_id:profileById.has(p.id)?p.id:null);
    const profile=userId?profileById.get(userId):null;
-   add(p.id,p.full_name||profile?.full_name||"Representante",userId,userId?userRates.get(userId)??repRates.get(p.id)??0:repRates.get(p.id)??0);
+   add(p.id,p.full_name||profile?.full_name||"Representante",userId,userId?userRates.get(userId)??repRates.get(p.id)??0:repRates.get(p.id)??0,p.phone??commercialRep?.phone??profile?.phone??null);
   }
-  for(const p of profiles.data??[])if(p.site_role==="Representante")add(p.id,p.full_name||"Representante",p.id,userRates.get(p.id)??0);
-  for(const p of commercial.data??[])if(p.active)add(p.id,p.full_name||"Representante",p.user_id??null,p.user_id?userRates.get(p.user_id)??repRates.get(p.id)??0:repRates.get(p.id)??0);
+  for(const p of profiles.data??[])if(p.site_role==="Representante")add(p.id,p.full_name||"Representante",p.id,userRates.get(p.id)??0,p.phone);
+  for(const p of commercial.data??[])if(p.active)add(p.id,p.full_name||"Representante",p.user_id??null,p.user_id?userRates.get(p.user_id)??repRates.get(p.id)??0:repRates.get(p.id)??0,p.phone);
   const repByUser=new Map([...people.values()].filter(p=>p.userId).map(p=>[p.userId!,p.id]));
   const now=new Date();const periods=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return {key:monthKey(d),label:d.toLocaleDateString("pt-BR",{month:"short",year:"numeric"})};});
   const start=new Date(now.getFullYear(),now.getMonth()-5,1).toISOString();
@@ -111,7 +114,7 @@ function RepresentativeSales(){
    <section className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]" aria-label="Destaque e composição mensal">
     <div className="rounded-2xl border-2 border-[#d4af37] bg-white p-4 shadow-sm">
       <div className="flex items-center gap-2 text-[#986b10]"><Trophy size={23}/><h2 className="text-sm font-black uppercase">Destaque do mês</h2></div>
-      {leader&&leaderSales>0?<div className="mt-3 flex items-center gap-3"><RepresentativePortrait name={leader.name}/><div className="min-w-0"><p className="text-xs font-semibold text-[#52627a]">{latestMonth?.label}</p><strong className="block text-base font-black">{leader.name}</strong><strong className="block text-lg font-black text-[#168544]">{brl(leaderSales)}</strong><span className="text-xs">Maior volume de vendas no mês</span></div></div>:<p className="mt-3 text-sm text-[#52627a]">Nenhuma venda registrada para representantes no mês atual.</p>}
+      {leader&&leaderSales>0?<div className="mt-3 flex items-center gap-3"><div className="flex shrink-0 flex-col items-center gap-2"><RepresentativePortrait name={leader.name}/><WhatsAppContact phone={leader.phone} name={leader.name}/></div><div className="min-w-0"><p className="text-xs font-semibold text-[#52627a]">{latestMonth?.label}</p><strong className="block text-base font-black">{leader.name}</strong><strong className="block text-lg font-black text-[#168544]">{brl(leaderSales)}</strong><span className="text-xs">Maior volume de vendas no mês</span></div></div>:<p className="mt-3 text-sm text-[#52627a]">Nenhuma venda registrada para representantes no mês atual.</p>}
     </div>
     <div className="rounded-2xl bg-white p-4 shadow-sm">
       <div className="flex items-center gap-2"><CalendarDays size={21} className="text-[#ae801c]"/><h2 className="text-sm font-black uppercase">Composição mensal</h2></div>
@@ -121,16 +124,17 @@ function RepresentativeSales(){
    </section>
    <div className="flex items-center justify-between gap-2 px-1"><h2 className="text-base font-black sm:text-lg">Desempenho da equipe</h2><span className="text-xs text-slate-500">Toque no cartão para ver os meses</span></div>
    <div className="grid gap-3 lg:grid-cols-2">
-    {ranked.map((p,index)=>{const result=data!.results.get(p.id)!;const max=Math.max(1,...data!.periods.map(m=>result.months[m.key]??0));const isOpen=expanded===p.id;return <article key={p.id} className="overflow-hidden rounded-[22px] bg-white shadow-[0_6px_22px_rgba(13,45,79,.09)] transition-shadow hover:shadow-[0_9px_28px_rgba(13,45,79,.16)]">
+    {ranked.map((p,index)=>{const result=data!.results.get(p.id)!;const max=Math.max(1,...data!.periods.map(m=>result.months[m.key]??0));const isOpen=expanded===p.id;return <article key={p.id} className="relative overflow-hidden rounded-[22px] bg-white shadow-[0_6px_22px_rgba(13,45,79,.09)] transition-shadow hover:shadow-[0_9px_28px_rgba(13,45,79,.16)]">
      <button type="button" aria-expanded={isOpen} onClick={()=>setExpanded(isOpen?null:p.id)} className="w-full p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1c75b3] sm:p-5">
       <div className="flex items-center gap-3">
-       <RepresentativePortrait name={p.name}/>
-       <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-base font-black sm:text-lg">{p.name}</h3>{leader?.id===p.id&&leaderSales>0&&<span className="inline-flex items-center gap-1 rounded-full bg-[#fff2cf] px-2 py-0.5 text-[10px] font-bold text-[#9a6609]"><Trophy size={12}/> Destaque do mês</span>}</div><p className="mt-1 text-xs font-semibold text-slate-500">Comissão {p.rate.toLocaleString("pt-BR")}%</p><div className="mt-2 grid grid-cols-2 gap-2"><div><span className="block text-[10px] font-bold text-[#52627a]">Venda bruta</span><strong className="block text-sm font-black tabular-nums text-[#164c7b] sm:text-lg">{brl(result.total)}</strong></div><div><span className="block text-[10px] font-bold text-[#52627a]">Comissão estimada</span><strong className="block text-sm font-black tabular-nums text-[#94701f] sm:text-lg">{brl(result.commission)}</strong></div></div></div>
+       <div className="shrink-0 self-start pb-10"><RepresentativePortrait name={p.name}/></div>
+       <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-base font-black sm:text-lg">{p.name}</h3>{leader?.id===p.id&&leaderSales>0&&<span aria-label="Destaque do mês" title="Destaque do mês" className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#fff2cf] p-1.5 text-[#9a6609]"><Trophy size={16}/></span>}</div><p className="mt-1 text-xs font-semibold text-slate-500">Comissão {p.rate.toLocaleString("pt-BR")}%</p><div className="mt-2 grid grid-cols-2 gap-2"><div><span className="block text-[10px] font-bold text-[#52627a]">Venda bruta</span><strong className="block text-sm font-black tabular-nums text-[#164c7b] sm:text-lg">{brl(result.total)}</strong></div><div><span className="block text-[10px] font-bold text-[#52627a]">Comissão estimada</span><strong className="block text-sm font-black tabular-nums text-[#94701f] sm:text-lg">{brl(result.commission)}</strong></div></div></div>
        <ChevronDown size={19} className={`shrink-0 text-[#4b789f] transition-transform duration-300 ${isOpen?"rotate-180":""}`}/>
       </div>
       <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[#e6edf5]"><div className="h-full rounded-full bg-gradient-to-r from-[#247ab7] to-[#5cc5ef] transition-all duration-500" style={{width:`${result.total/highest*100}%`}}/></div>
       <p className="mt-1 text-right text-[10px] font-medium text-slate-500">Participação relativa ao maior volume</p>
      </button>
+     <div className="absolute left-[39px] top-[112px] z-10 sm:left-[47px] sm:top-[124px]"><WhatsAppContact phone={p.phone} name={p.name}/></div>
      <div className="flex justify-end px-4 pb-3 sm:px-5"><Link to="/pessoas" hash={`#${p.userId?"person":"representative"}:${p.userId||p.id}`} onClick={event=>event.stopPropagation()} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-bold text-red-700 hover:bg-red-100" aria-label={`Abrir ficha para excluir ${p.name}`} title="Abrir ficha administrativa para confirmar exclusão"><Trash2 size={16}/> Apagar</Link></div>
      {isOpen&&<div className="border-t border-[#e7eef5] bg-[#f7faff] px-4 pb-4 pt-3 sm:px-5">
       <div className="mb-3 flex items-center justify-between"><strong className="text-xs uppercase tracking-wide text-[#315f86]">Evolução mensal</strong><span className="text-[11px] text-slate-500">6 meses</span></div>
