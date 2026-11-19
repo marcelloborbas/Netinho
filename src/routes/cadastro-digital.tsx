@@ -31,9 +31,9 @@ function CadastroDigital() {
   const [enviando, setEnviando] = useState(false);
   const [protocolo, setProtocolo] = useState("");
   const [erroEnvio, setErroEnvio] = useState("");
-  const sections = Object.entries(campos).filter(([titulo]) => tipo !== "cliente" || titulo !== "Atuação profissional");
-  const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setGerado(false); };
-  const valido = () => !!(dados.razao_social?.trim() && dados.documento?.trim() && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(dados.comercial_email || "") && consentimento);
+  const sections = Object.entries(campos).filter(([titulo]) => tipo === "cliente" ? titulo !== "Atuação profissional" : !["Contato financeiro","Nota fiscal eletrônica (NFe)","Referências bancárias"].includes(titulo));
+  const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setGerado(false); setProtocolo(""); };
+  const valido = () => !!(dados.razao_social?.trim() && dados.documento?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.comercial_email || "") && consentimento);
   const enviar = async () => {
     setErroEnvio("");
     if (!valido()) { setErroEnvio("Preencha nome, documento, e-mail válido e aceite o aviso de privacidade."); return; }
@@ -78,10 +78,10 @@ function CadastroDigital() {
       <header className="my-6 border-b border-amber-500 pb-4">
         <p className="text-sm font-bold tracking-widest text-amber-700">NETINHO AUTO PARTS</p>
         <h1 className="text-3xl font-bold text-blue-950">Faça parte da Netinho</h1>
-        <p className="mt-2 text-slate-600">Preencha a ficha e gere seu PDF cadastral.</p>
+        <p className="mt-2 text-slate-600">Preencha e envie a ficha digital para análise. Depois, se desejar, baixe sua cópia em PDF.</p>
       </header>
       <label className="block font-semibold" htmlFor="tipo">Quero me cadastrar como</label>
-      <select id="tipo" value={tipo} onChange={e => { setTipo(e.target.value as Tipo); setGerado(false); }} className="mt-2 w-full rounded-lg border p-3">
+      <select id="tipo" value={tipo} onChange={e => { setTipo(e.target.value as Tipo); setGerado(false); setProtocolo(""); }} className="mt-2 w-full rounded-lg border p-3">
         <option value="cliente">Cliente</option><option value="vendedor">Vendedor</option><option value="representante">Representante</option>
       </select>
       {sections.map(([titulo, fields]) => <fieldset key={titulo} className="mt-7 rounded-xl border border-slate-200 p-4">
@@ -105,7 +105,7 @@ function CadastroDigital() {
       <button type="button" onClick={pdf} className="mt-5 w-full rounded-xl bg-blue-950 p-4 font-bold text-white">Gerar e baixar ficha em PDF</button>
       {gerado && <div className="mt-4 rounded-xl border p-4 text-sm">
         <p className="font-semibold">PDF gerado no seu dispositivo.</p>
-        <p>Para encaminhar, anexe o arquivo baixado ao e-mail ou compartilhe-o pelo WhatsApp da Netinho. O PDF é uma cópia local; o envio cadastral é realizado separadamente pelo botão acima.</p>
+        <p>O cadastro já foi registrado no sistema para análise administrativa quando o protocolo aparecer. Para encaminhar também o PDF, anexe o arquivo baixado ao e-mail ou WhatsApp da Netinho. O anexo não é enviado automaticamente.</p>
       </div>}
     </div>
   </main>;
