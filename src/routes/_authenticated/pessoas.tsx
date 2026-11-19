@@ -1,12 +1,15 @@
 import { AdminPageNavigation } from "@/components/AdminPageNavigation";
 import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Trash2, Pencil, X, UserPlus, ArrowLeft, UserRound, Search, Users, ShieldCheck, UserCheck, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
+import { PersonFileTabs, type PersonFileTabId } from "@/components/people/PersonFileTabs";
+import { CustomerPortfolio } from "@/components/people/CustomerPortfolio";
+import { CommercialAreaDdds, parseAreaDdds, RepresentativeRecordFields, useRepresentativeRecord } from "@/components/people/RepresentativeRecord";
 
 export const Route = createFileRoute("/_authenticated/pessoas")({
   staticData: { sitemap: false },
@@ -244,6 +247,9 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
  const [busy,setBusy]=useState(false);
  const [commissionRate,setCommissionRate]=useState("");
  const [open,setOpen]=useState(editingPage);
+ const [tab,setTab]=useState<PersonFileTabId>("dados");
+ const hasLinkedRecord=!!linkedCommercial&&(open||editingPage);
+ const linkedRecord=useRepresentativeRecord({name:linkedCommercial?.full_name??"",email:linkedCommercial?.email??"",representativeId:linkedCommercial?.id??"",commercial:true,omitPhone:true,enabled:hasLinkedRecord});
 
  const sales=role==="Vendedor"||role==="Representante"||role==="Administrador";
  const {data:commissionData,isError:commissionError}=useQuery({queryKey:["person-commission",person.id],enabled:true,queryFn:async()=>{const {data,error}=await supabase.from("salesperson_commission_rates" as never).select("rate").eq("user_id",person.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;return rate ?? null;}});
@@ -264,8 +270,11 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
  const effectiveMap=mapUrl;
 
  async function save(){
-  if(!name.trim()){toast.error("Informe o nome da pessoa.");return;}
-  if(sales&&!territoryInitialized.current&&!territoryEdited.current){toast.error("Aguarde o carregamento dos dados regionais antes de salvar.");return;}
+  // Validações antes de qualquer gravação, abrindo a aba onde está o problema.
+  if(!name.trim()){setTab("dados");toast.error("Informe o nome da pessoa.");return;}
+  if(sales&&!territoryInitialized.current&&!territoryEdited.current){setTab("regiao");toast.error("Aguarde o carregamento dos dados regionais antes de salvar.");return;}
+  const parsedDdds=role==="Representante"?parseAreaDdds(areaDdds):[];
+  if(!parsedDdds){setTab("regiao");toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
   setBusy(true);
   const {error}=await supabase.rpc("admin_set_person" as never,{p_user:person.id,p_role:role,p_active:active,p_uf:uf,p_cities:cities,p_supervisor:supervisor||null} as never);
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
@@ -293,11 +302,10 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
   const {data:savedTerritory,error:territoryError}=await supabase.from("person_territories" as never).upsert({user_id:person.id,city_base:effectiveCity.trim(),region:effectiveRegion.trim(),map_url:image} as never,{onConflict:"user_id"}).select("user_id").maybeSingle();
   if(territoryError||!savedTerritory){setBusy(false);toast.error("Dados da pessoa salvos, mas região/mapa não foram confirmados: "+(territoryError?.message??"O banco não confirmou a gravação."));onSaved();return;}
   if(role==="Representante"){
-   const ddds=Array.from(new Set(areaDdds.split(/[,;\s]+/).map(x=>x.replace(/^0+(?=\d)/,"")).filter(Boolean)));
-   if(ddds.some(x=>!/^\d{2}$/.test(x))){setBusy(false);toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
-   const {error:dddError}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:person.id,ddds:ddds.join(", ")} as never,{onConflict:"representative_id"});
+   const {error:dddError}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:person.id,ddds:parsedDdds.join(", ")} as never,{onConflict:"representative_id"});
    if(dddError){setBusy(false);toast.error("DDD não foi salvo. Aplique a migração representative_area_ddds no Supabase: "+dddError.message);return;}
    void qc.invalidateQueries({queryKey:["representative-area-ddds",person.id]});
+   void qc.invalidateQueries({queryKey:["representative-area-ddds-summary",person.id]});
   }
   setMapUrl(image);setMapFile(null);territoryEdited.current=false;
   await qc.invalidateQueries({queryKey:["person-territory",person.id]});
@@ -359,55 +367,78 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
    }} title={ownAccount?"Não é permitido excluir a própria conta administrativa":"Excluir usuário permanentemente"} aria-label={`Excluir definitivamente ${person.full_name||person.email}`} className="border-destructive text-destructive disabled:opacity-40"><Trash2 size={19}/></Button>
 
   </div>
-  {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-4 flex items-center justify-between gap-2"><h2 className="text-xl font-black">Ficha completa da pessoa</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-4">
-   <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
-    <h3 className="mb-4 text-base font-black">Identificação e acesso</h3>
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(160px,1fr)_minmax(130px,1fr)]">
-     <label className="block font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-     <label className="block font-bold">Status / perfil<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
-     <label className="block font-bold">Situação<select value={active?"ativo":"inativo"} onChange={e=>setActive(e.target.value==="ativo")} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
-    </div>
-    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-     <label className="block font-bold">E-mail de acesso<input type="email" value={person.email} readOnly className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-600"/><span className="mt-1 block text-xs font-normal text-slate-500">Vinculado à conta de login.</span></label>
-     <label className="block font-bold">WhatsApp / Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-    </div>
-   </section>
-   {linkedCommercial&&<section className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-3"><h3 className="font-black">Cadastro comercial vinculado</h3><p className="text-xs text-slate-600">Dados comerciais da mesma pessoa, preservados no cadastro existente. Atualize WhatsApp, UF, região e DDD aqui sem criar outro representante.</p><RepresentativeDetails name={linkedCommercial.full_name} email={linkedCommercial.email} representativeId={linkedCommercial.id} commercial /></section>}
-   <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-[#102a52]">Este usuário possui uma conta de acesso. Seus dados de contato e região devem ser editados nos campos da ficha acima. A ficha comercial complementar só pode ser salva para representantes vinculados ao cadastro comercial.</p>
-   <div className="rounded-lg bg-[#eaf2ff] p-3 text-sm"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
-   <section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
-    <h3 className="text-lg font-black">Comissão individual sobre vendas</h3>
-    <label className="block text-sm font-bold">Percentual (%)<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!sales||commissionError} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>
-    {!sales&&<p className="text-sm text-amber-900">Selecione o perfil Vendedor ou Representante para habilitar a comissão.</p>}
-    {commissionError&&<p role="alert" className="text-sm font-bold text-red-700">Não foi possível consultar a comissão. Não salve até corrigir a conexão com o banco.</p>}
-    <p className="text-xs text-slate-600">A comissão é salva junto com a ficha da pessoa.</p>
-   </section>
-   {sales&&<div className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3">
-    <strong>Área de atuação</strong>
-    <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>{territoryEdited.current=true;setCityBase(e.target.value);}} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-    {role==="Representante"&&<label className="block text-sm font-bold">DDD(s) da área de atuação<input value={areaDdds} onChange={e=>setAreaDdds(e.target.value)} placeholder="Ex.: 11, 15, 19" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/><span className="text-xs font-normal text-slate-500">Separe múltiplos DDDs por vírgula.</span></label>}
-    <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>{territoryEdited.current=true;setRegion(e.target.value);}} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-    <label className="block text-sm font-bold">Estado(s) — UF<input value={uf} onChange={e=>setUf(e.target.value)} placeholder="Ex.: SP, MG" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-    <label className="block text-sm font-bold">Cidades atendidas<textarea value={cities} onChange={e=>setCities(e.target.value)} rows={2} placeholder="Ex.: Sorocaba, Itu, Votorantim" className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-3"/></label>
-    {role==="Vendedor"&&<label className="block text-sm font-bold">Representante responsável<select value={supervisor} onChange={e=>setSupervisor(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="">Não vinculado</option>{people.filter(p=>p.id!==person.id&&p.site_role==="Representante").map(p=><option value={p.id} key={p.id}>{p.full_name||p.email}</option>)}</select></label>}
-    <div className="space-y-2 rounded-lg border border-blue-200 bg-white p-3">
-      <strong className="block text-sm">Mapa de imagem da região de atuação</strong>
-      <label className="block text-sm font-bold">Enviar imagem (PNG, JPG ou WebP, até 5 MB)<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>{const file=e.target.files?.[0]??null;if(file&&file.size>5*1024*1024){toast.error("Limite de 5 MB.");e.target.value="";return;}setMapFile(file);}} className="mt-1 block w-full text-sm"/></label>
-      <label className="block text-sm font-bold">Ou endereço da imagem<input value={effectiveMap} onChange={e=>{setMapUrl(e.target.value);setMapFile(null);}} placeholder="/images/territories/mapa.webp" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"/></label>
-      {mapFile?<p className="text-xs">Imagem selecionada: {mapFile.name}</p>:effectiveMap?<img src={effectiveMap} alt="Mapa da região de atuação" className="max-h-96 w-full rounded-xl object-contain"/>:/\\bGO\\b/i.test(uf)?<figure className="overflow-hidden rounded-xl border-2 border-[#d8ac34] bg-white p-1 shadow-md"><img src="/images/territories/mapa-goias.webp" alt="Arte ilustrativa da área de atuação em Goiás, com Goiânia e municípios da região" loading="lazy" className="h-auto w-full object-contain"/><figcaption className="px-2 py-2 text-center text-xs text-slate-600">Referência visual de Goiás. Confirme as cidades atendidas nos campos da ficha.</figcaption></figure>:<p className="text-xs text-slate-600">Sem mapa personalizado.</p>}
-    </div>
-    {/abdenego|abdnego/i.test(person.full_name+" "+person.email) && <figure className="overflow-hidden rounded-lg border border-blue-200 bg-white p-2"><img src="/images/territories/abdenego.webp" alt="Mapa da área de atuação de Abdenego" className="max-h-80 w-full object-contain"/><figcaption className="mt-1 text-center text-xs">Mapa de atuação cadastrado</figcaption></figure>}
-    {/livaldo/i.test(person.full_name+" "+person.email) && <figure className="overflow-hidden rounded-lg border border-blue-200 bg-white p-2"><img src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa da área de atuação de Livaldo" className="max-h-80 w-full object-contain"/><figcaption className="mt-1 text-center text-xs">Mapa de atuação cadastrado</figcaption></figure>}
-    <p className="text-xs text-slate-600">As localidades antigas e os mapas existentes não serão apagados. Estes campos registram a área na ficha da pessoa.</p>
-   </div>}
-   <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-12 w-full rounded-lg bg-[#102a52] px-4 py-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar ficha e permissões"}</button>
-  </div></div></div>}
+  {(open||editingPage)&&<PersonFilePanel title="Ficha completa da pessoa" onClose={()=>{setOpen(false);onClose?.();}}>
+   <PersonFileTabs label={`Ficha de ${person.full_name||person.email}`} value={tab} onValueChange={setTab} panels={{
+    dados:<div className="space-y-4">
+     <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
+      <h3 className="mb-3 text-base font-black">Identificação e contato</h3>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+       <label className="block font-bold md:col-span-2">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+       <label className="block font-bold">E-mail de acesso<input type="email" value={person.email} readOnly className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-600"/><span className="mt-1 block text-xs font-normal text-slate-500">Vinculado à conta de login.</span></label>
+       <label className="block font-bold">WhatsApp / Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/>{role==="Representante"&&linkedCommercial&&<span className="mt-1 block text-xs font-normal text-slate-500">Ao salvar, também atualiza as fichas comercial e pública do representante.</span>}</label>
+      </div>
+     </section>
+     {hasLinkedRecord&&<RepresentativeRecordFields record={linkedRecord} group="personal" title="Cadastro comercial vinculado — dados pessoais"/>}
+    </div>,
+    acesso:<div className="space-y-4 text-sm">
+     <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <h3 className="mb-3 text-base font-black">Perfil e situação</h3>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+       <label className="block font-bold">Status / perfil<select value={role} onChange={e=>setRole(e.target.value as Role)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3 text-slate-900">{roles.map(r=><option key={r}>{r}</option>)}</select></label>
+       <label className="block font-bold">Situação<select value={active?"ativo":"inativo"} onChange={e=>setActive(e.target.value==="ativo")} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
+       {role==="Vendedor"&&<label className="block font-bold md:col-span-2">Representante responsável<select value={supervisor} onChange={e=>setSupervisor(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="">Não vinculado</option>{people.filter(p=>p.id!==person.id&&p.site_role==="Representante").map(p=><option value={p.id} key={p.id}>{p.full_name||p.email}</option>)}</select></label>}
+      </div>
+     </section>
+     <div className="rounded-lg bg-[#eaf2ff] p-3"><strong>Permissões automáticas:</strong> {role==="Visitante"?"Catálogo e preços à vista, sem pedidos.":role==="Administrador"?"Administração, catálogo completo, preços, estoque e pedidos.":role==="Representante"?"Catálogo completo, preços à vista e a prazo, estoque, pedidos e equipe.":"Catálogo completo, preços à vista e a prazo, estoque e pedidos."}</div>
+     {ownAccount&&<p className="rounded-lg border border-amber-200 bg-amber-50 p-3">Esta é a sua conta administrativa; ela não pode ser excluída por esta tela.</p>}
+     <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-[#102a52]">Este usuário possui uma conta de acesso. Os dados de contato ficam em Dados pessoais e a área de atuação em Região de atendimento. A ficha comercial complementar só pode ser salva para representantes vinculados ao cadastro comercial.</p>
+    </div>,
+    comissao:<section className="space-y-3 rounded-xl border-2 border-amber-400 bg-amber-50 p-4">
+     <h3 className="text-lg font-black">Comissão individual sobre vendas</h3>
+     <label className="block text-sm font-bold">Percentual (%)<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!sales||commissionError} className="mt-2 min-h-12 w-full rounded-lg border-2 border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>
+     {!sales&&<p className="text-sm text-amber-900">Selecione o perfil Vendedor ou Representante na aba Acesso para habilitar a comissão.</p>}
+     {role==="Administrador"&&<p className="text-sm text-amber-900">Para o perfil Administrador a comissão é fixada em 3,5%.</p>}
+     {commissionError&&<p role="alert" className="text-sm font-bold text-red-700">Não foi possível consultar a comissão. Não salve até corrigir a conexão com o banco.</p>}
+     <p className="rounded-lg bg-white/70 p-2 text-sm"><strong>Vendas no mês:</strong> {monthlySales}</p>
+     <p className="text-xs text-slate-600">A comissão é salva junto com a ficha da pessoa (permitido: 0,5% a 3,5%).</p>
+    </section>,
+    carteira:<CustomerPortfolio ownerId={person.id} ownerName={person.full_name||person.email} enabled={tab==="carteira"}/>,
+    regiao:<div className="space-y-4">
+     {!sales&&<p className="rounded-lg bg-slate-50 p-3 text-sm">A área de atuação fica disponível para os perfis Vendedor, Representante e Administrador (aba Acesso).</p>}
+     {sales&&<div className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3">
+      <strong>Área de atuação</strong>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+       <label className="block text-sm font-bold">Cidade-base de atuação<input value={effectiveCity} onChange={e=>{territoryEdited.current=true;setCityBase(e.target.value);}} placeholder="Ex.: Sorocaba" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+       {role==="Representante"&&<label className="block text-sm font-bold">DDD(s) da área de atuação<input value={areaDdds} onChange={e=>setAreaDdds(e.target.value)} placeholder="Ex.: 11, 15, 19" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/><span className="text-xs font-normal text-slate-500">Separe múltiplos DDDs por vírgula.</span></label>}
+       <label className="block text-sm font-bold">Região de atuação<input value={effectiveRegion} onChange={e=>{territoryEdited.current=true;setRegion(e.target.value);}} placeholder="Ex.: Sorocaba e região, DDD 15" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+       <label className="block text-sm font-bold">Estado(s) — UF<input value={uf} onChange={e=>setUf(e.target.value)} placeholder="Ex.: SP, MG" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+       <label className="block text-sm font-bold md:col-span-2">Cidades atendidas<textarea value={cities} onChange={e=>setCities(e.target.value)} rows={2} placeholder="Ex.: Sorocaba, Itu, Votorantim" className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-3"/></label>
+      </div>
+      <div className="space-y-2 rounded-lg border border-blue-200 bg-white p-3">
+       <strong className="block text-sm">Mapa de imagem da região de atuação</strong>
+       <label className="block text-sm font-bold">Enviar imagem (PNG, JPG ou WebP, até 5 MB)<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>{const file=e.target.files?.[0]??null;if(file&&file.size>5*1024*1024){toast.error("Limite de 5 MB.");e.target.value="";return;}setMapFile(file);}} className="mt-1 block w-full text-sm"/></label>
+       <label className="block text-sm font-bold">Ou endereço da imagem<input value={effectiveMap} onChange={e=>{setMapUrl(e.target.value);setMapFile(null);}} placeholder="/images/territories/mapa.webp" className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"/></label>
+       {mapFile?<p className="text-xs">Imagem selecionada: {mapFile.name}</p>:effectiveMap?<img src={effectiveMap} alt="Mapa da região de atuação" className="max-h-96 w-full rounded-xl object-contain"/>:/\bGO\b/i.test(uf)?<figure className="overflow-hidden rounded-xl border-2 border-[#d8ac34] bg-white p-1 shadow-md"><img src="/images/territories/mapa-goias.webp" alt="Arte ilustrativa da área de atuação em Goiás, com Goiânia e municípios da região" loading="lazy" className="h-auto w-full object-contain"/><figcaption className="px-2 py-2 text-center text-xs text-slate-600">Referência visual de Goiás. Confirme as cidades atendidas nos campos da ficha.</figcaption></figure>:<p className="text-xs text-slate-600">Sem mapa personalizado.</p>}
+      </div>
+      {/abdenego|abdnego/i.test(person.full_name+" "+person.email) && <figure className="overflow-hidden rounded-lg border border-blue-200 bg-white p-2"><img src="/images/territories/abdenego.webp" alt="Mapa da área de atuação de Abdenego" className="max-h-80 w-full object-contain"/><figcaption className="mt-1 text-center text-xs">Mapa de atuação cadastrado</figcaption></figure>}
+      {/livaldo/i.test(person.full_name+" "+person.email) && <figure className="overflow-hidden rounded-lg border border-blue-200 bg-white p-2"><img src="/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png" alt="Mapa da área de atuação de Livaldo" className="max-h-80 w-full object-contain"/><figcaption className="mt-1 text-center text-xs">Mapa de atuação cadastrado</figcaption></figure>}
+      <p className="text-xs text-slate-600">As localidades antigas e os mapas existentes não serão apagados. Estes campos registram a área na ficha da pessoa.</p>
+     </div>}
+     {hasLinkedRecord&&<RepresentativeRecordFields record={linkedRecord} group="region" title="Cadastro comercial vinculado — região"/>}
+    </div>,
+   }}/>
+   <button type="button" disabled={busy} onClick={()=>void save()} className="mt-4 min-h-12 w-full rounded-lg bg-[#102a52] px-4 py-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar ficha e permissões"}</button>
+   {tab==="carteira"&&<p className="mt-2 text-xs text-slate-500">Transferências e atribuições de clientes são gravadas na hora, sem precisar salvar a ficha.</p>}
+  </PersonFilePanel>}
  </article>;
 }
 
 type CommercialRepresentative = {id:string;user_id?:string|null;full_name:string;email:string;active:boolean};
 function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingPage=false,onClose}:{representative:CommercialRepresentative;monthlySales:string;onSaved:()=>void;onEdit?:(()=>void)|undefined;editingPage?:boolean;onClose?:()=>void}) {
  const [open,setOpen]=useState(editingPage);
+ const [tab,setTab]=useState<PersonFileTabId>("dados");
+ const record=useRepresentativeRecord({name:representative.full_name,email:representative.email,representativeId:representative.id,commercial:true,enabled:open||editingPage});
+ const commercialMap=/abdenego|abdnego/i.test(representative.full_name)?"/images/territories/abdenego.webp":/livaldo/i.test(representative.full_name)?"/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png":null;
  const [busy,setBusy]=useState(false);
  const [name,setName]=useState(representative.full_name);
  const [email,setEmail]=useState(representative.email);
@@ -416,7 +447,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
  const [commissionRate,setCommissionRate]=useState("");
  const {data:commercialCommission,error:commissionError,isLoading:commissionLoading}=useQuery({queryKey:["commercial-representative-commission",representative.id],enabled:true,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_commission_rates" as never).select("rate").eq("representative_id",representative.id).maybeSingle();if(error)throw error;const rate=(data as {rate:number}|null)?.rate;setCommissionRate(rate==null?"":String(rate));return rate ?? null;}});
  async function save(){
-  if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){toast.error("Informe nome e e-mail válidos.");return;}
+  if(!name.trim()||!/^\S+@\S+\.\S+$/.test(email.trim())){setTab("dados");toast.error("Informe nome e e-mail válidos.");return;}
   setBusy(true);
   const {data:savedRepresentative,error}=await supabase.from("commercial_representatives").update({full_name:name.trim(),email:email.trim().toLowerCase(),active}).eq("id",representative.id).select("id").maybeSingle();
   if(error||!savedRepresentative){setBusy(false);toast.error("A ficha não foi atualizada: "+(error?.message??"O banco não autorizou a alteração."));return;}
@@ -442,158 +473,46 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
    <button type="button" disabled={busy} onClick={()=>void remove()} title="Excluir cadastro comercial" aria-label={`Excluir cadastro comercial de ${representative.full_name}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
 
   </div>
-  {(open||editingPage)&&<div className="w-full"><div className="w-full rounded-2xl bg-white p-4 text-[#102a52] shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><h2 className="text-xl font-black">Ficha do representante comercial</h2><button type="button" onClick={()=>{setOpen(false);onClose?.();}} aria-label="Fechar edição" className="rounded-lg p-2"><X size={22}/></button></div><div className="space-y-3">
-   <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-    <h3 className="mb-4 text-base font-black text-[#102a52]">Identificação e acesso</h3>
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(160px,1fr)_minmax(130px,1fr)]">
-     <label className="block text-sm font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-     <label className="block text-sm font-bold">Status / perfil<select value="Representante" disabled className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-700"><option>Representante</option></select><span className="mt-1 block text-xs font-normal text-slate-500">Cadastro comercial; para mudar o perfil, vincule uma conta de acesso.</span></label>
-     <label className="block text-sm font-bold">Situação<select value={active?"ativo":"inativo"} onChange={e=>setActive(e.target.value==="ativo")} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
-    </div>
-    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-     <label className="block text-sm font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
-    </div>
-   </section>
-   <RepresentativeDetails name={representative.full_name} email={representative.email} representativeId={representative.id} commercial />
-   <section className="rounded-xl border border-amber-300 bg-amber-50 p-4"><h4 className="text-base font-black">Comissão individual sobre vendas</h4><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}</section>
-   <p className="text-xs text-slate-600">Este é um cadastro comercial ainda não vinculado à ficha de usuário. Sua exclusão não apaga uma conta Google ou outros registros.</p>
-   <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white disabled:opacity-50">Salvar ficha e comissão</button>
-  </div></div></div>}
+  {(open||editingPage)&&<PersonFilePanel title="Ficha do representante comercial" onClose={()=>{setOpen(false);onClose?.();}}>
+   <PersonFileTabs label={`Ficha de ${representative.full_name}`} value={tab} onValueChange={setTab} panels={{
+    dados:<div className="space-y-4">
+     <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
+      <h3 className="mb-3 text-base font-black">Identificação e contato</h3>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+       <label className="block font-bold">Nome completo<input value={name} onChange={e=>setName(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+       <label className="block font-bold">E-mail<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+      </div>
+     </section>
+     <RepresentativeRecordFields record={record} group="personal" title="Dados cadastrais"/>
+    </div>,
+    acesso:<section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
+     <h3 className="text-base font-black">Perfil e situação</h3>
+     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <label className="block font-bold">Status / perfil<select value="Representante" disabled className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-700"><option>Representante</option></select><span className="mt-1 block text-xs font-normal text-slate-500">Cadastro comercial; para mudar o perfil, vincule uma conta de acesso.</span></label>
+      <label className="block font-bold">Situação<select value={active?"ativo":"inativo"} onChange={e=>setActive(e.target.value==="ativo")} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select></label>
+     </div>
+     <p className="text-xs text-slate-600">Este é um cadastro comercial ainda não vinculado à ficha de usuário. Sua exclusão não apaga uma conta Google ou outros registros.</p>
+    </section>,
+    comissao:<section className="rounded-xl border border-amber-300 bg-amber-50 p-4"><h3 className="text-base font-black">Comissão individual sobre vendas</h3><label className="mt-3 block text-sm font-bold">Percentual da comissão<select value={commissionRate} onChange={e=>setCommissionRate(e.target.value)} disabled={!!commissionError||commissionLoading} className="mt-2 min-h-12 w-full rounded-lg border border-amber-400 bg-white px-3 text-base disabled:opacity-60"><option value="">Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(rate=><option key={rate} value={rate}>{rate.toLocaleString("pt-BR")}%</option>)}</select></label>{commissionError&&<p role="alert" className="mt-2 text-sm font-bold text-red-700">Não foi possível consultar a comissão: {commissionError.message}.</p>}<p className="mt-2 text-sm"><strong>Vendas no mês:</strong> {monthlySales}</p></section>,
+    carteira:representative.user_id
+     ? <CustomerPortfolio ownerId={representative.user_id} ownerName={representative.full_name} enabled={tab==="carteira"}/>
+     : <p className="rounded-lg bg-slate-50 p-3 text-sm">Este cadastro comercial ainda não tem conta de acesso vinculada, por isso não possui carteira de clientes. Os clientes só podem ser atribuídos a representantes com conta ativa.</p>,
+    regiao:<div className="space-y-4">
+     <RepresentativeRecordFields record={record} group="region" title="Região de atuação"/>
+     <CommercialAreaDdds representativeId={representative.id}/>
+     {commercialMap&&<a href={commercialMap} target="_blank" rel="noreferrer" className="block rounded-lg border border-blue-200 bg-white p-2"><img src={commercialMap} alt={`Mapa de atuação de ${representative.full_name}`} className="max-h-80 w-full object-contain"/><span className="mt-1 block text-center text-xs font-bold">Ampliar mapa de atuação</span></a>}
+    </div>,
+   }}/>
+   <button type="button" disabled={busy} onClick={()=>void save()} className="mt-4 min-h-11 w-full rounded-lg bg-[#102a52] px-4 py-2 font-bold text-white disabled:opacity-50">Salvar ficha e comissão</button>
+   <p className="mt-2 text-xs text-slate-500">Este botão grava nome, e-mail, situação e comissão. Dados cadastrais, região e DDDs têm botões próprios nas abas.</p>
+  </PersonFilePanel>}
  </article>;
 }
 
-function RepresentativeDetails({name,email,representativeId,commercial=false}:{name:string;email:string;representativeId:string;commercial?:boolean}) {
- const qc=useQueryClient();
- const [values,setValues]=useState<Record<string,string>>({});
- const [initialized,setInitialized]=useState(false);
- const [saving,setSaving]=useState(false);
- const [areaDdds,setAreaDdds]=useState("");
- const [dddLoaded,setDddLoaded]=useState(false);
- const {data:storedAreaDdds,isLoading:dddLoading,error:dddError}=useQuery({
-  queryKey:["commercial-representative-area-ddds",representativeId],
-  enabled:commercial,
-  queryFn:async()=>{
-   const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",representativeId).maybeSingle();
-   if(error)throw error;
-   return (data as {ddds?:string}|null)?.ddds??"";
-  }
- });
- useEffect(()=>{if(!dddLoaded&&storedAreaDdds!==undefined){setAreaDdds(storedAreaDdds);setDddLoaded(true);}},[dddLoaded,storedAreaDdds]);
- async function saveAreaDdds(){
-  if(dddLoading||!dddLoaded){toast.error("Aguarde o carregamento dos DDDs.");return;}
-  const ddds=Array.from(new Set(areaDdds.split(/[,;\\s]+/).map(x=>x.replace(/^0+(?=\\d)/,"")).filter(Boolean)));
-  if(ddds.some(x=>!/^\\d{2}$/.test(x))){toast.error("Informe DDDs de dois dígitos, separados por vírgula.");return;}
-  setSaving(true);
-  const {error}=await supabase.from("representative_area_ddds" as never).upsert({representative_id:representativeId,ddds:ddds.join(", ")} as never,{onConflict:"representative_id"});
-  setSaving(false);
-  if(error){toast.error("Não foi possível salvar os DDDs: "+error.message);return;}
-  toast.success("DDDs de atuação salvos.");
-  await qc.invalidateQueries({queryKey:["commercial-representative-area-ddds",representativeId]});
- }
- const {data:record,isLoading,error}=useQuery({
-  queryKey:["admin-representative-detail",name,email],
-  queryFn:async()=>{
-   const {data:profiles,error:profileError}=await supabase.from("representative_profiles").select("slug,full_name,email,phone,region");
-   if(profileError)throw profileError;
-   const norm=(v:string|null|undefined)=>(v??"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").trim().toLowerCase();
-   const profile=profiles?.find(p=>!!email&&norm(p.email)===norm(email))??profiles?.find(p=>norm(p.full_name)===norm(name));
-   if(!profile)return null;
-   const {data:details,error:detailsError}=await supabase.from("representative_private_details").select("city,state,service_cities,street_address,neighborhood,postal_code,cpf,rg").eq("slug",profile.slug).maybeSingle();
-   if(detailsError)throw detailsError;
-   return {profile,details};
-  },retry:false
- });
- const fields=[
-  {key:"region",label:"Região de atuação"},
-  {key:"city",label:"Cidade-base"},
-  {key:"state",label:"Estado (UF)"},
-  {key:"service_cities",label:"Cidades atendidas"},
-  {key:"phone",label:"Telefone / WhatsApp"},
-  {key:"street_address",label:"Endereço"},
-  {key:"neighborhood",label:"Bairro"},
-  {key:"postal_code",label:"CEP"},
-  {key:"cpf",label:"CPF"},
-  {key:"rg",label:"RG"},
- ] as const;
- useEffect(()=>{if(record&&!initialized){
-  const initial:Record<string,string>={};
-  for(const field of fields){const source=field.key==="region"||field.key==="phone"?record.profile:record.details;initial[field.key]=String((source as Record<string,unknown>|null)?.[field.key]??"");}
-  setValues(initial);setInitialized(true);
- }},[record,initialized]);
- async function saveRegion(){
-  if(!record)return;
-  setSaving(true);
-  try{
-   const {data:savedProfile,error:profileError}=await supabase.from("representative_profiles").update({region:values["region"]??"",phone:values["phone"]??""}).eq("slug",record.profile.slug).select("slug").maybeSingle();
-   if(profileError)throw profileError;
-   const details={city:values["city"]??"",state:values["state"]??"",service_cities:values["service_cities"]??"",street_address:values["street_address"]??"",neighborhood:values["neighborhood"]??"",postal_code:values["postal_code"]??"",cpf:values["cpf"]??"",rg:values["rg"]??""};
-   const {data:savedDetails,error:detailError}=await supabase.from("representative_private_details").upsert({slug:record.profile.slug,...details},{onConflict:"slug"}).select("slug").maybeSingle();
-   if(detailError)throw detailError;
-   if(!savedDetails)throw new Error("O banco não confirmou a atualização dos dados cadastrais.");
-   toast.success("Dados regionais e cadastrais atualizados.");
-   await qc.invalidateQueries({queryKey:["admin-representative-detail",name,email]});
-  }catch(e){toast.error("Não foi possível salvar os dados da ficha: "+(e instanceof Error?e.message:String(e)));}
-  finally{setSaving(false);}
- }
- const map=/abdenego|abdnego/i.test(name)?"/images/territories/abdenego.webp":/livaldo/i.test(name)?"/Mapa%20de%20Atua%C3%A7%C3%A3o%20de%20Livaldo%20Sorocaba.png":null;
- return <section className="space-y-3 rounded-xl border border-blue-200 bg-[#f8fbff] p-3 text-sm">
-  <h4 className="font-extrabold">Região e dados cadastrais</h4>
-  {isLoading&&<p>Carregando ficha…</p>}
-  {error&&<p role="alert" className="text-red-700">Não foi possível consultar a ficha regional.</p>}
-  {!isLoading&&!error&&!record&&commercial&&<CommercialDetailsForm representativeId={representativeId} />}
-  {!isLoading&&!error&&!record&&!commercial&&<p className="rounded-lg bg-amber-50 p-3 text-sm">Ficha regional não vinculada. Atualize os dados principais na seção Identificação e acesso. Não será criado cadastro comercial duplicado.</p>}
-  {record&&initialized&&<>
-   {fields.map(field=><label key={field.key} className="block text-sm font-bold">{field.label}<input value={values[field.key]??""} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal"/></label>)}
-   <button type="button" disabled={saving} onClick={()=>void saveRegion()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-3 font-bold text-white disabled:opacity-50">{saving?"Salvando dados…":"Salvar dados regionais e cadastrais"}</button>
-  </>}
-  {map&&<a href={map} target="_blank" rel="noreferrer" className="block rounded-lg border border-blue-200 bg-white p-2"><img src={map} alt={`Mapa de atuação de ${name}`} className="max-h-80 w-full object-contain"/><span className="mt-1 block text-center text-xs font-bold">Ampliar mapa de atuação</span></a>}
- </section>;
-}
-
-function CommercialDetailsForm({representativeId}:{representativeId:string}) {
-
- const qc=useQueryClient();
- const [values,setValues]=useState<Record<string,string>>({});
- const [busy,setBusy]=useState(false);
- const [loaded,setLoaded]=useState(false);
- const fields=[
-  {key:"phone",label:"Telefone / WhatsApp"},{key:"street_address",label:"Endereço"},
-  {key:"address_number",label:"Número"},{key:"neighborhood",label:"Bairro"},
-  {key:"postal_code",label:"CEP"},{key:"city",label:"Cidade"},
-  {key:"state",label:"Estado (UF)"},{key:"region",label:"Região de atuação"},
-  {key:"service_cities",label:"Cidades atendidas"},{key:"cpf",label:"CPF"},
-  {key:"rg",label:"RG"},{key:"map_url",label:"Endereço da imagem do mapa"}
- ] as const;
- const {data,error,isLoading}=useQuery({
-  queryKey:["commercial-representative-details",representativeId],
-  retry:false,
-  queryFn:async()=>{
-   const {data,error}=await supabase.from("commercial_representative_details" as never).select("*").eq("representative_id",representativeId).maybeSingle();
-   if(error)throw error;
-   return data as Record<string,string>|null;
-  }
- });
- useEffect(()=>{
-  if(!isLoading&&!error&&!loaded){
-   setValues(Object.fromEntries(fields.map(f=>[f.key,String(data?.[f.key]??"")])));
-   setLoaded(true);
-  }
- },[isLoading,error,loaded,data]);
- async function save(){
-  setBusy(true);
-  const payload={representative_id:representativeId,...Object.fromEntries(fields.map(f=>[f.key,(values[f.key]??"").trim()]))};
-  const {data:saved,error}=await supabase.from("commercial_representative_details" as never).upsert(payload as never,{onConflict:"representative_id"}).select("representative_id").maybeSingle();
-  setBusy(false);
-  if(error||!saved){toast.error("O banco não confirmou os dados cadastrais: "+(error?.message??"Nenhum registro atualizado."));return;}
-  toast.success("Endereço, telefone e região salvos.");
-  await qc.invalidateQueries({queryKey:["commercial-representative-details",representativeId]});
- }
- return <div className="space-y-3">
-  {isLoading&&<p>Carregando dados cadastrais…</p>}
-  {error&&<p role="alert" className="text-red-700">A ficha cadastral precisa ser ativada no banco: {error.message}</p>}
-  {!error&&loaded&&<>
-   {fields.map(f=><label key={f.key} className="block text-sm font-bold">{f.label}<input className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 font-normal" value={values[f.key]??""} onChange={e=>setValues(v=>({...v,[f.key]:e.target.value}))}/></label>)}
-   <button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 w-full rounded-lg bg-[#102a52] px-3 font-bold text-white disabled:opacity-50">{busy?"Salvando…":"Salvar endereço e dados cadastrais"}</button>
-  </>}
+/** Moldura da ficha aberta dentro do card, com título e botão de fechar. */
+function PersonFilePanel({title,onClose,children}:{title:string;onClose:()=>void;children:ReactNode}) {
+ return <div className="mt-3 w-full rounded-2xl border border-slate-200 bg-white p-3 text-[#102a52] shadow-sm sm:p-5">
+  <div className="mb-3 flex items-center justify-between gap-2"><h2 className="text-lg font-black sm:text-xl">{title}</h2><button type="button" onClick={onClose} aria-label="Fechar edição" className="rounded-lg p-2 hover:bg-slate-100"><X size={22}/></button></div>
+  {children}
  </div>;
 }

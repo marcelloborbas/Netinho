@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import type { Customer } from "@/lib/queries";
+import { customerAssignmentRepresentativesQuery, type Customer } from "@/lib/queries";
 import { accessQuery } from "@/lib/access";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,22 +32,10 @@ const FIELDS: { key: keyof Customer; label: string; full?: boolean; type?: strin
   { key: "notes", label: "Observações", full: true },
 ];
 
-type Representative = { user_id: string; full_name: string; email: string; active: boolean };
-
 export function CustomerForm({ initial, onSaved }: { initial?: Customer | null; onSaved: (c: Customer) => void }) {
   const { data: access, isLoading: accessLoading } = useQuery(accessQuery);
   const isAdmin = access?.level === 1;
-  const { data: representatives = [], isLoading: repsLoading } = useQuery({
-    queryKey: ["customer-assignment-representatives"],
-    enabled: isAdmin,
-    staleTime: 60_000,
-    queryFn: async () => {
-      const { data, error } = await supabase.from("commercial_representatives")
-        .select("user_id,full_name,email,active").not("user_id", "is", null).order("full_name");
-      if (error) throw error;
-      return (data ?? []).filter((r) => r.user_id !== null);
-    },
-  });
+  const { data: representatives = [], isLoading: repsLoading } = useQuery({ ...customerAssignmentRepresentativesQuery, enabled: isAdmin });
   const [v, setV] = useState<Record<string, string>>(() =>
     Object.fromEntries(FIELDS.map((f) => [f.key, (initial?.[f.key] as string | null) ?? ""])),
   );

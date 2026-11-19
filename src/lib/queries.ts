@@ -163,3 +163,24 @@ export function productMatches(p: Product, q: string) {
   }
   return terms.every((term) => cached!.text.includes(term));
 }
+
+/**
+ * Representantes comerciais com conta vinculada, usados para atribuir ou
+ * transferir a carteira de clientes. Somente o administrador consulta esta
+ * lista; o RLS de `customers` só aceita representantes ativos como destino.
+ */
+export const customerAssignmentRepresentativesQuery = queryOptions({
+  queryKey: ["customer-assignment-representatives"],
+  staleTime: 60_000,
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("commercial_representatives")
+      .select("user_id,full_name,email,active")
+      .not("user_id", "is", null)
+      .order("full_name");
+    if (error) throw error;
+    return (data ?? []).filter(
+      (r): r is typeof r & { user_id: string } => r.user_id !== null,
+    );
+  },
+});
