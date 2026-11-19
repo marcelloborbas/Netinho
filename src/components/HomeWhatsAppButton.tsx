@@ -14,13 +14,9 @@ export function HomeWhatsAppButton() {
       rel="noopener noreferrer"
       aria-label={`Falar com a Netinho pelo WhatsApp ${BRAND.phone}`}
       title="Conversar pelo WhatsApp"
-      className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-gold/50 bg-navy-deep/70 px-2 py-1.5 text-whatsapp transition-colors hover:bg-navy-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:px-3"
+      className="netinho-home-whatsapp relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-whatsapp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
     >
-      <WhatsAppIcon size={28} />
-      <span className="hidden text-left leading-tight sm:block">
-        <strong className="block text-sm font-extrabold">WhatsApp</strong>
-        <small className="block whitespace-nowrap text-xs font-bold">{BRAND.phone}</small>
-      </span>
+      <WhatsAppIcon size={38} />
     </a>
   );
 }
