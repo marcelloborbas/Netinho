@@ -1,5 +1,5 @@
 import { pageHead } from "@/lib/page-head";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, FileText, Eye, FolderOpen } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
@@ -31,6 +31,7 @@ function DownloadsPage() {
         {isVisitor ? <span aria-disabled="true" className="mt-4 inline-flex min-h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-slate-200 px-3 py-3 text-sm font-black text-slate-500"><Download size={18}/> Download indisponível</span> : <a href="/downloads/material-de-apoio/Apoio%20-%20FCO.zip" download="Apoio - FCO.zip" className="mt-4 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl border border-[#d4af37] bg-gradient-to-r from-[#0c2c57] to-[#15508a] px-3 py-3 text-sm font-black text-white shadow-md transition hover:brightness-110"><Download size={18}/> Baixar Material de Apoio - FCO</a>}
       </div>
     </section>
+    <section className="rounded-[22px] border-2 border-[#d4af37] bg-white p-5 shadow-[0_7px_20px_rgba(16,42,82,.1)]"><h2 className="flex items-center gap-3 text-base font-black sm:text-lg"><FileText size={26} className="text-[#0b4b92]"/>Ficha cadastral digital</h2><p className="mt-2 text-sm text-slate-600">Preencha os campos diretamente no site, envie a solicitação para análise e baixe uma cópia em PDF. Disponível também para visitantes com conta.</p><Link to="/cadastro-digital" className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#102a52] px-4 py-3 font-bold text-white">Preencher ficha cadastral</Link></section>
     {documents.map(doc => {
       const url = "/downloads/" + encodeURIComponent(doc.filename);
       return <section key={doc.filename} className="rounded-[22px] border border-[#d4af37] bg-white p-5 shadow-[0_7px_20px_rgba(16,42,82,.1)]">
