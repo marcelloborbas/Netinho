@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CadastroDigitalRouteImport } from './routes/cadastro-digital'
+import { Route as CadastrosPendentesRouteImport } from './routes/cadastros-pendentes'
 import { Route as OfertasRouteImport } from './routes/ofertas'
 import { Route as RepresentanteRouteImport } from './routes/representante'
 import { Route as RepresentanteLivaldoRouteImport } from './routes/representante-livaldo'
@@ -27,6 +29,7 @@ import { Route as AuthenticatedCatalogoRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedDistribuidorasRouteImport } from './routes/_authenticated/distribuidoras'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated/downloads'
+import { Route as AuthenticatedEvolucaoVendasRouteImport } from './routes/_authenticated/evolucao-vendas'
 import { Route as AuthenticatedNovoClienteRouteImport } from './routes/_authenticated/novo-cliente'
 import { Route as AuthenticatedPedidoRouteImport } from './routes/_authenticated/pedido'
 import { Route as AuthenticatedPessoasRouteImport } from './routes/_authenticated/pessoas'
@@ -37,6 +40,7 @@ import { Route as AuthenticatedTransportadorasRouteImport } from './routes/_auth
 import { Route as AuthenticatedVendasRouteImport } from './routes/_authenticated/vendas'
 import { Route as AuthenticatedVendasPorRepresentanteRouteImport } from './routes/_authenticated/vendas-por-representante'
 import { Route as AuthenticatedVendedoresRouteImport } from './routes/_authenticated/vendedores'
+import { Route as CartaoSlugRouteImport } from './routes/cartao.$slug'
 import { Route as EditarRepresentanteSlugRouteImport } from './routes/editar-representante.$slug'
 import { Route as AuthenticatedPedidosIndexRouteImport } from './routes/_authenticated/pedidos.index'
 import { Route as AuthenticatedPedidosIdRouteImport } from './routes/_authenticated/pedidos.$id'
@@ -54,6 +58,16 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroDigitalRoute = CadastroDigitalRouteImport.update({
+  id: '/cadastro-digital',
+  path: '/cadastro-digital',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastrosPendentesRoute = CadastrosPendentesRouteImport.update({
+  id: '/cadastros-pendentes',
+  path: '/cadastros-pendentes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfertasRoute = OfertasRouteImport.update({
@@ -136,6 +150,12 @@ const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
   path: '/downloads',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEvolucaoVendasRoute =
+  AuthenticatedEvolucaoVendasRouteImport.update({
+    id: '/evolucao-vendas',
+    path: '/evolucao-vendas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedNovoClienteRoute =
   AuthenticatedNovoClienteRouteImport.update({
     id: '/novo-cliente',
@@ -191,6 +211,11 @@ const AuthenticatedVendedoresRoute = AuthenticatedVendedoresRouteImport.update({
   path: '/vendedores',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const CartaoSlugRoute = CartaoSlugRouteImport.update({
+  id: '/cartao/$slug',
+  path: '/cartao/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EditarRepresentanteSlugRoute = EditarRepresentanteSlugRouteImport.update({
   id: '/editar-representante/$slug',
   path: '/editar-representante/$slug',
@@ -217,6 +242,8 @@ const AuthenticatedPedidosRelatorioRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cadastro-digital': typeof CadastroDigitalRoute
+  '/cadastros-pendentes': typeof CadastrosPendentesRoute
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
@@ -232,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/clientes': typeof AuthenticatedClientesRoute
   '/distribuidoras': typeof AuthenticatedDistribuidorasRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/evolucao-vendas': typeof AuthenticatedEvolucaoVendasRoute
   '/novo-cliente': typeof AuthenticatedNovoClienteRoute
   '/pedido': typeof AuthenticatedPedidoRoute
   '/pessoas': typeof AuthenticatedPessoasRoute
@@ -242,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/vendas': typeof AuthenticatedVendasRoute
   '/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
+  '/cartao/$slug': typeof CartaoSlugRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
   '/pedidos/relatorio': typeof AuthenticatedPedidosRelatorioRoute
@@ -250,6 +279,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cadastro-digital': typeof CadastroDigitalRoute
+  '/cadastros-pendentes': typeof CadastrosPendentesRoute
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
@@ -265,6 +296,7 @@ export interface FileRoutesByTo {
   '/clientes': typeof AuthenticatedClientesRoute
   '/distribuidoras': typeof AuthenticatedDistribuidorasRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/evolucao-vendas': typeof AuthenticatedEvolucaoVendasRoute
   '/novo-cliente': typeof AuthenticatedNovoClienteRoute
   '/pedido': typeof AuthenticatedPedidoRoute
   '/pessoas': typeof AuthenticatedPessoasRoute
@@ -275,6 +307,7 @@ export interface FileRoutesByTo {
   '/vendas': typeof AuthenticatedVendasRoute
   '/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/vendedores': typeof AuthenticatedVendedoresRoute
+  '/cartao/$slug': typeof CartaoSlugRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/pedidos/$id': typeof AuthenticatedPedidosIdRoute
   '/pedidos/relatorio': typeof AuthenticatedPedidosRelatorioRoute
@@ -285,6 +318,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/cadastro-digital': typeof CadastroDigitalRoute
+  '/cadastros-pendentes': typeof CadastrosPendentesRoute
   '/ofertas': typeof OfertasRoute
   '/representante': typeof RepresentanteRoute
   '/representante-livaldo': typeof RepresentanteLivaldoRoute
@@ -300,6 +335,7 @@ export interface FileRoutesById {
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/distribuidoras': typeof AuthenticatedDistribuidorasRoute
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
+  '/_authenticated/evolucao-vendas': typeof AuthenticatedEvolucaoVendasRoute
   '/_authenticated/novo-cliente': typeof AuthenticatedNovoClienteRoute
   '/_authenticated/pedido': typeof AuthenticatedPedidoRoute
   '/_authenticated/pessoas': typeof AuthenticatedPessoasRoute
@@ -310,6 +346,7 @@ export interface FileRoutesById {
   '/_authenticated/vendas': typeof AuthenticatedVendasRoute
   '/_authenticated/vendas-por-representante': typeof AuthenticatedVendasPorRepresentanteRoute
   '/_authenticated/vendedores': typeof AuthenticatedVendedoresRoute
+  '/cartao/$slug': typeof CartaoSlugRoute
   '/editar-representante/$slug': typeof EditarRepresentanteSlugRoute
   '/_authenticated/pedidos/$id': typeof AuthenticatedPedidosIdRoute
   '/_authenticated/pedidos/relatorio': typeof AuthenticatedPedidosRelatorioRoute
@@ -320,6 +357,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/cadastro-digital'
+    | '/cadastros-pendentes'
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
@@ -335,6 +374,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/distribuidoras'
     | '/downloads'
+    | '/evolucao-vendas'
     | '/novo-cliente'
     | '/pedido'
     | '/pessoas'
@@ -345,6 +385,7 @@ export interface FileRouteTypes {
     | '/vendas'
     | '/vendas-por-representante'
     | '/vendedores'
+    | '/cartao/$slug'
     | '/editar-representante/$slug'
     | '/pedidos/$id'
     | '/pedidos/relatorio'
@@ -353,6 +394,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/cadastro-digital'
+    | '/cadastros-pendentes'
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
@@ -368,6 +411,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/distribuidoras'
     | '/downloads'
+    | '/evolucao-vendas'
     | '/novo-cliente'
     | '/pedido'
     | '/pessoas'
@@ -378,6 +422,7 @@ export interface FileRouteTypes {
     | '/vendas'
     | '/vendas-por-representante'
     | '/vendedores'
+    | '/cartao/$slug'
     | '/editar-representante/$slug'
     | '/pedidos/$id'
     | '/pedidos/relatorio'
@@ -387,6 +432,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/cadastro-digital'
+    | '/cadastros-pendentes'
     | '/ofertas'
     | '/representante'
     | '/representante-livaldo'
@@ -402,6 +449,7 @@ export interface FileRouteTypes {
     | '/_authenticated/clientes'
     | '/_authenticated/distribuidoras'
     | '/_authenticated/downloads'
+    | '/_authenticated/evolucao-vendas'
     | '/_authenticated/novo-cliente'
     | '/_authenticated/pedido'
     | '/_authenticated/pessoas'
@@ -412,6 +460,7 @@ export interface FileRouteTypes {
     | '/_authenticated/vendas'
     | '/_authenticated/vendas-por-representante'
     | '/_authenticated/vendedores'
+    | '/cartao/$slug'
     | '/editar-representante/$slug'
     | '/_authenticated/pedidos/$id'
     | '/_authenticated/pedidos/relatorio'
@@ -422,11 +471,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CadastroDigitalRoute: typeof CadastroDigitalRoute
+  CadastrosPendentesRoute: typeof CadastrosPendentesRoute
   OfertasRoute: typeof OfertasRoute
   RepresentanteRoute: typeof RepresentanteRoute
   RepresentanteLivaldoRoute: typeof RepresentanteLivaldoRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolicitarAcessoRoute: typeof SolicitarAcessoRoute
+  CartaoSlugRoute: typeof CartaoSlugRoute
   EditarRepresentanteSlugRoute: typeof EditarRepresentanteSlugRoute
 }
 
@@ -451,6 +503,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-digital': {
+      id: '/cadastro-digital'
+      path: '/cadastro-digital'
+      fullPath: '/cadastro-digital'
+      preLoaderRoute: typeof CadastroDigitalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastros-pendentes': {
+      id: '/cadastros-pendentes'
+      path: '/cadastros-pendentes'
+      fullPath: '/cadastros-pendentes'
+      preLoaderRoute: typeof CadastrosPendentesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ofertas': {
@@ -558,6 +624,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDownloadsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/evolucao-vendas': {
+      id: '/_authenticated/evolucao-vendas'
+      path: '/evolucao-vendas'
+      fullPath: '/evolucao-vendas'
+      preLoaderRoute: typeof AuthenticatedEvolucaoVendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/novo-cliente': {
       id: '/_authenticated/novo-cliente'
       path: '/novo-cliente'
@@ -628,6 +701,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVendedoresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/cartao/$slug': {
+      id: '/cartao/$slug'
+      path: '/cartao/$slug'
+      fullPath: '/cartao/$slug'
+      preLoaderRoute: typeof CartaoSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/editar-representante/$slug': {
       id: '/editar-representante/$slug'
       path: '/editar-representante/$slug'
@@ -670,6 +750,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedDistribuidorasRoute: typeof AuthenticatedDistribuidorasRoute
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
+  AuthenticatedEvolucaoVendasRoute: typeof AuthenticatedEvolucaoVendasRoute
   AuthenticatedNovoClienteRoute: typeof AuthenticatedNovoClienteRoute
   AuthenticatedPedidoRoute: typeof AuthenticatedPedidoRoute
   AuthenticatedPessoasRoute: typeof AuthenticatedPessoasRoute
@@ -696,6 +777,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedDistribuidorasRoute: AuthenticatedDistribuidorasRoute,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
+  AuthenticatedEvolucaoVendasRoute: AuthenticatedEvolucaoVendasRoute,
   AuthenticatedNovoClienteRoute: AuthenticatedNovoClienteRoute,
   AuthenticatedPedidoRoute: AuthenticatedPedidoRoute,
   AuthenticatedPessoasRoute: AuthenticatedPessoasRoute,
@@ -719,11 +801,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CadastroDigitalRoute: CadastroDigitalRoute,
+  CadastrosPendentesRoute: CadastrosPendentesRoute,
   OfertasRoute: OfertasRoute,
   RepresentanteRoute: RepresentanteRoute,
   RepresentanteLivaldoRoute: RepresentanteLivaldoRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolicitarAcessoRoute: SolicitarAcessoRoute,
+  CartaoSlugRoute: CartaoSlugRoute,
   EditarRepresentanteSlugRoute: EditarRepresentanteSlugRoute,
 }
 export const routeTree = rootRouteImport
