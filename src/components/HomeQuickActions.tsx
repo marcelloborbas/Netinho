@@ -1,5 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, ClipboardList, MessageCircle, Search, ShoppingCart, Tag, type LucideIcon } from "lucide-react";
+import {
+  ChevronRight,
+  ClipboardList,
+  MessageCircle,
+  Search,
+  ShoppingCart,
+  Tag,
+  type LucideIcon,
+} from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { HomeIconTile } from "@/components/HomeIconTile";
 
@@ -19,7 +27,9 @@ function QuickActionCopy({ icon, title, description }: QuickActionCopyProps) {
       <HomeIconTile icon={icon} />
       <span className="min-w-0">
         <strong className="block text-sm font-black leading-tight sm:text-base">{title}</strong>
-        <small className="mt-1 block text-xs leading-snug text-muted-foreground">{description}</small>
+        <small className="mt-1 block text-xs leading-snug text-muted-foreground">
+          {description}
+        </small>
       </span>
     </>
   );
@@ -30,28 +40,46 @@ export function HomeQuickActions() {
   return (
     <section className="space-y-3" aria-labelledby="home-quick-title">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="home-quick-title" className="text-lg font-black text-navy sm:text-xl">Acesso rápido</h2>
+        <h2 id="home-quick-title" className="text-lg font-black text-navy sm:text-xl">
+          Acesso rápido
+        </h2>
         <span className="truncate text-xs font-bold text-gold-deep">Netinho Auto Parts</span>
       </div>
       <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <li className="min-w-0">
           <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className={cardClass}>
-            <QuickActionCopy icon={ShoppingCart} title="Novo pedido" description="Monte um pedido para seu cliente" />
+            <QuickActionCopy
+              icon={ShoppingCart}
+              title="Novo pedido"
+              description="Monte um pedido para seu cliente"
+            />
           </Link>
         </li>
         <li className="min-w-0">
           <Link to="/catalogo" className={cardClass}>
-            <QuickActionCopy icon={Search} title="Consultar peças" description="Pesquise no catálogo" />
+            <QuickActionCopy
+              icon={Search}
+              title="Consultar peças"
+              description="Pesquise no catálogo"
+            />
           </Link>
         </li>
         <li className="min-w-0">
           <Link to="/pedidos" className={cardClass}>
-            <QuickActionCopy icon={ClipboardList} title="Meus pedidos" description="Acompanhe seus pedidos" />
+            <QuickActionCopy
+              icon={ClipboardList}
+              title="Meus pedidos"
+              description="Acompanhe seus pedidos"
+            />
           </Link>
         </li>
         <li className="min-w-0">
           <Link to="/ofertas" className={cardClass}>
-            <QuickActionCopy icon={Tag} title="Promoções" description="Veja as ofertas disponíveis" />
+            <QuickActionCopy
+              icon={Tag}
+              title="Promoções"
+              description="Veja as ofertas disponíveis"
+            />
           </Link>
         </li>
       </ul>
@@ -73,7 +101,9 @@ export function HomeWhatsAppBanner() {
         <HomeIconTile icon={MessageCircle} className="bg-navy-deep" />
         <span className="min-w-0">
           <strong className="block text-base font-black">Precisa de ajuda?</strong>
-          <small className="block text-sm text-navy-foreground/80">Nossa equipe atende você pelo WhatsApp</small>
+          <small className="block text-sm text-navy-foreground/80">
+            Nossa equipe atende você pelo WhatsApp
+          </small>
         </span>
         <span className="col-span-2 inline-flex items-center justify-center gap-1 rounded-full bg-gold px-4 py-2 text-sm font-black text-gold-foreground sm:col-span-1">
           Fale conosco <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
