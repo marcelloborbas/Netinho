@@ -61,7 +61,7 @@ export function HomePartsCarousel({ className }: { className?: string }) {
     // Faixa de ponta a ponta: as margens negativas anulam o recuo lateral da página e a faixa
     // encosta nas duas bordas da tela. As artes permanecem inteiras para preservar os textos.
     <section
-      className={cn("flex min-h-0 min-w-0 flex-col gap-1 mx-[calc(50%-50vw)]", className)}
+      className={cn("relative left-1/2 flex min-h-0 w-screen min-w-0 max-w-none -translate-x-1/2 flex-col gap-1", className)}
       aria-label="Carrossel de peças em destaque"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
