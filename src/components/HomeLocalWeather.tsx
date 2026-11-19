@@ -86,6 +86,7 @@ async function weatherAt(latitude:number, longitude:number): Promise<Weather> {
 export function HomeLocalWeather({enabled}:{enabled:boolean}) {
  const [coords,setCoords] = useState<{latitude:number;longitude:number}|null>(null);
  const [locating,setLocating] = useState(false);
+ const {data:locationCity} = useQuery({queryKey:["home-weather-city",coords?.latitude,coords?.longitude],queryFn:async()=>{const u=new URL("https://api.bigdatacloud.net/data/reverse-geocode-client");u.searchParams.set("latitude",String(coords!.latitude));u.searchParams.set("longitude",String(coords!.longitude));u.searchParams.set("localityLanguage","pt");const response=await fetch(u);if(!response.ok)return "";const j=await response.json() as {city?:string;locality?:string;principalSubdivision?:string};return j.city||j.locality||j.principalSubdivision||"";},enabled:enabled&&!!coords,staleTime:60*60_000,retry:false});
  const [locationError,setLocationError] = useState("");
  const [permissionNeeded,setPermissionNeeded] = useState(false);
  const requestLocation=()=>{
@@ -119,7 +120,7 @@ export function HomeLocalWeather({enabled}:{enabled:boolean}) {
  if (!displayed) return <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold"><button type="button" onClick={requestLocation} disabled={locating} className="rounded-md border border-gold/60 px-2 py-0.5 text-gold underline-offset-2 hover:underline disabled:opacity-60" title={locationError || (permissionNeeded ? "Autorizar localização para mostrar o clima" : "Consultar clima pela sua localização")}>🌤️ {locating ? "Localizando..." : "Ativar clima local"}</button><span aria-hidden="true">·</span></span>;
  return <span title={`Clima atual em: ${displayed.label} — ${condition(displayed.code)}`} className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gold">
    <span aria-hidden="true">{displayed.code <= 3 ? "☀️" : displayed.code >= 95 ? "⛈️" : "🌤️"}</span>
-   <span>{Math.round(displayed.temperature)}°C</span>
+   <span>{geoWeather ? (locationCity || region?.city || region?.uf || "Sua região") : (region?.city || stateNames[region?.uf || ""] || "Sua região")} · {Math.round(displayed.temperature)}°C</span>
    <span className="hidden sm:inline">{condition(displayed.code)}</span>
    <span aria-hidden="true">·</span>
  </span>;
