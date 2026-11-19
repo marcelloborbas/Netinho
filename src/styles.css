@@ -6492,3 +6492,8 @@ html body .welcome-auth-stage .welcome-auth-art {
 /* Tarja de visitantes: visual limpo e legibilidade garantida, sem fundo azul. */
 .catalog-showcase > .netinho-visitor-notice[role="note"] { background: #fff !important; background-image: none !important; color: #102a52 !important; border-color: #d7b45b !important; opacity: 1 !important; visibility: visible !important; }
 .catalog-showcase > .netinho-visitor-notice[role="note"] p, .catalog-showcase > .netinho-visitor-notice[role="note"] strong { color: #102a52 !important; opacity: 1 !important; }
+
+/* Tarja visitante: vermelho com letras amarelas, acima das regras legadas. */
+.catalog-showcase > .netinho-visitor-notice[role="note"] { background: #b31320 !important; background-image: none !important; color: #ffe45c !important; border-color: #ffd447 !important; }
+.catalog-showcase > .netinho-visitor-notice[role="note"] p { color: #ffe45c !important; }
+.catalog-showcase > .netinho-visitor-notice[role="note"] strong { color: #fff2a0 !important; }
