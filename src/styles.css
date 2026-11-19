@@ -6332,3 +6332,31 @@ html body .welcome-auth-stage .welcome-auth-art {
   grid-template-rows:minmax(0,1.4fr) minmax(0,1fr) minmax(0,.9fr) !important;
  }
 }
+
+/* Saudação: proporção original da arte, sem esticamento.
+   Ajuste responsivo: toda a largura visível; recorte vertical se necessário. */
+.netinho-home-refresh .netinho-home-hero > .netinho-hero-photo {
+ width:100% !important;
+ height:100% !important;
+ object-fit:cover !important;
+ object-position:center center !important;
+}
+/* WhatsApp: somente ícone maior, pulsação e halo dourado difuso. */
+@keyframes netinho-whatsapp-gold-pulse {
+ 0%,100% {transform:scale(1);filter:drop-shadow(0 0 4px #e3b84a88) drop-shadow(0 0 10px #d7a93355);}
+ 50% {transform:scale(1.09);filter:drop-shadow(0 0 9px #f5ce76cc) drop-shadow(0 0 19px #e6b64299);}
+}
+.netinho-home-refresh .netinho-home-whatsapp {
+ background:transparent !important;
+ border:0 !important;
+ border-radius:50% !important;
+ box-shadow:none !important;
+ animation:netinho-whatsapp-gold-pulse 2.2s ease-in-out infinite;
+}
+.netinho-home-refresh .netinho-home-whatsapp:hover {
+ animation-play-state:paused;
+ transform:scale(1.1);
+}
+@media(prefers-reduced-motion:reduce) {
+ .netinho-home-refresh .netinho-home-whatsapp {animation:none !important;}
+}
