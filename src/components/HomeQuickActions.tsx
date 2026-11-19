@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, ClipboardList, MessageCircle, Search, ShoppingCart, Tag, type LucideIcon } from "lucide-react";
 import { BRAND } from "@/lib/brand";
-import { HOME_ICON_SIZE, HOME_ICON_STROKE, HomeIconTile } from "@/components/HomeIconTile";
+import { HomeIconTile } from "@/components/HomeIconTile";
 
-/** Classe única dos cartões: mesma altura, borda dourada e foco visível. */
+/** Cartões com hierarquia visual única: ícone, título e descrição. */
 const cardClass =
-  "group flex h-full min-h-[96px] min-w-0 flex-col gap-2 rounded-2xl border border-gold/70 bg-card p-3 text-navy shadow-home-card transition-colors hover:border-gold hover:bg-gold-soft/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy sm:flex-row sm:items-center sm:gap-3";
+  "group flex h-full min-h-[108px] min-w-0 flex-col items-start gap-2 rounded-2xl border border-gold/70 bg-card p-3 text-navy shadow-home-card transition-colors hover:border-gold hover:bg-gold-soft/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy sm:min-h-[96px] sm:flex-row sm:items-center sm:gap-3";
 
 interface QuickActionCopyProps {
   icon: LucideIcon;
@@ -25,7 +25,7 @@ function QuickActionCopy({ icon, title, description }: QuickActionCopyProps) {
   );
 }
 
-/** Quatro atalhos completos, em grade 2×2 no celular e 4 colunas no computador. */
+/** Quatro atalhos com ícones semanticamente distintos e visual padronizado. */
 export function HomeQuickActions() {
   return (
     <section className="space-y-3" aria-labelledby="home-quick-title">
@@ -76,7 +76,7 @@ export function HomeWhatsAppBanner() {
           <small className="block text-sm text-navy-foreground/80">Nossa equipe atende você pelo WhatsApp</small>
         </span>
         <span className="col-span-2 inline-flex items-center justify-center gap-1 rounded-full bg-gold px-4 py-2 text-sm font-black text-gold-foreground sm:col-span-1">
-          Fale conosco <ChevronRight size={HOME_ICON_SIZE - 4} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" />
+          Fale conosco <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
         </span>
       </a>
     </section>
