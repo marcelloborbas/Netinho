@@ -210,12 +210,13 @@ function Home() {
   // Tela única: grade com altura da tela (100dvh). Celular: uma coluna; banner e painel absorvem a
   // altura restante. Computador (lg): 12 colunas; saudação ampliada e indicadores no topo, banner de
   // ponta a ponta e, abaixo, painel de vendas/pedidos ao lado das montadoras. As linhas flexíveis têm
-  // teto para não gerar blocos gigantes em monitores altos. Em telas baixas demais, a altura volta a
+  // teto baixo (banner até 300px, painel até 380px) para não gerar blocos gigantes; em monitores
+  // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
   const brands = ["volkswagen", "fiat", "chevrolet", "ford"] as const;
   return (
     <div className="netinho-home min-h-[100dvh] overflow-x-clip bg-background text-navy">
-      <main className="mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[min-content_min-content_minmax(140px,0.85fr)_minmax(190px,1.15fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[min-content_min-content_minmax(200px,420px)_minmax(220px,460px)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
+      <main className="mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[min-content_min-content_minmax(140px,0.85fr)_minmax(190px,1.15fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[min-content_min-content_minmax(170px,300px)_minmax(220px,380px)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
         <header
           className="relative isolate overflow-hidden rounded-2xl border border-gold/40 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-12"
           aria-label="Boas-vindas"
@@ -231,20 +232,20 @@ function Home() {
             decoding="async"
             fetchPriority="high"
           />
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-4">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
             <img
               src="/images/Logo%20Netinho.webp"
               alt="Netinho Auto Parts"
               width={618}
               height={309}
-              className="h-10 w-auto sm:h-14 lg:h-[72px]"
+              className="h-10 w-auto sm:h-14"
             />
             <div className="min-w-0 leading-tight">
               <p className="truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <span className="sm:hidden">{shortDate}</span>
                 <span className="hidden sm:inline">{todayLabel}</span> · {status}
               </p>
-              <p className="line-clamp-2 break-words font-display text-lg font-black leading-tight sm:truncate sm:text-2xl lg:text-[32px]">
+              <p className="line-clamp-2 break-words font-display text-lg font-black leading-tight sm:truncate sm:text-2xl lg:text-[28px]">
                 {salutation}, Sr.{" "}
                 <span style={{ color: dailyNameColor }} title={userName || "usuário"}>
                   {userName || "usuário"}
@@ -286,7 +287,7 @@ function Home() {
                     width={400}
                     height={248}
                     loading="lazy"
-                    className="block h-12 w-auto max-w-full object-contain sm:h-14 lg:h-16 xl:h-20"
+                    className="block h-12 w-auto max-w-full object-contain sm:h-14 xl:h-16"
                   />
                 </button>
               </li>
