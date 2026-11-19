@@ -11,6 +11,7 @@ import { HomeWhatsAppButton } from "@/components/HomeWhatsAppButton";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
+import { HomeLocalWeather } from "@/components/HomeLocalWeather";
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: false },
@@ -234,7 +235,8 @@ function Home() {
           />
           <div className="netinho-home-hero-content grid h-full min-h-[140px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep/85 via-navy-deep/20 to-transparent px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
             <div className="netinho-home-hero-copy min-w-0 leading-tight">
-              <p className="truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
+              <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
+                <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
                 <span className="hidden sm:inline">{todayLabel}</span> · {status}
               </p>
