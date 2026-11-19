@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 import { HomeKpis, HomeSalesPanel } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
-import { HomeQuickActions, HomeWhatsAppButton } from "@/components/HomeQuickActions";
+import { HomeWhatsAppButton } from "@/components/HomeWhatsAppButton";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -198,14 +198,24 @@ function Home() {
         </button>
       </main>
     );
-  // Tela única: grade com altura da tela (100dvh). Celular: uma coluna, banner e painel absorvem
-  // a altura restante. Computador (lg): 12 colunas; cabeçalho, indicadores e atalhos no topo,
-  // banner + montadoras à esquerda e o painel de vendas/pedidos à direita. A linha flexível tem
-  // teto para não gerar cartões gigantes em monitores altos. Em telas baixas demais, a altura
-  // volta a ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
+  // Data por extenso para a saudação (rota sem SSR, sem risco de divergência na hidratação).
+  const now = new Date();
+  const longDate = now.toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+  const todayLabel = longDate.charAt(0).toUpperCase() + longDate.slice(1);
+  const shortDate = now.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  // Tela única: grade com altura da tela (100dvh). Celular: uma coluna; banner e painel absorvem a
+  // altura restante. Computador (lg): 12 colunas; saudação ampliada e indicadores no topo, banner de
+  // ponta a ponta e, abaixo, painel de vendas/pedidos ao lado das montadoras. As linhas flexíveis têm
+  // teto para não gerar blocos gigantes em monitores altos. Em telas baixas demais, a altura volta a
+  // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
+  const brands = ["volkswagen", "fiat", "chevrolet", "ford"] as const;
   return (
     <div className="netinho-home min-h-[100dvh] overflow-x-clip bg-background text-navy">
-      <main className="mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[auto_auto_auto_minmax(104px,0.8fr)_minmax(190px,1.2fr)_auto] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[auto_auto_auto_minmax(180px,440px)_auto] lg:content-start [@media(min-width:1024px)_and_(min-height:960px)]:content-center lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
+      <main className="mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[min-content_min-content_minmax(140px,0.85fr)_minmax(190px,1.15fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[min-content_min-content_minmax(200px,420px)_minmax(220px,460px)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
         <header
           className="relative isolate overflow-hidden rounded-2xl border border-gold/40 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-12"
           aria-label="Boas-vindas"
@@ -221,27 +231,27 @@ function Home() {
             decoding="async"
             fetchPriority="high"
           />
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-1.5 sm:px-4">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-4">
             <img
               src="/images/Logo%20Netinho.webp"
               alt="Netinho Auto Parts"
               width={618}
               height={309}
-              className="h-9 w-auto sm:h-10"
+              className="h-10 w-auto sm:h-14 lg:h-[72px]"
             />
             <div className="min-w-0 leading-tight">
-              <p className="truncate text-sm font-bold sm:text-base">
+              <p className="truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
+                <span className="sm:hidden">{shortDate}</span>
+                <span className="hidden sm:inline">{todayLabel}</span> · {status}
+              </p>
+              <p className="line-clamp-2 break-words font-display text-lg font-black leading-tight sm:truncate sm:text-2xl lg:text-[32px]">
                 {salutation}, Sr.{" "}
-                <span
-                  className="font-black"
-                  style={{ color: dailyNameColor }}
-                  title={userName || "usuário"}
-                >
+                <span style={{ color: dailyNameColor }} title={userName || "usuário"}>
                   {userName || "usuário"}
                 </span>
                 !
               </p>
-              <p className="truncate text-[11px] italic text-navy-foreground/80 sm:text-xs">
+              <p className="truncate text-xs italic text-navy-foreground/85 sm:text-sm">
                 {periodBlessing}
               </p>
             </div>
@@ -249,23 +259,25 @@ function Home() {
           </div>
         </header>
         <HomeKpis className="lg:col-span-12" />
-        <HomeQuickActions className="lg:col-span-12" />
-        <HomePartsCarousel className="lg:col-span-6 lg:row-start-4" />
-        <HomeSalesPanel className="lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-4" />
+        <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
+        <HomeSalesPanel className="lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[300px]" />
         <section
-          className="min-w-0 lg:col-span-6 lg:row-start-5"
+          className="min-w-0 lg:col-span-4 lg:flex lg:flex-col lg:rounded-2xl lg:border lg:border-border lg:bg-card lg:p-3 lg:shadow-home-card"
           aria-labelledby="home-brands-title"
         >
-          <h2 id="home-brands-title" className="mb-1 text-sm font-black leading-tight text-navy">
+          <h2
+            id="home-brands-title"
+            className="mb-1 text-sm font-black leading-tight text-navy lg:mb-2 lg:text-base"
+          >
             Encontre peças por montadora
           </h2>
-          <ul className="grid grid-cols-4 gap-2 sm:gap-3">
-            {(["volkswagen", "fiat", "chevrolet", "ford"] as const).map((brand) => (
+          <ul className="grid grid-cols-4 gap-2 sm:gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:content-center">
+            {brands.map((brand) => (
               <li key={brand} className="min-w-0">
                 <button
                   type="button"
                   onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })}
-                  className="grid w-full place-items-center rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy sm:h-14"
+                  className="grid w-full place-items-center rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
                   aria-label={`Ver peças da montadora ${brand}`}
                 >
                   <img
@@ -274,7 +286,7 @@ function Home() {
                     width={400}
                     height={248}
                     loading="lazy"
-                    className="block h-12 w-auto max-w-full object-contain sm:h-14"
+                    className="block h-12 w-auto max-w-full object-contain sm:h-14 lg:h-16 xl:h-20"
                   />
                 </button>
               </li>

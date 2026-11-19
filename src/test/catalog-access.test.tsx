@@ -63,15 +63,18 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 describe("catalog access presentation", () => {
-  it("greets the authorized representative and offers the main actions after entry approval", () => {
+  it("greets the authorized representative without the removed shortcut cards", () => {
     state.seller = true;
     sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
     expect(screen.getByText("Marcello")).toBeVisible();
-    expect(screen.getByRole("link", { name: /Novo pedido/ })).toHaveAttribute("href", "/vendas");
-    expect(screen.getByRole("link", { name: /Consultar peças/ })).toHaveAttribute("href", "/catalogo");
-    expect(screen.getByRole("link", { name: /Meus pedidos/ })).toHaveAttribute("href", "/pedidos");
-    expect(screen.getByRole("link", { name: /Promoções/ })).toHaveAttribute("href", "/ofertas");
+    // Os atalhos foram retirados a pedido do cliente e não devem voltar à página inicial.
+    for (const name of [/Novo pedido/, /Consultar peças/, /Meus pedidos/, /Promoções/])
+      expect(screen.queryByRole("link", { name })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute(
+      "href",
+      expect.stringContaining("https://wa.me/"),
+    );
     expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("keeps the home open to visitors, who only browse", () => {
@@ -79,7 +82,7 @@ describe("catalog access presentation", () => {
     sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
     expect(screen.getByText("Marcello")).toBeVisible();
-    expect(screen.getByRole("link", { name: /Consultar peças/ })).toHaveAttribute("href", "/catalogo");
+    expect(screen.getByRole("button", { name: "Ver peças da montadora fiat" })).toBeVisible();
     expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("shows only the cash price to visitors and offers a representative instead of an order", () => {
@@ -88,7 +91,9 @@ describe("catalog access presentation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
     expect(screen.getByText("Preço à vista:")).toBeVisible();
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Adicionar peça à venda" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Adicionar peça à venda" }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText(/Estoque/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Consultar compra da peça" }));
     expect(screen.getByRole("group", { name: "Contato para comprar FCO-TESTE" })).toBeVisible();

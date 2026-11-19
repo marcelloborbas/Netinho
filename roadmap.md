@@ -90,3 +90,4 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 ## Banco de dados e página inicial em 19/11/2026
 - [ ] Trocar o banco de Tiny para Mini antes de publicar (aguarda aprovação no cartão).
 - [x] Página inicial no computador/notebook: painel inteiro em uma tela, sem rolagem; celular legível; build, testes e prévia conferidos; sem publicar.
+- [x] Página inicial: banner de ponta a ponta (cover), sem recriar os atalhos retirados, saudação ampliada no espaço liberado e ícone oficial do WhatsApp do site no topo; sem publicar.

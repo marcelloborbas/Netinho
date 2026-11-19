@@ -44,6 +44,7 @@
   --color-gold-soft: var(--gold-soft);
   --color-gold-deep: var(--gold-deep);
   --color-gold-foreground: var(--gold-foreground);
+  --color-whatsapp: var(--whatsapp);
 }
 
 :root {
@@ -84,6 +85,8 @@
   --gold-soft: #fbe7a6;
   --gold-deep: #a87a12;
   --gold-foreground: #102a52;
+  /* Verde do WhatsApp já usado no rodapé oficial do site. */
+  --whatsapp: #22c55e;
   --shadow-home-card: 0 1px 0 #ffffff inset, 0 8px 20px -12px color-mix(in oklab, var(--navy) 45%, transparent);
 }
 
