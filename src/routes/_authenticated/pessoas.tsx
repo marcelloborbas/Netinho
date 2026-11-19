@@ -194,6 +194,24 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
  const ownAccount=me?.id===person.id;
  const [name,setName]=useState(person.full_name??"");
  const [phone,setPhone]=useState(person.phone??"");
+ const {data:phoneSources}=useQuery({
+  queryKey:["representative-phone-sources",person.id,linkedCommercial?.id,person.email],
+  enabled:person.site_role==="Representante",
+  retry:false,
+  queryFn:async()=>{
+   const [commercialResult,publicResult]=await Promise.all([
+    linkedCommercial?.id
+     ? supabase.from("commercial_representative_details" as never).select("phone").eq("representative_id",linkedCommercial.id).maybeSingle()
+     : Promise.resolve({data:null,error:null}),
+    supabase.from("representative_profiles").select("phone").eq("email",person.email).maybeSingle(),
+   ]);
+   if(commercialResult.error)throw commercialResult.error;
+   if(publicResult.error)throw publicResult.error;
+   return {commercial:(commercialResult.data as {phone?:string}|null)?.phone??"",public:(publicResult.data as {phone?:string}|null)?.phone??""};
+  }
+ });
+ const phoneInitialized=useRef(false);
+ useEffect(()=>{if(!phoneInitialized.current&&phoneSources){if(!person.phone?.trim())setPhone(phoneSources.commercial||phoneSources.public||"");phoneInitialized.current=true;}},[phoneSources,person.phone]);
  const [role,setRole]=useState<Role>(person.site_role);
  const [active,setActive]=useState(person.access_active);
  const [uf,setUf]=useState(person.territory_uf??"");
@@ -236,6 +254,17 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
   if(error){setBusy(false);toast.error("Não foi possível salvar permissões: "+error.message);return;}
   const {error:profileError}=await supabase.rpc("admin_update_person_contact" as never,{p_user:person.id,p_name:name.trim(),p_phone:phone.trim()} as never);
   if(profileError){setBusy(false);toast.error("Permissões salvas, mas nome/telefone não foram confirmados: "+(profileError?.message??"O banco não autorizou a alteração. Verifique as permissões da tabela profiles."));onSaved();return;}
+  let contactWarning="";
+  if(role==="Representante"&&linkedCommercial?.id){
+   const {error:commercialPhoneError}=await supabase.from("commercial_representative_details" as never)
+    .upsert({representative_id:linkedCommercial.id,phone:phone.trim()} as never,{onConflict:"representative_id"});
+   const {error:publicPhoneError}=await supabase.from("representative_profiles")
+    .update({phone:phone.trim()}).eq("email",person.email);
+   if(commercialPhoneError||publicPhoneError)contactWarning=" O WhatsApp foi salvo no perfil de acesso, mas não foi possível sincronizar todas as fichas públicas/comerciais.";
+   void qc.invalidateQueries({queryKey:["representative-phone-sources",person.id]});
+   void qc.invalidateQueries({queryKey:["representative-public-contact"]});
+   void qc.invalidateQueries({queryKey:["commercial-representative-details",linkedCommercial.id]});
+  }
   let image=effectiveMap.trim();
   if(mapFile){
    const extension=mapFile.name.split(".").pop()?.toLowerCase()||"webp";
@@ -270,7 +299,7 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
    }
   }
   setBusy(false);
-  if(commissionWarning)toast.warning("Pessoa e região salvas. "+commissionWarning);
+  if(commissionWarning||contactWarning)toast.warning("Pessoa e região salvas. "+commissionWarning+contactWarning);
   else toast.success("Pessoa e região atualizadas.");
   onSaved();setOpen(false);onClose?.();
  }
@@ -323,7 +352,7 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
     </div>
     <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
      <label className="block font-bold">E-mail de acesso<input type="email" value={person.email} readOnly className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-slate-100 px-3 text-slate-600"/><span className="mt-1 block text-xs font-normal text-slate-500">Vinculado à conta de login.</span></label>
-     <label className="block font-bold">Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
+     <label className="block font-bold">WhatsApp / Telefone<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 bg-white px-3"/></label>
     </div>
    </section>
    {linkedCommercial&&<section className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-3"><h3 className="font-black">Cadastro comercial vinculado</h3><p className="text-xs text-slate-600">Dados comerciais da mesma pessoa, preservados no cadastro existente. Atualize WhatsApp, UF, região e DDD aqui sem criar outro representante.</p><RepresentativeDetails name={linkedCommercial.full_name} email={linkedCommercial.email} representativeId={linkedCommercial.id} commercial /></section>}
