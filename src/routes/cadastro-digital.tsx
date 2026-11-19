@@ -54,7 +54,7 @@ function CadastroDigital() {
         <p className="mt-2 text-slate-600">Preencha e envie a ficha digital diretamente para análise da Netinho Auto Parts.</p>
       </header>
       <label className="block font-semibold" htmlFor="tipo">Quero me cadastrar como</label>
-      <select id="tipo" value={tipo} onChange={e => { setTipo(e.target.value as Tipo); setGerado(false); setProtocolo(""); }} className="mt-2 w-full rounded-lg border p-3">
+      <select id="tipo" value={tipo} onChange={e => { setTipo(e.target.value as Tipo); setProtocolo(""); }} className="mt-2 w-full rounded-lg border p-3">
         <option value="cliente">Cliente</option><option value="vendedor">Vendedor</option><option value="representante">Representante</option>
       </select>
       {sections.map(([titulo, fields]) => <fieldset key={titulo} className="mt-7 rounded-xl border border-slate-200 p-4">
