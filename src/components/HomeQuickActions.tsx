@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import {
-  ChevronRight,
   ClipboardList,
   MessageCircle,
   Search,
@@ -9,11 +8,12 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { cn } from "@/lib/utils";
 import { HomeIconTile } from "@/components/HomeIconTile";
 
-/** Cartões com hierarquia visual única: ícone, título e descrição. */
+/** Cartão compacto horizontal: ícone, título e descrição em uma linha cada. */
 const cardClass =
-  "group flex h-full min-h-[108px] min-w-0 flex-col items-start gap-2 rounded-2xl border border-gold/70 bg-card p-3 text-navy shadow-home-card transition-colors hover:border-gold hover:bg-gold-soft/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy sm:min-h-[96px] sm:flex-row sm:items-center sm:gap-3";
+  "group flex h-full min-h-[52px] min-w-0 items-center gap-2 rounded-xl border border-gold/70 bg-card px-2 py-1.5 text-navy shadow-home-card transition-colors hover:border-gold hover:bg-gold-soft/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy sm:gap-3 sm:px-3 sm:py-2";
 
 interface QuickActionCopyProps {
   icon: LucideIcon;
@@ -24,10 +24,12 @@ interface QuickActionCopyProps {
 function QuickActionCopy({ icon, title, description }: QuickActionCopyProps) {
   return (
     <>
-      <HomeIconTile icon={icon} />
+      <HomeIconTile icon={icon} size="sm" />
       <span className="min-w-0">
-        <strong className="block text-sm font-black leading-tight sm:text-base">{title}</strong>
-        <small className="mt-1 block text-xs leading-snug text-muted-foreground">
+        <strong className="block truncate text-[13px] font-black leading-tight sm:text-sm">
+          {title}
+        </strong>
+        <small className="block truncate text-[11px] leading-tight text-muted-foreground sm:text-xs">
           {description}
         </small>
       </span>
@@ -35,17 +37,14 @@ function QuickActionCopy({ icon, title, description }: QuickActionCopyProps) {
   );
 }
 
-/** Quatro atalhos com ícones semanticamente distintos e visual padronizado. */
-export function HomeQuickActions() {
+/** Quatro atalhos em grade 2×2 no celular e 4 colunas no computador. */
+export function HomeQuickActions({ className }: { className?: string }) {
   return (
-    <section className="space-y-3" aria-labelledby="home-quick-title">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 id="home-quick-title" className="text-lg font-black text-navy sm:text-xl">
-          Acesso rápido
-        </h2>
-        <span className="truncate text-xs font-bold text-gold-deep">Netinho Auto Parts</span>
-      </div>
-      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <section className={cn("min-w-0", className)} aria-labelledby="home-quick-title">
+      <h2 id="home-quick-title" className="sr-only">
+        Acesso rápido
+      </h2>
+      <ul className="grid grid-cols-2 gap-2 lg:grid-cols-4">
         <li className="min-w-0">
           <Link to="/vendas" search={{ modo: "venda", q: "", promo: "" }} className={cardClass}>
             <QuickActionCopy
@@ -87,28 +86,22 @@ export function HomeQuickActions() {
   );
 }
 
-/** Banner de atendimento, sempre no fim do fluxo e sem sobrepor outros blocos. */
-export function HomeWhatsAppBanner() {
+/** Atendimento pelo WhatsApp integrado ao cabeçalho, no fluxo normal (sem sobrepor conteúdo). */
+export function HomeWhatsAppButton() {
   const href = `https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Preciso de ajuda para encontrar uma peça.")}`;
   return (
-    <section aria-label="Atendimento pelo WhatsApp">
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-gold/60 bg-navy p-4 text-navy-foreground shadow-home-card transition-colors hover:bg-navy-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:grid-cols-[auto_minmax(0,1fr)_auto]"
-      >
-        <HomeIconTile icon={MessageCircle} className="bg-navy-deep" />
-        <span className="min-w-0">
-          <strong className="block text-base font-black">Precisa de ajuda?</strong>
-          <small className="block text-sm text-navy-foreground/80">
-            Nossa equipe atende você pelo WhatsApp
-          </small>
-        </span>
-        <span className="col-span-2 inline-flex items-center justify-center gap-1 rounded-full bg-gold px-4 py-2 text-sm font-black text-gold-foreground sm:col-span-1">
-          Fale conosco <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
-        </span>
-      </a>
-    </section>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Falar com a Netinho pelo WhatsApp"
+      className="flex shrink-0 items-center gap-2 rounded-xl border border-gold/60 bg-navy-deep/70 p-0.5 text-navy-foreground transition-colors hover:bg-navy-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:pr-3"
+    >
+      <HomeIconTile icon={MessageCircle} size="sm" />
+      <span className="hidden text-left leading-tight sm:block">
+        <strong className="block text-sm font-black">WhatsApp</strong>
+        <small className="block text-xs text-navy-foreground/80">Fale conosco</small>
+      </span>
+    </a>
   );
 }

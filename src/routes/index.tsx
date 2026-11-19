@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
-import { HomeRecentOrders, HomeSalesPanel } from "@/components/HomeCommercialDashboard";
+import { HomeSalesPanel } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
-import { HomeQuickActions, HomeWhatsAppBanner } from "@/components/HomeQuickActions";
+import { HomeQuickActions, HomeWhatsAppButton } from "@/components/HomeQuickActions";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -108,43 +108,40 @@ function Home() {
     : access?.attribution === "Vendedor" ? "Vendedor"
     : access?.can_sell ? "Vendedor" : "Visitante";
   if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-navy-deep px-6 text-center text-navy-foreground"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><div role="status" aria-live="polite" className="flex flex-col items-center gap-4"><span className="h-11 w-11 animate-spin rounded-full border-4 border-gold/30 border-t-gold" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></div><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-gold px-5 py-3 font-bold text-gold-foreground">Ir para o login</button></main>;
-  // Fluxo vertical único: cada bloco ocupa o próprio espaço, sem posicionamento sobreposto.
-  // O espaço inferior reserva a altura da navegação fixa e da área segura do celular.
+  // Tela única: grade que ocupa 100dvh. Linhas flexíveis (banner e painel) absorvem a altura;
+  // as demais têm altura própria. O rodapé reserva a navegação fixa e a área segura do celular.
+  // Em telas muito baixas, a altura mínima das linhas libera a rolagem em vez de sobrepor blocos.
   return (
-    <div className="netinho-home flex min-h-[100dvh] flex-col bg-background text-navy">
-      <main className="mx-auto flex w-full max-w-[1100px] flex-1 flex-col gap-6 overflow-x-clip pb-[calc(7rem+env(safe-area-inset-bottom))]">
-        <header className="relative isolate overflow-hidden bg-navy-deep text-navy-foreground sm:mx-6 sm:mt-4 sm:rounded-3xl" aria-label="Boas-vindas">
-          {/* A arte de fundo já contém a logo oficial; fica restrita ao próprio cabeçalho. */}
-          <img src="/images/fundo-saudacao-novo.webp" alt="Netinho Auto Parts — estrada ao pôr do sol com caminhão e automóvel" width={2001} height={1071} className="absolute inset-0 -z-10 h-full w-full object-cover object-top" decoding="async" fetchPriority="high" />
-          <div className="flex min-h-[200px] flex-col justify-end bg-gradient-to-t from-navy-deep via-navy-deep/30 to-transparent px-4 pb-5 pt-20 sm:min-h-[340px] sm:px-8 sm:pb-8">
-            <div className="min-w-0 space-y-1">
-              <p className="flex min-w-0 flex-wrap items-baseline gap-x-2 font-bold leading-tight drop-shadow-lg">
-                <span className="shrink-0 text-lg italic sm:text-3xl">{salutation} Sr.</span>
-                <span className="min-w-0 max-w-full truncate text-3xl font-black leading-[1.05] animate-pulse motion-reduce:animate-none sm:text-6xl" style={{ color: dailyNameColor }} title={userName || "usuário"}>
-                  {userName || "usuário"}!
-                </span>
+    <div className="netinho-home min-h-[100dvh] overflow-x-clip bg-background text-navy">
+      <main className="mx-auto grid h-[100dvh] w-full [@media(max-height:700px)_and_(max-width:1023px)]:h-auto [@media(max-height:620px)]:h-auto max-w-[1100px] grid-cols-1 grid-rows-[auto_minmax(96px,0.8fr)_auto_minmax(252px,1.2fr)_auto] gap-2 px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 lg:grid-cols-2 lg:grid-rows-[auto_minmax(0,1fr)_auto_auto] lg:gap-4 lg:pt-4">
+        <header className="relative isolate overflow-hidden rounded-2xl border border-gold/40 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-2" aria-label="Boas-vindas">
+          {/* Arte decorativa restrita ao próprio cabeçalho, sob uma camada azul-marinho. */}
+          <img src="/images/fundo-saudacao-novo.webp" alt="" aria-hidden="true" width={2001} height={1071} className="absolute inset-0 -z-10 h-full w-full object-cover object-[center_70%] opacity-60" decoding="async" fetchPriority="high" />
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-2 sm:px-4">
+            <img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" width={618} height={309} className="h-9 w-auto sm:h-11" />
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-sm font-bold sm:text-base">
+                {salutation}, Sr. <span className="font-black" style={{ color: dailyNameColor }} title={userName || "usuário"}>{userName || "usuário"}</span>!
               </p>
-              <p className="text-base font-bold italic drop-shadow-lg sm:text-2xl">{periodBlessing}</p>
+              <p className="truncate text-[11px] italic text-navy-foreground/80 sm:text-xs">{periodBlessing}</p>
             </div>
+            <HomeWhatsAppButton />
           </div>
         </header>
-        <div className="flex flex-col gap-6 px-4 sm:px-6">
-          <HomePartsCarousel />
-          <HomeQuickActions />
-          <HomeSalesPanel />
-          <section className="space-y-3" aria-labelledby="home-brands-title">
-            <h2 id="home-brands-title" className="text-lg font-black text-navy sm:text-xl">Encontre peças por montadora</h2>
-            <ul className="grid grid-cols-4 gap-2 sm:gap-4">
-              {(["volkswagen", "fiat", "chevrolet", "ford"] as const).map(brand => <li key={brand} className="min-w-0">
-                <button type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })} className="block w-full rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy" aria-label={`Ver peças da montadora ${brand}`}>
-                  <img src={`/images/home-premium/montadora-${brand}.webp`} alt="" width={400} height={248} loading="lazy" className="block aspect-[400/248] h-auto w-full object-contain" />
-                </button>
-              </li>)}
-            </ul>
-          </section>
-          <HomeRecentOrders />
-          <HomeWhatsAppBanner />
-        </div>
+        <HomePartsCarousel className="lg:col-start-1 lg:row-start-2" />
+        <HomeQuickActions className="lg:col-span-2 lg:row-start-3" />
+        <HomeSalesPanel className="lg:col-start-2 lg:row-start-2" />
+        <section className="min-w-0 lg:col-span-2 lg:row-start-4" aria-labelledby="home-brands-title">
+          <h2 id="home-brands-title" className="mb-1 text-sm font-black leading-tight text-navy">Encontre peças por montadora</h2>
+          {/* Faixa horizontal: rola lateralmente só se a tela for estreita demais para as quatro marcas. */}
+          <ul className="flex snap-x gap-2 overflow-x-auto overscroll-x-contain pb-0.5 sm:gap-3">
+            {(["volkswagen", "fiat", "chevrolet", "ford"] as const).map(brand => <li key={brand} className="min-w-[76px] flex-1 snap-start lg:max-w-[150px]">
+              <button type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })} className="block w-full rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy" aria-label={`Ver peças da montadora ${brand}`}>
+                <img src={`/images/home-premium/montadora-${brand}.webp`} alt="" width={400} height={248} loading="lazy" className="block aspect-[400/248] h-auto w-full object-contain" />
+              </button>
+            </li>)}
+          </ul>
+        </section>
       </main>
       <PublicFooter />
     </div>

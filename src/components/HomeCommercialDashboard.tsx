@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import { ChartNoAxesColumnIncreasing, ChevronRight, ClipboardList, TrendingUp, Users, type LucideIcon } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { HOME_ICON_SIZE, HOME_ICON_STROKE, HomeIconTile } from "@/components/HomeIconTile";
 
 const periodKey=(date:Date)=>{const p=new Intl.DateTimeFormat("en-US",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit"}).formatToParts(date);return p.find(x=>x.type==="year")?.value+"-"+p.find(x=>x.type==="month")?.value;};
@@ -44,7 +46,7 @@ async function loadDashboard(isAdmin:boolean){
 }
 type DashboardData = NonNullable<Awaited<ReturnType<typeof loadDashboard>>>;
 
-/** Consulta única compartilhada pelo painel de vendas e pela lista de pedidos (mesma chave de cache). */
+/** Consulta única do painel; a mesma chave de cache atende as abas de vendas e pedidos. */
 function useHomeDashboard() {
  const { data: me } = useQuery(meQuery);
  const isAdmin = me?.isAdmin === true;
@@ -52,17 +54,15 @@ function useHomeDashboard() {
  return { ...query, isAdmin };
 }
 
-const cardShell = "rounded-2xl border border-border bg-card p-4 text-navy shadow-home-card sm:p-5";
+interface KpiProps { icon: LucideIcon; label: string; value: string; fullValue?: string | undefined }
 
-interface KpiProps { icon: LucideIcon; label: string; value: string }
-
-function Kpi({ icon, label, value }: KpiProps) {
+function Kpi({ icon, label, value, fullValue }: KpiProps) {
  return (
-  <li className="flex min-w-0 flex-col gap-2 rounded-2xl border border-gold/50 bg-card p-3 shadow-home-card sm:flex-row sm:items-center sm:gap-3">
-   <HomeIconTile icon={icon} />
+  <li className="flex min-w-0 items-center gap-2 rounded-xl border border-gold/40 bg-card px-2 py-1.5">
+   <HomeIconTile icon={icon} size="sm" />
    <span className="min-w-0">
-    <small className="block text-xs font-semibold text-muted-foreground">{label}</small>
-    <strong className="block break-words text-base font-black tabular-nums leading-tight sm:text-lg">{value}</strong>
+    <small className="block truncate text-[11px] font-semibold leading-tight text-muted-foreground">{label}</small>
+    <strong className="block truncate text-sm font-black tabular-nums leading-tight" title={fullValue ?? value}>{value}</strong>
    </span>
   </li>
  );
@@ -70,86 +70,89 @@ function Kpi({ icon, label, value }: KpiProps) {
 
 const shortMoney = (total: number) => total >= 1000 ? `R$ ${(total / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mil` : brl(total);
 
+/** Gráfico de barras compacto: ocupa o espaço restante do painel, sem altura fixa. */
 function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
  const max = Math.max(1, ...periods.map(p => p.total));
  return (
-  <ol className="grid h-44 grid-cols-3 items-end gap-3 border-b border-border px-1 sm:h-52 sm:gap-6" aria-label={`Vendas dos últimos 3 meses: ${periods.map(p => `${p.label}: ${brl(p.total)}`).join("; ")}`}>
+  <ol className="grid min-h-0 flex-1 grid-cols-3 items-end gap-3 px-1" aria-label={`Vendas dos últimos 3 meses: ${periods.map(p => `${p.label}: ${brl(p.total)}`).join("; ")}`}>
    {periods.map((p, index) => (
-    <li key={p.key} className="flex h-full min-w-0 flex-col items-center justify-end gap-1">
-     <span className="max-w-full truncate text-xs font-black tabular-nums" title={brl(p.total)}>{shortMoney(p.total)}</span>
-     <span aria-hidden="true" className={`block w-full max-w-20 rounded-t-md ${index === periods.length - 1 ? "bg-gold" : "bg-navy-soft"}`} style={{ height: `${Math.max(3, p.total / max * 78)}%` }} />
+    <li key={p.key} className="flex h-full min-h-0 min-w-0 flex-col items-center justify-end gap-0.5">
+     <span className="max-w-full truncate text-[10px] font-black tabular-nums" title={brl(p.total)}>{shortMoney(p.total)}</span>
+     <span aria-hidden="true" className={`block min-h-[3px] w-full max-w-16 rounded-t-md ${index === periods.length - 1 ? "bg-gold" : "bg-navy-soft"}`} style={{ height: `${Math.max(4, p.total / max * 70)}%` }} />
+     <span className="text-[10px] font-bold leading-none">{p.label}</span>
     </li>
    ))}
   </ol>
  );
 }
 
-/** Painel de vendas em três blocos separados: título/período, indicadores e gráfico. */
-export function HomeSalesPanel() {
+function SalesSummary() {
  const { data, isLoading, isError, isAdmin } = useHomeDashboard();
  const placeholder = isLoading ? "…" : "—";
  const ready = !isLoading && !isError;
  const count = (value: number | undefined) => ready ? (value ?? 0).toLocaleString("pt-BR") : placeholder;
  const growth = ready && data?.growth != null ? `${data.growth > 0 ? "+" : ""}${data.growth.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%` : placeholder;
  return (
-  <section className="space-y-3" aria-labelledby="home-sales-title">
-   <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-    <div className="flex min-w-0 items-center gap-2">
-     <ChartNoAxesColumnIncreasing size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} className="shrink-0 text-gold-deep" aria-hidden="true" />
-     <h2 id="home-sales-title" className="truncate text-lg font-black text-navy sm:text-xl">Evolução das vendas</h2>
-    </div>
-    <span className="shrink-0 rounded-full bg-navy px-3 py-1 text-xs font-bold text-gold">Últimos 3 meses</span>
-   </div>
-   <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Indicadores do mês">
-    <Kpi icon={ChartNoAxesColumnIncreasing} label="Vendas no mês" value={ready ? brl(data?.currentTotal ?? 0) : placeholder} />
+  <div className="flex h-full min-h-0 flex-col gap-2">
+   <ul className="grid shrink-0 grid-cols-2 gap-1.5" aria-label="Indicadores do mês">
+    <Kpi icon={ChartNoAxesColumnIncreasing} label="Vendas no mês" value={ready ? shortMoney(data?.currentTotal ?? 0) : placeholder} fullValue={ready ? brl(data?.currentTotal ?? 0) : undefined} />
     <Kpi icon={ClipboardList} label="Pedidos no mês" value={count(data?.orderCount)} />
     <Kpi icon={Users} label="Clientes atendidos" value={count(data?.clientCount)} />
     <Kpi icon={TrendingUp} label="Crescimento" value={growth} />
    </ul>
-   <div className={cardShell}>
-    {isLoading ? <p role="status" className="py-12 text-center text-sm">Carregando vendas…</p>
-     : isError ? <p role="alert" className="py-12 text-center text-sm">Não foi possível consultar as vendas.</p>
-     : <>
-       <SalesChart periods={data?.periods ?? []} />
-       <ol className="mt-2 grid grid-cols-3 gap-3 px-1 text-center text-xs font-bold sm:gap-6" aria-hidden="true">
-        {(data?.periods ?? []).map(p => <li key={p.key}>{p.label}</li>)}
-       </ol>
-      </>}
-    {isAdmin && <Link to="/vendas-por-representante" className="mt-4 flex items-center justify-end gap-1 text-sm font-bold text-navy-soft hover:underline">Ver por representante <ChevronRight size={16} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" /></Link>}
-   </div>
-  </section>
+   {isLoading ? <p role="status" className="grid flex-1 place-items-center text-xs">Carregando vendas…</p>
+    : isError ? <p role="alert" className="grid flex-1 place-items-center text-xs">Não foi possível consultar as vendas.</p>
+    : <SalesChart periods={data?.periods ?? []} />}
+   {isAdmin && <Link to="/vendas-por-representante" className="flex shrink-0 items-center justify-end gap-1 text-xs font-bold text-navy-soft hover:underline">Ver por representante <ChevronRight size={14} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" /></Link>}
+  </div>
  );
 }
 
 const statusLabels: Record<string, string> = { sent: "Enviado", received: "Recebido", processing: "Em separação", invoiced: "Faturado", cancelled: "Cancelado" };
 
-/** Últimos pedidos do período, exibidos depois das montadoras. */
-export function HomeRecentOrders() {
+function RecentOrders() {
  const { data, isLoading, isError } = useHomeDashboard();
+ const orders = data?.recentOrders ?? [];
  return (
-  <section className={cardShell} aria-labelledby="home-orders-title">
-   <div className="mb-2 flex items-center justify-between gap-3">
-    <h2 id="home-orders-title" className="text-lg font-black sm:text-xl">Últimos pedidos</h2>
-    <ClipboardList size={HOME_ICON_SIZE} strokeWidth={HOME_ICON_STROKE} className="shrink-0 text-gold-deep" aria-hidden="true" />
-   </div>
-   {isLoading ? <p role="status" className="py-6 text-center text-sm">Carregando pedidos…</p>
-    : isError ? <p role="alert" className="py-6 text-center text-sm">Não foi possível carregar os pedidos.</p>
-    : data?.recentOrders.length ? <ul className="divide-y divide-border">
-      {data.recentOrders.map(order => {
+  <div className="flex h-full min-h-0 flex-col gap-1">
+   {isLoading ? <p role="status" className="grid flex-1 place-items-center text-xs">Carregando pedidos…</p>
+    : isError ? <p role="alert" className="grid flex-1 place-items-center text-xs">Não foi possível carregar os pedidos.</p>
+    : orders.length ? <ul className="min-h-0 flex-1 divide-y divide-border overflow-y-auto overscroll-contain">
+      {orders.map(order => {
        const snapshot = order.customer_snapshot ?? {};
        const customerName = String(snapshot["trade_name"] ?? snapshot["company_name"] ?? snapshot["name"] ?? "Cliente");
-       return <li key={order.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3">
-        <div className="min-w-0">
-         <strong className="block text-sm">Pedido #{order.number}</strong>
-         <span className="block truncate text-xs text-muted-foreground">{customerName}</span>
-         <span className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString("pt-BR")}</span>
+       return <li key={order.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 py-1.5">
+        <div className="min-w-0 leading-tight">
+         <strong className="block text-xs">Pedido #{order.number} · <span className="font-semibold text-muted-foreground">{new Date(order.created_at).toLocaleDateString("pt-BR")}</span></strong>
+         <span className="block truncate text-[11px] text-muted-foreground">{customerName}</span>
         </div>
-        <span className="shrink-0 rounded-full bg-secondary px-2 py-1 text-xs font-bold text-navy">{statusLabels[order.status ?? ""] ?? "Registrado"}</span>
+        <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-navy">{statusLabels[order.status ?? ""] ?? "Registrado"}</span>
        </li>;
       })}
      </ul>
-    : <p className="py-6 text-center text-sm text-muted-foreground">Ainda não há pedidos registrados neste período.</p>}
-   <Link to="/pedidos" className="mt-2 flex items-center justify-end gap-1 text-sm font-bold text-navy-soft hover:underline">Ver todos os pedidos <ChevronRight size={16} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" /></Link>
+    : <p className="grid flex-1 place-items-center text-center text-xs text-muted-foreground">Ainda não há pedidos registrados neste período.</p>}
+   <Link to="/pedidos" className="flex shrink-0 items-center justify-end gap-1 text-xs font-bold text-navy-soft hover:underline">Ver todos os pedidos <ChevronRight size={14} strokeWidth={HOME_ICON_STROKE} aria-hidden="true" /></Link>
+  </div>
+ );
+}
+
+const tabTrigger = "h-7 rounded-md px-2.5 text-xs font-bold text-navy-foreground/80 data-[state=active]:bg-gold data-[state=active]:text-gold-foreground data-[state=active]:shadow-none";
+
+/** Painel compacto: abas de Vendas e Últimos pedidos dentro do mesmo espaço da tela. */
+export function HomeSalesPanel({ className }: { className?: string }) {
+ return (
+  <section className={cn("flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card p-2.5 text-navy shadow-home-card", className)} aria-labelledby="home-sales-title">
+   <Tabs defaultValue="vendas" className="flex min-h-0 flex-1 flex-col">
+    <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+     <h2 id="home-sales-title" className="truncate text-base font-black leading-tight">Evolução das vendas <span className="text-[11px] font-bold text-gold-deep">· 3 meses</span></h2>
+     <TabsList className="h-8 rounded-lg bg-navy p-0.5">
+      <TabsTrigger value="vendas" className={tabTrigger}>Vendas</TabsTrigger>
+      <TabsTrigger value="pedidos" className={tabTrigger}>Pedidos</TabsTrigger>
+     </TabsList>
+    </div>
+    <TabsContent value="vendas" className="mt-2 min-h-0 flex-1 data-[state=inactive]:hidden"><SalesSummary /></TabsContent>
+    <TabsContent value="pedidos" className="mt-2 min-h-0 flex-1 data-[state=inactive]:hidden"><RecentOrders /></TabsContent>
+   </Tabs>
   </section>
  );
 }

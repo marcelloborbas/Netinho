@@ -67,17 +67,19 @@ describe("catalog access presentation", () => {
     state.seller = true;
     sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
-    expect(screen.getByRole("heading", { name: /Marcello/ })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Vender" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Catálogo" })).toBeVisible();
+    expect(screen.getByText("Marcello")).toBeVisible();
+    expect(screen.getByRole("link", { name: /Novo pedido/ })).toHaveAttribute("href", "/vendas");
+    expect(screen.getByRole("link", { name: /Consultar peças/ })).toHaveAttribute("href", "/catalogo");
+    expect(screen.getByRole("link", { name: /Meus pedidos/ })).toHaveAttribute("href", "/pedidos");
+    expect(screen.getByRole("link", { name: /Promoções/ })).toHaveAttribute("href", "/ofertas");
     expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("keeps the home open to visitors, who only browse", () => {
     state.seller = false;
     sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
-    expect(screen.getByRole("heading", { name: /Marcello/ })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Catálogo" })).toBeVisible();
+    expect(screen.getByText("Marcello")).toBeVisible();
+    expect(screen.getByRole("link", { name: /Consultar peças/ })).toHaveAttribute("href", "/catalogo");
     expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("shows only the cash price to visitors and offers a representative instead of an order", () => {

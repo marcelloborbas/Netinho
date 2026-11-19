@@ -7,16 +7,19 @@ export const HOME_ICON_STROKE = 2;
 
 export interface HomeIconTileProps {
   icon: LucideIcon;
+  /** "md" para cartões principais; "sm" para cabeçalho e indicadores compactos. O ícone mantém 22px. */
+  size?: "md" | "sm";
   className?: string;
 }
 
 /** Ícone dourado em quadro azul-marinho, sempre com proporção fixa. */
-export function HomeIconTile({ icon: Icon, className }: HomeIconTileProps) {
+export function HomeIconTile({ icon: Icon, size = "md", className }: HomeIconTileProps) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gold/50 bg-navy text-gold shadow-sm",
+        "grid shrink-0 place-items-center rounded-xl border border-gold/50 bg-navy text-gold shadow-sm",
+        size === "md" ? "h-11 w-11" : "h-9 w-9 rounded-lg",
         className,
       )}
     >

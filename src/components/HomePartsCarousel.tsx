@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const parts = [
   { title: "Bomba de direção hidráulica", image: "/images/carrossel/carrossel-1.webp", search: "bomba direção hidráulica" },
@@ -12,7 +13,7 @@ const parts = [
   { title: "Promoções e novidades", image: "/images/carrossel/carrossel-9.webp", search: "peças" },
 ];
 
-export function HomePartsCarousel() {
+export function HomePartsCarousel({ className }: { className?: string }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [animate, setAnimate] = useState(true);
@@ -29,10 +30,12 @@ export function HomePartsCarousel() {
   const slides = parts.concat(parts.slice(0, 1));
   const active = index % parts.length;
   return (
-    <section className="mx-auto w-full max-w-3xl space-y-2" aria-label="Carrossel de peças em destaque"
+    <section className={cn("flex min-h-0 min-w-0 flex-col gap-1", className)} aria-label="Carrossel de peças em destaque"
       onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
-      <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl border border-gold/60 bg-navy-deep shadow-home-card">
+      {/* Moldura 16:9 limitada pela altura disponível; a imagem nunca é cortada (object-contain). */}
+      <div className="min-h-0 flex-1">
+      <div className="mx-auto aspect-video h-full max-w-full overflow-hidden rounded-2xl border border-gold/60 bg-navy-deep shadow-home-card">
         <div className="flex h-full w-full"
           style={{ transform: `translateX(-${index * 100}%)`, transition: animate ? "transform 650ms ease-in-out" : "none" }}
           onTransitionEnd={() => {
@@ -44,13 +47,14 @@ export function HomePartsCarousel() {
           }}>
           {slides.map((part, i) =>
             <div key={`${part.image}-${i}`} className="h-full min-w-full shrink-0" aria-hidden={i % parts.length !== active || i === parts.length}>
-              <img src={part.image} alt={part.title} width={1201} height={676} decoding="async" loading={i <= 1 ? "eager" : "lazy"} className="block h-full w-full object-cover" />
+              <img src={part.image} alt={part.title} width={1201} height={676} decoding="async" loading={i <= 1 ? "eager" : "lazy"} className="block h-full w-full object-contain" />
             </div>
           )}
         </div>
       </div>
+      </div>
       {/* Indicadores abaixo da imagem, no fluxo normal, sem cobrir o banner. */}
-      <div className="flex justify-center gap-1.5" role="group" aria-label="Selecionar imagem">
+      <div className="flex shrink-0 justify-center gap-1.5" role="group" aria-label="Selecionar imagem">
         {parts.map((part, i) => <button key={part.image} type="button" aria-label={`Mostrar imagem ${i + 1}: ${part.title}`} aria-current={active === i ? "true" : undefined} onClick={() => select(i)} className={`h-2 rounded-full transition-all ${active === i ? "w-5 bg-gold-deep" : "w-2 bg-navy/30"}`} />)}
       </div>
     </section>
