@@ -208,8 +208,8 @@ function Catalog() {
 
   useEffect(() => {
     setManufacturer("FCO");
-    setQ(search.q ?? "");
-    setSearchInput(search.q ?? "");
+    setQ("");
+    setSearchInput("");
     setHasSelectedCategory(false);
     setCategory("all");
     setVehicleBrand("all");
@@ -332,37 +332,7 @@ function Catalog() {
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
   return (
-    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 px-2 pt-1 pb-28 sm:px-6 sm:pt-4 sm:pb-32">
-      <section className="relative z-20 rounded-[16px] border-2 border-[#1b5b91] bg-gradient-to-b from-[#123c68] to-[#082644] p-2 shadow-lg sm:p-3" aria-label="Pesquisar catálogo">
-        <div className="flex items-center gap-2" role="search">
-          <div className="relative min-w-0 flex-1">
-            <input id="catalog-search" aria-label="Buscar peças" autoComplete="off" value={searchInput}
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => window.setTimeout(() => setSearchFocused(false), 160)}
-              onChange={(e) => { const value = e.target.value; setSearchInput(value); setQ(value.trim()); setPage(1); }}
-              placeholder="Busque pelo código, peça ou veículo..."
-              style={{ backgroundColor: "#ffffff", color: "#102a52", WebkitTextFillColor: "#102a52" }} className="min-h-11 w-full rounded-xl border-2 border-[#8dbbe5] px-3 pr-9 text-sm font-semibold placeholder:!text-[#50657d] focus:border-[#facc15] focus:outline-none focus:ring-2 focus:ring-[#facc1540]" />
-            {searchInput && <button type="button" aria-label="Limpar busca" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} className="absolute right-2 top-2.5 text-[#102a52]"><X size={20}/></button>}
-
-          </div>
-          <button type="button" onClick={() => { setSearchFocused(true); document.getElementById("catalog-search")?.focus(); }} aria-label="Buscar peças" title="Buscar" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#d4af37] bg-white text-[#102a52] shadow-sm hover:bg-[#fff4c2]"><Search size={23}/></button>
-        </div>
-      </section>
-      {searchInput.trim() && !isLoading && <section aria-label="Sugestões instantâneas de peças" className="rounded-xl border border-[#c9d7e6] bg-[#f1f1f1] p-2 shadow-sm">
-        <div className="mb-2 flex items-center justify-between gap-2 px-1">
-          <span className="text-xs font-extrabold text-[#102a52]">Resultados enquanto você digita</span>
-          <span className="text-xs font-semibold text-[#42627e]">{liveResults.length} {liveResults.length === 1 ? "peça" : "peças"}</span>
-        </div>
-        {livePreview.length ? <ul className="divide-y divide-[#d7dfe8]">
-          {livePreview.map((p) => <li key={p.id} className="flex min-w-0 items-center gap-2 px-2 py-2">
-            <PackageSearch size={17} className="shrink-0 text-[#244e7b]" aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate text-sm text-[#102a52]"><strong>{p.code}</strong> <span className="text-[#53687f]">— {(p.application || p.categories?.name || "Peça automotiva").slice(0, 85)}</span></span>
-            <span className="shrink-0 text-xs font-bold text-[#102a52]">{p.price_cash != null && p.price_cash > 0 ? brl(p.price_cash) : "Consultar"}</span>
-          </li>)}
-        </ul> : <p className="px-2 py-2 text-sm text-[#102a52]">Nenhuma peça corresponde ao texto digitado.</p>}
-        {liveResults.length > livePreview.length && <p className="px-2 pt-2 text-xs font-semibold text-[#42627e]">Mais resultados disponíveis nos cartões abaixo.</p>}
-      </section>}
-
+    <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 bg-[#f1f1f1] px-2 pt-1 pb-28 text-[#102a52] sm:px-6 sm:pt-4 sm:pb-32">
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
