@@ -6488,3 +6488,7 @@ html body .welcome-auth-stage .welcome-auth-art {
 
 /* Garantir contraste da orientação de cadastro no catálogo, mesmo com estilos legados. */
 .catalog-showcase > .netinho-visitor-notice[role="note"] { background: #fff2bd !important; color: #102a52 !important; border-color: #c99d34 !important; opacity: 1 !important; visibility: visible !important; }
+
+/* Tarja de visitantes: visual limpo e legibilidade garantida, sem fundo azul. */
+.catalog-showcase > .netinho-visitor-notice[role="note"] { background: #fff !important; background-image: none !important; color: #102a52 !important; border-color: #d7b45b !important; opacity: 1 !important; visibility: visible !important; }
+.catalog-showcase > .netinho-visitor-notice[role="note"] p, .catalog-showcase > .netinho-visitor-notice[role="note"] strong { color: #102a52 !important; opacity: 1 !important; }
