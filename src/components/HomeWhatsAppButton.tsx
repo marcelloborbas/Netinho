@@ -1,4 +1,5 @@
 import { BRAND } from "@/lib/brand";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 
 /**
@@ -16,7 +17,7 @@ export function HomeWhatsAppButton() {
       title="Conversar pelo WhatsApp"
       className="netinho-home-whatsapp relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-whatsapp focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
     >
-      <img src="/images/Netinho%20Whatsapp.webp" alt="" width={44} height={44} className="block h-11 w-11 object-contain" />
+      <WhatsAppIcon size={42} />
     </a>
   );
 }
