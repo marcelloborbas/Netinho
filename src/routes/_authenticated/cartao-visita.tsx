@@ -62,6 +62,12 @@ function BusinessCardPage() {
     })();
     return()=>{active=false;};
   },[userId,access?.name]);
+  const cardSlug = (() => {
+    const card = publishedCards[normalizeName(access?.name ?? "")];
+    return card ? card.replace(/^cartao-/, "").replace(/\.webp$/, "") : null;
+  })();
+  const cardUrl = cardSlug ? `https://netinhoautoparts.live/cartao/${cardSlug}` : null;
+  const qrImage = cardUrl ? `https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=12&data=${encodeURIComponent(cardUrl)}` : null;
   const isSales=access?.level===1||access?.attribution==="Administrador"||access?.attribution==="Representante"||access?.attribution==="Vendedor"||access?.can_sell===true;
   const getCardFile=async()=>{
     const response=await fetch(image);
@@ -95,6 +101,7 @@ function BusinessCardPage() {
   return <main className="mx-auto w-full max-w-none space-y-2 pb-24 text-[#102a52]">
     {!isSales?<div className="rounded-xl border border-slate-300 bg-slate-100 p-5 text-center text-sm font-semibold text-slate-500">Cartão de visita indisponível para visitantes. Somente vendedores, representantes e administradores autorizados podem baixar ou compartilhar.</div>:loading?<p className="p-5 text-center">Carregando cartão…</p>:image?<section className="mx-auto flex w-full max-w-4xl flex-col items-center gap-3">
       <img src={image} alt="Cartão de visita profissional do usuário" className="block h-auto w-full object-contain" />
+      {qrImage && <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-[#d4af37] bg-white p-3 text-center"><p className="text-sm font-black">QR Code exclusivo do seu cartão</p><a href={cardUrl ?? "#"} target="_blank" rel="noopener noreferrer" aria-label="Abrir meu cartão digital"><img src={qrImage} alt="QR Code para abrir seu cartão digital" width={140} height={140} className="h-[140px] w-[140px] rounded-lg border bg-white p-1" loading="lazy" /></a><p className="text-xs">Aponte a câmera para abrir seu cartão digital.</p></div>}
       <div className="flex w-full items-center justify-center gap-3 px-3 pb-3 sm:gap-5" aria-label="Ações do cartão digital">
         <button type="button" onClick={()=>void share()} aria-label="Compartilhar cartão de visita" title="Compartilhar" className="flex min-h-14 flex-1 max-w-48 items-center justify-center gap-2 rounded-xl border-2 border-[#d4af37] bg-[#123e74] px-3 py-3 text-sm font-bold text-white shadow-md transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37]"><Share2 size={22}/><span>Compartilhar</span></button>
         <button type="button" onClick={()=>void download()} aria-label="Baixar cartão de visita" title="Baixar" className="flex min-h-14 flex-1 max-w-48 items-center justify-center gap-2 rounded-xl border-2 border-[#d4af37] bg-[#fff8e6] px-3 py-3 text-sm font-bold text-[#102a52] shadow-md transition hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37]"><Download size={22}/><span>Baixar</span></button>
