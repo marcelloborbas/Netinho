@@ -78,15 +78,6 @@ function Pessoas() {
  const matchesRate=(rate:number|undefined)=>commissionFilter==="Todas"||(commissionFilter==="Definida"?rate!=null:commissionFilter==="Não definida"?rate==null:rate!=null&&Number(rate)===Number(commissionFilter));
  if(loadingMe)return <p className="p-5">Carregando…</p>;
  if(!me?.isAdmin)return <p className="p-5">Acesso restrito ao administrador.</p>;
- const selectedPerson=people.find(p=>editing===`person:${p.id}`);
- const selectedRepresentative=representatives.find(p=>editing===`representative:${p.id}`);
- const refresh=()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});};
- if(editing&&(selectedPerson||selectedRepresentative))return <main className="mx-auto min-h-[calc(100dvh-140px)] w-full max-w-3xl space-y-4 bg-[#f1f1f1] px-3 py-4 text-[#102a52]">
-      <AdminPageNavigation/>
-  <button type="button" onClick={()=>setEditing(null)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 font-bold"><ArrowLeft size={19}/>Voltar para PESSOAL</button>
-  
-  {selectedPerson?<PersonCard key={selectedPerson.id} person={selectedPerson} people={people} monthlySales={monthlySalesFor(selectedPerson.id)} linkedCommercial={linkedCommercialFor(selectedPerson)} editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:selectedRepresentative?<RepresentativeCard key={selectedRepresentative.id} representative={selectedRepresentative} monthlySales="Sem vínculo com pedidos" editingPage onClose={()=>setEditing(null)} onSaved={refresh}/>:null}
- </main>;
 
  return <main className="mx-auto max-w-4xl space-y-4 px-3 py-5 text-[#102a52]">
   
@@ -105,8 +96,8 @@ function Pessoas() {
   </div>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
   {[...people.filter(p=>(filterRole==="Todos"||p.site_role===filterRole)&&matchesRate(rateForPerson(p.id))).map(p=>({kind:"person" as const,id:p.id,name:p.full_name||"Sem nome",record:p})),...representatives.filter(rep=>(filterRole==="Todos"||filterRole==="Representante")&&matchesRate(rateForRepresentative(rep.id))&&!people.some(p=>(!!rep.user_id&&p.id===rep.user_id)||(!!p.email&&p.email.trim().toLowerCase()===rep.email?.trim().toLowerCase()))).map(rep=>({kind:"representative" as const,id:rep.id,name:rep.full_name||"Sem nome",record:rep}))].sort((a,b)=>a.name.localeCompare(b.name,"pt-BR")).map(entry=>entry.kind==="person"
-   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} linkedCommercial={linkedCommercialFor(entry.record)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
-   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} monthlySales="Sem vínculo com pedidos" onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
+   ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} linkedCommercial={linkedCommercialFor(entry.record)} editingPage={editing===`person:${entry.id}`} onClose={()=>setEditing(null)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
+   : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} monthlySales="Sem vínculo com pedidos" editingPage={editing===`representative:${entry.id}`} onClose={()=>setEditing(null)} onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
   {loadingRepresentatives&&<p>Carregando representantes…</p>}
   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
@@ -148,7 +139,7 @@ function SalesMiniChart({sellerId}:{sellerId:string}) {
   <div className="flex justify-between text-[9px] text-slate-500">{series.map(x=><span key={x.key}>{x.label}</span>)}</div>
  </div>;
 }
-function PersonSummary({id,name,active,rate,role,phone,uf,sellerId,commercialId,onEdit}:{id:string;name:string;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;commercialId?:string|undefined;onEdit?:(()=>void)|undefined}) {
+function PersonSummary({id,name,email,active,rate,role,phone,uf,sellerId,commercialId,onEdit}:{id:string;name:string;email?:string|null;active:boolean;rate:string;role:string;phone?:string|null;uf?:string|null;sellerId:string;commercialId?:string|undefined;onEdit?:(()=>void)|undefined}) {
  const {data:areaDdds=""}=useQuery({queryKey:["representative-area-ddds-summary",id,commercialId],enabled:role==="Representante",retry:false,queryFn:async()=>{for(const representativeId of [id,commercialId].filter(Boolean) as string[]){const {data,error}=await supabase.from("representative_area_ddds" as never).select("ddds").eq("representative_id",representativeId).maybeSingle();if(error)throw error;const value=(data as {ddds?:string}|null)?.ddds?.trim();if(value)return value;}return "";}});
  const {data:commercialDetails}=useQuery({queryKey:["commercial-representative-details",commercialId||id],enabled:role==="Representante"&&!!commercialId,retry:false,queryFn:async()=>{const {data,error}=await supabase.from("commercial_representative_details" as never).select("phone,state").eq("representative_id",commercialId||id).maybeSingle();if(error)throw error;return data as {phone?:string;state?:string}|null;}});
  const displayPhone=phone||commercialDetails?.phone||"—";
@@ -284,7 +275,7 @@ function PersonCard({person,people,monthlySales,linkedCommercial,onSaved,onEdit,
   onSaved();setOpen(false);onClose?.();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:p-4">
-  <PersonSummary id={person.id} name={person.full_name||"Sem nome"} active={person.access_active} rate={commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`} role={person.site_role} phone={person.phone} uf={person.territory_uf} sellerId={person.id} commercialId={linkedCommercial?.id} onEdit={editingPage?undefined:onEdit}/>
+  <PersonSummary id={person.id} name={person.full_name||"Sem nome"} email={person.email} active={person.access_active} rate={commissionError?"—":commissionData==null?(person.site_role==="Administrador"?"3,5%":"—"):`${Number(commissionData).toLocaleString("pt-BR")}%`} role={person.site_role} phone={person.phone} uf={person.territory_uf} sellerId={person.id} commercialId={linkedCommercial?.id} onEdit={editingPage?undefined:onEdit}/>
   <div className="mt-2 flex justify-end">
    <Button type="button" variant="outline" size="icon" disabled={busy||ownAccount} onClick={async()=>{
     if(ownAccount||busy)return;
@@ -400,7 +391,7 @@ function RepresentativeCard({representative,monthlySales,onSaved,onEdit,editingP
   toast.success("Cadastro comercial excluído.");onSaved();
  }
  return <article className="rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:p-4">
-  <PersonSummary id={representative.id} name={representative.full_name} active={active} rate={commissionError?"—":commercialCommission==null?"—":`${Number(commercialCommission).toLocaleString("pt-BR")}%`} role="Representante" sellerId="" onEdit={editingPage?undefined:onEdit}/>
+  <PersonSummary id={representative.id} name={representative.full_name} email={representative.email} active={active} rate={commissionError?"—":commercialCommission==null?"—":`${Number(commercialCommission).toLocaleString("pt-BR")}%`} role="Representante" sellerId="" onEdit={editingPage?undefined:onEdit}/>
   <div className="mt-2 flex justify-end">
    <button type="button" disabled={busy} onClick={()=>void remove()} title="Excluir cadastro comercial" aria-label={`Excluir cadastro comercial de ${representative.full_name}`} className="rounded-lg border border-red-300 bg-red-50 p-2 text-red-700 disabled:opacity-40"><Trash2 size={19}/></button>
 
