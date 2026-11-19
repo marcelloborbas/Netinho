@@ -8,7 +8,6 @@ const pages = [
  {to:"/pessoas",label:"Pessoas e Comissões"},
  {to:"/admin-pedidos",label:"Pedidos"},
  {to:"/clientes",label:"Clientes"},
- {to:"/vendedores",label:"Vendedores"},
  {to:"/distribuidoras",label:"Distribuidoras"},
 ] as const;
 
