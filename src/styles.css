@@ -6217,3 +6217,35 @@ html body .welcome-auth-stage .welcome-auth-art {
 @media(max-height:650px) and (max-width:1023px) {
  .netinho-home-refresh .netinho-home-refresh-grid {height:auto;min-height:100dvh;}
 }
+
+/* Home: manter textos impressos nas artes do carrossel visíveis.
+   A imagem inteira aparece; fundo da faixa cobre sobras de proporção. */
+.netinho-home-refresh .netinho-home-refresh-grid > section[aria-label="Carrossel de peças em destaque"] {
+ min-width:0;
+}
+.netinho-home-refresh .netinho-home-refresh-grid > section[aria-label="Carrossel de peças em destaque"] img {
+ object-fit:contain !important;
+ object-position:center center !important;
+ max-height:100%;
+}
+/* Banner da saudação: largura completa da fotografia, sem recorte lateral.
+   A área extra vertical recebe fundo marinho em vez de cantos brancos. */
+.netinho-home-refresh .netinho-home-hero {background:#071e3c;}
+.netinho-home-refresh .netinho-home-hero > .netinho-hero-photo {
+ width:100% !important;
+ height:100% !important;
+ object-fit:contain !important;
+ object-position:center center !important;
+ opacity:1 !important;
+}
+/* Placa azul sob a logo do primeiro plano encobre a marca já impressa
+   na imagem de fundo, evitando a duplicação perceptível. */
+.netinho-home-refresh .netinho-hero-logo {
+ isolation:isolate;
+ box-sizing:content-box;
+ padding:8px 12px;
+ margin:-8px -12px;
+ border-radius:12px;
+ background:linear-gradient(90deg,#071e3c 0%,#071e3cf5 82%,#071e3ce0 100%);
+ box-shadow:0 0 12px 5px #071e3caa;
+}
