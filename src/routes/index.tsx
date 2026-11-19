@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import { accessQuery } from "@/lib/access";
-import { HomeSalesPanel } from "@/components/HomeCommercialDashboard";
+import { HomeKpis, HomeSalesPanel } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
 import { HomeQuickActions, HomeWhatsAppButton } from "@/components/HomeQuickActions";
 import { PublicFooter } from "@/components/PublicFooter";
@@ -17,7 +17,11 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      ...pageHead("/", "Netinho Auto Parts | Catálogo de Peças e Representantes", "Netinho Auto Parts: consulte nosso catálogo de autopeças, faça pedidos e encontre um representante em sua região.").meta,
+      ...pageHead(
+        "/",
+        "Netinho Auto Parts | Catálogo de Peças e Representantes",
+        "Netinho Auto Parts: consulte nosso catálogo de autopeças, faça pedidos e encontre um representante em sua região.",
+      ).meta,
       { property: "og:image", content: homeShareImage.url },
       { property: "og:image:secure_url", content: homeShareImage.url },
       { property: "og:image:type", content: homeShareImage.type },
@@ -40,106 +44,241 @@ function Home() {
     const timer = window.setInterval(refreshGreeting, 60_000);
     return () => window.clearInterval(timer);
   }, []);
-  const salutation = hour === null ? "Olá" : hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
-  const periodBlessing = hour === null ? "Que seu dia seja abençoado!" : hour < 12 ? "Que sua manhã seja abençoada!" : hour < 18 ? "Que sua tarde seja abençoada!" : "Que sua noite seja abençoada!";
+  const salutation =
+    hour === null ? "Olá" : hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
+  const periodBlessing =
+    hour === null
+      ? "Que seu dia seja abençoado!"
+      : hour < 12
+        ? "Que sua manhã seja abençoada!"
+        : hour < 18
+          ? "Que sua tarde seja abençoada!"
+          : "Que sua noite seja abençoada!";
   // A sessão do Supabase, e não uma flag temporária da aba, determina o acesso.
   // PWAs iniciados pelo ícone podem abrir em uma nova sessão sem sessionStorage anterior.
-  const [entryApproved, setEntryApproved] = useState(() => typeof window !== "undefined" && window.sessionStorage.getItem("netinho-entry-approved") === "1");
+  const [entryApproved, setEntryApproved] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.sessionStorage.getItem("netinho-entry-approved") === "1",
+  );
   useEffect(() => {
     let active = true;
-    const timeout = window.setTimeout(() => { if (active) void navigate({ to: "/auth", replace: true }); }, 10000);
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
+    const timeout = window.setTimeout(() => {
+      if (active) void navigate({ to: "/auth", replace: true });
+    }, 10000);
+    void supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!active) return;
+        window.clearTimeout(timeout);
+        if (data.session?.user) {
+          window.sessionStorage.setItem("netinho-entry-approved", "1");
+          setEntryApproved(true);
+        } else {
+          window.sessionStorage.removeItem("netinho-entry-approved");
+          setEntryApproved(false);
+          void navigate({ to: "/auth", replace: true });
+        }
+      })
+      .catch(() => {
+        if (active) {
+          window.clearTimeout(timeout);
+          void navigate({ to: "/auth", replace: true });
+        }
+      });
+    return () => {
+      active = false;
       window.clearTimeout(timeout);
-      if (data.session?.user) {
-        window.sessionStorage.setItem("netinho-entry-approved", "1");
-        setEntryApproved(true);
-      } else {
-        window.sessionStorage.removeItem("netinho-entry-approved");
-        setEntryApproved(false);
-        void navigate({ to: "/auth", replace: true });
-      }
-    }).catch(() => { if (active) { window.clearTimeout(timeout); void navigate({ to: "/auth", replace: true }); } });
-    return () => { active = false; window.clearTimeout(timeout); };
+    };
   }, [navigate]);
   const { data: access } = useQuery({ ...accessQuery, enabled: entryApproved, retry: false });
   const previousLevel = useRef<string | null>(null);
   useEffect(() => {
     if (!access) return;
     const current = `${access.level}:${access.can_sell}`;
-    if (previousLevel.current !== null && previousLevel.current !== current && (access.can_sell || access.level === 1)) toast.success("Seu acesso foi atualizado! Confira os perfis disponíveis.");
+    if (
+      previousLevel.current !== null &&
+      previousLevel.current !== current &&
+      (access.can_sell || access.level === 1)
+    )
+      toast.success("Seu acesso foi atualizado! Confira os perfis disponíveis.");
     previousLevel.current = current;
   }, [access]);
   const [accountName, setAccountName] = useState("");
   useEffect(() => {
     let active = true;
-    const readName = (user: { user_metadata?: Record<string, unknown>; email?: string } | null | undefined) => {
+    const readName = (
+      user: { user_metadata?: Record<string, unknown>; email?: string } | null | undefined,
+    ) => {
       if (!active) return;
       const meta = user?.user_metadata ?? {};
-      const candidate = [meta["full_name"], meta["name"], meta["given_name"], meta["display_name"]]
-        .find((value) => typeof value === "string" && value.trim());
+      const candidate = [
+        meta["full_name"],
+        meta["name"],
+        meta["given_name"],
+        meta["display_name"],
+      ].find((value) => typeof value === "string" && value.trim());
       const emailName = user?.email?.split("@")[0]?.replace(/[._-]+/g, " ") ?? "";
       setAccountName(String(candidate || emailName).trim());
     };
-    if (entryApproved) void supabase.auth.getSession().then(({ data }) => readName(data.session?.user)).catch(() => {});
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (entryApproved)
+      void supabase.auth
+        .getSession()
+        .then(({ data }) => readName(data.session?.user))
+        .catch(() => {});
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       readName(session?.user);
     });
-    return () => { active = false; subscription.unsubscribe(); };
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, [entryApproved]);
   const savedName = (() => {
     if (typeof window === "undefined") return "";
     try {
       const profile = JSON.parse(localStorage.getItem("netinho-vendedor") || "null");
       return typeof profile?.name === "string" ? profile.name.trim() : "";
-    } catch { return ""; }
+    } catch {
+      return "";
+    }
   })();
   const validName = (value: string) => {
     const first = value.split(/\s+/)[0]?.trim() || "";
-    return first && !["usuário", "usuario", "visitante", "sr.", "sr"].includes(first.toLowerCase()) ? first : "";
+    return first && !["usuário", "usuario", "visitante", "sr.", "sr"].includes(first.toLowerCase())
+      ? first
+      : "";
   };
   const userName = validName(accountName) || validName(access?.name || "") || validName(savedName);
   // Alterna a cor do destaque a cada dia, sem depender de uma chamada externa.
-  const dailyNameColors = ["#ffe083", "#7ee7ff", "#ffc1e3", "#b8ffb0", "#ffd0a1", "#d4c3ff", "#fff2a6"];
-  const dailyNameColor = dailyNameColors[Math.floor(Date.now() / 86_400_000) % dailyNameColors.length];
-  const status = access?.level === 1 || access?.attribution === "Administrador"
-    ? "Administrador"
-    : access?.attribution === "Representante" ? "Representante"
-    : access?.attribution === "Vendedor" ? "Vendedor"
-    : access?.can_sell ? "Vendedor" : "Visitante";
-  if (!entryApproved) return <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-navy-deep px-6 text-center text-navy-foreground"><img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" className="w-44 max-w-full" /><div role="status" aria-live="polite" className="flex flex-col items-center gap-4"><span className="h-11 w-11 animate-spin rounded-full border-4 border-gold/30 border-t-gold" aria-hidden="true"/><p className="text-base font-semibold">Carregando sua página inicial…</p></div><button type="button" onClick={() => void navigate({ to: "/auth", replace: true })} className="rounded-xl bg-gold px-5 py-3 font-bold text-gold-foreground">Ir para o login</button></main>;
-  // Tela única: grade que ocupa 100dvh. Linhas flexíveis (banner e painel) absorvem a altura;
-  // as demais têm altura própria. O rodapé reserva a navegação fixa e a área segura do celular.
-  // Em telas muito baixas, a altura mínima das linhas libera a rolagem em vez de sobrepor blocos.
+  const dailyNameColors = [
+    "#ffe083",
+    "#7ee7ff",
+    "#ffc1e3",
+    "#b8ffb0",
+    "#ffd0a1",
+    "#d4c3ff",
+    "#fff2a6",
+  ];
+  const dailyNameColor =
+    dailyNameColors[Math.floor(Date.now() / 86_400_000) % dailyNameColors.length];
+  const status =
+    access?.level === 1 || access?.attribution === "Administrador"
+      ? "Administrador"
+      : access?.attribution === "Representante"
+        ? "Representante"
+        : access?.attribution === "Vendedor"
+          ? "Vendedor"
+          : access?.can_sell
+            ? "Vendedor"
+            : "Visitante";
+  if (!entryApproved)
+    return (
+      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-navy-deep px-6 text-center text-navy-foreground">
+        <img
+          src="/images/Logo%20Netinho.webp"
+          alt="Netinho Auto Parts"
+          className="w-44 max-w-full"
+        />
+        <div role="status" aria-live="polite" className="flex flex-col items-center gap-4">
+          <span
+            className="h-11 w-11 animate-spin rounded-full border-4 border-gold/30 border-t-gold"
+            aria-hidden="true"
+          />
+          <p className="text-base font-semibold">Carregando sua página inicial…</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void navigate({ to: "/auth", replace: true })}
+          className="rounded-xl bg-gold px-5 py-3 font-bold text-gold-foreground"
+        >
+          Ir para o login
+        </button>
+      </main>
+    );
+  // Tela única: grade com altura da tela (100dvh). Celular: uma coluna, banner e painel absorvem
+  // a altura restante. Computador (lg): 12 colunas; cabeçalho, indicadores e atalhos no topo,
+  // banner + montadoras à esquerda e o painel de vendas/pedidos à direita. A linha flexível tem
+  // teto para não gerar cartões gigantes em monitores altos. Em telas baixas demais, a altura
+  // volta a ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
   return (
     <div className="netinho-home min-h-[100dvh] overflow-x-clip bg-background text-navy">
-      <main className="mx-auto grid h-[100dvh] w-full [@media(max-height:700px)_and_(max-width:1023px)]:h-auto [@media(max-height:620px)]:h-auto max-w-[1100px] grid-cols-1 grid-rows-[auto_minmax(96px,0.8fr)_auto_minmax(252px,1.2fr)_auto] gap-2 px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 lg:grid-cols-2 lg:grid-rows-[auto_minmax(0,1fr)_auto_auto] lg:gap-4 lg:pt-4">
-        <header className="relative isolate overflow-hidden rounded-2xl border border-gold/40 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-2" aria-label="Boas-vindas">
+      <main className="mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[auto_auto_auto_minmax(104px,0.8fr)_minmax(190px,1.2fr)_auto] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[auto_auto_auto_minmax(180px,440px)_auto] lg:content-start [@media(min-width:1024px)_and_(min-height:960px)]:content-center lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
+        <header
+          className="relative isolate overflow-hidden rounded-2xl border border-gold/40 bg-navy-deep text-navy-foreground shadow-home-card lg:col-span-12"
+          aria-label="Boas-vindas"
+        >
           {/* Arte decorativa restrita ao próprio cabeçalho, sob uma camada azul-marinho. */}
-          <img src="/images/fundo-saudacao-novo.webp" alt="" aria-hidden="true" width={2001} height={1071} className="absolute inset-0 -z-10 h-full w-full object-cover object-[center_70%] opacity-60" decoding="async" fetchPriority="high" />
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-2 sm:px-4">
-            <img src="/images/Logo%20Netinho.webp" alt="Netinho Auto Parts" width={618} height={309} className="h-9 w-auto sm:h-11" />
+          <img
+            src="/images/fundo-saudacao-novo.webp"
+            alt=""
+            aria-hidden="true"
+            width={2001}
+            height={1071}
+            className="absolute inset-0 -z-10 h-full w-full object-cover object-[center_70%] opacity-60"
+            decoding="async"
+            fetchPriority="high"
+          />
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy-deep/40 px-3 py-1.5 sm:px-4">
+            <img
+              src="/images/Logo%20Netinho.webp"
+              alt="Netinho Auto Parts"
+              width={618}
+              height={309}
+              className="h-9 w-auto sm:h-10"
+            />
             <div className="min-w-0 leading-tight">
               <p className="truncate text-sm font-bold sm:text-base">
-                {salutation}, Sr. <span className="font-black" style={{ color: dailyNameColor }} title={userName || "usuário"}>{userName || "usuário"}</span>!
+                {salutation}, Sr.{" "}
+                <span
+                  className="font-black"
+                  style={{ color: dailyNameColor }}
+                  title={userName || "usuário"}
+                >
+                  {userName || "usuário"}
+                </span>
+                !
               </p>
-              <p className="truncate text-[11px] italic text-navy-foreground/80 sm:text-xs">{periodBlessing}</p>
+              <p className="truncate text-[11px] italic text-navy-foreground/80 sm:text-xs">
+                {periodBlessing}
+              </p>
             </div>
             <HomeWhatsAppButton />
           </div>
         </header>
-        <HomePartsCarousel className="lg:col-start-1 lg:row-start-2" />
-        <HomeQuickActions className="lg:col-span-2 lg:row-start-3" />
-        <HomeSalesPanel className="lg:col-start-2 lg:row-start-2" />
-        <section className="min-w-0 lg:col-span-2 lg:row-start-4" aria-labelledby="home-brands-title">
-          <h2 id="home-brands-title" className="mb-1 text-sm font-black leading-tight text-navy">Encontre peças por montadora</h2>
-          {/* Faixa horizontal: rola lateralmente só se a tela for estreita demais para as quatro marcas. */}
-          <ul className="flex snap-x gap-2 overflow-x-auto overscroll-x-contain pb-0.5 sm:gap-3">
-            {(["volkswagen", "fiat", "chevrolet", "ford"] as const).map(brand => <li key={brand} className="min-w-[76px] flex-1 snap-start lg:max-w-[150px]">
-              <button type="button" onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })} className="block w-full rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy" aria-label={`Ver peças da montadora ${brand}`}>
-                <img src={`/images/home-premium/montadora-${brand}.webp`} alt="" width={400} height={248} loading="lazy" className="block aspect-[400/248] h-auto w-full object-contain" />
-              </button>
-            </li>)}
+        <HomeKpis className="lg:col-span-12" />
+        <HomeQuickActions className="lg:col-span-12" />
+        <HomePartsCarousel className="lg:col-span-6 lg:row-start-4" />
+        <HomeSalesPanel className="lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-4" />
+        <section
+          className="min-w-0 lg:col-span-6 lg:row-start-5"
+          aria-labelledby="home-brands-title"
+        >
+          <h2 id="home-brands-title" className="mb-1 text-sm font-black leading-tight text-navy">
+            Encontre peças por montadora
+          </h2>
+          <ul className="grid grid-cols-4 gap-2 sm:gap-3">
+            {(["volkswagen", "fiat", "chevrolet", "ford"] as const).map((brand) => (
+              <li key={brand} className="min-w-0">
+                <button
+                  type="button"
+                  onClick={() => void navigate({ to: "/catalogo", search: { q: brand } })}
+                  className="grid w-full place-items-center rounded-xl transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy sm:h-14"
+                  aria-label={`Ver peças da montadora ${brand}`}
+                >
+                  <img
+                    src={`/images/home-premium/montadora-${brand}.webp`}
+                    alt=""
+                    width={400}
+                    height={248}
+                    loading="lazy"
+                    className="block h-12 w-auto max-w-full object-contain sm:h-14"
+                  />
+                </button>
+              </li>
+            ))}
           </ul>
         </section>
       </main>

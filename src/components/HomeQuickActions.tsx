@@ -50,7 +50,7 @@ export function HomeQuickActions({ className }: { className?: string }) {
             <QuickActionCopy
               icon={ShoppingCart}
               title="Novo pedido"
-              description="Monte um pedido para seu cliente"
+              description="Monte um pedido"
             />
           </Link>
         </li>
@@ -68,17 +68,13 @@ export function HomeQuickActions({ className }: { className?: string }) {
             <QuickActionCopy
               icon={ClipboardList}
               title="Meus pedidos"
-              description="Acompanhe seus pedidos"
+              description="Acompanhe o status"
             />
           </Link>
         </li>
         <li className="min-w-0">
           <Link to="/ofertas" className={cardClass}>
-            <QuickActionCopy
-              icon={Tag}
-              title="Promoções"
-              description="Veja as ofertas disponíveis"
-            />
+            <QuickActionCopy icon={Tag} title="Promoções" description="Veja as ofertas" />
           </Link>
         </li>
       </ul>

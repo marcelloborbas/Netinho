@@ -86,3 +86,7 @@ Detalhes de ativação e validação em `IMPLEMENTACAO.md`.
 - [x] Conferir como conta autorizada: preços visíveis, peça adicionada e tela de pedido com o item e o total.
 - [ ] Decidir se a pasta de catálogos em download (`/downloads/`) continua pública: o PDF FCO é acessível a quem tiver o endereço.
 - [ ] Decidir o destino da tela `/promocao`: ela funciona, mas nenhum botão leva até ela.
+
+## Banco de dados e página inicial em 19/11/2026
+- [ ] Trocar o banco de Tiny para Mini antes de publicar (aguarda aprovação no cartão).
+- [x] Página inicial no computador/notebook: painel inteiro em uma tela, sem rolagem; celular legível; build, testes e prévia conferidos; sem publicar.
