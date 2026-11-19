@@ -339,7 +339,7 @@ function Catalog() {
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#102a52] text-[#f7d979] shadow-sm sm:h-12 sm:w-12" aria-hidden="true"><UserRound size={25} strokeWidth={2.2} /></div>
             <p className="min-w-0 flex-1 text-[13px] font-medium leading-relaxed text-[#102a52] sm:text-[15px]">
-              <strong className="font-black text-[#102a52]">Visitante:</strong> Catálogo liberado para consulta. Para vender, toque em <strong className="font-black text-[#102a52]">Usuário e Cadastre-se.</strong>
+              <strong className="font-black text-[#102a52]">Visitante:</strong> Catálogo liberado para consulta.<br />Para vender, toque em <strong className="font-black text-[#102a52]">Usuário e Cadastre-se.</strong>
             </p>
           </div>
         </aside>
