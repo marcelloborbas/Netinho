@@ -1,0 +1,112 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { jsPDF } from "jspdf";
+import { supabase } from "@/integrations/supabase/client";
+
+export const Route = createFileRoute("/cadastro-digital")({
+  component: CadastroDigital,
+  ssr: false,
+});
+
+type Tipo = "cliente" | "vendedor" | "representante";
+const campos = {
+  "Informações básicas": [
+    ["nome_fantasia", "Nome fantasia"], ["razao_social", "Razão social / Nome completo"],
+    ["documento", "CNPJ / CPF"], ["identidade", "Inscrição estadual / RG"],
+    ["endereco", "Endereço"], ["cidade", "Cidade"], ["uf", "UF"], ["cep", "CEP"],
+    ["transportador", "Transportador"], ["ramo", "Ramo de atividade"],
+  ],
+  "Contato comercial": [["comercial_nome", "Nome do contato"], ["comercial_email", "E-mail"], ["comercial_telefone", "Telefone / celular"]],
+  "Contato financeiro": [["financeiro_nome", "Nome do contato"], ["financeiro_email", "E-mail"], ["financeiro_telefone", "Telefone / celular"]],
+  "Nota fiscal eletrônica (NFe)": [["nfe_nome", "Nome do contato"], ["nfe_email", "E-mail"], ["nfe_telefone", "Telefone / celular"]],
+  "Referências bancárias": [["referencia", "Referência bancária (empresa e contato)"], ["banco", "Banco"], ["agencia", "Agência"], ["conta", "Conta corrente"], ["favorecido", "Favorecido / CPF"], ["pix", "Chave PIX"]],
+  "Atuação profissional": [["regiao", "Região de atuação"], ["cidades_atendidas", "Cidades atendidas"], ["experiencia", "Experiência comercial"]],
+} as const;
+
+function CadastroDigital() {
+  const [tipo, setTipo] = useState<Tipo>("cliente");
+  const [dados, setDados] = useState<Record<string, string>>({});
+  const [consentimento, setConsentimento] = useState(false);
+  const [gerado, setGerado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [protocolo, setProtocolo] = useState("");
+  const [erroEnvio, setErroEnvio] = useState("");
+  const sections = Object.entries(campos).filter(([titulo]) => tipo === "cliente" ? titulo !== "Atuação profissional" : !["Contato financeiro","Nota fiscal eletrônica (NFe)","Referências bancárias"].includes(titulo));
+  const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setGerado(false); setProtocolo(""); };
+  const valido = () => !!(dados.razao_social?.trim() && dados.documento?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.comercial_email || "") && consentimento);
+  const enviar = async () => {
+    setErroEnvio("");
+    if (!valido()) { setErroEnvio("Preencha nome, documento, e-mail válido e aceite o aviso de privacidade."); return; }
+    setEnviando(true);
+    try {
+      const { data: auth, error: authError } = await supabase.auth.getUser();
+      if (authError || !auth.user) { setErroEnvio("Entre na sua conta, inclusive como visitante, antes de enviar a ficha."); return; }
+      const { data, error } = await supabase.from("registration_requests" as never).insert({user_id: auth.user.id, applicant_type: tipo, form_data: dados, status: "recebido"} as never).select("id").single();
+      if (error) throw error;
+      setProtocolo(String((data as {id:string}).id));
+    } catch { setErroEnvio("Não foi possível registrar o cadastro. Tente novamente."); }
+    finally { setEnviando(false); }
+  };
+  const pdf = () => {
+    if (!valido()) {
+      window.alert("Preencha nome, CPF/CNPJ, e-mail comercial e confirme o aviso de privacidade.");
+      return;
+    }
+    const doc = new jsPDF();
+    let y = 20;
+    const line = (text: string, bold = false) => {
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      const parts = doc.splitTextToSize(text, 174);
+      if (y + parts.length * 6 > 275) { doc.addPage(); y = 20; }
+      doc.text(parts, 18, y); y += parts.length * 6 + 2;
+    };
+    doc.setFontSize(16); line("NETINHO AUTO PARTS", true);
+    doc.setFontSize(12); line("FICHA CADASTRAL - " + tipo.toUpperCase(), true);
+    line("Gerado em: " + new Date().toLocaleString("pt-BR"));
+    if (protocolo) line("Protocolo: " + protocolo);
+    sections.forEach(([titulo, fields]) => {
+      y += 4; line(titulo.toUpperCase(), true);
+      fields.forEach(([key, label]) => line(label + ": " + (dados[key] || "-")));
+    });
+    line("Declaração: o solicitante confirmou a ciência do tratamento dos dados para análise cadastral.");
+    doc.save("ficha-cadastral-netinho-" + tipo + ".pdf");
+    setGerado(true);
+  };
+  return <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
+    <div className="mx-auto max-w-3xl rounded-2xl bg-white p-5 shadow-lg md:p-9">
+      <Link to="/" className="text-sm text-blue-900 underline">Voltar ao início</Link>
+      <header className="my-6 border-b border-amber-500 pb-4">
+        <p className="text-sm font-bold tracking-widest text-amber-700">NETINHO AUTO PARTS</p>
+        <h1 className="text-3xl font-bold text-blue-950">Faça parte da Netinho</h1>
+        <p className="mt-2 text-slate-600">Preencha e envie a ficha digital para análise. Depois, se desejar, baixe sua cópia em PDF.</p>
+      </header>
+      <label className="block font-semibold" htmlFor="tipo">Quero me cadastrar como</label>
+      <select id="tipo" value={tipo} onChange={e => { setTipo(e.target.value as Tipo); setGerado(false); setProtocolo(""); }} className="mt-2 w-full rounded-lg border p-3">
+        <option value="cliente">Cliente</option><option value="vendedor">Vendedor</option><option value="representante">Representante</option>
+      </select>
+      {sections.map(([titulo, fields]) => <fieldset key={titulo} className="mt-7 rounded-xl border border-slate-200 p-4">
+        <legend className="px-2 font-bold text-blue-950">{titulo}</legend>
+        <div className="grid gap-4 md:grid-cols-2">
+          {fields.map(([key, label]) => <label key={key} className="block text-sm font-medium">
+            {label}{["razao_social","documento","comercial_email"].includes(key) ? " *" : ""}
+            <input value={dados[key] || ""} onChange={e => set(key, e.target.value)}
+              type={key.includes("email") ? "email" : "text"} maxLength={250}
+              className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" />
+          </label>)}
+        </div>
+      </fieldset>)}
+      <label className="mt-7 flex items-start gap-3 text-sm">
+        <input type="checkbox" checked={consentimento} onChange={e => setConsentimento(e.target.checked)} className="mt-1" />
+        Estou ciente de que os dados informados serão utilizados para análise do cadastro pela Netinho Auto Parts. Não há aprovação automática.
+      </label>
+      <button type="button" disabled={enviando || !!protocolo} onClick={() => void enviar()} className="mt-5 w-full rounded-xl bg-amber-600 p-4 font-bold text-white disabled:opacity-60">{enviando ? "Enviando..." : protocolo ? "Solicitação registrada" : "Enviar cadastro para análise"}</button>
+      {erroEnvio && <p role="alert" className="mt-2 text-red-700">{erroEnvio}</p>}
+      {protocolo && <p role="status" className="mt-3 break-all text-sm text-green-800">Cadastro recebido para análise. Protocolo: {protocolo}. Nenhuma permissão de vendas foi liberada automaticamente.</p>}
+      <button type="button" onClick={pdf} className="mt-5 w-full rounded-xl bg-blue-950 p-4 font-bold text-white">Gerar e baixar ficha em PDF</button>
+      {gerado && <div className="mt-4 rounded-xl border p-4 text-sm">
+        <p className="font-semibold">PDF gerado no seu dispositivo.</p>
+        <p>O cadastro já foi registrado no sistema para análise administrativa quando o protocolo aparecer. Para encaminhar também o PDF, anexe o arquivo baixado ao e-mail ou WhatsApp da Netinho. O anexo não é enviado automaticamente.</p>
+      </div>}
+    </div>
+  </main>;
+}
