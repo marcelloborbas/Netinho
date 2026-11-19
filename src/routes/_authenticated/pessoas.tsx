@@ -107,18 +107,15 @@ function Pessoas() {
     <label className="text-xs font-bold uppercase tracking-wide text-slate-500">Comissão<select aria-label="Filtrar por comissão" value={commissionFilter} onChange={e=>setCommissionFilter(e.target.value)} className="mt-1 min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-[#102a52]"><option>Todas</option><option>Definida</option><option>Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(n=><option key={n} value={n}>{n.toLocaleString("pt-BR")}%</option>)}</select></label>
     <div className="col-span-2 flex items-end sm:col-span-1"><div className="w-full rounded-xl bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-500"><span className="font-black text-[#102a52]">{visibleEntries.length}</span> resultado(s) encontrado(s)</div></div>
    </div>
-    <label className="text-xs font-bold">Perfil<select aria-label="Filtrar por perfil" value={filterRole} onChange={e=>setFilterRole(e.target.value as Role|"Todos")} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option value="Todos">Todos</option>{roles.map(role=><option key={role} value={role}>{role}</option>)}</select></label>
-    <label className="text-xs font-bold">Comissão<select aria-label="Filtrar por comissão" value={commissionFilter} onChange={e=>setCommissionFilter(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm"><option>Todas</option><option>Definida</option><option>Não definida</option>{[0.5,1,1.5,2,2.5,3,3.5].map(n=><option key={n} value={n}>{n.toLocaleString("pt-BR")}%</option>)}</select></label>
-
-   </div>
    
    {(ratesError||commercialRatesError)&&<p role="alert" className="text-xs font-semibold text-red-700">Não foi possível consultar todas as comissões. O filtro por comissão pode estar incompleto.</p>}
-  </div>
+  </section>
   {isLoading&&<p>Carregando pessoas…</p>}{error&&<p role="alert" className="text-red-700">Não foi possível carregar os cadastros. A atualização do banco de dados pode estar pendente.</p>}
   <section className="space-y-3"><div className="flex items-center justify-between px-1"><h2 className="text-lg font-black">Equipe e representantes</h2><span className="text-xs font-semibold text-slate-500">Selecione editar para abrir a ficha</span></div>{visibleEntries.map(entry=>entry.kind==="person"
    ? <PersonCard key={`person-${entry.id}`} person={entry.record} people={people} monthlySales={monthlySalesFor(entry.id)} linkedCommercial={linkedCommercialFor(entry.record)} editingPage={editing===`person:${entry.id}`} onClose={()=>setEditing(null)} onEdit={()=>setEditing(`person:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-people"]});void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["access"]});void qc.invalidateQueries({queryKey:["admin-all-person-commissions"]});}}/>
    : <RepresentativeCard key={`representative-${entry.id}`} representative={entry.record} monthlySales="Sem vínculo com pedidos" editingPage={editing===`representative:${entry.id}`} onClose={()=>setEditing(null)} onEdit={()=>setEditing(`representative:${entry.id}`)} onSaved={()=>{void qc.invalidateQueries({queryKey:["admin-commercial-representatives"]});void qc.invalidateQueries({queryKey:["admin-all-commercial-commissions"]});}}/>)}
-  </section>\n  {loadingRepresentatives&&<p>Carregando representantes…</p>}
+  </section>
+  {loadingRepresentatives&&<p>Carregando representantes…</p>}
   {representativesError&&<p role="alert" className="text-red-700">Não foi possível carregar os representantes comerciais.</p>}
   {!isLoading&&!error&&people.length===0&&representatives.length===0&&<p className="rounded-xl bg-white p-4">Nenhuma pessoa cadastrada.</p>}
  </main>;

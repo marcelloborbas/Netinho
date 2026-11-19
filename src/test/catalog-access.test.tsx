@@ -82,31 +82,32 @@ describe("catalog access presentation", () => {
     sessionStorage.setItem("netinho-entry-approved", "1");
     render(<Home />);
     expect(screen.getByText("Marcello")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Ver peças da montadora fiat" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "Logo fiat" })).toBeVisible();
     expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("shows only the cash price to visitors and offers a representative instead of an order", () => {
     state.seller = false;
     render(<Catalog />);
     fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
-    expect(screen.getByText("Preço à vista:")).toBeVisible();
+    expect(screen.getByText("Condição à vista")).toBeVisible();
     expect(screen.getByText(/1\.234,56/)).toBeVisible();
     expect(
-      screen.queryByRole("button", { name: "Adicionar peça à venda" }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("button", { name: "Comprar peça FCO-TESTE" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Ver ficha técnica da peça FCO-TESTE" }),
+    ).toBeDisabled();
     expect(screen.queryByText(/Estoque/)).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Consultar compra da peça" }));
-    expect(screen.getByRole("group", { name: "Contato para comprar FCO-TESTE" })).toBeVisible();
     expect(toast.success).not.toHaveBeenCalled();
   });
   it("shows stock and adds the part to the sale for an authorized seller", async () => {
     state.seller = true;
     render(<Catalog />);
     fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
-    expect(screen.getByText(/Estoque = 8/)).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "Adicionar peça à venda" }));
+    expect(screen.queryByText(/Estoque/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Comprar peça FCO-TESTE" }));
     await waitFor(() =>
-      expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada à venda."),
+      expect(toast.success).toHaveBeenCalledWith("Peça FCO-TESTE adicionada ao pedido."),
     );
   });
   it("does not list HD parts while the brand is still marked as coming soon", () => {
@@ -114,6 +115,6 @@ describe("catalog access presentation", () => {
     render(<Catalog />);
     fireEvent.click(screen.getByRole("button", { name: "Todas as peças" }));
     expect(screen.queryByRole("heading", { name: "K6246.HD" })).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Injeção eletrônica" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Injeção eletrônica" })).toBeVisible();
   });
 });

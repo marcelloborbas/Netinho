@@ -46,7 +46,7 @@ describe("Representative editor rendering", () => {
     render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><Editor /></QueryClientProvider>);
     expect(await screen.findByRole("heading", { name: "Editar representante comercial" })).toBeVisible();
     expect(await screen.findByLabelText("Nome completo")).toHaveValue(name);
-    expect(screen.getByRole("button", { name: "Salvar alterações" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Salvar ficha e comissão" })).toBeVisible();
     expect(screen.queryByLabelText(/senha/i)).not.toBeInTheDocument();
   });
 
@@ -57,6 +57,6 @@ describe("Representative editor rendering", () => {
     if (!Editor) throw new Error("Representative editor component is missing");
     render(<QueryClientProvider client={new QueryClient()}><Editor /></QueryClientProvider>);
     expect(await screen.findByText("Acesso exclusivo do administrador.")).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Salvar alterações" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Salvar ficha e comissão" })).not.toBeInTheDocument();
   });
 });

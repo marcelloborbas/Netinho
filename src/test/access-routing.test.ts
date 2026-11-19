@@ -11,7 +11,12 @@ vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => vi.fn(),
 }));
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { auth: { getUser: async () => ({ data: { user: state.user } }) } },
+  supabase: {
+    auth: {
+      getUser: async () => ({ data: { user: state.user } }),
+      getSession: async () => ({ data: { session: state.user ? { user: state.user } : null } }),
+    },
+  },
 }));
 import { Route } from "@/routes/_authenticated/route";
 const options = Route.options as unknown as { beforeLoad: (args: unknown) => Promise<unknown> };

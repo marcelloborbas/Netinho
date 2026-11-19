@@ -7,15 +7,32 @@ const mock = vi.hoisted(() => ({
   adminId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
   targetId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
 }));
-vi.mock("@tanstack/react-router", () => ({ createFileRoute: () => (options: { component: () => React.ReactNode }) => ({ options }), Link: () => null }));
+vi.mock("@tanstack/react-router", () => ({ createFileRoute: () => (options: { component: () => React.ReactNode }) => ({ options }), Link: () => null, useLocation: () => ({ pathname: "/admin/pessoas", hash: "" }) }));
 vi.mock("@/lib/queries", () => ({ meQuery: { queryKey: ["me"], queryFn: async () => ({ id: mock.adminId, isAdmin: true }) } }));
 vi.mock("sonner", () => ({ toast: { success: mock.success, error: mock.error } }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   functions: { invoke: mock.invoke },
-  from: (table: string) => ({ select: () => ({ order: async () => ({ data: table === "profiles" ? [
-    { id: mock.adminId, full_name: "Admin", email: "admin@example.test", site_role: "Administrador", access_active: true },
-    { id: mock.targetId, full_name: "Teste", email: "teste@example.test", site_role: "Visitante", access_active: true },
-  ] : [], error: null }) }) }),
+  storage: { from: () => ({
+    getPublicUrl: (path: string) => ({ data: { publicUrl: "https://example.test/person-photos/" + path } }),
+    upload: async () => ({ error: null }),
+  }) },
+  from: (table: string) => {
+    const rows = table === "profiles" ? [
+      { id: mock.adminId, full_name: "Admin", email: "admin@example.test", site_role: "Administrador", access_active: true, territory_uf: null, territory_cities: null, supervisor_id: null, phone: null },
+      { id: mock.targetId, full_name: "Teste", email: "teste@example.test", site_role: "Visitante", access_active: true, territory_uf: null, territory_cities: null, supervisor_id: null, phone: null },
+    ] : [];
+    const chain: Record<string, unknown> = {
+      select: () => chain,
+      order: () => chain,
+      gte: () => chain,
+      lt: () => chain,
+      range: () => chain,
+      eq: () => chain,
+      insert: async () => ({ error: null }),
+      then: (resolve: (value: { data: unknown[]; error: null }) => void) => resolve({ data: rows, error: null }),
+    };
+    return chain;
+  },
 } }));
 import { Route } from "@/routes/_authenticated/pessoas";
 function mount() {

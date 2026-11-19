@@ -24,7 +24,7 @@ describe("saved order email", () => {
       { filename: "pedido-123.xlsx", content: "UEsDBA==" },
     ]);
     expect(body.text).toBe("Total: R$ 123,45");
-    expect(new Headers(options?.headers).get("Idempotency-Key")).toBe(`netinho-order-${savedOrder}`);
+    expect(new Headers(options?.headers).get("Idempotency-Key")).toBe(`netinho-order-${savedOrder}-v2`);
   });
   it("logs provider status and reason without confirming a rejected send", async () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
