@@ -99,6 +99,6 @@ function Page() {
     {active.phone&&<div className="mt-4 flex flex-wrap gap-3"><a href={`tel:${active.phone.replace(/[^\d+]/g,"")}`} className="rounded-lg border border-[#102a52] px-4 py-3 text-sm font-bold text-[#102a52]">Ligar: {active.phone}</a><a href={`https://wa.me/${active.phone.replace(/\D/g,"").replace(/^(?!55)(?=\d{10,11}$)/,"55")}`} target="_blank" rel="noreferrer" className="rounded-lg bg-green-700 px-4 py-3 text-sm font-bold text-white">WhatsApp</a></div>}
    </section>
   </div>}
-  {access?.level===1&&<Link to="/pessoas" hash="representantes" className="mt-3 inline-block text-xs font-bold text-[#102a52] underline">Administrar regiões de atuação</Link>}
+  {access?.level===1&&<Link to="/admin" search={{ secao: "pessoas" }} hash="representantes" className="mt-3 inline-block text-xs font-bold text-[#102a52] underline">Administrar regiões de atuação</Link>}
  </main>;
 }

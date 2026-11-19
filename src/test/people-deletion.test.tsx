@@ -34,12 +34,10 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {
     return chain;
   },
 } }));
-import { Route } from "@/routes/_authenticated/pessoas";
+import { PeopleSection } from "@/components/admin/sections/PeopleSection";
 function mount() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
-  const Page = Route.options.component;
-  if (!Page) throw new Error("PESSOAL component is missing");
-  render(<QueryClientProvider client={client}><Page /></QueryClientProvider>);
+  render(<QueryClientProvider client={client}><PeopleSection /></QueryClientProvider>);
   return client;
 }
 beforeEach(() => { vi.clearAllMocks(); vi.spyOn(window, "confirm").mockReturnValue(true); });

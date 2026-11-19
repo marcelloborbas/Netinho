@@ -125,7 +125,7 @@ function EditRepresentativePage() {
 
   return (
     <BrandPageLayout><main className="mx-auto max-w-2xl space-y-5 px-4 py-8">
-      <Link to="/admin-gestao" hash="representantes" className="inline-flex items-center gap-2 font-bold text-[#173b67]"><ArrowLeft size={18} /> Voltar à gestão</Link>
+      <Link to="/admin" search={{ secao: "representantes" }} className="inline-flex items-center gap-2 font-bold text-[#173b67]"><ArrowLeft size={18} /> Voltar à gestão</Link>
       <section className="surface-card space-y-5 p-5">
         <div><h1 className="text-2xl font-bold">Editar representante comercial</h1><p className="mt-1 text-sm text-muted-foreground">Somente administradores podem alterar este cadastro.</p></div>
         <div className="flex flex-wrap items-center gap-4">

@@ -73,8 +73,8 @@ function AppShell() {
     navigate({ to: "/auth" });
   }
   return (
-    <div className={fullScreenEmptyOrder ? "min-h-[100dvh] bg-[#d9f1ff] pb-20" : pathname === "/admin" ? "flex min-h-screen flex-col pb-0" : fullWidthSales ? "flex min-h-[100dvh] w-full flex-col pb-20" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
-      <main className={fullScreenEmptyOrder ? "w-full min-h-[100dvh] p-0" : pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-4 py-3 sm:px-6" : fullWidthSales ? "w-full min-w-0 flex-1 px-1 py-1 sm:px-2" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
+    <div className={fullScreenEmptyOrder ? "min-h-[100dvh] bg-[#d9f1ff] pb-20" : fullWidthSales ? "flex min-h-[100dvh] w-full flex-col pb-20" : "flex min-h-screen flex-col pb-36 md:pb-28"}>
+      <main className={fullScreenEmptyOrder ? "w-full min-h-[100dvh] p-0" : pathname === "/admin" ? "mx-auto w-full max-w-7xl flex-1 px-3 py-3 sm:px-6" : fullWidthSales ? "w-full min-w-0 flex-1 px-1 py-1 sm:px-2" : "mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6"}>
         <Outlet />
       </main>
       <PublicFooter />

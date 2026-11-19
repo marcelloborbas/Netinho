@@ -79,7 +79,7 @@ export function HomeSalesEvolution() {
   const totalSales=history.reduce((sum,p)=>sum+p.total,0);
   const totalCommissions=history.reduce((sum,p)=>sum+p.commission,0);
   return <section className="mx-3 mb-3 !min-h-0 !h-auto overflow-hidden rounded-[26px] border-[3px] border-[#ffce2c] bg-gradient-to-b from-[#0a5aab] via-[#06316d] to-[#021844] p-3 text-white shadow-[0_4px_0_#a96e00,0_5px_20px_#002a6c88] sm:mx-6" aria-label="Evolução das vendas da Netinho">
-    <Link to="/vendas-por-representante" className="flex items-center gap-2 rounded-lg p-1 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" title="Abrir vendas por representante" aria-label="Abrir relatório de vendas por representante">
+    <Link to="/admin" search={{ secao: "vendas" }} hash="ranking" className="flex items-center gap-2 rounded-lg p-1 transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" title="Abrir vendas por representante" aria-label="Abrir relatório de vendas por representante">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-8 w-8 shrink-0 text-[#ffd42a]" aria-hidden="true"><path d="M3 3v18h18M7 16v-4M12 16V7M17 16V5"/></svg>
       <div><h2 className="text-lg font-black uppercase leading-tight">Evolução das Vendas da Netinho</h2><p className="text-xs text-[#d7e8ff]">Resultado de todos os representantes nos últimos seis meses</p></div>
       <span className="ml-auto text-xs font-bold text-[#ffdc6c]">Ver por representante ›</span>

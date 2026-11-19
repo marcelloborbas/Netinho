@@ -272,6 +272,6 @@ function SalesSummary() {
 export function HomeSalesPanel({ className }: { className?: string }) {
   return <section className={cn("relative flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card p-2.5 text-navy shadow-home-card lg:p-3",className)} aria-label="Evolução das vendas">
     <SalesSummary />
-    <Link to="/evolucao-vendas" aria-label="Abrir página de evolução das vendas" className="absolute inset-0 z-10 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]" />
+    <Link to="/admin" search={{ secao: "vendas" }} aria-label="Abrir página de evolução das vendas" className="absolute inset-0 z-10 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]" />
   </section>;
 }
