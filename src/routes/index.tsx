@@ -225,7 +225,7 @@ function Home() {
             fetchPriority="high"
           />
           <div className="netinho-home-hero-content grid h-full min-h-[140px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-gradient-to-r from-navy-deep/85 via-navy-deep/20 to-transparent px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
-            <div className="netinho-home-hero-copy min-w-0 leading-tight">
+            <div className="netinho-home-hero-copy min-w-0 rounded-xl bg-navy-deep/60 px-3 py-2 leading-tight backdrop-blur-[2px] sm:px-4">
               <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
