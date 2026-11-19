@@ -5,13 +5,14 @@ import { meQuery } from "@/lib/queries";
 import { brl } from "@/lib/brand";
 import {
   ChartNoAxesColumnIncreasing,
+  ChevronRight,
   ClipboardList,
   TrendingUp,
   Users,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HomeIconTile } from "@/components/HomeIconTile";
+import { HOME_ICON_STROKE, HomeIconTile } from "@/components/HomeIconTile";
 
 const periodKey = (date: Date) => {
   const p = new Intl.DateTimeFormat("en-US", {
@@ -235,6 +236,7 @@ function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
 }
 
 const panelTitle = "truncate text-sm font-black leading-tight lg:text-base";
+const panelLink = "flex shrink-0 items-center justify-end gap-1 text-xs font-bold text-navy-soft hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-navy";
 
 function SalesSummary() {
   const { data, isPending, isError, isAdmin } = useHomeDashboard();
