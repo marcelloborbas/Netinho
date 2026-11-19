@@ -255,10 +255,10 @@ function Home() {
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
         <HomeSalesPanel className="netinho-home-sales lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[230px]" />
         <section
-          className="netinho-home-brands min-w-0 lg:col-span-4 lg:flex lg:flex-col lg:rounded-2xl lg:border lg:border-border lg:bg-card lg:p-3 lg:shadow-home-card"
+          className="netinho-home-brands min-w-0 lg:col-span-4"
           aria-label="Montadoras"
         >
-          <ul className="grid h-full grid-cols-4 items-center gap-1 sm:gap-2 lg:min-h-0 lg:flex-1 lg:grid-cols-4 lg:content-center">
+          <ul className="grid h-full grid-cols-4 items-center gap-1 sm:gap-2">
             {brands.map((brand) => (
               <li key={brand} className="min-w-0">
                 <div className="grid w-full place-items-center" aria-label={`Montadora ${brand}`}>
