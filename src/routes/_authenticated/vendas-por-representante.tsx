@@ -14,6 +14,7 @@ function RepresentativePortrait({name}:{name:string}){
  return <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#d9e7f6] to-[#b2cce7] shadow-md ring-2 ring-white sm:h-24 sm:w-24">{src&&!failed?<img src={src} alt={`Foto de ${name}`} loading="lazy" onError={()=>setFailed(true)} className="h-full w-full object-cover object-top"/>:<UserRound size={40} className="text-[#345e86]"/>}</div>;
 }
 export const Route=createFileRoute("/_authenticated/vendas-por-representante")({component:RepresentativeSales,staticData:{sitemap:false}});
+const dueDate=(key:string)=>{const [year,month]=key.split("-").map(Number);return new Date(Date.UTC(year,month,15)).toLocaleDateString("pt-BR",{timeZone:"UTC"});};
 const monthKey=(d:Date)=>{const parts=new Intl.DateTimeFormat("en-US",{year:"numeric",month:"2-digit",timeZone:"America/Sao_Paulo"}).formatToParts(d);return `${parts.find(p=>p.type==="year")?.value}-${parts.find(p=>p.type==="month")?.value}`;};
 function RepresentativeSales(){
  const {data:me,isLoading:loadingMe}=useQuery(meQuery);
@@ -67,7 +68,7 @@ function RepresentativeSales(){
   const repByUser=new Map([...people.values()].filter(p=>p.userId).map(p=>[p.userId!,p.id]));
   const now=new Date();const periods=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return {key:monthKey(d),label:d.toLocaleDateString("pt-BR",{month:"short",year:"numeric"})};});
   const start=new Date(now.getFullYear(),now.getMonth()-5,1).toISOString();
-  const results=new Map<string,{total:number;commission:number;months:Record<string,number>}>();
+  const results=new Map<string,{total:number;commission:number;months:Record<string,{gross:number;commission:number}>}>();
   for(const p of people.values())results.set(p.id,{total:0,commission:0,months:{}});
   for(let from=0;;from+=500){
    const {data:orders,error}=await supabase.from("orders").select("seller_id,created_at,total,kind,status").gte("created_at",start).order("created_at").range(from,from+499);
@@ -76,7 +77,7 @@ function RepresentativeSales(){
     if(!o.seller_id||!repByUser.has(o.seller_id)||o.kind==="orcamento"||o.status==="cancelled")continue;
     const period=monthKey(new Date(o.created_at));if(!periods.some(x=>x.key===period))continue;
     const repId=repByUser.get(o.seller_id)!;const item=results.get(repId)!;const value=Number(o.total??0);
-    item.total+=value;item.commission+=value*people.get(repId)!.rate/100;item.months[period]=(item.months[period]??0)+value;
+    item.total+=value;item.commission+=value*people.get(repId)!.rate/100;const monthly=item.months[period]??{gross:0,commission:0};monthly.gross+=value;monthly.commission+=value*people.get(repId)!.rate/100;item.months[period]=monthly;
    }
    if(!orders||orders.length<500)break;
   }
@@ -90,9 +91,9 @@ function RepresentativeSales(){
  const ranked=[...people].sort((a,b)=>(data?.results.get(b.id)?.total??0)-(data?.results.get(a.id)?.total??0));
  const highest=Math.max(1,...ranked.map(p=>data?.results.get(p.id)?.total??0));
  const latestMonth=data?.periods.at(-1);
- const leader=latestMonth?[...people].sort((a,b)=>(data?.results.get(b.id)?.months[latestMonth.key]??0)-(data?.results.get(a.id)?.months[latestMonth.key]??0))[0]:undefined;
- const leaderSales=leader&&latestMonth?(data?.results.get(leader.id)?.months[latestMonth.key]??0):0;
- const monthlyTotals=(data?.periods??[]).map(m=>({key:m.key,label:m.label,total:people.reduce((sum,p)=>sum+(data?.results.get(p.id)?.months[m.key]??0),0)}));
+ const leader=latestMonth?[...people].sort((a,b)=>(data?.results.get(b.id)?.months[latestMonth.key]?.gross??0)-(data?.results.get(a.id)?.months[latestMonth.key]?.gross??0))[0]:undefined;
+ const leaderSales=leader&&latestMonth?(data?.results.get(leader.id)?.months[latestMonth.key]?.gross??0):0;
+ const monthlyTotals=(data?.periods??[]).map(m=>({key:m.key,label:m.label,total:people.reduce((sum,p)=>sum+(data?.results.get(p.id)?.months[m.key]?.gross??0),0),commission:people.reduce((sum,p)=>sum+(data?.results.get(p.id)?.months[m.key]?.commission??0),0)}));
  const previousMonth=monthlyTotals.at(-2)?.total??0;
  const currentMonth=monthlyTotals.at(-1)?.total??0;
  const change=previousMonth>0?(currentMonth-previousMonth)/previousMonth*100:null;
@@ -114,7 +115,7 @@ function RepresentativeSales(){
     </div>
     <div className="rounded-2xl bg-white p-4 shadow-sm">
       <div className="flex items-center gap-2"><CalendarDays size={21} className="text-[#ae801c]"/><h2 className="text-sm font-black uppercase">Composição mensal</h2></div>
-      <div className="mt-3 space-y-2">{monthlyTotals.map(m=><div key={m.key} className="flex items-center justify-between gap-3 border-b border-[#e4e9f0] pb-1.5 text-sm"><span className="font-semibold capitalize">{m.label}</span><strong className="tabular-nums">{brl(m.total)}</strong></div>)}</div>
+      <div className="mt-3 space-y-2">{monthlyTotals.map(m=><div key={m.key} className="flex items-center justify-between gap-3 border-b border-[#e4e9f0] pb-1.5 text-sm"><span className="font-semibold capitalize">{m.label}</span><span className="text-right tabular-nums"><strong className="block">{brl(m.total)} <span className="text-[10px] font-medium">bruto</span></strong><strong className="block text-[#a06f16]">{brl(m.commission)} <span className="text-[10px] font-medium">comissão</span></strong><small className="block text-[10px] text-[#52627a]">Até {dueDate(m.key)}</small></span></div>)}</div>
       <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-[#edf3f9] p-2 text-xs"><span className="font-bold">Variação do último mês</span><strong className="text-sm" style={{color:change==null?"#52627a":change>=0?"#168544":"#c62c35"}}>{change==null?"Sem base de comparação":`${change>0?"+":""}${change.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</strong></div>
     </div>
    </section>
@@ -124,7 +125,7 @@ function RepresentativeSales(){
      <button type="button" aria-expanded={isOpen} onClick={()=>setExpanded(isOpen?null:p.id)} className="w-full p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#1c75b3] sm:p-5">
       <div className="flex items-center gap-3">
        <RepresentativePortrait name={p.name}/>
-       <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-base font-black sm:text-lg">{p.name}</h3>{leader?.id===p.id&&leaderSales>0&&<span className="inline-flex items-center gap-1 rounded-full bg-[#fff2cf] px-2 py-0.5 text-[10px] font-bold text-[#9a6609]"><Trophy size={12}/> Destaque do mês</span>}</div><p className="mt-1 text-xs font-semibold text-slate-500">Comissão {p.rate.toLocaleString("pt-BR")}%</p><p className="mt-2 text-lg font-black text-[#164c7b] sm:text-xl">{brl(result.total)}</p><p className="text-xs font-semibold text-[#94701f]">Comissões: {brl(result.commission)}</p></div>
+       <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-base font-black sm:text-lg">{p.name}</h3>{leader?.id===p.id&&leaderSales>0&&<span className="inline-flex items-center gap-1 rounded-full bg-[#fff2cf] px-2 py-0.5 text-[10px] font-bold text-[#9a6609]"><Trophy size={12}/> Destaque do mês</span>}</div><p className="mt-1 text-xs font-semibold text-slate-500">Comissão {p.rate.toLocaleString("pt-BR")}%</p><div className="mt-2 grid grid-cols-2 gap-2"><div><span className="block text-[10px] font-bold text-[#52627a]">Venda bruta</span><strong className="block text-sm font-black tabular-nums text-[#164c7b] sm:text-lg">{brl(result.total)}</strong></div><div><span className="block text-[10px] font-bold text-[#52627a]">Comissão estimada</span><strong className="block text-sm font-black tabular-nums text-[#94701f] sm:text-lg">{brl(result.commission)}</strong></div></div></div>
        <ChevronDown size={19} className={`shrink-0 text-[#4b789f] transition-transform duration-300 ${isOpen?"rotate-180":""}`}/>
       </div>
       <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[#e6edf5]"><div className="h-full rounded-full bg-gradient-to-r from-[#247ab7] to-[#5cc5ef] transition-all duration-500" style={{width:`${result.total/highest*100}%`}}/></div>
@@ -133,13 +134,19 @@ function RepresentativeSales(){
      <div className="flex justify-end px-4 pb-3 sm:px-5"><Link to="/pessoas" hash={`#${p.userId?"person":"representative"}:${p.userId||p.id}`} onClick={event=>event.stopPropagation()} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-bold text-red-700 hover:bg-red-100" aria-label={`Abrir ficha para excluir ${p.name}`} title="Abrir ficha administrativa para confirmar exclusão"><Trash2 size={16}/> Apagar</Link></div>
      {isOpen&&<div className="border-t border-[#e7eef5] bg-[#f7faff] px-4 pb-4 pt-3 sm:px-5">
       <div className="mb-3 flex items-center justify-between"><strong className="text-xs uppercase tracking-wide text-[#315f86]">Evolução mensal</strong><span className="text-[11px] text-slate-500">6 meses</span></div>
-      <div className="grid h-40 grid-cols-6 gap-2 border-b border-[#d6e3ef]">{data!.periods.map(m=><div key={m.key} className="flex min-w-0 flex-col items-center justify-end gap-1"><span className="max-w-full truncate text-[10px] font-bold" title={brl(result.months[m.key]??0)}>{(result.months[m.key]??0)>=1000?`${((result.months[m.key]??0)/1000).toLocaleString("pt-BR",{maximumFractionDigits:1})}k`:Math.round(result.months[m.key]??0)}</span><div className="w-full max-w-10 rounded-t-lg bg-gradient-to-t from-[#124578] to-[#46b1e7] transition-all duration-500" style={{height:Math.max(3,(result.months[m.key]??0)/max*100)+"%"}} title={brl(result.months[m.key]??0)}/><span className="text-[10px] font-bold uppercase">{m.label.split(" ")[0]}</span></div>)}</div>
-      <p className="mt-3 text-right text-xs font-semibold text-[#24547f]">Total do período: {brl(result.total)}</p>
+      <div className="overflow-x-auto rounded-xl border border-[#d6e3ef] bg-white">
+       <table className="w-full min-w-[350px] text-left text-xs sm:text-sm">
+        <thead className="bg-[#102a52] text-white"><tr><th className="px-2 py-2">Mês</th><th className="px-2 py-2 text-right">Venda bruta</th><th className="px-2 py-2 text-right">Comissão</th><th className="px-2 py-2 text-right">Pagar até</th></tr></thead>
+        <tbody>{data!.periods.map(m=>{const values=result.months[m.key]??{gross:0,commission:0};return <tr key={m.key} className="border-b border-[#e3eaf2]"><td className="px-2 py-2 font-bold capitalize">{m.label}</td><td className="px-2 py-2 text-right tabular-nums">{brl(values.gross)}</td><td className="px-2 py-2 text-right font-bold tabular-nums text-[#9b6b14]">{brl(values.commission)}</td><td className="px-2 py-2 text-right tabular-nums">{dueDate(m.key)}</td></tr>;})}</tbody>
+        <tfoot className="bg-[#edf3f9] font-black"><tr><td className="px-2 py-2">Total</td><td className="px-2 py-2 text-right">{brl(result.total)}</td><td className="px-2 py-2 text-right">{brl(result.commission)}</td><td className="px-2 py-2 text-right">—</td></tr></tfoot>
+       </table>
+      </div>
+      <p className="mt-2 text-[11px] text-[#52627a]">Comissão prevista para pagamento até o dia 15 do mês seguinte ao da venda. Valores estimados pelas taxas atuais; confirmar o fechamento antes de pagar.</p>
      </div>}
     </article>;})}
    </div>
    {!people.length&&<p className="rounded-xl bg-white p-4">Nenhum representante cadastrado.</p>}
-   <p className="px-1 text-xs leading-relaxed text-slate-500">Pedidos atribuídos diretamente aos representantes, sem orçamentos ou cancelamentos. Comissões estimadas pelas taxas atuais; representantes sem vínculo de usuário podem não apresentar vendas.</p>
+   <p className="px-1 text-xs leading-relaxed text-slate-500">Pedidos atribuídos diretamente aos representantes, sem orçamentos ou cancelamentos. Comissões estimadas pelas taxas atuais, com previsão de pagamento até o dia 15 do mês seguinte à venda. O relatório não registra quitação e não substitui a conferência financeira; representantes sem vínculo de usuário podem não apresentar vendas.</p>
   </>}
  </main>;
 }
