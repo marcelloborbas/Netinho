@@ -6374,3 +6374,37 @@ html body .welcome-auth-stage .welcome-auth-art {
 .netinho-home-refresh .netinho-home-refresh-grid > section[aria-label="Carrossel de peças em destaque"] img {
  background:rgb(241,241,241) !important;
 }
+
+/* Saudação: ocupar toda a área com imagem proporcional, sem esticar.
+   A margem de segurança na esquerda evita cortar a logo embutida. */
+.netinho-home-refresh .netinho-home-hero > .netinho-hero-photo {
+ object-fit:cover !important;
+ object-position:left center !important;
+}
+.netinho-home-refresh .netinho-home-hero-greeting {
+ font-size:clamp(24px,6vw,46px) !important;
+ line-height:1.08 !important;
+}
+.netinho-home-refresh .netinho-home-hero-copy {
+ flex:1 1 auto !important;
+}
+.netinho-home-refresh .netinho-home-hero-content {
+ align-items:flex-end !important;
+}
+.netinho-home-refresh .netinho-home-whatsapp img {
+ background:transparent !important;
+ mix-blend-mode:multiply;
+}
+@keyframes netinho-footer-avatar-glow {
+ 0%,100% {transform:scale(1);filter:drop-shadow(0 0 3px #d9af3699);}
+ 50% {transform:scale(1.08);filter:drop-shadow(0 0 9px #f5d67c) drop-shadow(0 0 5px #d9af36);}
+}
+.netinho-home-refresh .netinho-footer-avatar {
+ animation:netinho-footer-avatar-glow 2.2s ease-in-out infinite;
+}
+@media(prefers-reduced-motion:reduce) {
+ .netinho-home-refresh .netinho-footer-avatar {animation:none !important;}
+}
+@media(max-width:420px) {
+ .netinho-home-refresh .netinho-home-hero-greeting {font-size:clamp(23px,6vw,29px) !important;}
+}
