@@ -505,7 +505,7 @@ function PersonSummary({
   return (
     <div className="space-y-2">
       <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
-        <div className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"><PersonPhoto id={id} name={name} editable={selected} /></div>
+        <div className="h-16 w-16 shrink-0 sm:h-20 sm:w-20"><PersonPhoto id={id} name={name} editable={selected} /></div>
         <div className="min-w-0 flex-1">
           <strong className="block truncate text-sm font-black text-navy sm:text-base" title={name}>{firstName}</strong>
           <span className="block truncate text-[11px] font-semibold text-navy/75" title={role}>{role.replace(" (cadastro comercial)", "")}</span>
