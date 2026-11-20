@@ -23,8 +23,11 @@ const campos = {
   "Contato financeiro": [["financeiro_nome", "Nome do contato"], ["financeiro_email", "E-mail"], ["financeiro_telefone", "Telefone / celular"]],
   "Nota fiscal eletrônica (NFe)": [["nfe_nome", "Nome do contato"], ["nfe_email", "E-mail"], ["nfe_telefone", "Telefone / celular"]],
   "Referências bancárias": [["referencia", "Referência bancária (empresa e contato)"], ["banco", "Banco"], ["agencia", "Agência"], ["conta", "Conta corrente"], ["favorecido", "Favorecido / CPF"], ["pix", "Chave PIX"]],
-  "Em que região pretende atender": [["regiao", "Região pretendida"], ["cidades_atendidas", "Cidades que pretende atender"], ["experiencia", "Experiência comercial"]],
+  "Em que região pretende atender": [["regiao", "Região pretendida"], ["cidades_atendidas", "Qual sua pretensão de Atuação - Cidade"], ["ddd_atuacao", "DDD da região de atuação"], ["experiencia", "Experiência comercial"]],
 } as const;
+
+const dddsBrasil = [11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99];
+const camposNumericos = new Set(["documento", "identidade", "cep", "numero", "comercial_telefone", "financeiro_telefone", "agencia", "conta"]);
 
 function CadastroDigital() {
   const { data: access } = useQuery(accessQuery);
@@ -94,15 +97,22 @@ function CadastroDigital() {
         <div className="grid gap-4 md:grid-cols-2">
           {fields.map(([key, label]) => <label key={key} className={`block text-sm font-medium ${["razao_social", "comercial_email", "comercial_telefone"].includes(key) ? "md:col-span-2" : ""}`}>
             {label}{["razao_social","documento","comercial_email"].includes(key) ? " *" : ""}
+            {key === "ddd_atuacao" ? (
+              <select value={dados[key] || ""} onChange={e => set(key, e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900">
+                <option value="">Selecione o DDD</option>
+                {dddsBrasil.map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
+              </select>
+            ) : (
             <input ref={key === "numero" ? numeroRef : undefined} value={dados[key] || ""} onChange={e => {
-                const value = key === "cep" ? e.target.value.replace(/\\D/g, "").slice(0, 8) : e.target.value;
+                const value = camposNumericos.has(key) ? e.target.value.replace(/\D/g, "").slice(0, key === "cep" ? 8 : key === "documento" ? 14 : key === "comercial_telefone" || key === "financeiro_telefone" ? 11 : 250) : e.target.value;
                 set(key, value);
                 if (key === "cep") void consultarCep(value);
               }}
               type={key.includes("email") ? "email" : key === "comercial_telefone" ? "tel" : "text"}
-              inputMode={key === "cep" || key === "numero" ? "numeric" : undefined}
+              inputMode={camposNumericos.has(key) ? "numeric" : undefined} pattern={camposNumericos.has(key) ? "[0-9]*" : undefined}
               maxLength={key === "cep" ? 8 : 250}
               className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" />
+            )}
             {key === "cep" && consultandoCep && <span className="mt-1 block text-xs text-slate-600">Consultando CEP...</span>}
             {key === "cep" && cepErro && <span role="status" className="mt-1 block text-xs text-amber-700">{cepErro}</span>}
           </label>)}
