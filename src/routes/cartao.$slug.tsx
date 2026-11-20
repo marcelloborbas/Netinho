@@ -39,8 +39,7 @@ function PublicCard() {
     <main className="min-h-screen bg-[#f1f1f1] px-3 py-6 text-[#102a52]">
       <section className="mx-auto max-w-lg overflow-hidden rounded-2xl border-2 border-[#d4af37] bg-white shadow-lg">
         <header className="bg-[#102a52] px-4 py-4 text-center text-[#ffe19a]">
-          <h1 className="text-xl font-black">Netinho Auto Parts</h1>
-          <p className="text-sm">Cartão digital do representante</p>
+          <h1 className="text-xl font-black">CARTÃO DIGITAL</h1>
         </header>
         {!image || failed ? (
           <div className="flex flex-col items-center gap-3 p-8 text-center">
