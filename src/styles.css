@@ -6643,29 +6643,3 @@ body:has(.catalog-showcase) .catalog-showcase {
     font-size: 13px !important;
   }
 }
-
-/* Fazer Pedido: três categorias visíveis, artes preenchendo seus recipientes. */
-@media (max-width:639px) {
- .catalog-showcase .catalog-category-filters .catalog-category-item {flex:0 0 calc((100% - 18px)/3) !important;width:calc((100% - 18px)/3) !important;min-width:0 !important;}
- .catalog-showcase .catalog-category-filters .catalog-category-item > button {width:100% !important;min-width:0 !important;max-width:none !important;height:auto !important;aspect-ratio:1/1 !important;padding:0 !important;}
-}
-.catalog-showcase .catalog-category-filters .catalog-category-item > button {padding:0 !important;}
-.catalog-showcase .catalog-category-filters .catalog-category-item > button img.catalog-category-photo {width:100% !important;height:100% !important;object-fit:cover !important;object-position:center !important;border-radius:inherit !important;}
-.catalog-showcase .catalog-category-filters .catalog-category-item > button > span.relative {width:100% !important;height:100% !important;max-width:none !important;min-height:0 !important;}
-
-/* Fazer Pedido — arte até as bordas internas, sem faixas vazias. */
-.catalog-showcase .catalog-category-filters .catalog-category-item > button {position:relative !important;overflow:hidden !important;padding:0 !important;}
-.catalog-showcase .catalog-category-filters .catalog-category-item > button > img.catalog-category-photo,
-.catalog-showcase .catalog-category-filters .catalog-category-item > button > span.relative > img.catalog-category-photo {
- position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;max-width:none !important;max-height:none !important;object-fit:cover !important;object-position:center !important;border-radius:0 !important;background:transparent !important;
-}
-
-/* Catálogo: enquadramento ampliado das artes de categoria para eliminar margens
-   incorporadas às próprias imagens, sem alterar o tamanho dos cartões. */
-.catalog-showcase .catalog-category-filters .catalog-category-item > button img.catalog-category-photo {
-  object-fit: cover !important;
-  object-position: center center !important;
-  transform: scale(1.18) !important;
-  transform-origin: center center !important;
-}
-.catalog-showcase .catalog-category-filters .catalog-category-item > button {overflow: hidden !important;}
