@@ -6652,3 +6652,10 @@ body:has(.catalog-showcase) .catalog-showcase {
 .catalog-showcase .catalog-category-filters .catalog-category-item > button {padding:0 !important;}
 .catalog-showcase .catalog-category-filters .catalog-category-item > button img.catalog-category-photo {width:100% !important;height:100% !important;object-fit:cover !important;object-position:center !important;border-radius:inherit !important;}
 .catalog-showcase .catalog-category-filters .catalog-category-item > button > span.relative {width:100% !important;height:100% !important;max-width:none !important;min-height:0 !important;}
+
+/* Fazer Pedido — arte até as bordas internas, sem faixas vazias. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > button {position:relative !important;overflow:hidden !important;padding:0 !important;}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button > img.catalog-category-photo,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button > span.relative > img.catalog-category-photo {
+ position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;max-width:none !important;max-height:none !important;object-fit:cover !important;object-position:center !important;border-radius:0 !important;background:transparent !important;
+}
