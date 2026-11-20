@@ -360,14 +360,24 @@ function Catalog() {
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
-        <nav className="grid grid-cols-1 gap-2.5" aria-label="Filtro por representação">
+        <nav className="grid grid-cols-2 gap-2.5" aria-label="Filtro por representação">
+          <button
+            type="button"
+            aria-pressed={false}
+            aria-label="Todos"
+            disabled
+            title="Todos os catálogos indisponível no momento"
+            className="relative flex aspect-square w-full max-w-[160px] items-center justify-center justify-self-center overflow-hidden rounded-xl border border-[#f1f1f1] bg-[#f1f1f1] p-2 text-center disabled:cursor-not-allowed"
+          >
+            <img src="/images/brands/catalogo-todos.webp" alt="Todos os catálogos" loading="lazy" decoding="async" className="h-full w-full object-contain" />
+          </button>
           <button
             type="button"
             aria-pressed={manufacturer === "FCO"}
             aria-label="FCO"
             title="Exibir peças FCO"
             onClick={() => { setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
-            className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-xl border bg-[#f1f1f1] p-1 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] sm:h-40 ${manufacturer === "FCO" ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#f1f1f1] hover:border-[#102a52]"}`}
+            className={`relative flex aspect-square w-full max-w-[160px] items-center justify-center justify-self-center overflow-hidden rounded-xl border bg-[#f1f1f1] p-1 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${manufacturer === "FCO" ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#f1f1f1] hover:border-[#102a52]"}`}
           >
             <img src="/images/brands/FCO_logo_web.webp" alt="FCO" loading="lazy" decoding="async" className="block h-full w-full object-contain" />
           </button>
