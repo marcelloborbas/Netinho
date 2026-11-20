@@ -6813,3 +6813,28 @@ body:has(.catalog-showcase) .catalog-showcase {
 .catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"]:hover {
   border-color: #102a52 !important;
 }
+
+/* Saudação: ampliar a arte com logo embutida 1,5x, ancorada à esquerda. */
+.netinho-home-refresh .netinho-home-hero > .netinho-hero-photo {
+  width: 150% !important;
+  max-width: none !important;
+  height: 150% !important;
+  inset: auto !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  object-fit: cover !important;
+  object-position: left center !important;
+}
+/* Categoria: remover também sombra e anel cinza dos cartões não selecionados. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:not([aria-pressed="true"]),
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:not([aria-pressed="true"]):hover {
+  border: 1px solid rgb(241, 241, 241) !important;
+  box-shadow: none !important;
+  --tw-ring-color: rgb(241, 241, 241) !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:not([aria-pressed="true"])::before,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:not([aria-pressed="true"])::after {
+  box-shadow: none !important;
+  border-color: rgb(241, 241, 241) !important;
+}
