@@ -373,7 +373,17 @@ function Catalog() {
                 className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] ${selected ? "border-[#d4af37] ring-2 ring-[#d4af37]/40" : "border-[#d9d9d9] hover:border-[#d4af37]"}`}
                 style={{ backgroundColor: "rgb(241, 241, 241)" }}
               >
-                {label}
+                {brand === "all" ? (
+                  <span>Todos</span>
+                ) : (
+                  <img
+                    src={brand === "FCO" ? "/images/brands/FCO_logo_web.webp" : "/images/brands/cropped-LOGO-512.png"}
+                    alt={brand === "FCO" ? "FCO" : "HD Embreagens"}
+                    loading="lazy"
+                    decoding="async"
+                    className={brand === "HD" ? "h-auto max-h-[75%] w-full max-w-[100px] object-contain grayscale opacity-[0.05]" : "h-auto max-h-[75%] w-full max-w-[100px] object-contain"}
+                  />
+                )}
               </button>
             );
           })}
