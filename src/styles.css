@@ -6700,3 +6700,13 @@ body:has(.catalog-showcase) .catalog-showcase {
   background-color: rgb(255, 255, 255) !important;
   background-image: none !important;
 }
+
+/* Categoria: eliminar qualquer diferença de tom entre o cartão e a área da imagem. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > button,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"],
+.catalog-showcase .catalog-category-filters .catalog-category-item > button > span,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button .catalog-category-photo {
+  background: rgb(241, 241, 241) !important;
+  background-color: rgb(241, 241, 241) !important;
+  background-image: none !important;
+}
