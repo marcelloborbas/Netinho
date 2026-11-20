@@ -6746,7 +6746,7 @@ body:has(.catalog-showcase) .catalog-showcase {
 .catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"],
 .catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
 .catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] {
-  transform: scale(1.045) translateZ(0) !important;
+  transform: scale(1.095) translateZ(0) !important;
   position: relative;
   z-index: 5;
   border-color: #102a52 !important;
@@ -6757,7 +6757,7 @@ body:has(.catalog-showcase) .catalog-showcase {
 .catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"] img,
 .catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"] img,
 .catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] img {
-  transform: scale(1.055) !important;
+  transform: scale(1.095) !important;
   transition: transform 220ms ease !important;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -6771,4 +6771,35 @@ body:has(.catalog-showcase) .catalog-showcase {
   .catalog-showcase section[aria-label="Modelos dos veículos"] button img {
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Efeito premium: brilho azul-marinho sutil e reflexo que atravessa uma única vez o filtro selecionado. */
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"]:not(:disabled),
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] {
+  box-shadow: 0 10px 22px rgb(16 42 82 / 0.25), 0 0 0 2px rgb(16 42 82 / 0.24), 0 0 15px rgb(44 101 168 / 0.18) !important;
+  isolation: isolate;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"]:not(:disabled)::after,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"]::after,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"]::after,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"]::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 2;
+  background: linear-gradient(110deg, transparent 25%, rgb(255 255 255 / 0.32) 48%, transparent 70%);
+  transform: translateX(-130%);
+  animation: catalog-selected-sheen 850ms ease-out 1 both;
+}
+@keyframes catalog-selected-sheen {
+  from { transform: translateX(-130%); opacity: 0; }
+  25% { opacity: 1; }
+  to { transform: translateX(130%); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-showcase [aria-pressed="true"]::after { animation: none !important; opacity: 0 !important; }
 }
