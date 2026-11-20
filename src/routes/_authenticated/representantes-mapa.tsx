@@ -20,7 +20,28 @@ const dddRows = "SP|11|Grande São Paulo|São Paulo, Guarulhos, Osasco, Santo An
 
 function DddDirectory(){
  const [uf,setUf]=useState("TODOS");
- const [search,setSearch]=useState("");
+ const {data:me}=useQuery(meQuery);
+ const isAdmin=me?.isAdmin===true;
+ const [editingRep,setEditingRep]=useState<Representative|null>(null);
+ const qc=useQueryClient();
+ const {data:editRecords}=useQuery({
+  queryKey:["representatives-edit-targets"],enabled:isAdmin,
+  queryFn:async()=>{
+   const [profiles,commercial]=await Promise.all([
+    supabase.from("profiles").select("id,full_name"),
+    supabase.from("commercial_representatives").select("id,full_name")
+   ]);
+   if(profiles.error)throw profiles.error;
+   if(commercial.error)throw commercial.error;
+   return {profiles:profiles.data??[],commercial:commercial.data??[]};
+  }
+ });
+ const editHash=(p:Representative)=>{
+  const profile=editRecords?.profiles.find(x=>x.id===p.photoId||x.id===p.id);
+  if(profile)return "person:"+profile.id;
+  const commercial=editRecords?.commercial.find(x=>x.id===p.id||normalize(x.full_name??"")===normalize(p.name));
+  return commercial?"representative:"+commercial.id:null;
+ };
  const {data:reps=[],isLoading:loadingReps}=useQuery({
   queryKey:["ddd-directory-representatives"],
   staleTime:60_000,
@@ -37,28 +58,38 @@ function DddDirectory(){
    }));
   }
  });
- const rows=dddRows.filter(item=>(uf==="TODOS"||item.uf===uf)&&[item.uf,item.ddd,item.region,item.cities].join(" ").toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR").trim()));
+ const rows=dddRows.filter(item=>uf==="TODOS"||item.uf===uf);
  const matchDdd=(value:string,ddd:string)=>value.split(/[^0-9]+/).some(part=>part.replace(/^0+/,"")===ddd);
+ const visibleCount=reps.filter(rep=>uf==="TODOS"||rep.uf===uf||dddRows.some(row=>row.uf===uf&&matchDdd(rep.ddds,row.ddd))).length;
  return <section className="mx-auto max-w-5xl space-y-4 px-3 py-5 text-[#102a52]">
   <header className="rounded-2xl bg-[#102a52] px-4 py-4 text-center shadow-md"><h1 className="text-xl font-black tracking-wide text-white sm:text-2xl">REPRESENTANTES NO BRASIL</h1></header>
   
-  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><label className="text-sm font-bold">Estado<select value={uf} onChange={e=>setUf(e.target.value)} className="mt-1 w-full rounded-lg border p-3"><option value="TODOS">Todos os estados</option>{Object.entries(states).sort((a,b)=>a[1].name.localeCompare(b[1].name,"pt-BR")).map(([key,state])=><option key={key} value={key}>{state.name} ({key})</option>)}</select></label><label className="text-sm font-bold">Buscar DDD, cidade ou região<input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Ex.: 015, Sorocaba" className="mt-1 w-full rounded-lg border p-3"/></label></div>
+  <div className="flex flex-wrap items-end gap-3">
+   <label className="min-w-0 flex-1 text-sm font-bold">Estado
+    <select value={uf} onChange={e=>setUf(e.target.value)} className="mt-1 w-full rounded-xl border border-[#c9d9ec] bg-white p-3 text-[#102a52]">
+     <option value="TODOS">Todos os estados</option>
+     {Object.entries(states).sort((a,b)=>a[1].name.localeCompare(b[1].name,"pt-BR")).map(([key,state])=><option key={key} value={key}>{state.name} ({key}) · DDDs {dddRows.filter(r=>r.uf===key).map(r=>r.ddd).join(", ")}</option>)}
+    </select>
+   </label>
+   <output aria-live="polite" className="flex min-h-12 items-center justify-center rounded-xl bg-[#102a52] px-4 py-3 text-center text-sm font-black text-white">{loadingReps?"Consultando…":`${visibleCount} representante${visibleCount===1?"":"s"}`}</output>
+  </div>
   <div className="space-y-2">{rows.map(item=>{
    const matches=reps.filter(rep=>matchDdd(rep.ddds,item.ddd));
    return <article key={item.uf+item.ddd} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
     <div className="flex items-start justify-between gap-3">
      <div className="min-w-0 flex-1"><div className="flex items-center gap-3"><strong className="rounded-lg bg-[#102a52] px-3 py-2 text-lg text-[#f6d56b]">0{item.ddd}</strong><div><p className="font-bold">{states[item.uf]?.name} ({item.uf})</p><p className="text-sm text-slate-600">{item.region}</p></div></div><p className="mt-2 text-sm"><strong>Principais cidades:</strong> {item.cities}</p></div>
      {matches.length>0&&<div className="flex max-w-[45%] shrink-0 flex-wrap justify-end gap-2" aria-label={`Representantes do DDD ${item.ddd}`}>
-      {matches.map(rep=><div key={rep.id} className="flex w-16 flex-col items-center gap-1 text-center sm:w-20">
-       <img src={representativePhoto(rep.name)||fallbackPhoto(rep.name)||"/images/Logo%20Netinho.webp"} alt={`Foto de ${rep.name}`} loading="lazy" className="h-12 w-12 rounded-full border-2 border-[#d7a62c] bg-slate-100 object-cover object-top sm:h-14 sm:w-14" onError={e=>{const fallback=fallbackPhoto(rep.name);if(fallback&&e.currentTarget.src!==new URL(fallback,window.location.origin).href)e.currentTarget.src=fallback;else e.currentTarget.src="/images/Logo%20Netinho.webp";}}/>
-       <span className="line-clamp-2 text-[10px] font-bold leading-tight text-[#102a52]">{rep.name.split(" ")[0]}</span>
+      {matches.map(rep=><div key={rep.id} className="flex w-20 flex-col items-center gap-1 text-center sm:w-24">
+       <img src={representativePhoto(rep.name)||fallbackPhoto(rep.name)||"/images/Logo%20Netinho.webp"} alt={`Foto de ${rep.name}`} loading="lazy" className="h-16 w-16 rounded-full border-2 border-[#d7a62c] bg-slate-100 object-cover object-top sm:h-20 sm:w-20" onError={e=>{const fallback=fallbackPhoto(rep.name);if(fallback&&e.currentTarget.src!==new URL(fallback,window.location.origin).href)e.currentTarget.src=fallback;else e.currentTarget.src="/images/Logo%20Netinho.webp";}}/>
+       <span className="line-clamp-2 text-xs font-bold leading-tight text-[#102a52]">{rep.name.split(" ")[0]}</span>
+       {isAdmin&&<button type="button" onClick={()=>setEditingRep({id:rep.id,name:rep.name,uf:rep.uf,city:"",region:"",phone:"",photoId:rep.id,ddds:rep.ddds})} className="rounded-lg bg-[#102a52] px-2 py-1 text-xs font-bold text-white" aria-label={`Abrir ficha de ${rep.name}`}>Abrir ficha</button>}
       </div>)}
      </div>}
     </div>
     {loadingReps&&<p className="mt-2 text-xs text-slate-500">Consultando representantes…</p>}
    </article>;
-  })}{rows.length===0&&<p className="py-8 text-center">Nenhum DDD encontrado para esta busca.</p>}</div>
-  <p className="text-xs text-slate-500">As fotos são exibidas quando há representante cadastrado para o DDD de atuação. O DDD não comprova a localização atual de um número celular.</p>
+  })}{rows.length===0&&<p className="py-8 text-center">Nenhum DDD encontrado para este estado.</p>}</div>
+  {isAdmin&&editingRep&&<RepresentativeEditDialog representative={editingRep} target={editHash(editingRep)} onClose={()=>setEditingRep(null)} onSaved={()=>{void qc.invalidateQueries({queryKey:["ddd-directory-representatives"]});void qc.invalidateQueries({queryKey:["representatives-edit-targets"]});}}/>}
  </section>;
 }
 
