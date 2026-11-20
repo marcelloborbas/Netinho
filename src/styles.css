@@ -7093,3 +7093,12 @@ body:has(.catalog-showcase) .catalog-showcase {
     transform:translateY(-50%) !important;
   }
 }
+
+/* Representantes: alinhar o centro do ícone ao centro vertical da tarja escura (90px). */
+@media(max-width:1023px) {
+ .netinho-home-refresh .netinho-hero-representatives {
+   top:auto !important;
+   bottom:45px !important;
+   transform:translateY(50%) !important;
+ }
+}
