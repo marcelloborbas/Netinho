@@ -7,6 +7,7 @@ export type Product = Database["public"]["Tables"]["products"]["Row"] & {
   manufacturer?: "FCO" | "HD";
   image_url?: string | null;
   catalog_page?: number | null;
+  ipi_percent?: number | null;
 };
 export type Customer = Database["public"]["Tables"]["customers"]["Row"];
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
