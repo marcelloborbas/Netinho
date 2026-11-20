@@ -7445,3 +7445,56 @@ body:has(.catalog-showcase) .catalog-showcase {
 @media (prefers-reduced-motion: reduce) {
   .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img { transition: none !important; }
 }
+
+/* Cartão de peças: logos faceadas com as extremidades da placa de preço. */
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos {
+  display: flex !important;
+  grid-column: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos .catalog-card-montadora-logo {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  margin-right: auto !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos img.catalog-card-fco-original-logo {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  object-position: right center !important;
+}
+.catalog-showcase .catalog-product-card.catalog-product-card--glossy,
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col,
+.catalog-showcase .catalog-product-card--glossy .catalog-card-glossy-content,
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  background-color: rgb(241,241,241) !important;
+  background-image: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+  filter: none !important;
+  box-shadow: none !important;
+  transform: translate3d(0,0,0) scale(1) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .catalog-showcase .catalog-product-card--glossy:hover .product-visual.catalog-card-piece-image img {
+    transform: translate3d(0,-72px,0) scale(1.825) !important;
+    filter: none !important;
+    box-shadow: none !important;
+  }
+}
+.catalog-showcase .catalog-product-card--glossy:focus-within .product-visual.catalog-card-piece-image img,
+.catalog-showcase .catalog-product-card--glossy:active .product-visual.catalog-card-piece-image img {
+  transform: translate3d(0,-72px,0) scale(1.825) !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+    transition: none !important;
+  }
+}
