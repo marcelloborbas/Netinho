@@ -7102,3 +7102,25 @@ body:has(.catalog-showcase) .catalog-showcase {
    transform:translateY(50%) !important;
  }
 }
+
+/* Ajustes finos da página inicial: montadoras menores, saudação um pouco mais alta e representantes mais baixo. */
+.netinho-home-refresh .netinho-home-brands .netinho-brand-marquee img {
+  max-height:90px !important;
+  max-width:110px !important;
+  width:85% !important;
+}
+.netinho-home-refresh .netinho-home-hero-copy {
+  transform:translateY(8px) !important;
+}
+.netinho-home-refresh .netinho-hero-representatives {
+  transform:translateY(calc(-50% + 12px)) !important;
+}
+@media(max-width:1023px) {
+  .netinho-home-refresh .netinho-home-hero-copy {
+    transform:translateY(-6px) !important;
+  }
+  .netinho-home-refresh .netinho-hero-representatives {
+    bottom:33px !important;
+    transform:translateY(50%) !important;
+  }
+}
