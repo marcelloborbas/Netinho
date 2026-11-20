@@ -48,7 +48,7 @@ export const ADMIN_SECTIONS: ReadonlyArray<AdminSectionMeta> = [
   {
     id: "pessoas",
     label: "Pessoas e Comissões",
-    description: "Cadastro único de pessoas, representantes, acessos e comissões",
+    description: "Vendedores, representantes, acessos e comissões em um só lugar",
     icon: Users,
     keywords:
       "usuários representantes vendedores acesso perfil comissão whatsapp carteira região ddd excluir",
@@ -63,21 +63,21 @@ export const ADMIN_SECTIONS: ReadonlyArray<AdminSectionMeta> = [
   {
     id: "pedidos",
     label: "Pedidos",
-    description: "Todos os pedidos e orçamentos por usuário",
+    description: "Consultar e administrar pedidos",
     icon: ClipboardList,
     keywords: "pedidos orçamentos vendas status total",
   },
   {
     id: "vendas",
     label: "Vendas e comissões",
-    description: "Evolução das vendas e ranking por representante",
+    description: "Resultados e evolução comercial",
     icon: BarChart3,
     keywords: "evolução vendas ranking representante comissão destaque do mês",
   },
   {
     id: "fornecedores",
-    label: "Fornecedores",
-    description: "Comissões FCO/HD e catálogos dos fornecedores",
+    label: "Distribuidoras",
+    description: "Cadastro e condições das distribuidoras",
     icon: Factory,
     keywords: "distribuidoras fornecedores fco hd catálogo comissão repasse faturamento",
   },
