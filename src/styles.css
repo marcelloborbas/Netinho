@@ -6643,3 +6643,17 @@ body:has(.catalog-showcase) .catalog-showcase {
     font-size: 13px !important;
   }
 }
+
+/* Catálogo: fundo neutro uniforme RGB(241,241,241) em todas as áreas de imagens. */
+.catalog-showcase .catalog-category-item > button,
+.catalog-showcase .catalog-category-item > button > span,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button > div,
+.catalog-showcase .catalog-card-image-col,
+.catalog-showcase .catalog-card-piece-image,
+.catalog-showcase .catalog-card-montadora-logo,
+.catalog-showcase .catalog-card-fco-original-logo {
+  background-color: rgb(241, 241, 241) !important;
+  background-image: none !important;
+}
