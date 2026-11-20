@@ -7070,3 +7070,26 @@ body:has(.catalog-showcase) .catalog-showcase {
     padding-bottom:0 !important;
   }
 }
+
+/* Saudação alinhada à esquerda dentro da tarja; ícone fixo centralizado verticalmente na tarja. */
+.netinho-home-refresh .netinho-home-hero-copy {
+  align-items:flex-start !important;
+  text-align:left !important;
+  padding-right:clamp(66px,11vw,115px) !important;
+}
+.netinho-home-refresh .netinho-home-hero-copy > p {
+  text-align:left !important;
+  justify-content:flex-start !important;
+}
+.netinho-home-refresh .netinho-hero-representatives {
+  top:auto !important;
+  bottom:0 !important;
+  transform:translateY(-13px) !important;
+}
+@media(min-width:1024px) {
+  .netinho-home-refresh .netinho-hero-representatives {
+    top:50% !important;
+    bottom:auto !important;
+    transform:translateY(-50%) !important;
+  }
+}
