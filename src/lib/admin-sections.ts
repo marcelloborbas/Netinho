@@ -40,15 +40,15 @@ export interface AdminSectionMeta {
 export const ADMIN_SECTIONS: ReadonlyArray<AdminSectionMeta> = [
   {
     id: "visao-geral",
-    label: "Visão geral",
-    description: "Indicadores, atalhos e exportação de cadastros",
+    label: "Painel",
+    description: "Acesso às funções administrativas",
     icon: LayoutDashboard,
     keywords: "resumo métricas indicadores exportar excel planilha",
   },
   {
     id: "pessoas",
     label: "Pessoas e Comissões",
-    description: "Perfis, acessos, comissões, carteiras e regiões",
+    description: "Cadastro único de pessoas, representantes, acessos e comissões",
     icon: Users,
     keywords:
       "usuários representantes vendedores acesso perfil comissão whatsapp carteira região ddd excluir",
@@ -94,13 +94,6 @@ export const ADMIN_SECTIONS: ReadonlyArray<AdminSectionMeta> = [
     description: "Mensagens individuais ou para todos os representantes",
     icon: MessageCircle,
     keywords: "whatsapp mensagem comunicado representantes",
-  },
-  {
-    id: "representantes",
-    label: "Representantes",
-    description: "Mapa, diretório e fichas públicas dos representantes",
-    icon: MapPinned,
-    keywords: "mapa diretório ficha pública editar representante abdenego livaldo vendedores",
   },
   {
     id: "configuracoes",
