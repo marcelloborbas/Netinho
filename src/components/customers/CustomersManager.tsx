@@ -26,7 +26,7 @@ function selectCustomerForOrder(c: Customer) {
  * Lista de clientes compartilhada: carteira própria para vendedores e visão
  * geral (com responsável e exclusão) para o administrador. O RLS decide o que aparece.
  */
-export function CustomersManager() {
+export function CustomersManager({ compactAdmin = false }: { compactAdmin?: boolean } = {}) {
   const qc = useQueryClient();
   const { data: access } = useQuery(accessQuery);
   const isAdmin = access?.level === 1;
@@ -149,7 +149,16 @@ export function CustomersManager() {
         </p>
       ) : (
         <ul className="grid gap-3 md:grid-cols-2">
-          {list.map((c) => (
+          {list.map((c) => compactAdmin && isAdmin ? (
+            <li key={c.id} className="surface-card flex min-w-0 items-center gap-2 rounded-2xl border border-[#b8cee8] bg-white p-3 shadow-sm sm:p-4">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-extrabold text-[#102a52]" title={c.trade_name || c.company_name}>{c.trade_name || c.company_name}</p>
+                <p className="truncate text-xs text-muted-foreground">Resp.: {representativeNamesFor(c.seller_id) ?? "Não identificado"}</p>
+              </div>
+              <button type="button" onClick={() => setEditing(c)} aria-label={`Editar ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-[#a7c1e5] bg-[#eaf2ff] p-2 text-[#174e9b] hover:bg-[#dbeafe]"><Pencil className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setDeleting(c)} aria-label={`Excluir ${c.trade_name || c.company_name}`} className="shrink-0 rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 hover:bg-red-100"><Trash2 className="h-4 w-4" /></button>
+            </li>
+          ) : (
             <li
               key={c.id}
               className="surface-card flex min-w-0 items-center gap-2 rounded-2xl border border-[#b8cee8] bg-white p-3 shadow-sm sm:p-4"
@@ -223,8 +232,8 @@ export function CustomersManager() {
                 </button>
               )}
             </li>
-          ))}
-        </ul>
+ 
+          ))}       </ul>
       )}
 
       <Dialog
