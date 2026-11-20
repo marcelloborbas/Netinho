@@ -87,12 +87,33 @@ export function CustomersManager({ compactAdmin = false }: { compactAdmin?: bool
       setDeletingBusy(false);
       return;
     }
-    const { error } = await supabase.from("customers").delete().eq("id", deleting.id);
+    // Preserve the link between historical orders and their customer.
+    const { count: orderCount, error: ordersError } = await supabase
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("customer_id", deleting.id);
+    if (ordersError) {
+      setDeletingBusy(false);
+      toast.error("Não foi possível verificar os pedidos deste cliente. A exclusão foi cancelada por segurança.");
+      return;
+    }
+    if ((orderCount ?? 0) > 0) {
+      setDeletingBusy(false);
+      toast.error("Este cliente possui pedidos vinculados e não pode ser excluído. Preserve o histórico de vendas.");
+      return;
+    }
+    const { data: deletedRows, error } = await supabase
+      .from("customers")
+      .delete()
+      .eq("id", deleting.id)
+      .select("id");
     setDeletingBusy(false);
     if (error) {
-      toast.error(
-        "Não foi possível excluir. Verifique as permissões ou os pedidos vinculados ao cliente.",
-      );
+      toast.error("Não foi possível excluir: " + error.message);
+      return;
+    }
+    if (!deletedRows?.length) {
+      toast.error("O banco não confirmou a exclusão. Verifique as permissões do administrador.");
       return;
     }
     toast.success("Cliente excluído.");
