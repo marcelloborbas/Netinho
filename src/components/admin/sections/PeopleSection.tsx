@@ -233,9 +233,6 @@ export function PeopleSection() {
       : monthTotalsError
         ? "Indisponível"
         : (monthTotals[id] ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  const rateForPerson = (id: string) => commissionRows.find((x) => x.user_id === id)?.rate;
-  const rateForRepresentative = (id: string) =>
-    commercialRates.find((x) => x.representative_id === id)?.rate;
   const linkedCommercialFor = (person: Person) =>
     representatives.find(
       (rep) =>
@@ -244,10 +241,6 @@ export function PeopleSection() {
     );
   const visibleEntries = [
     ...people
-      .filter(
-        (p) =>
-          true,
-      )
       .map((p) => ({
         kind: "person" as const,
         id: p.id,
