@@ -26,7 +26,7 @@ const campos = {
   "Em que região pretende atender": [["regiao", "Região pretendida"], ["cidades_atendidas", "Qual sua pretensão de Atuação - Cidade"], ["ddd_atuacao", "DDD da região de atuação"], ["experiencia", "Experiência comercial"]],
 } as const;
 
-const dddsBrasil = [11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99];
+const dddsPorUF: Record<string, number[]> = {"AC":[68],"AL":[82],"AP":[96],"AM":[92,97],"BA":[71,73,74,75,77],"CE":[85,88],"DF":[61],"ES":[27,28],"GO":[62,64],"MA":[98,99],"MT":[65,66],"MS":[67],"MG":[31,32,33,34,35,37,38],"PA":[91,93,94],"PB":[83],"PR":[41,42,43,44,45,46],"PE":[81,87],"PI":[86,89],"RJ":[21,22,24],"RN":[84],"RS":[51,53,54,55],"RO":[69],"RR":[95],"SC":[47,48,49],"SP":[11,12,13,14,15,16,17,18,19],"SE":[79],"TO":[63]};
 const camposNumericos = new Set(["documento", "identidade", "cep", "numero", "comercial_telefone", "financeiro_telefone", "agencia", "conta"]);
 
 function CadastroDigital() {
@@ -35,23 +35,26 @@ function CadastroDigital() {
   const numeroRef = useRef<HTMLInputElement>(null);
   const cepRequest = useRef(0);
   const [cepErro, setCepErro] = useState("");
+  const [dddDoCep, setDddDoCep] = useState("");
   const [consultandoCep, setConsultandoCep] = useState(false);
   const consultarCep = async (cep: string) => {
     const digits = cep.replace(/\D/g, "");
     const request = ++cepRequest.current;
-    if (digits.length !== 8) { setCepErro(""); setConsultandoCep(false); return; }
+    if (digits.length !== 8) { setCepErro(""); setDddDoCep(""); setConsultandoCep(false); return; }
     setConsultandoCep(true);
     setCepErro("");
     try {
       const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
       if (!response.ok) throw new Error("Consulta indisponível");
-      const endereco = await response.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string; estado?: string };
+      const endereco = await response.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string; estado?: string; ddd?: string };
       if (request !== cepRequest.current) return;
-      if (endereco.erro) { setCepErro("CEP não encontrado. Preencha o endereço manualmente."); return; }
-      setDados(old => ({ ...old, endereco: endereco.logradouro || old["endereco"] || "", bairro: endereco.bairro || old["bairro"] || "", cidade: endereco.localidade || old["cidade"] || "", uf: endereco.uf || old["uf"] || "", estado: endereco.estado || old["estado"] || "" }));
+      if (endereco.erro) { setDddDoCep(""); setCepErro("CEP não encontrado. Preencha o endereço manualmente."); return; }
+      const dddCep = String(endereco.ddd || "").replace(/\D/g, "");
+      setDddDoCep(dddCep);
+      setDados(old => ({ ...old, ddd_atuacao: dddCep && (dddsPorUF[endereco.uf || ""] || []).includes(Number(dddCep)) ? dddCep : "", endereco: endereco.logradouro || old["endereco"] || "", bairro: endereco.bairro || old["bairro"] || "", cidade: endereco.localidade || old["cidade"] || "", uf: endereco.uf || old["uf"] || "", estado: endereco.estado || old["estado"] || "" }));
       window.requestAnimationFrame(() => numeroRef.current?.focus());
     } catch {
-      if (request === cepRequest.current) setCepErro("Não foi possível consultar o CEP. Preencha o endereço manualmente.");
+      if (request === cepRequest.current) { setDddDoCep(""); setCepErro("Não foi possível consultar o CEP. Preencha o endereço manualmente."); }
     } finally {
       if (request === cepRequest.current) setConsultandoCep(false);
     }
@@ -68,7 +71,7 @@ function CadastroDigital() {
     .map(([titulo, fields]) => [titulo, isVisitor && titulo === "Informações básicas"
       ? fields.filter(([key]) => !["transportador", "ramo"].includes(key))
       : fields] as const);
-  const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setProtocolo(""); };
+  const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value, ...(key === "uf" || key === "cidade" ? { ddd_atuacao: "" } : {}) })); if (key === "uf" || key === "cidade") setDddDoCep(""); setProtocolo(""); };
   const valido = () => !!(dados["razao_social"]?.trim() && dados["documento"]?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados["comercial_email"] || "") && consentimento);
   const enviar = async () => {
     setErroEnvio("");
@@ -99,8 +102,8 @@ function CadastroDigital() {
             {label}{["razao_social","documento","comercial_email"].includes(key) ? " *" : ""}
             {key === "ddd_atuacao" ? (
               <select value={dados[key] || ""} onChange={e => set(key, e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900">
-                <option value="">Selecione o DDD</option>
-                {dddsBrasil.map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
+                <option value="">{dados.uf ? "Selecione o DDD da sua região" : "Informe primeiro o CEP ou a UF"}</option>
+                {(dddDoCep && (dddsPorUF[dados.uf?.toUpperCase() || ""] || []).includes(Number(dddDoCep)) ? [Number(dddDoCep)] : dddsPorUF[dados.uf?.toUpperCase() || ""] || []).map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
               </select>
             ) : (
             <input ref={key === "numero" ? numeroRef : undefined} value={dados[key] || ""} onChange={e => {
