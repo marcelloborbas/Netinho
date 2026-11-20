@@ -79,7 +79,7 @@ function VehicleModelPicture({name,brand}:{name:string;brand:string}) {
   const photo = slug && filename ? `/images/veiculos/${slug}/${encodeURIComponent(filename)}` : null;
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
-  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-full w-full object-cover object-center transition-transform duration-200 group-hover:scale-105" /> : <div className="h-full w-full"><VehicleModelIllustration name={name}/></div>;
+  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-12 w-full object-contain transition-transform duration-200 group-hover:scale-105" /> : <div className="h-12 w-full"><VehicleModelIllustration name={name}/></div>;
 }
 
 /** Miniaturas vetoriais locais, com silhuetas e cores próprias por modelo. */
@@ -402,33 +402,34 @@ function Catalog() {
       <nav aria-label="Filtrar peças por montadora" className="mb-2 flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain rounded-xl bg-transparent px-0 py-2 [scrollbar-width:thin]">
         {availableVehicleBrands.map((brand) => {
           const selected = vehicleBrand === brand.name;
-          return <button
-            key={brand.name}
-            type="button"
-            title={`Ver peças para ${brand.name}`}
-            aria-label={`Ver ${brand.count} peças para ${brand.name}`}
-            aria-pressed={selected}
-            onClick={() => { setVehicleBrand(selected ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}
-            className={`group relative flex h-[128px] w-[calc((100%-16px)/3)] min-w-[105px] max-w-[160px] shrink-0 snap-start flex-col items-center overflow-hidden rounded-2xl border bg-white px-2 pb-2 pt-2 text-center text-[#102a52] shadow-sm transition-all duration-200 hover:border-[#d4af37] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37] ${selected ? "border-[#d4af37] ring-2 ring-[#d4af37]/50" : "border-[#d9dee6]"}`}
-          >
-            <img
-              src={`/images/montadoras/${brand.slug === "mercedes" ? "mercedes-benz" : brand.slug}.webp`}
-              alt={brand.name}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-            />
-            <span className="absolute inset-x-0 bottom-0 z-10 bg-white/90 px-1 py-1 text-[12px] font-extrabold text-[#102a52] backdrop-blur-sm">{brand.count} peças</span>
-          </button>;
+          return <div key={brand.name} className="flex w-[calc((100%-16px)/3)] min-w-[105px] max-w-[160px] shrink-0 snap-start flex-col items-center gap-1.5">
+            <button
+              type="button"
+              title={`Ver peças para ${brand.name}`}
+              aria-label={`Ver ${brand.count} peças para ${brand.name}`}
+              aria-pressed={selected}
+              onClick={() => { setVehicleBrand(selected ? "all" : brand.name); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}
+              className={`group relative block h-[128px] w-full overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-200 hover:border-[#d4af37] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4af37] ${selected ? "border-[#d4af37] ring-2 ring-[#d4af37]/50" : "border-[#d9dee6]"}`}
+            >
+              <img
+                src={`/images/montadoras/${brand.slug === "mercedes" ? "mercedes-benz" : brand.slug}.webp`}
+                alt={brand.name}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+              />
+            </button>
+            <span className="text-center text-[12px] font-extrabold leading-tight text-[#102a52]">{brand.count} peças</span>
+          </div>;
         })}
       </nav>
       {availableVehicleBrands.length > 0 && <section aria-label="Modelos dos veículos" className="mb-4">
         <p className="mb-3 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">4</span>VEÍCULO</p>
         {(vehicleBrand === "all" ? (vehicleModels[availableVehicleBrands[0]?.name ?? ""] ?? []).slice(0,3).map(name => ({name,count:0})) : availableVehicleModels).length ? <div className="flex w-full snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-width:thin]">
-          {(vehicleBrand === "all" ? (vehicleModels[availableVehicleBrands[0]?.name ?? ""] ?? []).slice(0,3).map(name => ({name,count:0})) : availableVehicleModels).map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { if(vehicleBrand === "all") {setVehicleBrand(availableVehicleBrands[0].name);setVehicleModel(model.name);} else {setVehicleModel(vehicleModel === model.name ? "all" : model.name);} setHasSelectedCategory(true); setPage(1); }} className={`group relative flex h-[132px] min-h-[132px] w-[calc((100%-16px)/3)] min-w-[105px] max-w-[160px] shrink-0 snap-start flex-col items-center justify-center gap-1 overflow-hidden rounded-2xl border-2 bg-white p-0 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
-            <span className="absolute inset-0 block h-full w-full"><VehicleModelPicture name={model.name} brand={vehicleBrand === "all" ? availableVehicleBrands[0].name : vehicleBrand} /></span>
-            <span className="absolute inset-x-0 bottom-0 z-10 w-full break-words bg-white/90 px-1 py-1 text-[13px] font-extrabold leading-tight text-[#102a52] backdrop-blur-sm">{model.name}</span>
-            
+          {(vehicleBrand === "all" ? (vehicleModels[availableVehicleBrands[0]?.name ?? ""] ?? []).slice(0,3).map(name => ({name,count:0})) : availableVehicleModels).map((model) => <button key={model.name} type="button" aria-pressed={vehicleModel === model.name} onClick={() => { if(vehicleBrand === "all") {setVehicleBrand(availableVehicleBrands[0].name);setVehicleModel(model.name);} else {setVehicleModel(vehicleModel === model.name ? "all" : model.name);} setHasSelectedCategory(true); setPage(1); }} className={`group flex min-h-[60px] min-w-[92px] max-w-[120px] shrink-0 snap-start flex-col items-center justify-center gap-1 overflow-hidden rounded-2xl border-2 bg-gradient-to-b from-white to-[#f4f8fd] px-2 py-2 text-center shadow-[0_4px_10px_rgba(0,51,111,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${vehicleModel === model.name ? "border-[#e8ab16] ring-2 ring-[#ffdc55] shadow-[0_0_12px_rgba(255,204,0,0.3)]" : "border-[#c7d9ed] hover:border-[#d4af37]"}`}>
+            <VehicleModelPicture name={model.name} brand={vehicleBrand === "all" ? availableVehicleBrands[0].name : vehicleBrand} />
+            <span className="mt-1 w-full break-words text-[13px] font-extrabold leading-tight text-[#102a52]">{model.name}</span>
+            {vehicleBrand !== "all" && <span className="text-[11px] font-semibold text-[#4a6785]">{model.count} peças</span>}
           </button>)}
         </div> : <p className="text-xs text-[#102a52]">Nenhum modelo identificado nas aplicações cadastradas para esta marca.</p>}
       </section>}
