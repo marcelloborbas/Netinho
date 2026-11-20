@@ -497,7 +497,7 @@ function PersonSummary({
   const isRepresentative = role.startsWith("Representante");
   const { data: assignedCustomers = [], isLoading: loadingClients, isError: clientsError } = useQuery({
     ...customersQuery,
-    enabled: showClients && isRepresentative,
+    enabled: isRepresentative,
   });
   const ownerId = role.includes("cadastro comercial") ? null : id;
   const clientList = ownerId ? assignedCustomers.filter((customer) => customer.seller_id === ownerId) : [];
@@ -509,7 +509,7 @@ function PersonSummary({
         <div className="min-w-0 flex-1">
           <strong className="block truncate text-sm font-black text-navy sm:text-base" title={name}>{firstName}</strong>
           <span className="block truncate text-[11px] font-semibold text-navy/75" title={role}>{role.replace(" (cadastro comercial)", "")}</span>
-          {isRepresentative && <button type="button" onClick={() => setShowClients((open) => !open)} aria-expanded={showClients} className="mt-1 rounded-md border border-[#102a52]/30 px-2 py-0.5 text-[11px] font-bold text-[#102a52] hover:bg-[#102a52]/10">Clientes {showClients ? "−" : "+"}</button>}
+          {isRepresentative && <button type="button" onClick={() => setShowClients((open) => !open)} aria-expanded={showClients} className="mt-1 rounded-md border border-[#102a52]/30 px-2 py-0.5 text-[11px] font-bold text-[#102a52] hover:bg-[#102a52]/10">{loadingClients ? "…" : clientsError ? "—" : clientList.length} Clientes {showClients ? "−" : "+"}</button>}
         </div>
         {whatsappNumber ? (
           <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp" className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
