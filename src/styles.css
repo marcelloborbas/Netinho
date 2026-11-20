@@ -6904,3 +6904,17 @@ body:has(.catalog-showcase) .catalog-showcase {
 .catalog-showcase .catalog-category-filters .catalog-category-item > button > span {
   background-color: transparent !important;
 }
+
+/* Ícone de representantes: maior, acima, com pulsação suave. */
+.netinho-home-refresh .netinho-home-hero-actions > a {
+  flex: 0 0 64px !important;
+  width: 64px !important;
+  height: 64px !important;
+}
+@keyframes netinho-representative-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 3px 5px rgb(0 0 0 / .2)); }
+  50% { transform: scale(1.09); filter: drop-shadow(0 5px 10px rgb(212 175 55 / .5)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .netinho-home-hero-actions img { animation: none !important; }
+}
