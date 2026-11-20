@@ -6657,3 +6657,39 @@ body:has(.catalog-showcase) .catalog-showcase {
   background-color: rgb(241, 241, 241) !important;
   background-image: none !important;
 }
+
+/* Padronização dos três grupos do catálogo: cartões quadrados até 120px,
+   três visíveis por linha em telas estreitas, sem distorcer imagens. */
+.catalog-showcase .catalog-category-filters {
+  gap: 10px !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item {
+  flex: 0 0 min(120px, calc((100% - 20px) / 3)) !important;
+  width: min(120px, calc((100% - 20px) / 3)) !important;
+  min-width: 0 !important;
+  gap: 6px !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 120px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 5px !important;
+  border-radius: 12px !important;
+}
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] > div {
+  gap: 10px !important;
+}
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button {
+  border-radius: 12px !important;
+}
+@media (max-width: 639px) {
+  .catalog-showcase .catalog-category-filters .catalog-category-item {
+    flex: 0 0 calc((100% - 20px) / 3) !important;
+    width: calc((100% - 20px) / 3) !important;
+  }
+}
