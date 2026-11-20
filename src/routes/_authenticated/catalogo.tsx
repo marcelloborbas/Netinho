@@ -367,6 +367,14 @@ function Catalog() {
 
   return (
     <div className="catalog-showcase mx-auto w-full max-w-6xl space-y-2 bg-[#f1f1f1] px-2 pt-1 pb-28 text-[#102a52] sm:px-6 sm:pt-4 sm:pb-32">
+      <section role="search" aria-label="Procurar peças no catálogo" className="sticky top-0 z-40 rounded-xl border-2 border-[#d4af37] bg-white p-2 shadow-md">
+        <label htmlFor="catalog-search-top" className="mb-1 block px-1 text-xs font-extrabold uppercase tracking-wide text-[#102a52]">Procurar peça</label>
+        <div className="flex items-center gap-2">
+          <Search size={21} className="ml-1 shrink-0 text-[#102a52]" aria-hidden="true" />
+          <input id="catalog-search-top" type="search" value={searchInput} onChange={(event) => { setSearchInput(event.target.value); setQ(event.target.value); setPage(1); }} placeholder="Código, peça, referência ou veículo" autoComplete="off" className="h-11 min-w-0 flex-1 rounded-lg border border-[#c7d8eb] bg-white px-3 text-base text-[#102a52] outline-none focus:border-[#102a52] focus:ring-2 focus:ring-[#d4af37]" />
+          {searchInput && <button type="button" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} aria-label="Limpar pesquisa" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#e8eef5] text-[#102a52]"><X size={19}/></button>}
+        </div>
+      </section>
       {!canSell && (
         <aside role="note" aria-label="Orientação para visitantes" className="netinho-visitor-notice relative isolate w-full overflow-hidden rounded-xl border-2 border-[#ffd447] bg-[#b31320] px-3 py-3 shadow-[0_5px_18px_rgba(140,0,15,0.3)] sm:px-5 sm:py-4" style={{ backgroundColor: "#b31320", color: "#ffe45c" }}>
           <div className="flex items-center gap-3 sm:gap-4">
