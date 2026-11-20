@@ -6710,3 +6710,26 @@ body:has(.catalog-showcase) .catalog-showcase {
   background-color: rgb(241, 241, 241) !important;
   background-image: none !important;
 }
+
+/* Catálogo: seleção e foco em azul-marinho, sem realce dourado. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"],
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"] {
+  border-color: #102a52 !important;
+  --tw-ring-color: rgb(16 42 82 / 0.4) !important;
+  outline-color: #102a52 !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:hover,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button:hover,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button:hover,
+.catalog-showcase nav[aria-label="Filtro por representação"] button:not(:disabled):hover {
+  border-color: #102a52 !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:focus-visible,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button:focus-visible,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button:focus-visible,
+.catalog-showcase nav[aria-label="Filtro por representação"] button:focus-visible {
+  outline-color: #102a52 !important;
+  --tw-ring-color: rgb(16 42 82 / 0.4) !important;
+}
