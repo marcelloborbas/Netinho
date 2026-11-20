@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { accessQuery } from "@/lib/access";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/cadastro-digital")({
@@ -24,13 +26,20 @@ const campos = {
 } as const;
 
 function CadastroDigital() {
+  const { data: access } = useQuery(accessQuery);
+  const isVisitor = access?.attribution === "Visitante" || access?.level === 3;
   const [tipo, setTipo] = useState<Tipo>("cliente");
   const [dados, setDados] = useState<Record<string, string>>({});
   const [consentimento, setConsentimento] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [protocolo, setProtocolo] = useState("");
   const [erroEnvio, setErroEnvio] = useState("");
-  const sections = Object.entries(campos).filter(([titulo]) => tipo === "cliente" ? titulo !== "Atuação profissional" : !["Contato financeiro","Nota fiscal eletrônica (NFe)","Referências bancárias"].includes(titulo));
+  const sections = Object.entries(campos)
+    .filter(([titulo]) => tipo === "cliente" ? titulo !== "Atuação profissional" : !["Contato financeiro","Nota fiscal eletrônica (NFe)","Referências bancárias"].includes(titulo))
+    .filter(([titulo]) => !isVisitor || !["Contato comercial", "Contato financeiro", "Nota fiscal eletrônica (NFe)", "Referências bancárias"].includes(titulo))
+    .map(([titulo, fields]) => [titulo, isVisitor && titulo === "Informações básicas"
+      ? fields.filter(([key]) => !["transportador", "ramo"].includes(key))
+      : fields] as const);
   const set = (key: string, value: string) => { setDados(old => ({ ...old, [key]: value })); setProtocolo(""); };
   const valido = () => !!(dados["razao_social"]?.trim() && dados["documento"]?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados["comercial_email"] || "") && consentimento);
   const enviar = async () => {
@@ -69,6 +78,17 @@ function CadastroDigital() {
           </label>)}
         </div>
       </fieldset>)}
+      {isVisitor && <fieldset className="mt-7 rounded-xl border border-slate-200 p-4">
+        <legend className="px-2 font-bold text-blue-950">Contato</legend>
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium">E-mail *
+            <input type="email" value={dados["comercial_email"] || ""} onChange={e => set("comercial_email", e.target.value)} maxLength={250} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" />
+          </label>
+          <label className="block text-sm font-medium">Telefone / celular
+            <input type="tel" value={dados["comercial_telefone"] || ""} onChange={e => set("comercial_telefone", e.target.value)} maxLength={250} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" />
+          </label>
+        </div>
+      </fieldset>}
       <label className="mt-7 flex items-start gap-3 text-sm">
         <input type="checkbox" checked={consentimento} onChange={e => setConsentimento(e.target.checked)} className="mt-1" />
         Estou ciente de que os dados informados serão utilizados para análise do cadastro pela Netinho Auto Parts. Não há aprovação automática.
