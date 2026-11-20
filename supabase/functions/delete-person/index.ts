@@ -15,9 +15,9 @@ Deno.serve(async (request: Request) => {
       return error || data.user?.is_anonymous ? null : data.user;
     },
     async isAdmin(userId) {
-      const { data, error } = await admin.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+      const { data, error } = await admin.from("profiles").select("site_role,access_active").eq("id", userId).maybeSingle();
       if (error) throw error;
-      return Boolean(data);
+      return data?.site_role === "Administrador" && data.access_active === true;
     },
     async targetExists(userId) {
       const { data, error } = await admin.auth.admin.getUserById(userId);
@@ -29,15 +29,14 @@ Deno.serve(async (request: Request) => {
       if (error) throw error;
     },
     async verifyRemoved(userId) {
-      const [auth, profile, roles, representatives] = await Promise.all([
+      const [auth, profile, representatives] = await Promise.all([
         admin.auth.admin.getUserById(userId),
         admin.from("profiles").select("id").eq("id", userId),
-        admin.from("user_roles").select("id").eq("user_id", userId),
         admin.from("commercial_representatives").select("id").eq("user_id", userId),
       ]);
       if (auth.error && auth.error.status !== 404) throw auth.error;
-      if (profile.error || roles.error || representatives.error) throw new Error("Cleanup verification failed");
-      return !auth.data.user && !profile.data?.length && !roles.data?.length && !representatives.data?.length;
+      if (profile.error || representatives.error) throw new Error("Cleanup verification failed");
+      return !auth.data.user && !profile.data?.length && !representatives.data?.length;
     },
   });
 });
