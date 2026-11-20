@@ -206,10 +206,7 @@ function Home() {
   // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
   const brands = ["volkswagen", "fiat", "chevrolet", "ford", "renault", "honda", "toyota", "hyundai", "nissan", "jeep", "peugeot", "citroen", "mitsubishi", "kia", "bmw", "mercedes-benz", "audi", "volvo"] as const;
-  const [brandPage, setBrandPage] = useState(0);
-  useEffect(() => {
-    const timer = window.setInterval(() => setBrandPage(page => (page + 1) % (brands.length / 3)), 4000);
-    return () => window.clearInterval(timer);
+  return () => window.clearInterval(timer);
   }, []);
   return (
     <div className="netinho-home netinho-home-refresh min-h-[100dvh] overflow-x-clip bg-background text-navy">
@@ -256,8 +253,16 @@ function Home() {
           className="netinho-home-brands relative min-w-0 overflow-hidden bg-transparent border-0 shadow-none lg:col-span-4"
           aria-label="Montadoras"
         >
-          <div className="grid h-full min-h-[100px] grid-cols-4 items-center justify-items-center gap-3 px-0 sm:gap-5">
-            {brands.slice(brandPage * 3, brandPage * 3 + 3).map(brand => <img key={brand} src={`/images/logos-montadoras/${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply animate-in fade-in duration-500" loading="lazy" />)}
+          <div className="grid h-full min-h-[100px] grid-cols-4 items-center gap-3 px-0 sm:gap-5">
+            <div className="col-span-3 min-w-0 overflow-hidden" aria-label="Logos das montadoras em movimento contínuo">
+              <div className="netinho-brand-marquee flex h-full items-center">
+                {[...brands, ...brands].map((brand, i) => (
+                  <div key={`${brand}-${i}`} className="flex h-full min-w-0 shrink-0 basis-1/3 items-center justify-center px-1.5" aria-hidden={i >= brands.length}>
+                    <img src={`/images/logos-montadoras/${brand}.webp`} alt={i < brands.length ? `Logo ${brand}` : ""} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            </div>
             <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
               <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={110} height={110} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain" loading="lazy" />
             </Link>
