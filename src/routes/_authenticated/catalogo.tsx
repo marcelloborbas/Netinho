@@ -368,9 +368,10 @@ function Catalog() {
                 type="button"
                 aria-pressed={selected}
                 aria-label={label}
-                title={`Exibir peças: ${label}`}
-                onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] ${selected ? "border-[#d4af37] ring-2 ring-[#d4af37]/40" : "border-[#d9d9d9] hover:border-[#d4af37]"}`}
+                disabled={brand === "HD"}
+                title={brand === "HD" ? "Catálogo HD indisponível no momento" : `Exibir peças: ${label}`}
+                onClick={() => { if (brand === "HD") return; setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
+                className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] ${selected ? "border-[#d4af37] ring-2 ring-[#d4af37]/40" : "border-[#d9d9d9] hover:border-[#d4af37]"}`}
                 style={{ backgroundColor: "rgb(241, 241, 241)" }}
               >
                 {brand === "all" ? (
