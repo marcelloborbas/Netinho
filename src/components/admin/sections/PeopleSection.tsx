@@ -151,7 +151,7 @@ export function PeopleSection() {
       return (data ?? []) as Person[];
     },
   });
-  const { data: commissionRows = [], error: ratesError } = useQuery({
+  const { error: ratesError } = useQuery({
     queryKey: ["admin-all-person-commissions"],
     enabled: !!me?.isAdmin,
     queryFn: async () => {
