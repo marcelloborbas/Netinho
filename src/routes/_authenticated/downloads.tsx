@@ -12,11 +12,8 @@ export const Route = createFileRoute("/_authenticated/downloads")({
 
 const documents = [
   { label: "Catálogo - FCO", filename: "Catalogo_Netinho Representação FCO.pdf" },
-  { label: "Ficha Cadastral - Representantes", filename: "Ficha_Cadastral_Representantes_da_Netinho.pdf" },
-  { label: "Formulário de Pedido - Netinho", filename: "Formulário_Pedido_Netinho.pdf" },
   { label: "Tabela de Valores - FCO - Produtos", filename: "Tabela_de_Valores_FCO_Produtos.pdf" },
   { label: "Tabela de Valores - FCO - Caixas e Bombas", filename: "Tabela_de_Valores_FCO_Caixas_e_Bombas.pdf" },
-  { label: "Apoio - FCO", filename: "Apoio - FCO.zip", folder: "material-de-apoio" },
 ] as const;
 
 function DownloadsPage() {
