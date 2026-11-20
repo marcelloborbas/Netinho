@@ -463,7 +463,8 @@ function PersonSummary({
           .select("phone").eq("email", normalizedEmail).maybeSingle();
         if (profile?.phone?.trim()) return profile.phone.trim();
         const { data: commercial } = await supabase.from("commercial_representatives")
-          .select("id,phone").eq("email", normalizedEmail).maybeSingle();\n        if (commercial?.phone?.trim()) return commercial.phone.trim();
+          .select("id,phone").eq("email", normalizedEmail).maybeSingle();
+        if (commercial?.phone?.trim()) return commercial.phone.trim();
         if (commercial?.id) {
           const { data: details } = await supabase.from("commercial_representative_details" as never)
             .select("phone").eq("representative_id", commercial.id).maybeSingle();
@@ -473,7 +474,8 @@ function PersonSummary({
       }
       if (role.startsWith("Representante")) {
         const { data: namedCommercial } = await supabase.from("commercial_representatives")
-          .select("id,phone").eq("full_name", name).maybeSingle();\n        if (namedCommercial?.phone?.trim()) return namedCommercial.phone.trim();
+          .select("id,phone").eq("full_name", name).maybeSingle();
+        if (namedCommercial?.phone?.trim()) return namedCommercial.phone.trim();
         if (namedCommercial?.id) {
           const { data: details } = await supabase.from("commercial_representative_details" as never)
             .select("phone").eq("representative_id", namedCommercial.id).maybeSingle();

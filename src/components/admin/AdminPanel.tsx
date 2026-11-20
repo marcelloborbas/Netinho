@@ -82,7 +82,7 @@ export function AdminPanel({ section }: { section: AdminSectionId }) {
     <div className="text-navy">
       {section !== "cadastros" && <header className="relative mb-4 flex flex-col items-center justify-center gap-3">
         <h1 className="w-full text-center text-xl font-black uppercase tracking-wide text-navy sm:text-2xl">PAINEL ADMINISTRATIVO</h1>
-        {section !== "visao-geral" && section !== "pessoas" && section !== "cadastros" && <Link to="/admin" search={{secao:"visao-geral"}} className="rounded-xl border border-gold px-3 py-2 text-sm font-bold text-navy hover:bg-gold/10 sm:absolute sm:right-0">Voltar ao painel</Link>}
+        {section !== "visao-geral" && section !== "pessoas" && <Link to="/admin" search={{secao:"visao-geral"}} className="rounded-xl border border-gold px-3 py-2 text-sm font-bold text-navy hover:bg-gold/10 sm:absolute sm:right-0">Voltar ao painel</Link>}
       </header>}
       <SectionBoundary key={section}>
         <Suspense fallback={<SectionSkeleton />}><Active /></Suspense>

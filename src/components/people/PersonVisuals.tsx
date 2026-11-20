@@ -23,7 +23,7 @@ export function PersonPhoto({
     romulo: "Romullo.webp", burgato: "José Burgato.webp", osmair: "Osmair.webp",
   };
   const matchedKey = Object.keys(representativeFiles).find((key) => normalized.includes(key));
-  const repositoryPhoto = matchedKey ? "/images/public/images/representantes/" + encodeURIComponent(representativeFiles[matchedKey]) : null;
+  const repositoryPhoto = matchedKey ? "/images/public/images/representantes/" + encodeURIComponent(representativeFiles[matchedKey]!) : null;
   const [fallbackFailed, setFallbackFailed] = useState(false);
   const [busy, setBusy] = useState(false);
   const path = id + "/foto.webp";

@@ -108,8 +108,8 @@ function CadastroDigital() {
               <div className="mt-1 space-y-2">
                 <div className="flex gap-2">
                   <select value={dddSelecionado} onChange={e => setDddSelecionado(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white p-3 text-slate-900">
-                    <option value="">{dados.uf ? "Escolha um DDD próximo" : "Informe primeiro o CEP ou a UF"}</option>
-                    {(dddDoCep && dddsVizinhos[dddDoCep] ? dddsVizinhos[dddDoCep] : dddsPorUF[dados.uf?.toUpperCase() || ""] || []).filter(ddd => !(dados[key] || "").split(",").includes(String(ddd))).map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
+                    <option value="">{dados["uf"] ? "Escolha um DDD próximo" : "Informe primeiro o CEP ou a UF"}</option>
+                    {(dddDoCep && dddsVizinhos[dddDoCep] ? dddsVizinhos[dddDoCep] : dddsPorUF[dados["uf"]?.toUpperCase() || ""] || []).filter(ddd => !(dados[key] || "").split(",").includes(String(ddd))).map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
                   </select>
                   <button type="button" disabled={!dddSelecionado} onClick={() => { set(key, [...new Set([...(dados[key] || "").split(",").filter(Boolean), dddSelecionado])].join(",")); setDddSelecionado(""); }} className="rounded-lg bg-[#102a52] px-4 font-bold text-white disabled:opacity-40">Adicionar</button>
                 </div>
