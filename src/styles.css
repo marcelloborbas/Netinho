@@ -6998,3 +6998,41 @@ body:has(.catalog-showcase) .catalog-showcase {
     transform: none !important;
   }
 }
+
+
+/* Saudação: centralizar os textos dentro da tarja escura, inclusive no celular.
+   Sobrescreve os alinhamentos antigos que forçavam o conteúdo para baixo e à esquerda. */
+.netinho-home-refresh .netinho-home-hero-content {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.netinho-home-refresh .netinho-home-hero-copy {
+  width:100% !important;
+  min-height:0 !important;
+  flex:0 1 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  margin-inline:auto !important;
+}
+.netinho-home-refresh .netinho-home-hero-copy > p {
+  text-align:center !important;
+  justify-content:center !important;
+  max-width:100%;
+}
+@media(max-width:1023px) {
+  .netinho-home-refresh .netinho-home-hero-content {
+    justify-content:flex-end !important;
+    padding-bottom:0 !important;
+  }
+  .netinho-home-refresh .netinho-home-hero-copy {
+    height:90px !important;
+    max-height:90px !important;
+    flex:0 0 90px !important;
+    padding:5px 8px !important;
+  }
+}
