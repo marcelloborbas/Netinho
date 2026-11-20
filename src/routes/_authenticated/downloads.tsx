@@ -12,8 +12,7 @@ export const Route = createFileRoute("/_authenticated/downloads")({
 
 const documents = [
   { label: "Catálogo - FCO", filename: "Catalogo_Netinho Representação FCO.pdf" },
-  { label: "Tabela de Valores - FCO - Produtos", filename: "Tabela_de_Valores_FCO_Produtos.pdf" },
-  { label: "Tabela de Valores - FCO - Caixas e Bombas", filename: "Tabela_de_Valores_FCO_Caixas_e_Bombas.pdf" },
+  { label: "Tabela de Valores – FCO", filename: "Tabela de Valores – FCO.pdf" },
 ] as const;
 
 function DownloadsPage() {
