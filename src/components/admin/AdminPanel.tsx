@@ -36,7 +36,6 @@ const SECTIONS: Record<AdminSectionId, ComponentType> = {
   representantes: lazy(() =>
     import("./sections/PeopleSection").then((m) => ({ default: m.PeopleSection })),
   ),
-  ),
   configuracoes: lazy(() =>
     import("./sections/SettingsSection").then((m) => ({ default: m.SettingsSection })),
   ),
