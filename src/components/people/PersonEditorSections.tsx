@@ -1,8 +1,6 @@
 import { useCallback, useState, type ReactNode } from "react";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
   BriefcaseBusiness,
-  ChevronDown,
   IdCard,
   MapPin,
   Percent,
@@ -66,53 +64,16 @@ export interface PersonEditorSectionsProps {
  */
 export function PersonEditorSections({ state, sections }: PersonEditorSectionsProps) {
   return (
-    <AccordionPrimitive.Root
-      type="multiple"
-      value={state.open}
-      onValueChange={(next) => state.setOpen(next.filter(isSection))}
-      className="divide-y divide-border overflow-clip rounded-xl border border-border bg-card"
-    >
+    <div className="space-y-4 rounded-xl border border-border bg-card p-3 sm:p-4" aria-label="Ficha completa de edição">
       {PERSON_SECTIONS.map(({ id, label, icon: Icon }) => (
-        <AccordionPrimitive.Item
-          key={id}
-          value={id}
-          id={`${state.idPrefix}-${id}`}
-          className="scroll-mt-4"
-        >
-          <AccordionPrimitive.Header asChild>
-            <div className="flex">
-              <AccordionPrimitive.Trigger className="group flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold sm:px-4">
-                <span
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-navy text-gold"
-                  aria-hidden="true"
-                >
-                  <Icon size={16} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-extrabold text-navy">{label}</span>
-                  {sections[id].summary != null && (
-                    <span className="block truncate text-xs font-medium text-muted-foreground">
-                      {sections[id].summary}
-                    </span>
-                  )}
-                </span>
-                <ChevronDown
-                  size={18}
-                  aria-hidden="true"
-                  className="shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
-                />
-              </AccordionPrimitive.Trigger>
-            </div>
-          </AccordionPrimitive.Header>
-          <AccordionPrimitive.Content
-            forceMount
-            className="px-3 pb-4 pt-1 data-[state=closed]:hidden sm:px-4"
-          >
-            {sections[id].content}
-          </AccordionPrimitive.Content>
-        </AccordionPrimitive.Item>
+        <section key={id} id={`${state.idPrefix}-${id}`} className="scroll-mt-4 border-b border-border pb-4 last:border-b-0 last:pb-0">
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-navy">
+            <Icon size={18} aria-hidden="true" />{label}
+          </h4>
+          {sections[id].content}
+        </section>
       ))}
-    </AccordionPrimitive.Root>
+    </div>
   );
 }
 
