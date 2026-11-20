@@ -217,7 +217,7 @@ function Catalog() {
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
-    setManufacturer(search.marca ?? "FCO");
+    setManufacturer("FCO");
     setQ("");
     setSearchInput("");
     setHasSelectedCategory(false);
@@ -337,7 +337,7 @@ function Catalog() {
   const showProducts = searching || hasSelectedCategory || vehicleBrand !== "all";
   const pageCount = Math.max(1, Math.ceil(visibleProducts.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca ?? "FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -368,9 +368,9 @@ function Catalog() {
                 type="button"
                 aria-pressed={selected}
                 aria-label={label}
-                disabled={brand === "HD"}
-                title={brand === "HD" ? "Catálogo HD indisponível no momento" : `Exibir peças: ${label}`}
-                onClick={() => { if (brand === "HD") return; setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
+                disabled={brand !== "FCO"}
+                title={brand !== "FCO" ? `Catálogo ${label} indisponível no momento` : `Exibir peças: ${label}`}
+                onClick={() => { if (brand !== "FCO") return; setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
                 className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${selected ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#d9d9d9] hover:border-[#102a52]"}`}
                 style={{ backgroundColor: "rgb(241, 241, 241)" }}
               >
