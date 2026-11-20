@@ -205,7 +205,7 @@ function Home() {
   // teto baixo (banner até 300px, painel até 380px) para não gerar blocos gigantes; em monitores
   // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
-  const brands = ["volkswagen", "fiat"] as const;
+  const brands = ["volkswagen", "fiat", "chevrolet"] as const;
   return (
     <div className="netinho-home netinho-home-refresh min-h-[100dvh] overflow-x-clip bg-background text-navy">
       <main className="netinho-home-refresh-grid mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[minmax(140px,1.45fr)_minmax(140px,1fr)_minmax(130px,0.8fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[minmax(140px,1.25fr)_minmax(170px,1fr)_minmax(170px,0.9fr)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
@@ -251,16 +251,11 @@ function Home() {
           className="netinho-home-brands relative min-w-0 overflow-hidden bg-transparent border-0 shadow-none lg:col-span-4"
           aria-label="Montadoras"
         >
-          <div className="flex h-full min-h-[100px] flex-col items-center justify-center gap-2">
-            <div className="grid w-full grid-cols-2 items-center justify-items-center gap-3 sm:gap-5">
-              {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[90px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />)}
-            </div>
-            <div className="flex w-full items-center justify-center gap-5">
-              <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="flex h-12 w-12 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
-                <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={48} height={48} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
-              </Link>
-              <HomeWhatsAppButton />
-            </div>
+          <div className="grid h-full min-h-[100px] grid-cols-4 items-center justify-items-center gap-3 px-0 sm:gap-5">
+            {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />)}
+            <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
+              <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={110} height={110} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain" loading="lazy" />
+            </Link>
           </div>
         </section>
       </main>
