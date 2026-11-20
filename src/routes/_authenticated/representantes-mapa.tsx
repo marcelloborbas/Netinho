@@ -268,8 +268,8 @@ function RepresentativesMap(){
               <p><strong>Nome:</strong> <span className="font-semibold">{p.name}</span></p>
               <p><strong>Estado:</strong> {states[p.uf]?.name||p.uf||"Não informado"}</p>
               <p><strong>Cidade:</strong> {p.city||"Não informada"}</p>
-              <p><strong>Locais Atendidos:</strong> {p.region||"Não informados"}</p>
-              <p><strong>DDD(s) de atuação:</strong> {p.ddds||"Não informados"}</p>
+              {isAdmin&&<p><strong>Locais Atendidos:</strong> {p.region||"Não informados"}</p>}
+              {isAdmin&&<p><strong>DDD(s) de atuação:</strong> {p.ddds||"Não informados"}</p>}
               {isAdmin&&<p><strong>Telefone:</strong> {p.phone?<a className="font-semibold text-[#1267a3] underline-offset-2 hover:underline" href={`tel:${phone}`}>{p.phone}</a>:<span className="text-slate-500">Não informado</span>}</p>}
             </div>
             <div className="flex flex-col items-center gap-2">
