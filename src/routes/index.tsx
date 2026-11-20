@@ -242,7 +242,7 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-            <div className="relative z-20 flex h-full flex-col items-center justify-center gap-2 py-1">
+            <div className="netinho-home-hero-actions relative z-30 flex h-full min-w-[52px] flex-col items-center justify-center gap-2 py-1">
               <Link
                 to="/representantes-mapa"
                 aria-label="Conheça nossos representantes pelo Brasil"
