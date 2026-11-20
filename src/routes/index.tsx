@@ -221,7 +221,7 @@ function Home() {
             aria-hidden="true"
             width={2001}
             height={1071}
-            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full object-cover object-center opacity-100"
+            className="netinho-hero-photo absolute inset-0 -z-10 h-full w-full object-cover object-left opacity-100"
             decoding="async"
             fetchPriority="high"
           />
@@ -237,7 +237,7 @@ function Home() {
                 <span style={{ color: dailyNameColor }} title={userName || "usuário"}>
                   {userName || "usuário"}
                 </span>
-                !
+                .
               </p>
               <p className="netinho-home-hero-blessing truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">
                 {periodBlessing}
@@ -250,7 +250,7 @@ function Home() {
               to="/representantes-mapa"
               aria-label="Conheça nossos representantes pelo Brasil"
               title="Representantes pelo Brasil"
-              className="group absolute right-2 top-2 z-30 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/65 bg-gradient-to-br from-white via-[#dce6f1] to-[#a7b9cf] text-[#102a52] shadow-[0_5px_14px_rgba(0,0,0,0.25)] ring-1 ring-[#102a52]/20 transition-all duration-300 hover:-translate-y-0.5 hover:scale-110 hover:shadow-[0_8px_20px_rgba(16,42,82,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-3 sm:top-3"
+              className="group absolute left-3 top-[58%] z-30 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/65 bg-gradient-to-br from-white via-[#dce6f1] to-[#a7b9cf] text-[#102a52] shadow-[0_5px_14px_rgba(0,0,0,0.25)] ring-1 ring-[#102a52]/20 transition-all duration-300 hover:-translate-y-0.5 hover:scale-110 hover:shadow-[0_8px_20px_rgba(16,42,82,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:left-5 sm:top-[60%]"
             >
               <span className="relative flex items-center justify-center" aria-hidden="true">
                 <MapPinned size={29} strokeWidth={1.8} />
