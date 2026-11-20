@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-/** Exportação somente leitura dos cadastros para um único arquivo Excel. */
+/** Exportação somente leitura dos cadastros para um único arquivo PDF. */
 type ExportRow = Record<string, unknown>;
 
 async function readAllRows(table: string): Promise<ExportRow[]> {
@@ -55,75 +55,72 @@ export async function exportAdminData(): Promise<number> {
       "Não foi possível consultar nenhuma tabela. Verifique a conexão do site com o Supabase e as permissões de leitura.",
     );
   }
-  const ExcelJS = (await import("exceljs")).default;
-  const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Netinho Auto Parts";
-  workbook.created = new Date();
-  const summary = workbook.addWorksheet("Resumo da exportação");
-  summary.addRow(["Cadastro", "Tabela", "Situação", "Registros", "Detalhes"]);
-  for (const result of results)
-    summary.addRow([
-      result.sheet,
-      result.table,
-      result.error ? "NÃO EXPORTADO" : result.rows.length ? "EXPORTADO" : "VAZIO",
-      result.error ? "" : result.rows.length,
-      result.error,
-    ]);
-  summary.columns = [{ width: 24 }, { width: 34 }, { width: 20 }, { width: 14 }, { width: 95 }];
-  summary.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
-  summary.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF102A52" } };
-  const sheets: Array<[string, ExportRow[]]> = results
-    .filter((result) => !result.error)
-    .map((result) => [result.sheet, result.rows]);
-  for (const [name, rows] of sheets) {
-    const sheet = workbook.addWorksheet(name);
-    const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
-    if (!columns.length) {
-      sheet.addRow(["Sem registros neste cadastro"]);
+  const [{ jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ]);
+  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4", compress: true });
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const date = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  const title = (heading: string) => {
+    pdf.setFillColor(16, 42, 82);
+    pdf.rect(0, 0, pageWidth, 21, "F");
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(13);
+    pdf.text("NETINHO AUTO PARTS", 12, 9);
+    pdf.setFontSize(9);
+    pdf.text(heading, 12, 16);
+    pdf.setTextColor(16, 42, 82);
+  };
+  title("Exportação administrativa - " + date);
+  autoTable(pdf, {
+    startY: 27,
+    head: [["Cadastro", "Tabela", "Situação", "Registros", "Detalhes"]],
+    body: results.map((r) => [r.sheet, r.table, r.error ? "NÃO EXPORTADO" : r.rows.length ? "EXPORTADO" : "VAZIO", r.error ? "—" : String(r.rows.length), r.error]),
+    theme: "grid",
+    styles: { fontSize: 8, overflow: "linebreak" },
+    headStyles: { fillColor: [16, 42, 82] },
+    margin: { left: 12, right: 12 },
+  });
+  for (const result of results) {
+    if (result.error) continue;
+    pdf.addPage();
+    title(result.sheet + " - " + result.rows.length + " registros");
+    if (!result.rows.length) {
+      pdf.setFontSize(10);
+      pdf.text("Nenhum registro encontrado.", 12, 32);
       continue;
     }
-    sheet.columns = columns.map((key) => ({
-      header: key,
-      key,
-      width: Math.min(42, Math.max(16, key.length + 5)),
-    }));
-    for (const row of rows) {
-      const clean: Record<string, string | number | boolean | null> = {};
-      for (const key of columns) {
-        const value = row[key];
-        // Avoid Excel formula injection in text fields from external records.
-        clean[key] =
-          value == null
-            ? null
-            : typeof value === "number" || typeof value === "boolean"
-              ? value
-              : typeof value === "string"
-                ? /^[=+@\\-\\t\\r]/.test(value)
-                  ? "'" + value
-                  : value
-                : JSON.stringify(value);
+    const columns = Array.from(new Set(result.rows.flatMap((row) => Object.keys(row))));
+    // Dividir tabelas muito largas para manter todos os campos legíveis no PDF.
+    const batchSize = 5;
+    for (let index = 0; index < columns.length; index += batchSize) {
+      if (index > 0) {
+        pdf.addPage();
+        title(result.sheet + " - campos " + (index + 1) + " a " + Math.min(index + batchSize, columns.length));
       }
-      sheet.addRow(clean);
+      const keys = columns.slice(index, index + batchSize);
+      autoTable(pdf, {
+        startY: 26,
+        head: [["#", ...keys]],
+        body: result.rows.map((row, rowIndex) => [String(rowIndex + 1), ...keys.map((key) => {
+          const value = row[key];
+          return value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+        })]),
+        theme: "grid",
+        styles: { fontSize: 7, cellPadding: 2, overflow: "linebreak", valign: "top" },
+        headStyles: { fillColor: [16, 42, 82] },
+        columnStyles: { 0: { cellWidth: 10 } },
+        margin: { left: 10, right: 10, top: 15, bottom: 13 },
+        didDrawPage: ({ pageNumber }) => {
+          pdf.setFontSize(8);
+          pdf.setTextColor(90, 100, 115);
+          pdf.text("Netinho Auto Parts | " + result.sheet + " | página " + pageNumber, 10, pdf.internal.pageSize.getHeight() - 6);
+        },
+      });
     }
-    sheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
-    sheet.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF102A52" } };
-    sheet.autoFilter = {
-      from: { row: 1, column: 1 },
-      to: { row: rows.length + 1, column: columns.length },
-    };
-    sheet.views = [{ state: "frozen", ySplit: 1 }];
   }
-  const bytes = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([bytes], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `netinho-exportacao-${new Date().toISOString().slice(0, 10)}.xlsx`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  pdf.save(`netinho-exportacao-${new Date().toISOString().slice(0, 10)}.pdf`);
   return results.filter((result) => result.error).length;
 }
