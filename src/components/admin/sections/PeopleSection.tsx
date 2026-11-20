@@ -3,7 +3,7 @@ import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { normalizeHash } from "@/lib/admin-sections";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronDown, Pencil, Trash2, UserPlus, Users, X } from "lucide-react";
+import { MessageCircle, Pencil, Trash2, UserPlus, Users, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -466,7 +466,7 @@ export function PeopleSection() {
       )}
       {visibleEntries.length === 0 && (people.length > 0 || representatives.length > 0) && (
         <p className="rounded-xl bg-card p-4 text-sm text-muted-foreground">
-          Nenhuma pessoa corresponde à busca e aos filtros.
+          Nenhuma pessoa corresponde aos filtros.
         </p>
       )}
     </div>
@@ -475,41 +475,21 @@ export function PeopleSection() {
 
 /** Linha compacta da lista: foto, nome, perfil, situação, comissão e contato. */
 function PersonSummary({
-  id,
-  name,
-  active,
-  rate,
-  role,
-  phone,
-  uf,
-  commercialId,
-  selected,
-  onToggle,
-  actions,
+  id, name, active, rate, role, phone, uf, region, commercialId, selected, onToggle, actions,
 }: {
-  id: string;
-  name: string;
-  active: boolean;
-  rate: string;
-  role: string;
-  phone?: string | null;
-  uf?: string | null;
-  commercialId?: string | undefined;
-  selected: boolean;
-  onToggle: () => void;
-  actions: ReactNode;
+  id: string; name: string; active: boolean; rate: string; role: string;
+  phone?: string | null; uf?: string | null; region?: string | null;
+  commercialId?: string; selected: boolean; onToggle: () => void; actions: ReactNode;
 }) {
   const { data: areaDdds = "" } = useQuery({
     queryKey: ["representative-area-ddds-summary", id, commercialId],
-    enabled: role === "Representante",
+    enabled: role.startsWith("Representante"),
     retry: false,
     queryFn: async () => {
       for (const representativeId of [id, commercialId].filter(Boolean) as string[]) {
         const { data, error } = await supabase
           .from("representative_area_ddds" as never)
-          .select("ddds")
-          .eq("representative_id", representativeId)
-          .maybeSingle();
+          .select("ddds").eq("representative_id", representativeId).maybeSingle();
         if (error) throw error;
         const value = (data as { ddds?: string } | null)?.ddds?.trim();
         if (value) return value;
@@ -519,85 +499,78 @@ function PersonSummary({
   });
   const { data: commercialDetails } = useQuery({
     queryKey: ["commercial-representative-details", commercialId || id],
-    enabled: role === "Representante" && !!commercialId,
+    enabled: role.startsWith("Representante") && !!commercialId,
     retry: false,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("commercial_representative_details" as never)
-        .select("phone,state")
-        .eq("representative_id", commercialId || id)
-        .maybeSingle();
+        .select("phone,state").eq("representative_id", commercialId || id).maybeSingle();
       if (error) throw error;
       return data as { phone?: string; state?: string } | null;
     },
   });
+  const { data: territory } = useQuery({
+    queryKey: ["person-territory-summary", id],
+    enabled: !!uf,
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("person_territories" as never)
+        .select("region").eq("user_id", id).maybeSingle();
+      if (error) throw error;
+      return data as { region?: string | null } | null;
+    },
+  });
+  const { data: representativeRegion } = useQuery({
+    queryKey: ["commercial-region-summary", commercialId || id],
+    enabled: role.startsWith("Representante") && !uf,
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commercial_representative_details" as never)
+        .select("region").eq("representative_id", commercialId || id).maybeSingle();
+      if (error) return null;
+      return data as { region?: string | null } | null;
+    },
+  });
   const displayPhone = phone || commercialDetails?.phone || "";
-  const displayUf = uf || commercialDetails?.state || "";
-  const meta = [
-    displayPhone && `WhatsApp ${displayPhone}`,
-    areaDdds && `DDD ${areaDdds}`,
-    displayUf && `UF ${displayUf}`,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  const digits = displayPhone.replace(/\D/g, "");
+  const whatsappNumber = digits.length === 10 || digits.length === 11 ? "55" + digits : digits.length >= 12 && digits.startsWith("55") ? digits : "";
+  const ddd = areaDdds || (digits.length >= 10 ? digits.slice(digits.startsWith("55") ? 2 : 0, digits.startsWith("55") ? 4 : 2) : "");
+  const displayUf = uf || commercialDetails?.state || "Não informado";
+  const displayRegion = region || territory?.region || representativeRegion?.region || "Não informada";
+  const firstName = name.trim().split(/\s+/)[0] || "Sem nome";
   return (
-    <div className="flex items-center gap-2 sm:gap-3">
-      <div className="h-12 w-12 shrink-0 sm:h-14 sm:w-14">
-        <PersonPhoto id={id} name={name} editable={selected} />
+    <div>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="h-14 w-14 shrink-0 sm:h-16 sm:w-16">
+          <PersonPhoto id={id} name={name} editable={selected} />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-2">
+          <strong className="min-w-0 text-sm font-black text-navy sm:text-base" title={name}>{firstName}</strong>
+          {whatsappNumber ? (
+            <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer"
+              aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366]/15 text-[#128C4A] hover:bg-[#25D366]/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
+              <MessageCircle size={20} aria-hidden="true"/>
+            </a>
+          ) : <span title="Telefone não cadastrado" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground opacity-40"><MessageCircle size={20}/></span>}
+          <span className="text-xs font-semibold text-navy">DDD {ddd || "—"}</span>
+          <span className={cn("rounded-md px-2 py-1 text-[11px] font-extrabold", active ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive")}>{active ? "Ativo" : "Inativo"}</span>
+          <span className="rounded-md bg-[#102a52]/10 px-2 py-1 text-xs font-extrabold text-[#102a52]">{rate}</span>
+          <button type="button" onClick={onToggle} aria-expanded={selected}
+            aria-label={`${selected ? "Fechar edição de" : "Editar"} ${name}`} title={selected ? "Fechar edição" : "Editar ficha"}
+            className="ml-auto inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#102a52]/25 text-[#102a52] hover:bg-[#102a52]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]">
+            <Pencil size={19} aria-hidden="true"/>
+          </button>
+        </div>
       </div>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={selected}
-        aria-label={`${selected ? "Fechar" : "Editar"} ficha de ${name}`}
-        className="flex min-w-0 flex-1 items-center gap-2 rounded-lg py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-      >
-        <span className="min-w-0 flex-1">
-          <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <strong className="truncate text-sm font-black sm:text-base" title={name}>
-              {name}
-            </strong>
-            <span
-              className={cn(
-                "rounded-md px-1.5 py-0.5 text-[10px] font-extrabold uppercase",
-                active ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive",
-              )}
-            >
-              {active ? "Ativo" : "Inativo"}
-            </span>
-            <span className="rounded-md bg-gold-soft/60 px-1.5 py-0.5 text-[10px] font-extrabold text-navy">
-              {rate}
-            </span>
-          </span>
-          <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-            {role}
-            {meta ? ` · ${meta}` : ""}
-          </span>
-        </span>
-        <span
-          className={cn(
-            "hidden shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-bold sm:inline-flex",
-            selected ? "border-gold bg-gold-soft/50 text-navy" : "border-border text-navy",
-          )}
-          aria-hidden="true"
-        >
-          {selected ? (
-            <>
-              <ChevronDown size={14} className="rotate-180" />
-              Fechar
-            </>
-          ) : (
-            <>
-              <Pencil size={14} />
-              Editar
-            </>
-          )}
-        </span>
-        <span className="shrink-0 text-gold-deep sm:hidden" aria-hidden="true">
-          {selected ? <ChevronDown size={18} className="rotate-180" /> : <Pencil size={17} />}
-        </span>
-      </button>
-      {actions}
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 border-t border-border/60 pt-2 text-xs text-navy sm:pl-[76px]">
+        <span><b>Status:</b> {role}</span>
+        <span><b>Região:</b> {displayRegion}</span>
+        <span><b>UF/Estado:</b> {displayUf}</span>
+      </div>
+      {selected && <div className="mt-2 flex justify-end">{actions}</div>}
     </div>
   );
 }
@@ -743,6 +716,7 @@ function PersonRow({
         role={person.site_role}
         phone={person.phone}
         uf={person.territory_uf}
+        region={person.territory_cities}
         commercialId={linkedCommercial?.id}
         selected={selected}
         onToggle={selected ? onClose : onSelect}
