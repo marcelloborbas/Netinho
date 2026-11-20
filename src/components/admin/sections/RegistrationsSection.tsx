@@ -21,6 +21,7 @@ export function RegistrationsSection() {
   const [filter, setFilter] = useState("todos");
   const [updating, setUpdating] = useState<string | null>(null);
   const [updateError, setUpdateError] = useState("");
+  const [updateSuccess, setUpdateSuccess] = useState("");
   const {
     data: rows = [],
     isLoading,
@@ -43,6 +44,7 @@ export function RegistrationsSection() {
   async function update(id: string, status: string) {
     setUpdating(id);
     setUpdateError("");
+    setUpdateSuccess("");
     const { error: rpcError } = await supabase.rpc(
       "review_registration_request" as never,
       { p_request_id: id, p_status: status } as never,
@@ -52,6 +54,9 @@ export function RegistrationsSection() {
       setUpdateError("Não foi possível alterar a situação: " + rpcError.message);
       return;
     }
+    const request = rows.find((row) => row.id === id);
+    setUpdateSuccess(status === "aprovado" ? request?.applicant_type === "cliente" ? "Cadastro de cliente aprovado. O acesso permanece como Visitante; esta aprovação não cria automaticamente um cliente comercial nem libera vendas." : "Cadastro aprovado. O perfil de acesso foi atualizado; o usuário pode precisar entrar novamente para ver as novas permissões." : `Situação alterada para ${label(status)}.`);
+    void qc.invalidateQueries({ queryKey: ["me"] });
     qc.setQueryData<RegistrationRequest[]>(["admin-registration-requests"], (old) =>
       old?.map((row) => (row.id === id ? { ...row, status } : row)),
     );
@@ -74,6 +79,7 @@ export function RegistrationsSection() {
           está disponível no banco de dados ({error.message}).
         </p>
       )}
+      {updateSuccess && <p role="status" className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm font-semibold text-emerald-900">{updateSuccess}</p>}
       {updateError && (
         <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
           {updateError}
