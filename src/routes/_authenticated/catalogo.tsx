@@ -113,15 +113,37 @@ function VehicleModelIllustration({ name }: { name: string }) {
   </svg>;
 }
 
+const catalogBrandLogoFiles: Record<string, string> = {
+  volkswagen: "volkswagen-3d.webp",
+  fiat: "fiat-3d.webp",
+  chevrolet: "chevrolet-3d.webp",
+  ford: "ford-3d.webp",
+  renault: "renault.webp",
+  toyota: "toyota.webp",
+  honda: "honda.webp",
+  hyundai: "hyundai.webp",
+  nissan: "nissan.webp",
+  peugeot: "peugeot.webp",
+  citroen: "citroen.webp",
+  jeep: "jeep.webp",
+  mitsubishi: "mitsubishi.webp",
+  bmw: "bmw.webp",
+  mercedes: "mercedes-benz.webp",
+  kia: "kia.webp",
+  volvo: "volvo.webp",
+};
+
 function VehicleBrandIcons({ application }: { application?: string | null }) {
   if (!application) return null;
   const matches = vehicleBrands.filter((brand) => brand.pattern.test(application));
   if (!matches.length) return null;
-  return <div className="my-2 flex flex-wrap items-center gap-2" aria-label="Montadoras identificadas nas aplicações">
-    {matches.map((brand) => <span key={brand.name} title={brand.name} className="inline-flex animate-pulse items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-[#102a52] motion-reduce:animate-none">
-      <img src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt="" aria-hidden="true" loading="lazy" className="h-6 w-6 object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
-      {brand.name}
-    </span>)}
+  return <div className="my-1 flex flex-wrap items-center gap-2" aria-label="Montadoras identificadas nas aplicações">
+    {matches.map((brand) => {
+      const localFile = catalogBrandLogoFiles[brand.slug];
+      return <span key={brand.name} title={brand.name} className="inline-flex items-center justify-center rounded-lg bg-transparent p-0.5" aria-label={brand.name}>
+        <img src={localFile ? `/images/logos-montadoras/${localFile}` : `https://cdn.simpleicons.org/${brand.slug}/${brand.color}`} alt={`Logo ${brand.name}`} loading="lazy" decoding="async" className="h-10 w-12 object-contain sm:h-12 sm:w-14" />
+      </span>;
+    })}
   </div>;
 }
 
