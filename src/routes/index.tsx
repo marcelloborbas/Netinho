@@ -242,19 +242,8 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-            <div className="relative z-20 flex items-center justify-end self-center">
-              <HomeWhatsAppButton />
-            </div>
+
           </div>
-          {/* Ícone independente do fluxo dos textos: no alto, à extrema direita, alinhado à logo da arte. */}
-          <Link
-            to="/representantes-mapa"
-            aria-label="Conheça nossos representantes pelo Brasil"
-            title="Representantes pelo Brasil"
-            className="absolute right-4 top-4 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-5 sm:top-4"
-          >
-            <img src="/images/icones/icone-representantes.webp" alt="" aria-hidden="true" width={48} height={48} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
-          </Link>
         </header>
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
         <HomeSalesPanel className="netinho-home-sales lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[230px]" />
@@ -262,11 +251,16 @@ function Home() {
           className="netinho-home-brands relative min-w-0 overflow-hidden bg-transparent border-0 shadow-none lg:col-span-4"
           aria-label="Montadoras"
         >
-          <div className="grid h-full min-h-[100px] grid-cols-4 items-center justify-items-center gap-3 px-0 sm:gap-5">
-            {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />)}
-            <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="col-span-2 flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
-              <img src="/images/logos-montadoras/representantes-3d.webp" alt="Representantes" className="block h-auto max-h-[110px] w-full max-w-[270px] object-contain mix-blend-multiply" loading="lazy" />
-            </Link>
+          <div className="flex h-full min-h-[100px] flex-col items-center justify-center gap-2">
+            <div className="grid w-full grid-cols-2 items-center justify-items-center gap-3 sm:gap-5">
+              {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[90px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />)}
+            </div>
+            <div className="flex w-full items-center justify-center gap-5">
+              <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="flex h-12 w-12 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
+                <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={48} height={48} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
+              </Link>
+              <HomeWhatsAppButton />
+            </div>
           </div>
         </section>
       </main>
