@@ -302,7 +302,8 @@ function OrderPage() {
 
   if (d.items.length === 0) {
     return (
-      <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">\n        <div className="absolute inset-x-3 top-3 z-[60]">{pieceSearchBar}</div>
+      <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">
+        <div className="absolute inset-x-3 top-3 z-[60]">{pieceSearchBar}</div>
         <div className="relative h-[100dvh] w-full overflow-hidden">
           <img
             src="/images/lia-fazer-pedido.webp?v=20261102"
@@ -325,7 +326,8 @@ function OrderPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[640px] space-y-4 pb-5">\n      {pieceSearchBar}
+    <div className="mx-auto w-full max-w-[640px] space-y-4 pb-5">
+      {pieceSearchBar}
       <style>{`@keyframes netinhoGuidePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.22), 0 0 10px rgba(220,38,38,.2); } 50% { box-shadow: 0 0 0 6px rgba(220,38,38,.12), 0 0 24px rgba(239,68,68,.7); } } .netinho-guided-pulse { animation: netinhoGuidePulse 1.5s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .netinho-guided-pulse { animation: none; } }`}</style>
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
