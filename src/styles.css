@@ -6733,3 +6733,42 @@ body:has(.catalog-showcase) .catalog-showcase {
   outline-color: #102a52 !important;
   --tw-ring-color: rgb(16 42 82 / 0.4) !important;
 }
+
+/* Filtros ativos: leve aproximação permanente, reforçando a seleção atual. */
+.catalog-showcase nav[aria-label="Filtro por representação"] button,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button {
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease !important;
+  transform-origin: center center;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"]:not(:disabled),
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] {
+  transform: scale(1.045) translateZ(0) !important;
+  position: relative;
+  z-index: 5;
+  border-color: #102a52 !important;
+  box-shadow: 0 7px 17px rgb(16 42 82 / 0.22), 0 0 0 2px rgb(16 42 82 / 0.18) !important;
+  --tw-ring-color: rgb(16 42 82 / 0.35) !important;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"] img,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"] img,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"] img,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] img {
+  transform: scale(1.055) !important;
+  transition: transform 220ms ease !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-showcase nav[aria-label="Filtro por representação"] button,
+  .catalog-showcase .catalog-category-filters .catalog-category-item > button,
+  .catalog-showcase nav[aria-label="Filtrar peças por montadora"] button,
+  .catalog-showcase section[aria-label="Modelos dos veículos"] button,
+  .catalog-showcase nav[aria-label="Filtro por representação"] button img,
+  .catalog-showcase .catalog-category-filters .catalog-category-item > button img,
+  .catalog-showcase nav[aria-label="Filtrar peças por montadora"] button img,
+  .catalog-showcase section[aria-label="Modelos dos veículos"] button img {
+    transition-duration: 0.01ms !important;
+  }
+}
