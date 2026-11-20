@@ -1,9 +1,8 @@
-import { useLocation } from "@tanstack/react-router";
-import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
+import { Link, useLocation } from "@tanstack/react-router";
 import { normalizeHash } from "@/lib/admin-sections";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { MessageCircle, Pencil, Trash2, UserPlus, Users, X } from "lucide-react";
+import { Pencil, Trash2, UserPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -88,11 +87,6 @@ export function PeopleSection() {
   const qc = useQueryClient();
   const hash = normalizeHash(useLocation().hash);
   const [adding, setAdding] = useState(() => hash === "novo-representante");
-  const [filterRole, setFilterRole] = useState<Role | "Todos">(() =>
-    hash === "representantes" ? "Representante" : "Todos",
-  );
-  const [commissionFilter, setCommissionFilter] = useState("Todas");
-  
   const [editing, setEditing] = useState<string | null>(() => {
     const match = hash.match(/^(person|representative):([0-9a-f-]{36})$/i);
     return match ? match[1] + ":" + match[2] : null;
@@ -248,19 +242,11 @@ export function PeopleSection() {
         (rep.user_id && rep.user_id === person.id) ||
         (!!person.email && rep.email?.trim().toLowerCase() === person.email.trim().toLowerCase()),
     );
-  const matchesRate = (rate: number | undefined) =>
-    commissionFilter === "Todas" ||
-    (commissionFilter === "Definida"
-      ? rate != null
-      : commissionFilter === "Não definida"
-        ? rate == null
-        : rate != null && Number(rate) === Number(commissionFilter));
   const visibleEntries = [
     ...people
       .filter(
         (p) =>
-          (filterRole === "Todos" || p.site_role === filterRole) &&
-          matchesRate(rateForPerson(p.id)),
+          true,
       )
       .map((p) => ({
         kind: "person" as const,
@@ -271,8 +257,6 @@ export function PeopleSection() {
     ...representatives
       .filter(
         (rep) =>
-          (filterRole === "Todos" || filterRole === "Representante") &&
-          matchesRate(rateForRepresentative(rep.id)) &&
           !people.some(
             (p) =>
               (!!rep.user_id && p.id === rep.user_id) ||
@@ -349,78 +333,14 @@ export function PeopleSection() {
         </div>
       )}
 
-      <AdminSectionHeader
-        icon={Users}
-        title="Pessoas e Comissões"
-        description="Cadastro único de vendedores, representantes, acessos e comissões"
-        stats={[
-          { label: "Cadastros", value: visibleEntries.length },
-        ]}
-        actions={
-          <button
-            type="button"
-            onClick={() => setAdding(true)}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-gold px-4 text-sm font-extrabold text-gold-foreground shadow transition hover:bg-gold-soft"
-          >
-            <UserPlus size={18} aria-hidden="true" />
-            Adicionar pessoa
-          </button>
-        }
-      />
-
-      <section
-        aria-label="Localizar e filtrar"
-        className="grid grid-cols-2 items-end gap-2 rounded-2xl border border-border bg-card p-3"
-      >
-        <label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-          Perfil
-          <select
-            aria-label="Filtrar por perfil"
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value as Role | "Todos")}
-            className="mt-1 min-h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-semibold normal-case tracking-normal text-navy"
-          >
-            <option value="Todos">Todos</option>
-            {roles.map((role) => (
-              <option key={role} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-          Comissão
-          <select
-            aria-label="Filtrar por comissão"
-            value={commissionFilter}
-            onChange={(e) => setCommissionFilter(e.target.value)}
-            className="mt-1 min-h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-semibold normal-case tracking-normal text-navy"
-          >
-            <option>Todas</option>
-            <option>Definida</option>
-            <option>Não definida</option>
-            {RATE_OPTIONS.map((n) => (
-              <option key={n} value={n}>
-                {formatRate(n)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <p className="col-span-2 text-xs text-muted-foreground sm:col-span-3">
-          <span className="font-black text-navy">{visibleEntries.length}</span> resultado(s) · toque
-          em uma pessoa para abrir a ficha nesta página
-        </p>
-        {(ratesError || commercialRatesError) && (
-          <p
-            role="alert"
-            className="col-span-2 text-xs font-semibold text-destructive sm:col-span-3"
-          >
-            Não foi possível consultar todas as comissões. O filtro por comissão pode estar
-            incompleto.
-          </p>
-        )}
-      </section>
-
+      <div className="flex flex-wrap items-center justify-between gap-2 py-2" aria-label="Ações de pessoas e comissões">
+        <Link to="/admin" search={{ secao: "visao-geral" }} className="inline-flex min-h-11 items-center rounded-xl border border-[#102a52]/30 px-4 text-sm font-bold text-[#102a52] hover:bg-[#102a52]/10">Voltar</Link>
+        <span className="rounded-xl bg-[#102a52]/10 px-4 py-3 text-sm font-extrabold text-[#102a52]">Cadastros: {visibleEntries.length}</span>
+        <button type="button" onClick={() => setAdding(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#102a52] px-4 text-sm font-extrabold text-white hover:bg-[#173b6e]">
+          <UserPlus size={18} aria-hidden="true" />Adicionar pessoa
+        </button>
+      </div>
+      {(ratesError || commercialRatesError) && <p role="alert" className="text-xs text-destructive">Não foi possível consultar todas as comissões.</p>}
       {isLoading && <p>Carregando pessoas…</p>}
       {error && (
         <p role="alert" className="text-destructive">
@@ -466,7 +386,7 @@ export function PeopleSection() {
       )}
       {visibleEntries.length === 0 && (people.length > 0 || representatives.length > 0) && (
         <p className="rounded-xl bg-card p-4 text-sm text-muted-foreground">
-          Nenhuma pessoa corresponde aos filtros.
+          Nenhuma pessoa encontrada.
         </p>
       )}
     </div>
@@ -552,9 +472,9 @@ function PersonSummary({
             <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer"
               aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp"
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366]/15 text-[#128C4A] hover:bg-[#25D366]/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
-              <MessageCircle size={20} aria-hidden="true"/>
+              <img src="/images/Logo_inicial_whatsapp.webp" alt="" aria-hidden="true" width={32} height={32} className="h-8 w-8 object-contain" />
             </a>
-          ) : <span title="Telefone não cadastrado" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground opacity-40"><MessageCircle size={20}/></span>}
+          ) : <span title="Telefone não cadastrado" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground opacity-40"><img src="/images/Logo_inicial_whatsapp.webp" alt="" aria-hidden="true" width={32} height={32} className="h-8 w-8 object-contain grayscale" /></span>}
           <span className="text-xs font-semibold text-navy">DDD {ddd || "—"}</span>
           <span className={cn("rounded-md px-2 py-1 text-[11px] font-extrabold", active ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive")}>{active ? "Ativo" : "Inativo"}</span>
           <span className="rounded-md bg-[#102a52]/10 px-2 py-1 text-xs font-extrabold text-[#102a52]">{rate}</span>
@@ -756,7 +676,7 @@ function PersonEditor({
   onSaved: () => void;
 }) {
   const qc = useQueryClient();
-  const sections = usePersonSections(`ficha-person-${person.id}`);
+  const sections = usePersonSections(`ficha-person-${person.id}`, ["dados", "acesso", "comissao", "carteira", "regiao"]);
   const [name, setName] = useState(person.full_name ?? "");
   const [phone, setPhone] = useState(person.phone ?? "");
   const { data: phoneSources } = useQuery({
@@ -1501,7 +1421,7 @@ function RepresentativeEditor({
   onSaved: () => void;
 }) {
   const qc = useQueryClient();
-  const sections = usePersonSections(`ficha-representative-${representative.id}`);
+  const sections = usePersonSections(`ficha-representative-${representative.id}`, ["dados", "acesso", "comissao", "carteira", "regiao"]);
   const record = useRepresentativeRecord({
     name: representative.full_name,
     email: representative.email,
