@@ -3,7 +3,7 @@ import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 import { normalizeHash } from "@/lib/admin-sections";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronDown, Pencil, Search, Trash2, UserPlus, Users, X } from "lucide-react";
+import { ChevronDown, Pencil, Trash2, UserPlus, Users, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
@@ -92,7 +92,7 @@ export function PeopleSection() {
     hash === "representantes" ? "Representante" : "Todos",
   );
   const [commissionFilter, setCommissionFilter] = useState("Todas");
-  const [search, setSearch] = useState("");
+  
   const [editing, setEditing] = useState<string | null>(() => {
     const match = hash.match(/^(person|representative):([0-9a-f-]{36})$/i);
     return match ? match[1] + ":" + match[2] : null;
@@ -255,16 +255,12 @@ export function PeopleSection() {
       : commissionFilter === "Não definida"
         ? rate == null
         : rate != null && Number(rate) === Number(commissionFilter));
-  const activePeople = people.filter((p) => p.access_active).length;
-  const activeRepresentatives = representatives.filter((r) => r.active).length;
-  const term = search.trim().toLowerCase();
   const visibleEntries = [
     ...people
       .filter(
         (p) =>
           (filterRole === "Todos" || p.site_role === filterRole) &&
-          matchesRate(rateForPerson(p.id)) &&
-          (!term || [p.full_name, p.email, p.phone].some((v) => v?.toLowerCase().includes(term))),
+          matchesRate(rateForPerson(p.id)),
       )
       .map((p) => ({
         kind: "person" as const,
@@ -281,8 +277,7 @@ export function PeopleSection() {
             (p) =>
               (!!rep.user_id && p.id === rep.user_id) ||
               (!!p.email && p.email.trim().toLowerCase() === rep.email?.trim().toLowerCase()),
-          ) &&
-          (!term || [rep.full_name, rep.email].some((v) => v?.toLowerCase().includes(term))),
+          ),
       )
       .map((rep) => ({
         kind: "representative" as const,
@@ -357,11 +352,9 @@ export function PeopleSection() {
       <AdminSectionHeader
         icon={Users}
         title="Pessoas e Comissões"
-        description="Perfis, acessos, comissões, carteiras de clientes e regiões"
+        description="Cadastro único de vendedores, representantes, acessos e comissões"
         stats={[
-          { label: "Pessoas", value: people.length },
-          { label: "Acessos ativos", value: activePeople },
-          { label: "Representantes ativos", value: activeRepresentatives },
+          { label: "Cadastros", value: visibleEntries.length },
         ]}
         actions={
           <button
@@ -377,23 +370,8 @@ export function PeopleSection() {
 
       <section
         aria-label="Localizar e filtrar"
-        className="grid grid-cols-2 items-end gap-2 rounded-2xl border border-border bg-card p-3 sm:grid-cols-[minmax(0,1fr)_170px_170px]"
+        className="grid grid-cols-2 items-end gap-2 rounded-2xl border border-border bg-card p-3"
       >
-        <label className="relative col-span-2 block sm:col-span-1">
-          <span className="sr-only">Buscar</span>
-          <Search
-            size={18}
-            aria-hidden="true"
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            aria-label="Buscar pessoa"
-            placeholder="Buscar por nome, e-mail ou WhatsApp..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="min-h-11 w-full rounded-xl border border-border bg-background pl-10 pr-3 text-sm outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30"
-          />
-        </label>
         <label className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
           Perfil
           <select
