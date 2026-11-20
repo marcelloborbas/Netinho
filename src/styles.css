@@ -7036,3 +7036,27 @@ body:has(.catalog-showcase) .catalog-showcase {
     padding:5px 8px !important;
   }
 }
+
+/* Montadoras: movimento horizontal contínuo, sem piscar ou afetar o ícone fixo. */
+@keyframes netinho-brands-scroll {
+  from { transform:translateX(0); }
+  to { transform:translateX(-50%); }
+}
+.netinho-home-refresh .netinho-brand-marquee {
+  width:1200%;
+  animation:netinho-brands-scroll 48s linear infinite;
+  will-change:transform;
+}
+.netinho-home-refresh .netinho-brand-marquee > div { flex-basis:calc(100% / 36) !important; }
+@media (prefers-reduced-motion:reduce) {
+  .netinho-home-refresh .netinho-brand-marquee { animation:none; }
+}
+/* Saudação ligeiramente mais baixa, preservando o centro da tarja escura. */
+.netinho-home-refresh .netinho-home-hero-copy { transform:translateY(8px); }
+@media(max-width:1023px) {
+  .netinho-home-refresh .netinho-home-hero-copy {
+    transform:none;
+    padding-top:12px !important;
+    padding-bottom:2px !important;
+  }
+}
