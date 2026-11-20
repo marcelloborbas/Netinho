@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { createPortal, flushSync } from "react-dom";
-import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck, Volume2, Pencil } from "lucide-react";
+import { Trash2, Minus, Plus, X, ShoppingCart, PartyPopper, CheckCircle2, MailCheck, ArrowRight, Sparkles, ClipboardCheck, Volume2, Pencil, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { confirmOrderEmail } from "@/lib/order-email";
@@ -63,6 +63,20 @@ function OrderPage() {
     // Antecipar o carregamento da rota do catálogo enquanto a arte é exibida.
     void router.preloadRoute({ to: "/catalogo", search: { modo: "venda" } }).catch(() => {});
   }, [router, d.items.length]);
+  const [pieceSearch, setPieceSearch] = useState("");
+  const searchPiece = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const q = pieceSearch.trim();
+    if (!q) return;
+    void navigate({ to: "/catalogo", search: { modo: "venda", q } });
+  };
+  const pieceSearchBar = (
+    <form onSubmit={searchPiece} role="search" aria-label="Procurar peça para o pedido" className="flex w-full items-center gap-2 rounded-2xl border-2 border-[#d4af37] bg-white p-2 shadow-sm">
+      <Search size={21} className="ml-2 shrink-0 text-[#102a52]" aria-hidden="true" />
+      <input type="search" value={pieceSearch} onChange={(event) => setPieceSearch(event.target.value)} placeholder="Procure por código, peça ou veículo" aria-label="Procurar peça" className="h-11 min-w-0 flex-1 bg-transparent px-1 text-sm font-semibold text-[#102a52] outline-none placeholder:font-normal placeholder:text-slate-500 sm:text-base" />
+      <button type="submit" disabled={!pieceSearch.trim()} className="h-11 shrink-0 rounded-xl bg-[#102a52] px-4 text-sm font-bold text-white disabled:opacity-50">Buscar</button>
+    </form>
+  );
   const [review, setReview] = useState(false);
   const [busy, setBusy] = useState(false);
   const submissionLock = useRef(false);
@@ -288,7 +302,7 @@ function OrderPage() {
 
   if (d.items.length === 0) {
     return (
-      <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">
+      <main className="relative mx-auto min-h-[100dvh] w-full max-w-[540px] overflow-hidden bg-[#d9f1ff]" aria-label="Fazer pedido">\n        <div className="absolute inset-x-3 top-3 z-[60]">{pieceSearchBar}</div>
         <div className="relative h-[100dvh] w-full overflow-hidden">
           <img
             src="/images/lia-fazer-pedido.webp?v=20261102"
@@ -311,7 +325,7 @@ function OrderPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[640px] space-y-4 pb-5">
+    <div className="mx-auto w-full max-w-[640px] space-y-4 pb-5">\n      {pieceSearchBar}
       <style>{`@keyframes netinhoGuidePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.22), 0 0 10px rgba(220,38,38,.2); } 50% { box-shadow: 0 0 0 6px rgba(220,38,38,.12), 0 0 24px rgba(239,68,68,.7); } } .netinho-guided-pulse { animation: netinhoGuidePulse 1.5s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .netinho-guided-pulse { animation: none; } }`}</style>
       {confirmOpen && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col bg-[#0862bd]" role="dialog" aria-modal="true" aria-labelledby="lia-confirm-title">
