@@ -79,7 +79,7 @@ function VehicleModelPicture({name,brand}:{name:string;brand:string}) {
   const photo = slug && filename ? `/images/veiculos/${slug}/${encodeURIComponent(filename)}` : null;
   const [failed,setFailed]=useState(false);
   useEffect(()=>setFailed(false),[photo]);
-  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-full w-full object-contain object-center scale-[1.2] transition-transform duration-200 group-hover:scale-[1.25]" /> : <div className="h-full w-full"><VehicleModelIllustration name={name}/></div>;
+  return photo&&!failed ? <img src={photo} alt={`Modelo ${name}`} loading="lazy" decoding="async" onError={()=>setFailed(true)} className="h-12 w-full object-contain transition-transform duration-200 group-hover:scale-105" /> : <div className="h-12 w-full"><VehicleModelIllustration name={name}/></div>;
 }
 
 /** Miniaturas vetoriais locais, com silhuetas e cores próprias por modelo. */
