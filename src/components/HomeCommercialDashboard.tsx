@@ -243,14 +243,14 @@ function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
   </div>;
 }
 
-const panelTitle = "truncate text-sm font-black leading-tight lg:text-base";
+const panelTitle = "text-base font-black leading-tight sm:text-lg lg:text-xl";
 
 function SalesSummary() {
   const { data, isPending, isError, isAdmin } = useHomeDashboard();
   return (
     <div className="flex h-full min-h-0 flex-col gap-1.5">
       <h3 className={cn(panelTitle, "block text-center text-[#102a52]")}>
-        {isAdmin ? "Evolução das Vendas" : "Minhas Vendas"} <span className="text-[11px] font-bold text-gold-deep">· últimos 3 meses</span>
+        {isAdmin ? "Evolução das Vendas" : "Minhas Vendas"} <span className="text-sm font-bold text-gold-deep sm:text-base">· últimos 3 meses</span>
       </h3>
       {isPending ? (
         <p role="status" className="grid flex-1 place-items-center text-xs text-muted-foreground">
