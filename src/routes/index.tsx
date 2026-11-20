@@ -224,18 +224,8 @@ function Home() {
             decoding="async"
             fetchPriority="high"
           />
-          <div className="netinho-home-hero-content relative z-10 grid h-full min-h-[140px] grid-cols-[minmax(0,1fr)_auto] grid-rows-[auto_1fr] gap-x-2 px-3 py-2 sm:px-5">
-            <div className="col-start-2 row-start-1 flex items-start justify-end">
-              <Link
-                to="/representantes-mapa"
-                aria-label="Conheça nossos representantes pelo Brasil"
-                title="Representantes pelo Brasil"
-                className="group flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-transparent transition-transform duration-300 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                <img src="/images/icones/icone-representantes.webp" alt="" aria-hidden="true" width={64} height={64} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
-              </Link>
-            </div>
-            <div className="netinho-home-hero-copy relative z-10 col-start-1 row-start-2 min-w-0 self-center rounded-lg bg-navy-deep/60 px-3 py-2 leading-tight sm:px-4">
+          <div className="netinho-home-hero-content relative z-10 grid h-full min-h-[140px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
+            <div className="netinho-home-hero-copy relative z-10 min-w-0 rounded-lg bg-navy-deep/60 px-3 py-2 leading-tight sm:px-4">
               <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
@@ -243,15 +233,28 @@ function Home() {
               </p>
               <p className="netinho-home-hero-greeting line-clamp-2 break-words font-display text-xl font-black leading-tight sm:truncate sm:text-3xl lg:text-[34px]">
                 {salutation}, Sr.{" "}
-                <span style={{ color: dailyNameColor }} title={userName || "usuário"}>{userName || "usuário"}</span>.
+                <span style={{ color: dailyNameColor }} title={userName || "usuário"}>
+                  {userName || "usuário"}
+                </span>
+                .
               </p>
-              <p className="netinho-home-hero-blessing truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">{periodBlessing}</p>
+              <p className="netinho-home-hero-blessing truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">
+                {periodBlessing}
+              </p>
             </div>
-            <div className="col-start-2 row-start-2 flex items-center justify-end self-center">
+            <div className="relative z-20 flex items-center justify-end self-center">
               <HomeWhatsAppButton />
             </div>
           </div>
-          
+          {/* Ícone independente do fluxo dos textos: no alto, à extrema direita, alinhado à logo da arte. */}
+          <Link
+            to="/representantes-mapa"
+            aria-label="Conheça nossos representantes pelo Brasil"
+            title="Representantes pelo Brasil"
+            className="absolute right-2 top-2 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-transparent transition-transform duration-300 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-4 sm:top-3"
+          >
+            <img src="/images/icones/icone-representantes.webp" alt="" aria-hidden="true" width={56} height={56} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
+          </Link>
         </header>
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
         <HomeSalesPanel className="netinho-home-sales lg:col-span-8 [@media(max-height:740px)_and_(max-width:1023px)]:h-[230px]" />
