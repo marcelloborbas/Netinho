@@ -7498,3 +7498,31 @@ body:has(.catalog-showcase) .catalog-showcase {
     transition: none !important;
   }
 }
+
+/* Ficha técnica: foco no botão não deve ampliar a foto da peça.
+   O destaque visual é exclusivo da interação direta com a imagem. */
+.catalog-showcase .catalog-product-card--glossy:focus-within .product-visual.catalog-card-piece-image img,
+.catalog-showcase .catalog-product-card--glossy:active .product-visual.catalog-card-piece-image img {
+  transform: translate3d(0,0,0) scale(1) !important;
+  filter: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .catalog-showcase .catalog-product-card--glossy:hover .product-visual.catalog-card-piece-image img {
+    transform: translate3d(0,0,0) scale(1) !important;
+    filter: none !important;
+  }
+  .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image:hover img {
+    transform: translate3d(0,-72px,0) scale(1.825) !important;
+    filter: none !important;
+  }
+}
+@media (hover: none) {
+  .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image:active img {
+    transform: translate3d(0,-72px,0) scale(1.825) !important;
+    filter: none !important;
+  }
+}
+.catalog-showcase .catalog-product-card--glossy:has(.catalog-card-glossy-ficha[aria-expanded="true"]) .catalog-card-glossy-content {
+  height: auto !important;
+  grid-template-rows: none !important;
+}
