@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Pencil, Trash2, UserPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { meQuery } from "@/lib/queries";
+import { meQuery, customersQuery } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -481,6 +481,15 @@ function PersonSummary({
   const displayUf = uf?.trim() || territory?.uf?.trim() || territory?.state?.trim() || commercialDetails?.state?.trim() || "—";
   const displayRegion = territory?.region || representativeRegion?.region || commercialDetails?.region || region || "—";
   const firstName = name.trim().split(/\s+/)[0] || "Sem nome";
+  const [showClients, setShowClients] = useState(false);
+  const isRepresentative = role.startsWith("Representante");
+  const { data: assignedCustomers = [], isLoading: loadingClients, isError: clientsError } = useQuery({
+    ...customersQuery,
+    enabled: showClients && isRepresentative,
+  });
+  const ownerId = commercialId ? id : (role.includes("cadastro comercial") ? null : id);
+  const clientList = ownerId ? assignedCustomers.filter((customer) => customer.seller_id === ownerId) : [];
+
   return (
     <div className="space-y-2">
       <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
@@ -488,6 +497,7 @@ function PersonSummary({
         <div className="min-w-0 flex-1">
           <strong className="block truncate text-sm font-black text-navy sm:text-base" title={name}>{firstName}</strong>
           <span className="block truncate text-[11px] font-semibold text-navy/75" title={role}>{role.replace(" (cadastro comercial)", "")}</span>
+          {isRepresentative && <button type="button" onClick={() => setShowClients((open) => !open)} aria-expanded={showClients} className="mt-1 rounded-md border border-[#102a52]/30 px-2 py-0.5 text-[11px] font-bold text-[#102a52] hover:bg-[#102a52]/10">Clientes {showClients ? "−" : "+"}</button>}
         </div>
         {whatsappNumber ? (
           <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp" className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
@@ -505,6 +515,17 @@ function PersonSummary({
         <span><b>UF:</b> {displayUf}</span>
         <span><b>Região:</b> {displayRegion}</span>
       </div>
+      {showClients && isRepresentative && (
+        <div className="mt-2 rounded-xl border border-[#102a52]/15 bg-[#f1f1f1] p-3 text-xs text-navy">
+          <strong>Clientes de {name} ({loadingClients ? "…" : clientList.length})</strong>
+          {loadingClients ? <p className="mt-2">Carregando clientes…</p>
+            : clientsError ? <p role="alert" className="mt-2 text-destructive">Não foi possível consultar a carteira.</p>
+            : !clientList.length ? <p className="mt-2">Nenhum cliente vinculado a esta conta.</p>
+            : <ul className="mt-2 space-y-1">{clientList.map((client) => (
+                <li key={client.id} className="rounded-md bg-white px-2 py-1.5">{client.trade_name || client.company_name}</li>
+              ))}</ul>}
+        </div>
+      )}
     </div>
   );
 }
