@@ -11,7 +11,7 @@ export function CustomersSection() {
         title="Clientes"
         description="Todas as carteiras; transferências entre representantes ficam em Pessoas e Comissões → Carteira"
       />
-      <CustomersManager />
+      <CustomersManager compactAdmin />
     </div>
   );
 }
