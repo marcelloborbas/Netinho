@@ -100,10 +100,10 @@ export function OverviewSection() {
   const value = (v: number | string | undefined) =>
     isLoading ? "…" : isError || v === undefined ? "—" : v;
   const cards = [
-    { label: "Acessos ativos", value: value(kpis?.activePeople) },
-    { label: "Clientes", value: value(kpis?.customers) },
-    { label: "Pedidos no mês", value: value(kpis?.monthOrders) },
-    { label: "Vendido no mês", value: value(kpis ? brl(kpis.monthTotal) : undefined) },
+    { label: "Acessos ativos", value: value(kpis?.activePeople), section: "pessoas" as const },
+    { label: "Clientes", value: value(kpis?.customers), section: "clientes" as const },
+    { label: "Pedidos no mês", value: value(kpis?.monthOrders), section: "pedidos" as const },
+    { label: "Vendido no mês", value: value(kpis ? brl(kpis.monthTotal) : undefined), section: "vendas" as const },
   ];
   return (
     <div className="space-y-3 text-navy">
@@ -129,10 +129,10 @@ export function OverviewSection() {
       />
       <dl className="grid grid-cols-2 gap-2 lg:grid-cols-4">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+          <Link key={card.label} to="/admin" search={{secao:card.section}} aria-label={`Abrir ${card.label}`} className="group block rounded-2xl border border-border bg-card p-3 shadow-sm transition hover:border-gold hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold">
             <dt className="text-xs font-semibold text-muted-foreground">{card.label}</dt>
-            <dd className="mt-1 truncate text-xl font-black tabular-nums">{card.value}</dd>
-          </div>
+            <dd className="mt-1 flex items-center justify-between gap-1 text-xl font-black tabular-nums"><span className="min-w-0 truncate">{card.value}</span><ChevronRight size={17} className="shrink-0 text-gold-deep transition-transform group-hover:translate-x-1" aria-hidden="true"/></dd>
+          </Link>
         ))}
       </dl>
       {isError && (
