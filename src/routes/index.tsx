@@ -241,7 +241,7 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-            <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="netinho-hero-representatives absolute right-2 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] sm:right-3">
+            <Link to="/representantes-mapa" search={{ consulta: "ddds" }} aria-label="Representantes no Brasil" title="Representantes pelo Brasil" className="netinho-hero-representatives absolute right-2 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] sm:right-3">
               <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={90} height={90} className="block h-auto w-[54px] max-w-full object-contain sm:w-[78px]" loading="eager" />
             </Link>
           </div>
