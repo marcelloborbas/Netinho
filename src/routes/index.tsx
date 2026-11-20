@@ -251,9 +251,9 @@ function Home() {
             to="/representantes-mapa"
             aria-label="Conheça nossos representantes pelo Brasil"
             title="Representantes pelo Brasil"
-            className="absolute right-2 top-2 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-transparent transition-transform duration-300 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-4 sm:top-3"
+            className="absolute right-4 top-4 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-5 sm:top-4"
           >
-            <img src="/images/icones/icone-representantes.webp" alt="" aria-hidden="true" width={56} height={56} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
+            <img src="/images/icones/icone-representantes.webp" alt="" aria-hidden="true" width={48} height={48} decoding="async" className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none" />
           </Link>
         </header>
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
