@@ -229,9 +229,9 @@ function Home() {
             decoding="async"
             fetchPriority="high"
           />
-          <div className="netinho-home-hero-content relative z-10 grid h-full min-h-[140px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-5 lg:py-2">
-            <div className="netinho-home-hero-copy relative z-10 min-w-0 rounded-lg bg-navy-deep/60 px-3 py-2 leading-tight sm:px-4">
-              <p className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
+          <div className="netinho-home-hero-content relative z-10 grid h-full min-h-[140px] grid-cols-1 items-center gap-3 px-3 py-2.5 sm:px-5 lg:py-2">
+            <div className="netinho-home-hero-copy relative z-10 flex min-h-full min-w-0 flex-col items-center justify-center rounded-lg bg-navy-deep/60 px-3 py-2 text-center leading-tight sm:px-4">
+              <p className="flex min-w-0 items-center justify-center gap-1.5 truncate text-[11px] font-bold tracking-wide text-gold sm:text-xs">
                 <HomeLocalWeather enabled={entryApproved} />
                 <span className="sm:hidden">{shortDate}</span>
                 <span className="hidden sm:inline">{todayLabel}</span>
