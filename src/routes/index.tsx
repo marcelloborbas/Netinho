@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { MapPinned } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -242,7 +243,12 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-            <div className="relative z-20"><HomeWhatsAppButton /></div>
+            <div className="relative z-20 flex h-full flex-col items-center justify-between gap-2 py-1">
+              <Link to="/representantes-mapa" aria-label="Ver mapa de representantes" title="Representantes pelo Brasil" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/35 bg-navy-deep/45 text-gold shadow-sm backdrop-blur-sm transition hover:border-gold hover:bg-navy-deep/75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
+                <MapPinned size={22} strokeWidth={1.7} aria-hidden="true" />
+              </Link>
+              <HomeWhatsAppButton />
+            </div>
           </div>
           
         </header>
