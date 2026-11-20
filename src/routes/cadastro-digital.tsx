@@ -23,7 +23,7 @@ const campos = {
   "Contato financeiro": [["financeiro_nome", "Nome do contato"], ["financeiro_email", "E-mail"], ["financeiro_telefone", "Telefone / celular"]],
   "Nota fiscal eletrônica (NFe)": [["nfe_nome", "Nome do contato"], ["nfe_email", "E-mail"], ["nfe_telefone", "Telefone / celular"]],
   "Referências bancárias": [["referencia", "Referência bancária (empresa e contato)"], ["banco", "Banco"], ["agencia", "Agência"], ["conta", "Conta corrente"], ["favorecido", "Favorecido / CPF"], ["pix", "Chave PIX"]],
-  "Pretensão de atuação": [["cidades_atendidas", "Qual sua pretensão de Atuação - Cidade"], ["ddd_atuacao", "DDD da região de atuação"]],
+  "Pretensão de atuação": [["cidades_atendidas", "Cidade"], ["ddd_atuacao", "DDD da região de atuação"]],
   "Em que região pretende atender": [["regiao", "Região pretendida"], ["experiencia", "Experiência comercial"]],
 } as const;
 
@@ -81,10 +81,10 @@ function CadastroDigital() {
     try {
       const { data: auth, error: authError } = await supabase.auth.getUser();
       if (authError || !auth.user) { setErroEnvio("Entre na sua conta, inclusive como visitante, antes de enviar a ficha."); return; }
-      const { data, error } = await supabase.from("registration_requests" as never).insert({user_id: auth.user.id, applicant_type: tipo, form_data: dados, status: "recebido"} as never).select("id").single();
+      const { error } = await supabase.from("registration_requests" as never).insert({user_id: auth.user.id, applicant_type: tipo, form_data: dados, status: "recebido"} as never);
       if (error) throw error;
-      setProtocolo(String((data as {id:string}).id));
-    } catch { setErroEnvio("Não foi possível registrar o cadastro. Tente novamente."); }
+      setProtocolo("Cadastro recebido com sucesso. Aguarde a análise da Netinho.");
+    } catch (err) { const detail = err && typeof err === "object" && "code" in err ? String((err as {code?:string}).code || "") : ""; setErroEnvio(`Não foi possível registrar o cadastro${detail ? ` (erro ${detail})` : ""}. Verifique sua conexão ou entre novamente na conta.`); console.error("Falha ao enviar cadastro:", err); }
     finally { setEnviando(false); }
   };
   return <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
