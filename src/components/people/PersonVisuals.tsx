@@ -15,6 +15,16 @@ export function PersonPhoto({
   editable?: boolean;
 }) {
   const [photo, setPhoto] = useState<string | null>(null);
+  const normalized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const representativeFiles: Record<string, string> = {
+    abdnego: "Abdnego.webp", abdenego: "Abdnego.webp", domingos: "Domingos.webp",
+    jhonatas: "Jhonatas.webp", justino: "José Justino.webp", livaldo: "Livaldo.webp",
+    luciano: "Luciano.webp", marcello: "Marcello.webp", romullo: "Romullo.webp",
+    romulo: "Romullo.webp", burgato: "José Burgato.webp", osmair: "Osmair.webp",
+  };
+  const matchedKey = Object.keys(representativeFiles).find((key) => normalized.includes(key));
+  const repositoryPhoto = matchedKey ? "/images/public/images/representantes/" + encodeURIComponent(representativeFiles[matchedKey]) : null;
+  const [fallbackFailed, setFallbackFailed] = useState(false);
   const [busy, setBusy] = useState(false);
   const path = id + "/foto.webp";
   const url = supabase.storage.from("person-photos").getPublicUrl(path).data.publicUrl;
@@ -71,8 +81,9 @@ export function PersonPhoto({
       setBusy(false);
     }
   }
-  const image = photo ? (
-    <img src={photo} alt={`Foto de ${name}`} className="h-full w-full object-cover" />
+  const displayPhoto = photo || (!fallbackFailed ? repositoryPhoto : null);
+  const image = displayPhoto ? (
+    <img src={displayPhoto} alt={`Foto de ${name}`} className="h-full w-full object-cover" onError={() => { if (photo) { setPhoto(null); } else { setFallbackFailed(true); } }} />
   ) : (
     <UserRound size={24} aria-hidden="true" />
   );
