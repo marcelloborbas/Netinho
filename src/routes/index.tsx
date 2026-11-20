@@ -241,7 +241,9 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-
+            <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="netinho-hero-representatives absolute right-2 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] sm:right-3">
+              <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={90} height={90} className="block h-auto w-[54px] max-w-full object-contain sm:w-[78px]" loading="eager" />
+            </Link>
           </div>
         </header>
         <HomePartsCarousel className="lg:col-span-12 [@media(max-height:740px)_and_(max-width:1023px)]:h-[210px]" />
@@ -250,8 +252,8 @@ function Home() {
           className="netinho-home-brands relative min-w-0 overflow-hidden bg-transparent border-0 shadow-none lg:col-span-4"
           aria-label="Montadoras"
         >
-          <div className="grid h-full min-h-[100px] grid-cols-4 items-center gap-3 px-0 sm:gap-5">
-            <div className="col-span-3 min-w-0 overflow-hidden" aria-label="Logos das montadoras em movimento contínuo">
+          <div className="flex h-full min-h-[100px] items-center px-0">
+            <div className="w-full min-w-0 overflow-hidden" aria-label="Logos das montadoras em movimento contínuo">
               <div className="netinho-brand-marquee flex h-full items-center">
                 {[...brands, ...brands].map((brand, i) => (
                   <div key={`${brand}-${i}`} className="flex h-full min-w-0 shrink-0 basis-1/3 items-center justify-center px-1.5" aria-hidden={i >= brands.length}>
@@ -260,9 +262,7 @@ function Home() {
                 ))}
               </div>
             </div>
-            <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
-              <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={110} height={110} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain" loading="lazy" />
-            </Link>
+
           </div>
         </section>
       </main>
