@@ -392,7 +392,7 @@ function PersonSummary({
 }: {
   id: string; name: string; email?: string | null; active: boolean; rate: string; role: string;
   phone?: string | null; uf?: string | null; region?: string | null;
-  commercialId?: string; selected: boolean; onToggle: () => void; actions: ReactNode;
+  commercialId?: string | undefined; selected: boolean; onToggle: () => void; actions: ReactNode;
 }) {
   const { data: areaDdds = "" } = useQuery({
     queryKey: ["representative-area-ddds-summary", id, commercialId],

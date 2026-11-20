@@ -8,7 +8,10 @@ const mock = vi.hoisted(() => ({
   targetId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
 }));
 vi.mock("@tanstack/react-router", () => ({ createFileRoute: () => (options: { component: () => React.ReactNode }) => ({ options }), Link: () => null, useLocation: () => ({ pathname: "/admin/pessoas", hash: "" }) }));
-vi.mock("@/lib/queries", () => ({ meQuery: { queryKey: ["me"], queryFn: async () => ({ id: mock.adminId, isAdmin: true }) } }));
+vi.mock("@/lib/queries", () => ({
+  meQuery: { queryKey: ["me"], queryFn: async () => ({ id: mock.adminId, isAdmin: true }) },
+  customersQuery: { queryKey: ["customers"], queryFn: async () => [] },
+}));
 vi.mock("sonner", () => ({ toast: { success: mock.success, error: mock.error } }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   functions: { invoke: mock.invoke },

@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 import { HomeSalesPanel } from "@/components/HomeCommercialDashboard";
 import { HomePartsCarousel } from "@/components/HomePartsCarousel";
-import { HomeWhatsAppButton } from "@/components/HomeWhatsAppButton";
 import { PublicFooter } from "@/components/PublicFooter";
 import { pageHead } from "@/lib/page-head";
 import { homeShareImage } from "@/lib/home-share-image";
@@ -206,8 +205,6 @@ function Home() {
   // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
   const brands = ["volkswagen", "fiat", "chevrolet", "ford", "renault", "honda", "toyota", "hyundai", "nissan", "jeep", "peugeot", "citroen", "mitsubishi", "kia", "bmw", "mercedes-benz", "audi", "volvo"] as const;
-  return () => window.clearInterval(timer);
-  }, []);
   return (
     <div className="netinho-home netinho-home-refresh min-h-[100dvh] overflow-x-clip bg-background text-navy">
       <main className="netinho-home-refresh-grid mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[minmax(140px,1.45fr)_minmax(140px,1fr)_minmax(130px,0.8fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[minmax(140px,1.25fr)_minmax(170px,1fr)_minmax(170px,0.9fr)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">

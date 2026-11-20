@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
@@ -45,7 +45,7 @@ function CadastroDigital() {
       const endereco = await response.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string };
       if (request !== cepRequest.current) return;
       if (endereco.erro) { setCepErro("CEP não encontrado. Preencha o endereço manualmente."); return; }
-      setDados(old => ({ ...old, endereco: endereco.logradouro || old.endereco || "", bairro: endereco.bairro || old.bairro || "", cidade: endereco.localidade || old.cidade || "", uf: endereco.uf || old.uf || "" }));
+      setDados(old => ({ ...old, endereco: endereco.logradouro || old["endereco"] || "", bairro: endereco.bairro || old["bairro"] || "", cidade: endereco.localidade || old["cidade"] || "", uf: endereco.uf || old["uf"] || "" }));
       window.requestAnimationFrame(() => numeroRef.current?.focus());
     } catch {
       if (request === cepRequest.current) setCepErro("Não foi possível consultar o CEP. Preencha o endereço manualmente.");

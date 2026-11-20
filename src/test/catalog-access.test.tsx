@@ -71,10 +71,8 @@ describe("catalog access presentation", () => {
     // Os atalhos foram retirados a pedido do cliente e não devem voltar à página inicial.
     for (const name of [/Novo pedido/, /Consultar peças/, /Meus pedidos/, /Promoções/])
       expect(screen.queryByRole("link", { name })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute(
-      "href",
-      expect.stringContaining("https://wa.me/"),
-    );
+    // O botão de WhatsApp foi removido da página inicial a pedido do cliente.
+    expect(screen.queryByRole("link", { name: /WhatsApp/ })).not.toBeInTheDocument();
     expect(screen.queryByText("Administração")).not.toBeInTheDocument();
   });
   it("keeps the home open to visitors, who only browse", () => {
