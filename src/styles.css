@@ -6659,3 +6659,13 @@ body:has(.catalog-showcase) .catalog-showcase {
 .catalog-showcase .catalog-category-filters .catalog-category-item > button > span.relative > img.catalog-category-photo {
  position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;max-width:none !important;max-height:none !important;object-fit:cover !important;object-position:center !important;border-radius:0 !important;background:transparent !important;
 }
+
+/* Catálogo: enquadramento ampliado das artes de categoria para eliminar margens
+   incorporadas às próprias imagens, sem alterar o tamanho dos cartões. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > button img.catalog-category-photo {
+  object-fit: cover !important;
+  object-position: center center !important;
+  transform: scale(1.18) !important;
+  transform-origin: center center !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button {overflow: hidden !important;}
