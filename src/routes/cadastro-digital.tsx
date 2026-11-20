@@ -28,6 +28,8 @@ const campos = {
 } as const;
 
 const dddsPorUF: Record<string, number[]> = {"AC":[68],"AL":[82],"AP":[96],"AM":[92,97],"BA":[71,73,74,75,77],"CE":[85,88],"DF":[61],"ES":[27,28],"GO":[62,64],"MA":[98,99],"MT":[65,66],"MS":[67],"MG":[31,32,33,34,35,37,38],"PA":[91,93,94],"PB":[83],"PR":[41,42,43,44,45,46],"PE":[81,87],"PI":[86,89],"RJ":[21,22,24],"RN":[84],"RS":[51,53,54,55],"RO":[69],"RR":[95],"SC":[47,48,49],"SP":[11,12,13,14,15,16,17,18,19],"SE":[79],"TO":[63]};
+// Sugestões de DDDs limítrofes em SP; para outras UFs, oferece os DDDs do estado.
+const dddsVizinhos: Record<string, number[]> = {"11":[11,12,13,15,19],"12":[12,11,13,19],"13":[13,11,12,15],"14":[14,15,16,17,18],"15":[15,11,13,14,19],"16":[16,14,17,19],"17":[17,16,18,19],"18":[18,14,17],"19":[19,11,12,15,16]};
 const camposNumericos = new Set(["documento", "identidade", "cep", "numero", "comercial_telefone", "financeiro_telefone", "agencia", "conta"]);
 
 function CadastroDigital() {
@@ -37,6 +39,7 @@ function CadastroDigital() {
   const cepRequest = useRef(0);
   const [cepErro, setCepErro] = useState("");
   const [dddDoCep, setDddDoCep] = useState("");
+  const [dddSelecionado, setDddSelecionado] = useState("");
   const [consultandoCep, setConsultandoCep] = useState(false);
   const consultarCep = async (cep: string) => {
     const digits = cep.replace(/\D/g, "");
@@ -102,10 +105,19 @@ function CadastroDigital() {
           {fields.map(([key, label]) => <label key={key} className={`block text-sm font-medium ${["razao_social", "comercial_email", "comercial_telefone"].includes(key) ? "md:col-span-2" : ""}`}>
             {label}{["razao_social","documento","comercial_email"].includes(key) ? " *" : ""}
             {key === "ddd_atuacao" ? (
-              <select value={dados[key] || ""} onChange={e => set(key, e.target.value)} className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900">
-                <option value="">{dados.uf ? "Selecione o DDD da sua região" : "Informe primeiro o CEP ou a UF"}</option>
-                {(dddDoCep && (dddsPorUF[dados.uf?.toUpperCase() || ""] || []).includes(Number(dddDoCep)) ? [Number(dddDoCep)] : dddsPorUF[dados.uf?.toUpperCase() || ""] || []).map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
-              </select>
+              <div className="mt-1 space-y-2">
+                <div className="flex gap-2">
+                  <select value={dddSelecionado} onChange={e => setDddSelecionado(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white p-3 text-slate-900">
+                    <option value="">{dados.uf ? "Escolha um DDD próximo" : "Informe primeiro o CEP ou a UF"}</option>
+                    {(dddDoCep && dddsVizinhos[dddDoCep] ? dddsVizinhos[dddDoCep] : dddsPorUF[dados.uf?.toUpperCase() || ""] || []).filter(ddd => !(dados[key] || "").split(",").includes(String(ddd))).map(ddd => <option key={ddd} value={String(ddd)}>{ddd}</option>)}
+                  </select>
+                  <button type="button" disabled={!dddSelecionado} onClick={() => { set(key, [...new Set([...(dados[key] || "").split(",").filter(Boolean), dddSelecionado])].join(",")); setDddSelecionado(""); }} className="rounded-lg bg-[#102a52] px-4 font-bold text-white disabled:opacity-40">Adicionar</button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(dados[key] || "").split(",").filter(Boolean).map(ddd => <button key={ddd} type="button" onClick={() => set(key, (dados[key] || "").split(",").filter(item => item !== ddd).join(","))} className="rounded-full border border-blue-300 bg-blue-50 px-3 py-1.5 text-sm font-bold text-blue-950" title={`Remover DDD ${ddd}`}>{ddd} ×</button>)}
+                </div>
+                <p className="text-xs text-slate-500">Você pode adicionar vários DDDs. Toque em um DDD selecionado para removê-lo.</p>
+              </div>
             ) : (
             <input ref={key === "numero" ? numeroRef : undefined} value={dados[key] || ""} onChange={e => {
                 const value = camposNumericos.has(key) ? e.target.value.replace(/\D/g, "").slice(0, key === "cep" ? 8 : key === "documento" ? 14 : key === "comercial_telefone" || key === "financeiro_telefone" ? 11 : 250) : e.target.value;
