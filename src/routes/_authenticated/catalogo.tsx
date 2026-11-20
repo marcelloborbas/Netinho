@@ -369,7 +369,7 @@ function Catalog() {
                 aria-pressed={selected}
                 aria-label={label}
                 disabled={brand !== "FCO"}
-                title={brand !== "FCO" ? `Catálogo ${label} indisponível no momento` : `Exibir peças: ${label}`}
+                title={brand === "HD" ? "Em breve: nova representação" : brand === "all" ? "Todos os catálogos indisponível no momento" : `Exibir peças: ${label}`}
                 onClick={() => { if (brand !== "FCO") return; setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
                 className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${selected ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#d9d9d9] hover:border-[#102a52]"}`}
                 style={{ backgroundColor: "rgb(241, 241, 241)" }}
@@ -378,11 +378,11 @@ function Catalog() {
                   <img src="/images/brands/catalogo-todos.webp" alt="Todos os catálogos" loading="lazy" decoding="async" className="h-full max-h-[108px] w-full max-w-[108px] object-contain" />
                 ) : (
                   <img
-                    src={brand === "FCO" ? "/images/brands/FCO_logo_web.webp" : "/images/brands/cropped-LOGO-512.png"}
-                    alt={brand === "FCO" ? "FCO" : "HD Embreagens"}
+                    src={brand === "FCO" ? "/images/brands/FCO_logo_web.webp" : "/images/brands/catalogo-em-breve.webp"}
+                    alt={brand === "FCO" ? "FCO" : "Em breve: nova representação"}
                     loading="lazy"
                     decoding="async"
-                    className={brand === "HD" ? "h-auto max-h-[75%] w-full max-w-[100px] object-contain grayscale opacity-[0.05]" : "h-auto max-h-[75%] w-full max-w-[100px] object-contain"}
+                    className="h-auto max-h-[95%] w-full max-w-[108px] object-contain"
                   />
                 )}
               </button>
