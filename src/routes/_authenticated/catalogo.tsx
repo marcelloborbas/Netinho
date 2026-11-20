@@ -373,7 +373,7 @@ function Catalog() {
                 disabled={brand !== "FCO"}
                 title={brand === "HD" ? "Em breve: nova representação" : brand === "all" ? "Todos os catálogos indisponível no momento" : `Exibir peças: ${label}`}
                 onClick={() => { if (brand !== "FCO") return; setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${selected ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#d9d9d9] hover:border-[#102a52]"}`}
+                className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center overflow-hidden rounded-xl border ${brand === "HD" ? "p-0" : "px-2 py-2"} text-center text-base font-extrabold text-[#102a52] transition-colors disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${selected ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#d9d9d9] hover:border-[#102a52]"}`}
                 style={{ backgroundColor: "rgb(241, 241, 241)" }}
               >
                 {brand === "all" ? (
@@ -384,7 +384,7 @@ function Catalog() {
                     alt={brand === "FCO" ? "FCO" : "Em breve: nova representação"}
                     loading="lazy"
                     decoding="async"
-                    className="h-auto max-h-[95%] w-full max-w-[108px] object-contain"
+                    className={brand === "HD" ? "block h-full w-full max-h-none max-w-none object-cover" : "h-auto max-h-[95%] w-full max-w-[108px] object-contain"}
                   />
                 )}
               </button>
