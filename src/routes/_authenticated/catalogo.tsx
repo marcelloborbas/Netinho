@@ -217,7 +217,7 @@ function Catalog() {
   const { data: campaignOffers = [], isLoading: campaignLoading } = useQuery({ queryKey: ["fco-campaign-10-2026"], queryFn: readOffers, staleTime: Infinity });
 
   useEffect(() => {
-    setManufacturer("FCO");
+    setManufacturer(search.marca ?? "FCO");
     setQ("");
     setSearchInput("");
     setHasSelectedCategory(false);
@@ -248,9 +248,9 @@ function Catalog() {
       ...localHd.filter((hd) => !hdCodes.has(hd.code)),
     ];
   }, [products, localFco]);
-  const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.manufacturer !== "HD" && p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
+  const categories = useMemo(() => Array.from(new Set(combined.filter((p) => p.active !== false).map((p) => p.categories?.name).filter((n): n is string => typeof n === "string" && n.trim().length > 0))).sort((a, b) => a.localeCompare(b, "pt-BR")), [combined]);
   const categoryCounts = useMemo(() => {
-    const eligible = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq));
+    const eligible = combined.filter((p) => p.active !== false && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && productMatches(p, dq));
     const counts = new Map<string, number>();
     for (const p of eligible) {
       const name = p.categories?.name;
@@ -262,7 +262,7 @@ function Catalog() {
     // Uma única passagem pelos produtos elegíveis, sem repetir filtros para cada marca.
     const counts = new Map<string, number>();
     for (const product of combined) {
-      if (product.active === false || product.manufacturer === "HD" || (manufacturer !== "all" && (product.manufacturer ?? "FCO") !== manufacturer) || (category !== "all" && product.categories?.name !== category) || !productMatches(product, dq)) continue;
+      if (product.active === false || (manufacturer !== "all" && (product.manufacturer ?? "FCO") !== manufacturer) || (category !== "all" && product.categories?.name !== category) || !productMatches(product, dq)) continue;
       const application = product.application ?? "";
       for (const brand of vehicleBrands) {
         if (brand.pattern.test(application)) counts.set(brand.name, (counts.get(brand.name) ?? 0) + 1);
@@ -275,7 +275,7 @@ function Catalog() {
     if (vehicleBrand === "all") return [];
     const counts = new Map<string, number>();
     for (const product of combined) {
-      if (product.active === false || product.manufacturer === "HD" || (manufacturer !== "all" && (product.manufacturer ?? "FCO") !== manufacturer) || (category !== "all" && product.categories?.name !== category) || !productMatches(product, dq)) continue;
+      if (product.active === false || (manufacturer !== "all" && (product.manufacturer ?? "FCO") !== manufacturer) || (category !== "all" && product.categories?.name !== category) || !productMatches(product, dq)) continue;
       const application = product.application ?? "";
       if (!selectedVehicleBrand?.pattern.test(application)) continue;
       for (const model of vehicleModels[vehicleBrand] ?? []) {
@@ -291,7 +291,7 @@ function Catalog() {
     const term = searchInput.trim();
     if (!term) return [];
     const normalized = term.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
-    const matches = combined.filter((p) => p.active !== false && p.manufacturer !== "HD" && (productMatches(p, term) || (p.code ?? "").toLocaleLowerCase("pt-BR").startsWith(normalized)));
+    const matches = combined.filter((p) => p.active !== false && (productMatches(p, term) || (p.code ?? "").toLocaleLowerCase("pt-BR").startsWith(normalized)));
     const rank = (p: CatalogProduct) => {
       const code = (p.code ?? "").toLocaleLowerCase("pt-BR");
       const text = [p.application, p.refs, p.categories?.name, p.search_text].filter(Boolean).join(" ").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
@@ -311,7 +311,7 @@ function Catalog() {
     const orderProductIds = filterMode === "compras" ? new Set(draft.items.map((item) => item.productId)) : null;
     const recentPositions = filterMode === "recentes" ? new Map(recentCodes.map((code, index) => [code, index])) : null;
     const matching = combined.filter((p) =>
-      p.manufacturer !== "HD" && (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || selectedVehicleBrand?.pattern.test(p.application ?? "")) && (vehicleModel === "all" || mentionsModel(p.application ?? "", vehicleModel)) && productMatches(p, dq));
+      (manufacturer === "all" || (p.manufacturer ?? "FCO") === manufacturer) && (category === "all" || p.categories?.name === category) && (vehicleBrand === "all" || selectedVehicleBrand?.pattern.test(p.application ?? "")) && (vehicleModel === "all" || mentionsModel(p.application ?? "", vehicleModel)) && productMatches(p, dq));
     const selected = matching.filter((p) => {
       if (filterMode === "recentes") return recentPositions?.has(p.code) === true;
       if (filterMode === "disponiveis") return p.stock > 0;
@@ -337,7 +337,7 @@ function Catalog() {
   const showProducts = searching || hasSelectedCategory || vehicleBrand !== "all";
   const pageCount = Math.max(1, Math.ceil(visibleProducts.length / 24));
   const currentPage = Math.min(page, pageCount);
-  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
+  const reset = () => { setFilterMode("relevantes"); setQ(""); setSearchInput(""); setManufacturer(search.marca ?? "FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); };
   const comparedProducts = compared.map((id) => combined.find((product) => product.id === id)).filter((p): p is CatalogProduct => !!p);
   const categoryIcon = (name: string) => /freio|disco|pastilha/i.test(name) ? Disc3 : /motor|coxim|embreagem/i.test(name) ? Cog : /suspens|amortec/i.test(name) ? Gauge : /elétr|eletr|igni|bobina/i.test(name) ? Zap : /filtro/i.test(name) ? Filter : /direç|direc/i.test(name) ? CarFront : /bateria/i.test(name) ? BatteryCharging : /rolamento/i.test(name) ? CircleDot : Settings2;
 
@@ -358,24 +358,22 @@ function Catalog() {
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
-        <nav className="grid grid-cols-1 items-stretch gap-1.5 sm:gap-3" aria-label="Filtro por representação">
-          {(["FCO"] as const).map((brand) => {
-            const pending = false;
+        <nav className="grid grid-cols-3 gap-2.5" aria-label="Filtro por representação">
+          {(["all", "FCO", "HD"] as const).map((brand) => {
             const selected = manufacturer === brand;
-            const logo = "/images/brands/fco.webp";
+            const label = brand === "all" ? "Todos" : brand;
             return (
               <button
                 key={brand}
                 type="button"
-                disabled={pending}
-                aria-pressed={!pending && selected}
-                aria-label={brand}
-                title="Peças FCO"
-                onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`flex min-w-0 min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl border-2 px-1 py-1 shadow-sm text-center transition-colors ${pending ? "cursor-not-allowed border-[#a7b6c8] bg-[#e7edf4] text-[#102a52]" : selected ? "border-[#d4af37] bg-[#fff4c2] text-[#102a52] ring-2 ring-[#d4af37]/40" : "border-[#a7c1e5] bg-white text-[#102a52] hover:border-[#d4af37]"}`}
+                aria-pressed={selected}
+                aria-label={label}
+                title={`Exibir peças: ${label}`}
+                onClick={() => { setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
+                className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center rounded-xl border px-2 py-2 text-center text-base font-extrabold text-[#102a52] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] ${selected ? "border-[#d4af37] ring-2 ring-[#d4af37]/40" : "border-[#d9d9d9] hover:border-[#d4af37]"}`}
+                style={{ backgroundColor: "rgb(241, 241, 241)" }}
               >
-                <img src={logo} alt={brand} loading="lazy" decoding="async" className="h-7 w-full max-w-[72px] object-contain" />
-                {pending && <span className="text-[10px] font-bold leading-tight text-[#102a52]">Em breve</span>}
+                {label}
               </button>
             );
           })}
