@@ -6862,3 +6862,45 @@ body:has(.catalog-showcase) .catalog-showcase {
   z-index: 40 !important;
 }
 .netinho-home-refresh .netinho-home-hero-actions > a { flex: 0 0 48px; width: 48px; height: 48px; }
+
+/* Correção mobile: seleções não podem crescer para fora da área rolável e cortar a borda superior. */
+.catalog-showcase nav[aria-label="Filtro por representação"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] > div,
+.catalog-showcase .catalog-category-filters {
+  scroll-padding-top: 12px;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"],
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] {
+  transform: none !important;
+  outline-offset: -3px !important;
+  box-shadow: inset 0 0 0 2px #102a52, 0 3px 9px rgb(16 42 82 / .14) !important;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"] img,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"] img,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"] img,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] img {
+  transform: none !important;
+}
+/* Categoria: corrigir a cor no próprio botão e no fundo visível das imagens. */
+.catalog-showcase .catalog-category-filters .catalog-category-item > button,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button:not([aria-pressed="true"]):hover {
+  background: rgb(241, 241, 241) !important;
+  background-color: rgb(241, 241, 241) !important;
+  border-color: rgb(241, 241, 241) !important;
+  outline-color: rgb(241, 241, 241) !important;
+  --tw-ring-color: rgb(241 241 241) !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"] {
+  background: rgb(241, 241, 241) !important;
+  border-color: #102a52 !important;
+  --tw-ring-color: #102a52 !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button img,
+.catalog-showcase .catalog-category-filters .catalog-category-item > button > span {
+  background-color: transparent !important;
+}
