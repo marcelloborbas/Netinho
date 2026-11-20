@@ -483,27 +483,27 @@ function PersonSummary({
   const firstName = name.trim().split(/\s+/)[0] || "Sem nome";
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
         <div className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"><PersonPhoto id={id} name={name} editable={selected} /></div>
-        <strong className="min-w-0 flex-1 truncate text-sm font-black text-navy" title={name}>{firstName}</strong>
-        <span className={cn("shrink-0 rounded-md px-1.5 py-1 text-[10px] font-extrabold", active ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive")}>{active ? "Ativo" : "Inativo"}</span>
+        <div className="min-w-0 flex-1">
+          <strong className="block truncate text-sm font-black text-navy sm:text-base" title={name}>{firstName}</strong>
+          <span className="block truncate text-[11px] font-semibold text-navy/75" title={role}>{role.replace(" (cadastro comercial)", "")}</span>
+        </div>
         {whatsappNumber ? (
           <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp" className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
             <img src="/images/Logo_inicial_whatsapp.webp" alt="" width={30} height={30} className="h-8 w-8 object-contain" />
           </a>
         ) : <span title="WhatsApp não disponível" className="inline-flex h-8 w-8 shrink-0 items-center justify-center opacity-40"><img src="/images/Logo_inicial_whatsapp.webp" alt="" width={30} height={30} className="h-8 w-8 grayscale" /></span>}
-        <span className="shrink-0 rounded-md bg-[#102a52]/10 px-1.5 py-1 text-xs font-extrabold text-[#102a52]">{rate}</span>
-        <div className="shrink-0">{actions}</div>
+        <span className="shrink-0 text-[11px] text-navy">DDD <strong className="font-black">{ddd || "—"}</strong></span>
+        <span className="shrink-0 rounded-md bg-[#102a52]/10 px-1.5 py-1 text-[11px] font-extrabold text-[#102a52]">{rate}</span>
+        <div className="flex shrink-0 flex-col items-center gap-1">
+          <button type="button" onClick={onToggle} aria-expanded={selected} aria-label={`${selected ? "Fechar edição de" : "Editar"} ${name}`} title="Editar ficha completa" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#102a52]/25 text-[#102a52] hover:bg-[#102a52]/10"><Pencil size={17} aria-hidden="true" /></button>
+          {actions}
+        </div>
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border/60 pt-2 text-xs text-navy">
-        <span>DDD <strong className="font-black">{ddd || "—"}</strong></span>
-        <span>Comissão <strong className="font-black">{rate}</strong></span>
-        <button type="button" onClick={onToggle} aria-expanded={selected} aria-label={`${selected ? "Fechar edição de" : "Editar"} ${name}`} title="Editar ficha completa" className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#102a52]/25 text-[#102a52] hover:bg-[#102a52]/10"><Pencil size={18} aria-hidden="true" /></button>
-      </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-navy">
-        <span><b>Status:</b> {role.replace(/ \(cadastro comercial\)/, "")}</span>
-        <span><b>Região:</b> {displayRegion}</span>
         <span><b>UF:</b> {displayUf}</span>
+        <span><b>Região:</b> {displayRegion}</span>
       </div>
     </div>
   );
