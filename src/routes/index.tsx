@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { MapPinned } from "lucide-react";
+import { MapPinned, UsersRound, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -243,12 +243,21 @@ function Home() {
                 {periodBlessing}
               </p>
             </div>
-            <div className="relative z-20 flex h-full flex-col items-center justify-between gap-2 py-1">
-              <Link to="/representantes-mapa" aria-label="Ver mapa de representantes" title="Representantes pelo Brasil" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/35 bg-navy-deep/45 text-gold shadow-sm backdrop-blur-sm transition hover:border-gold hover:bg-navy-deep/75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
-                <MapPinned size={22} strokeWidth={1.7} aria-hidden="true" />
-              </Link>
+            <div className="relative z-20 flex h-full flex-col items-center justify-end gap-2 py-1">
               <HomeWhatsAppButton />
             </div>
+            <Link
+              to="/representantes-mapa"
+              aria-label="Conheça nossos representantes pelo Brasil"
+              title="Representantes pelo Brasil"
+              className="group absolute right-2 top-2 z-30 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/65 bg-gradient-to-br from-white via-[#dce6f1] to-[#a7b9cf] text-[#102a52] shadow-[0_5px_14px_rgba(0,0,0,0.25)] ring-1 ring-[#102a52]/20 transition-all duration-300 hover:-translate-y-0.5 hover:scale-110 hover:shadow-[0_8px_20px_rgba(16,42,82,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-3 sm:top-3"
+            >
+              <span className="relative flex items-center justify-center" aria-hidden="true">
+                <MapPinned size={29} strokeWidth={1.8} />
+                <UsersRound size={14} strokeWidth={2.3} className="absolute bottom-[3px] left-[7px] rounded-full bg-[#dce6f1] p-[1px]" />
+                <Sparkles size={13} className="absolute -right-3 -top-2 text-[#647d9d] transition-transform duration-300 group-hover:rotate-12" />
+              </span>
+            </Link>
           </div>
           
         </header>
