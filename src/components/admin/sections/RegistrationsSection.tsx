@@ -1,9 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ClipboardCheck, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery } from "@/lib/queries";
-import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
 type RegistrationRequest = {
   id: string;
@@ -61,23 +60,13 @@ export function RegistrationsSection() {
   const open = rows.filter((row) => !["aprovado", "recusado"].includes(row.status)).length;
   return (
     <div className="space-y-3 text-navy">
-      <AdminSectionHeader
-        icon={ClipboardCheck}
-        title="Cadastros recebidos"
-        description="Solicitações enviadas pelo Cadastro Digital"
-        stats={error ? undefined : [{ label: "Em aberto", value: open }]}
-        actions={
-          <button
-            type="button"
-            onClick={() => void refetch()}
-            disabled={isFetching}
-            className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-navy-soft px-3 text-xs font-bold disabled:opacity-50"
-          >
-            <RefreshCw size={15} aria-hidden="true" className={isFetching ? "animate-spin" : ""} />
-            Atualizar
-          </button>
-        }
-      />
+      <header className="rounded-2xl bg-[#102a52] px-4 py-4 text-center shadow-md">
+        <h1 className="text-xl font-black uppercase tracking-wide text-white sm:text-2xl">CADASTROS RECEBIDOS</h1>
+      </header>
+      <div className="flex items-center justify-end gap-3">
+        {!error && <span className="text-sm font-bold">Em aberto: {open}</span>}
+        <button type="button" onClick={() => void refetch()} disabled={isFetching} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#102a52] px-4 text-xs font-bold text-white disabled:opacity-50"><RefreshCw size={15} aria-hidden="true" className={isFetching ? "animate-spin" : ""}/>Atualizar</button>
+      </div>
       {isLoading && <p className="p-2 text-sm">Carregando solicitações…</p>}
       {error && (
         <p role="alert" className="rounded-xl border border-gold/60 bg-gold-soft/40 p-3 text-sm">
