@@ -429,9 +429,9 @@ function PersonSummary({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("person_territories" as never)
-        .select("region,uf,state").eq("user_id", id).maybeSingle();
+        .select("region,city_base").eq("user_id", id).maybeSingle();
       if (error) throw error;
-      return data as { region?: string | null; uf?: string | null; state?: string | null } | null;
+      return data as { region?: string | null; city_base?: string | null } | null;
     },
   });
   const { data: representativeRegion } = useQuery({
@@ -478,8 +478,8 @@ function PersonSummary({
   const digits = displayPhone.replace(/\D/g, "");
   const whatsappNumber = digits.length === 10 || digits.length === 11 ? "55" + digits : digits.length >= 12 && digits.startsWith("55") ? digits : "";
   const ddd = areaDdds || (digits.length >= 10 ? digits.slice(digits.startsWith("55") ? 2 : 0, digits.startsWith("55") ? 4 : 2) : "");
-  const displayUf = uf?.trim() || territory?.uf?.trim() || territory?.state?.trim() || commercialDetails?.state?.trim() || "—";
-  const displayRegion = territory?.region || representativeRegion?.region || commercialDetails?.region || region || "—";
+  const displayUf = uf?.trim() || commercialDetails?.state?.trim() || "—";
+  const displayRegion = territory?.region?.trim() || region?.trim() || representativeRegion?.region?.trim() || commercialDetails?.region?.trim() || "—";
   const firstName = name.trim().split(/\s+/)[0] || "Sem nome";
   const [showClients, setShowClients] = useState(false);
   const isRepresentative = role.startsWith("Representante");
@@ -979,6 +979,11 @@ function PersonEditor({
         else void qc.invalidateQueries({ queryKey: ["person-commission", person.id] });
       }
     }
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ["admin-people"] }),
+      qc.invalidateQueries({ queryKey: ["person-territory-summary", person.id] }),
+      qc.invalidateQueries({ queryKey: ["person-territory", person.id] }),
+    ]);
     setBusy(false);
     if (commissionWarning || contactWarning)
       toast.warning("Pessoa e região salvas. " + commissionWarning + contactWarning);
