@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
@@ -16,7 +16,7 @@ const campos = {
     ["razao_social", "Nome completo"], ["comercial_email", "E-mail"], ["comercial_telefone", "Telefone"],
     ["documento", "CNPJ / CPF"], ["identidade", "Inscrição estadual / RG"],
     ["cep", "CEP"], ["endereco", "Endereço"], ["numero", "Número"], ["complemento", "Complemento"],
-    ["bairro", "Bairro"], ["cidade", "Cidade"], ["uf", "UF"],
+    ["bairro", "Bairro"], ["cidade", "Cidade"], ["uf", "UF"], ["estado", "Estado"],
     ["transportador", "Transportador"], ["ramo", "Ramo de atividade"],
   ],
   "Contato comercial": [["comercial_nome", "Nome do contato"]],
@@ -42,10 +42,10 @@ function CadastroDigital() {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
       if (!response.ok) throw new Error("Consulta indisponível");
-      const endereco = await response.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string };
+      const endereco = await response.json() as { erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string; estado?: string };
       if (request !== cepRequest.current) return;
       if (endereco.erro) { setCepErro("CEP não encontrado. Preencha o endereço manualmente."); return; }
-      setDados(old => ({ ...old, endereco: endereco.logradouro || old["endereco"] || "", bairro: endereco.bairro || old["bairro"] || "", cidade: endereco.localidade || old["cidade"] || "", uf: endereco.uf || old["uf"] || "" }));
+      setDados(old => ({ ...old, endereco: endereco.logradouro || old["endereco"] || "", bairro: endereco.bairro || old["bairro"] || "", cidade: endereco.localidade || old["cidade"] || "", uf: endereco.uf || old["uf"] || "", estado: endereco.estado || old["estado"] || "" }));
       window.requestAnimationFrame(() => numeroRef.current?.focus());
     } catch {
       if (request === cepRequest.current) setCepErro("Não foi possível consultar o CEP. Preencha o endereço manualmente.");
@@ -82,11 +82,8 @@ function CadastroDigital() {
   };
   return <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
     <div className="mx-auto max-w-3xl rounded-2xl bg-white p-5 shadow-lg md:p-9">
-      <Link to="/" className="text-sm text-blue-900 underline">Voltar ao início</Link>
-      <header className="my-6 border-b border-amber-500 pb-4">
-        <p className="text-sm font-bold tracking-widest text-amber-700">NETINHO AUTO PARTS</p>
-        <h1 className="text-3xl font-bold text-blue-950">Faça parte da Netinho</h1>
-        <p className="mt-2 text-slate-600">Preencha e envie a ficha digital diretamente para análise da Netinho Auto Parts.</p>
+      <header className="mb-6 rounded-xl bg-[#102a52] px-5 py-5 text-center shadow-sm">
+        <h1 className="text-2xl font-black tracking-wider text-white">CADASTRE-SE</h1>
       </header>
       <label className="block font-semibold" htmlFor="tipo">Quero me cadastrar como</label>
       <select id="tipo" value={tipo} onChange={e => { setTipo(e.target.value as Tipo); setProtocolo(""); }} className="mt-2 w-full rounded-lg border p-3">
@@ -97,9 +94,17 @@ function CadastroDigital() {
         <div className="grid gap-4 md:grid-cols-2">
           {fields.map(([key, label]) => <label key={key} className={`block text-sm font-medium ${["razao_social", "comercial_email", "comercial_telefone"].includes(key) ? "md:col-span-2" : ""}`}>
             {label}{["razao_social","documento","comercial_email"].includes(key) ? " *" : ""}
-            <input value={dados[key] || ""} onChange={e => set(key, e.target.value)}
-              type={key.includes("email") ? "email" : "text"} maxLength={250}
+            <input ref={key === "numero" ? numeroRef : undefined} value={dados[key] || ""} onChange={e => {
+                const value = key === "cep" ? e.target.value.replace(/\\D/g, "").slice(0, 8) : e.target.value;
+                set(key, value);
+                if (key === "cep") void consultarCep(value);
+              }}
+              type={key.includes("email") ? "email" : key === "comercial_telefone" ? "tel" : "text"}
+              inputMode={key === "cep" || key === "numero" ? "numeric" : undefined}
+              maxLength={key === "cep" ? 8 : 250}
               className="mt-1 block w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" />
+            {key === "cep" && consultandoCep && <span className="mt-1 block text-xs text-slate-600">Consultando CEP...</span>}
+            {key === "cep" && cepErro && <span role="status" className="mt-1 block text-xs text-amber-700">{cepErro}</span>}
           </label>)}
         </div>
       </fieldset>)}
