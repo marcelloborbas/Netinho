@@ -1,23 +1,73 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { meQuery } from "@/lib/queries";
+import { brl } from "@/lib/brand";
 import {
   ChevronRight,
   ClipboardList,
   LayoutDashboard,
   Search,
   ShoppingCart,
+  Clock3,
+  Activity,
 } from "lucide-react";
 import { ADMIN_SECTIONS } from "@/lib/admin-sections";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
 /** Atalhos para as áreas de administração. */
 export function OverviewSection() {
+  const { data: me } = useQuery(meQuery);
+  const { data: activity, isLoading, isError } = useQuery({
+    queryKey: ["admin-overview-activity"],
+    enabled: !!me?.isAdmin,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("orders")
+        .select("id,number,created_at,total,status,kind")
+        .order("created_at", { ascending: false }).limit(100);
+      if (error) throw error;
+      const rows = data ?? [];
+      const orders = rows.filter((o) => o.kind !== "orcamento");
+      const recent = orders.slice(0, 5);
+      const pending = orders.filter((o) => !["cancelled", "faturado", "invoiced", "delivered", "concluido"].includes(o.status.toLowerCase()));
+      return { recent, pending: pending.slice(0, 5), pendingCount: pending.length };
+    },
+  });
+  const dateLabel = (date: string) => new Date(date).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
   return (
     <div className="space-y-3 text-navy">
       <AdminSectionHeader
         icon={LayoutDashboard}
         title="Visão geral"
-        description="Acesse as áreas de gestão e acompanhamento"
+        description="Acompanhamento operacional e acesso rápido às tarefas"
       />
+      <section aria-label="Acompanhamento operacional" className="grid gap-3 lg:grid-cols-2">
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-black"><Clock3 size={18} className="text-gold-deep"/>Pedidos em acompanhamento</h3>
+            <Link to="/admin" search={{secao:"pedidos"}} className="text-xs font-bold text-navy underline-offset-2 hover:underline">Ver todos</Link>
+          </div>
+          <p className="mb-2 text-xs text-muted-foreground">Até 5 pedidos recentes ainda não finalizados, entre os últimos 100 registros consultados.</p>
+          {isLoading ? <p className="text-sm">Carregando pedidos…</p> : isError ? <p role="alert" className="text-sm text-destructive">Não foi possível carregar os pedidos.</p> : !activity?.pending.length ? <p className="text-sm text-muted-foreground">Nenhum pedido em acompanhamento nesta consulta.</p> :
+            <ul className="divide-y divide-border">{activity.pending.map((order) => <li key={order.id} className="flex items-center justify-between gap-2 py-2 text-xs">
+              <span className="min-w-0"><strong className="block text-sm">Pedido #{order.number}</strong><span className="text-muted-foreground">{dateLabel(order.created_at)} · {order.status}</span></span>
+              <strong className="shrink-0">{brl(Number(order.total ?? 0))}</strong>
+            </li>)}</ul>}
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-black"><Activity size={18} className="text-gold-deep"/>Últimos pedidos</h3>
+            <Link to="/admin" search={{secao:"pedidos"}} className="text-xs font-bold text-navy underline-offset-2 hover:underline">Gerenciar pedidos</Link>
+          </div>
+          <p className="mb-2 text-xs text-muted-foreground">Últimos 5 pedidos registrados, sem orçamentos.</p>
+          {isLoading ? <p className="text-sm">Carregando movimentações…</p> : isError ? <p role="alert" className="text-sm text-destructive">Não foi possível carregar a movimentação.</p> : !activity?.recent.length ? <p className="text-sm text-muted-foreground">Nenhum pedido encontrado.</p> :
+            <ul className="divide-y divide-border">{activity.recent.map((order) => <li key={order.id} className="flex items-center justify-between gap-2 py-2 text-xs">
+              <span className="min-w-0"><strong className="block text-sm">Pedido #{order.number}</strong><span className="text-muted-foreground">{dateLabel(order.created_at)} · {order.status}</span></span>
+              <strong className="shrink-0">{brl(Number(order.total ?? 0))}</strong>
+            </li>)}</ul>}
+        </div>
+      </section>
       <section
         aria-label="Todas as áreas do painel"
         className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
