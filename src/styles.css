@@ -7139,3 +7139,12 @@ body:has(.catalog-showcase) .catalog-showcase {
     transform:translateY(50%) !important;
   }
 }
+
+/* Montadoras: ícones compactos, mantendo três marcas visíveis no carrossel. */
+.netinho-home-refresh .netinho-home-brands .netinho-brand-marquee img {
+  width:60% !important;
+  max-width:76px !important;
+  max-height:62px !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
