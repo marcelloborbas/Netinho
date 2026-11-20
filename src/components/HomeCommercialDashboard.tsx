@@ -227,37 +227,37 @@ function SalesChart({ periods }: { periods: DashboardData["periods"] }) {
           <g transform={`rotate(${needleAngle} 90 94)`}><path d="M 90 94 L 84 85 L 90 32 L 96 85 Z" fill="#102a52" stroke="#fff" strokeWidth="1.5"/><circle cx="90" cy="94" r="7" fill="#d4af37" stroke="#102a52" strokeWidth="2"/></g>
         </svg>
       </div>
-      <strong className="text-[17px] font-black leading-none tabular-nums sm:text-2xl" style={{color}}>{variation == null ? "—" : `${variation > 0 ? "+" : ""}${variation.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</strong>
-      <span className="text-center text-[10px] font-extrabold leading-tight sm:text-xs" style={{color}}>{label}</span>
-      <span className="text-center text-[9px] leading-tight text-[#50617a]">Em relação ao mês anterior</span>
+      <strong className="text-xl font-black leading-none tabular-nums sm:text-3xl" style={{color}}>{variation == null ? "—" : `${variation > 0 ? "+" : ""}${variation.toLocaleString("pt-BR",{maximumFractionDigits:1})}%`}</strong>
+      <span className="text-center text-xs font-extrabold leading-tight sm:text-sm" style={{color}}>{label}</span>
+      <span className="text-center text-[11px] font-medium leading-tight text-[#50617a] sm:text-xs">Em relação ao mês anterior</span>
     </div>
     <div className="flex h-full min-h-0 flex-col justify-end gap-1.5">
       <div className="flex min-h-[82px] flex-1 items-end justify-around gap-2 border-b border-[#d4af37]/60 pb-0.5">
         {periods.map((p,i) => <div key={p.key} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1">
-          <strong className="max-w-full truncate text-center text-[10px] font-black tabular-nums text-[#102a52] sm:text-xs" title={brl(p.total)}>{shortMoney(p.total)}</strong>
+          <strong className="max-w-full truncate text-center text-xs font-black tabular-nums text-[#102a52] sm:text-sm" title={brl(p.total)}>{shortMoney(p.total)}</strong>
           <div className="relative w-full max-w-[48px] rounded-t-md border border-[#d4af37]/40 shadow-[inset_-5px_0_9px_rgba(0,0,0,.1)]" style={{height:`${Math.max(p.total>0?9:3,(p.total/max)*70)}%`,background:i===periods.length-1?"linear-gradient(105deg,#b78116,#ffe17a 55%,#c6962b)":"linear-gradient(105deg,#6b8db4,#c2d3e6 55%,#819fbe)"}}/>
         </div>)}
       </div>
-      <div className="grid grid-cols-3 gap-1 text-center">{periods.map(p=><span key={p.key} className="text-[10px] font-bold text-[#102a52] sm:text-xs">{p.label}</span>)}</div>
+      <div className="grid grid-cols-3 gap-1 text-center">{periods.map(p=><span key={p.key} className="text-xs font-bold text-[#102a52] sm:text-sm">{p.label}</span>)}</div>
     </div>
   </div>;
 }
 
-const panelTitle = "text-base font-black leading-tight sm:text-lg lg:text-xl";
+const panelTitle = "text-lg font-black leading-tight sm:text-xl lg:text-2xl";
 
 function SalesSummary() {
   const { data, isPending, isError, isAdmin } = useHomeDashboard();
   return (
     <div className="flex h-full min-h-0 flex-col gap-1.5">
       <h3 className={cn(panelTitle, "block text-center text-[#102a52]")}>
-        {isAdmin ? "Evolução das Vendas" : "Minhas Vendas"} <span className="text-sm font-bold text-gold-deep sm:text-base">· últimos 3 meses</span>
+        {isAdmin ? "Evolução das Vendas" : "Minhas Vendas"} <span className="text-base font-bold text-gold-deep sm:text-lg">· últimos 3 meses</span>
       </h3>
       {isPending ? (
-        <p role="status" className="grid flex-1 place-items-center text-xs text-muted-foreground">
+        <p role="status" className="grid flex-1 place-items-center text-sm text-muted-foreground">
           Carregando vendas…
         </p>
       ) : isError ? (
-        <p role="alert" className="grid flex-1 place-items-center text-xs">
+        <p role="alert" className="grid flex-1 place-items-center text-sm">
           Não foi possível consultar as vendas.
         </p>
       ) : (
