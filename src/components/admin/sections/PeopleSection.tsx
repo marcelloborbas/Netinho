@@ -487,7 +487,7 @@ function PersonSummary({
     ...customersQuery,
     enabled: showClients && isRepresentative,
   });
-  const ownerId = commercialId ? id : (role.includes("cadastro comercial") ? null : id);
+  const ownerId = role.includes("cadastro comercial") ? null : id;
   const clientList = ownerId ? assignedCustomers.filter((customer) => customer.seller_id === ownerId) : [];
 
   return (
@@ -520,7 +520,7 @@ function PersonSummary({
           <strong>Clientes de {name} ({loadingClients ? "…" : clientList.length})</strong>
           {loadingClients ? <p className="mt-2">Carregando clientes…</p>
             : clientsError ? <p role="alert" className="mt-2 text-destructive">Não foi possível consultar a carteira.</p>
-            : !clientList.length ? <p className="mt-2">Nenhum cliente vinculado a esta conta.</p>
+            : !clientList.length ? <p className="mt-2">Nenhum cliente vinculado a esta conta de acesso.</p>
             : <ul className="mt-2 space-y-1">{clientList.map((client) => (
                 <li key={client.id} className="rounded-md bg-white px-2 py-1.5">{client.trade_name || client.company_name}</li>
               ))}</ul>}
