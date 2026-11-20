@@ -238,28 +238,30 @@ function Home() {
                 </span>
                 .
               </p>
-              <p className="netinho-home-hero-blessing truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">
-                {periodBlessing}
-              </p>
+              <div className="mt-1 flex items-center gap-2">
+                <HomeWhatsAppButton />
+                <p className="netinho-home-hero-blessing min-w-0 truncate text-sm font-semibold italic text-navy-foreground/90 sm:text-base">
+                  {periodBlessing}
+                </p>
+              </div>
             </div>
-            <div className="netinho-home-hero-actions relative z-30 flex h-full min-w-[52px] flex-col items-center justify-center gap-2 py-1">
+            <div className="netinho-home-hero-actions relative z-30 flex h-full min-w-[64px] flex-col items-center justify-start pt-1">
               <Link
                 to="/representantes-mapa"
                 aria-label="Conheça nossos representantes pelo Brasil"
                 title="Representantes pelo Brasil"
-                className="group flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-transparent transition-transform duration-300 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="group flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-transparent transition-transform duration-300 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <img
                   src="/images/icones/icone-representantes.webp"
                   alt=""
                   aria-hidden="true"
-                  width={48}
-                  height={48}
+                  width={64}
+                  height={64}
                   decoding="async"
-                  className="h-full w-full object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)]"
+                  className="h-full w-full animate-[netinho-representative-pulse_2.4s_ease-in-out_infinite] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.25)] motion-reduce:animate-none"
                 />
               </Link>
-              <HomeWhatsAppButton />
             </div>
           </div>
           
