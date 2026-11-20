@@ -447,7 +447,7 @@ function PersonSummary({
     },
   });
   const { data: alternativePhone } = useQuery({
-    queryKey: ["admin-person-whatsapp-fallback", id, email, commercialId],
+    queryKey: ["admin-person-whatsapp-fallback", id, name, email, commercialId],
     enabled: !phone?.trim(),
     retry: false,
     queryFn: async () => {
@@ -467,6 +467,16 @@ function PersonSummary({
         if (commercial?.id) {
           const { data: details } = await supabase.from("commercial_representative_details" as never)
             .select("phone").eq("representative_id", commercial.id).maybeSingle();
+          const value = (details as { phone?: string } | null)?.phone?.trim();
+          if (value) return value;
+        }
+      }
+      if (role.startsWith("Representante")) {
+        const { data: namedCommercial } = await supabase.from("commercial_representatives")
+          .select("id").eq("full_name", name).maybeSingle();
+        if (namedCommercial?.id) {
+          const { data: details } = await supabase.from("commercial_representative_details" as never)
+            .select("phone").eq("representative_id", namedCommercial.id).maybeSingle();
           const value = (details as { phone?: string } | null)?.phone?.trim();
           if (value) return value;
         }
