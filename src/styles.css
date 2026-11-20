@@ -7170,3 +7170,67 @@ body:has(.catalog-showcase) .catalog-showcase {
     transition: none;
   }
 }
+
+/* Catálogo: marcas limpas e maiores, FCO proporcional e destaque real da peça. */
+.catalog-showcase .catalog-product-card--glossy .catalog-card-montadora-logo img {
+  width: clamp(44px, 12vw, 58px) !important;
+  height: clamp(38px, 10vw, 48px) !important;
+  max-width: 100% !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-montadora-logo,
+.catalog-showcase .catalog-product-card--glossy .catalog-card-montadora-logo span {
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-brand-logos img.catalog-card-fco-original-logo {
+  width: clamp(36px, 10vw, 43px) !important;
+  max-width: 43px !important;
+  height: auto !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+.catalog-showcase .catalog-product-card.catalog-product-card--compact.catalog-product-card--glossy {
+  overflow: visible !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col,
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image {
+  overflow: visible !important;
+}
+.catalog-showcase .catalog-product-card--glossy .catalog-card-image-col {
+  position: relative;
+  z-index: 1;
+}
+.catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+  position: relative;
+  transform: translateY(0) scale(1) !important;
+  transform-origin: center center;
+  transition: transform 340ms cubic-bezier(.2,.8,.2,1), filter 340ms ease !important;
+  will-change: transform;
+}
+@media (hover: hover) and (pointer: fine) {
+  .catalog-showcase .catalog-product-card--glossy:hover .catalog-card-image-col {
+    z-index: 5;
+  }
+  .catalog-showcase .catalog-product-card--glossy:hover .product-visual.catalog-card-piece-image img {
+    transform: translateY(-22px) scale(1.24) !important;
+    filter: drop-shadow(0 15px 11px rgba(0,0,0,.28)) !important;
+  }
+}
+.catalog-showcase .catalog-product-card--glossy:focus-within .product-visual.catalog-card-piece-image img {
+  transform: translateY(-22px) scale(1.24) !important;
+  filter: drop-shadow(0 15px 11px rgba(0,0,0,.28)) !important;
+}
+@media (hover: none) {
+  .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image:active img {
+    transform: translateY(-16px) scale(1.18) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-showcase .catalog-product-card--glossy .product-visual.catalog-card-piece-image img {
+    transition: none !important;
+  }
+}
