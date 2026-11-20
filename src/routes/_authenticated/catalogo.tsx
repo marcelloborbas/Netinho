@@ -401,7 +401,7 @@ function Catalog() {
             onClick={() => { setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
             className={`relative flex aspect-square w-full max-w-[160px] items-center justify-center justify-self-center overflow-hidden rounded-xl border bg-[#f1f1f1] p-1 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${manufacturer === "FCO" ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#f1f1f1] hover:border-[#102a52]"}`}
           >
-            <img src="/images/brands/FCO_logo_web.webp" alt="FCO" loading="lazy" decoding="async" className="block h-full w-full object-contain" />
+            <img src="/images/brands/FCO_logo_web.webp" alt="FCO" loading="lazy" decoding="async" className="block h-[60%] w-[60%] max-h-[60%] max-w-[60%] object-contain" />
           </button>
         </nav>
       </section>
