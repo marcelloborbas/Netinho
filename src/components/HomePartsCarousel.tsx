@@ -105,23 +105,6 @@ export function HomePartsCarousel({ className }: { className?: string }) {
           ))}
         </div>
       </div>
-      {/* Indicadores abaixo da imagem, no fluxo normal, sem cobrir o banner. */}
-      <div
-        className="flex shrink-0 justify-center gap-1.5"
-        role="group"
-        aria-label="Selecionar imagem"
-      >
-        {parts.map((part, i) => (
-          <button
-            key={part.image}
-            type="button"
-            aria-label={`Mostrar imagem ${i + 1}: ${part.title}`}
-            aria-current={active === i ? "true" : undefined}
-            onClick={() => select(i)}
-            className={`h-2 rounded-full transition-all ${active === i ? "w-5 bg-gold-deep" : "w-2 bg-navy/30"}`}
-          />
-        ))}
-      </div>
     </section>
   );
 }
