@@ -412,26 +412,26 @@ function PersonSummary({
   });
   const { data: commercialDetails } = useQuery({
     queryKey: ["commercial-representative-details", commercialId || id],
-    enabled: role.startsWith("Representante") && !!commercialId,
+    enabled: role.startsWith("Representante"),
     retry: false,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("commercial_representative_details" as never)
-        .select("phone,state").eq("representative_id", commercialId || id).maybeSingle();
+        .select("phone,state,region").eq("representative_id", commercialId || id).maybeSingle();
       if (error) throw error;
-      return data as { phone?: string; state?: string } | null;
+      return data as { phone?: string; state?: string; region?: string } | null;
     },
   });
   const { data: territory } = useQuery({
     queryKey: ["person-territory-summary", id],
-    enabled: !!uf,
+    enabled: true,
     retry: false,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("person_territories" as never)
-        .select("region").eq("user_id", id).maybeSingle();
+        .select("region,uf,state").eq("user_id", id).maybeSingle();
       if (error) throw error;
-      return data as { region?: string | null } | null;
+      return data as { region?: string | null; uf?: string | null; state?: string | null } | null;
     },
   });
   const { data: representativeRegion } = useQuery({
@@ -478,40 +478,33 @@ function PersonSummary({
   const digits = displayPhone.replace(/\D/g, "");
   const whatsappNumber = digits.length === 10 || digits.length === 11 ? "55" + digits : digits.length >= 12 && digits.startsWith("55") ? digits : "";
   const ddd = areaDdds || (digits.length >= 10 ? digits.slice(digits.startsWith("55") ? 2 : 0, digits.startsWith("55") ? 4 : 2) : "");
-  const displayUf = uf || commercialDetails?.state || "Não informado";
-  const displayRegion = region || territory?.region || representativeRegion?.region || "Não informada";
+  const displayUf = uf?.trim() || territory?.uf?.trim() || territory?.state?.trim() || commercialDetails?.state?.trim() || "—";
+  const displayRegion = territory?.region || representativeRegion?.region || commercialDetails?.region || region || "—";
   const firstName = name.trim().split(/\s+/)[0] || "Sem nome";
   return (
-    <div>
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="h-14 w-14 shrink-0 sm:h-16 sm:w-16">
-          <PersonPhoto id={id} name={name} editable={selected} />
-        </div>
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-2">
-          <strong className="min-w-0 text-sm font-black text-navy sm:text-base" title={name}>{firstName}</strong>
-          {whatsappNumber ? (
-            <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer"
-              aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp"
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366]/15 text-[#128C4A] hover:bg-[#25D366]/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
-              <img src="/images/Logo_inicial_whatsapp.webp" alt="" aria-hidden="true" width={32} height={32} className="h-8 w-8 object-contain" />
-            </a>
-          ) : <span title="Telefone não cadastrado" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground opacity-40"><img src="/images/Logo_inicial_whatsapp.webp" alt="" aria-hidden="true" width={32} height={32} className="h-8 w-8 object-contain grayscale" /></span>}
-          <span className="text-xs font-semibold text-navy">DDD {ddd || "—"}</span>
-          <span className={cn("rounded-md px-2 py-1 text-[11px] font-extrabold", active ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive")}>{active ? "Ativo" : "Inativo"}</span>
-          <span className="rounded-md bg-[#102a52]/10 px-2 py-1 text-xs font-extrabold text-[#102a52]">{rate}</span>
-          <button type="button" onClick={onToggle} aria-expanded={selected}
-            aria-label={`${selected ? "Fechar edição de" : "Editar"} ${name}`} title={selected ? "Fechar edição" : "Editar ficha"}
-            className="ml-auto inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#102a52]/25 text-[#102a52] hover:bg-[#102a52]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#102a52]">
-            <Pencil size={19} aria-hidden="true"/>
-          </button>
-        </div>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"><PersonPhoto id={id} name={name} editable={selected} /></div>
+        <strong className="min-w-0 flex-1 truncate text-sm font-black text-navy" title={name}>{firstName}</strong>
+        <span className={cn("shrink-0 rounded-md px-1.5 py-1 text-[10px] font-extrabold", active ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive")}>{active ? "Ativo" : "Inativo"}</span>
+        {whatsappNumber ? (
+          <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" aria-label={`Conversar com ${name} pelo WhatsApp`} title="Conversar pelo WhatsApp" className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#128C4A]">
+            <img src="/images/Logo_inicial_whatsapp.webp" alt="" width={30} height={30} className="h-8 w-8 object-contain" />
+          </a>
+        ) : <span title="WhatsApp não disponível" className="inline-flex h-8 w-8 shrink-0 items-center justify-center opacity-40"><img src="/images/Logo_inicial_whatsapp.webp" alt="" width={30} height={30} className="h-8 w-8 grayscale" /></span>}
+        <span className="shrink-0 rounded-md bg-[#102a52]/10 px-1.5 py-1 text-xs font-extrabold text-[#102a52]">{rate}</span>
+        <div className="shrink-0">{actions}</div>
       </div>
-      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 border-t border-border/60 pt-2 text-xs text-navy sm:pl-[76px]">
-        <span><b>Status:</b> {role}</span>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border/60 pt-2 text-xs text-navy">
+        <span>DDD <strong className="font-black">{ddd || "—"}</strong></span>
+        <span>Comissão <strong className="font-black">{rate}</strong></span>
+        <button type="button" onClick={onToggle} aria-expanded={selected} aria-label={`${selected ? "Fechar edição de" : "Editar"} ${name}`} title="Editar ficha completa" className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#102a52]/25 text-[#102a52] hover:bg-[#102a52]/10"><Pencil size={18} aria-hidden="true" /></button>
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-navy">
+        <span><b>Status:</b> {role.replace(/ \(cadastro comercial\)/, "")}</span>
         <span><b>Região:</b> {displayRegion}</span>
-        <span><b>UF/Estado:</b> {displayUf}</span>
+        <span><b>UF:</b> {displayUf}</span>
       </div>
-      {selected && <div className="mt-2 flex justify-end">{actions}</div>}
     </div>
   );
 }
@@ -652,6 +645,7 @@ function PersonRow({
       <PersonSummary
         id={person.id}
         name={person.full_name || "Sem nome"}
+        email={person.email}
         active={person.access_active}
         rate={rate}
         role={person.site_role}
