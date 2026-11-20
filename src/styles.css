@@ -6574,6 +6574,22 @@ body:has(.catalog-showcase) .catalog-showcase {
   padding: 7px !important;
   overflow: hidden !important;
   border-radius: 18px !important;
+  /* Fundo uniforme oficial RGB(241,241,241): sem azul, sem sombra, sem borda azul. */
+  background: #f1f1f1 !important;
+  background-image: none !important;
+  border: 1px solid #d9d9d9 !important;
+  box-shadow: none !important;
+  color: #102a52 !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button[aria-pressed="true"] {
+  background: #f1f1f1 !important;
+  background-image: none !important;
+  border: 2px solid #d4af37 !important;
+  box-shadow: none !important;
+  color: #102a52 !important;
+}
+.catalog-showcase .catalog-category-filters .catalog-category-item > button svg {
+  color: #102a52 !important;
 }
 .catalog-showcase .catalog-category-filters .catalog-category-item > button img {
   display: block !important;
