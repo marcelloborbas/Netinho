@@ -205,7 +205,12 @@ function Home() {
   // teto baixo (banner até 300px, painel até 380px) para não gerar blocos gigantes; em monitores
   // altos o conjunto é centralizado verticalmente. Em telas baixas demais, a altura volta a
   // ser automática e a página rola normalmente, sem sobrepor blocos nem encolher o texto.
-  const brands = ["volkswagen", "fiat", "chevrolet"] as const;
+  const brands = ["volkswagen", "fiat", "chevrolet", "ford", "renault", "honda", "toyota", "hyundai", "nissan", "jeep", "peugeot", "citroen", "mitsubishi", "kia", "bmw", "mercedes-benz", "audi", "volvo"] as const;
+  const [brandPage, setBrandPage] = useState(0);
+  useEffect(() => {
+    const timer = window.setInterval(() => setBrandPage(page => (page + 1) % (brands.length / 3)), 4000);
+    return () => window.clearInterval(timer);
+  }, []);
   return (
     <div className="netinho-home netinho-home-refresh min-h-[100dvh] overflow-x-clip bg-background text-navy">
       <main className="netinho-home-refresh-grid mx-auto grid h-[100dvh] w-full max-w-[1100px] grid-cols-1 grid-rows-[minmax(140px,1.45fr)_minmax(140px,1fr)_minmax(130px,0.8fr)_min-content] gap-2 bg-transparent! px-4 pb-[calc(76px+env(safe-area-inset-bottom))] pt-[max(8px,env(safe-area-inset-top))] sm:gap-3 sm:px-6 [@media(max-height:740px)_and_(max-width:1023px)]:h-auto lg:max-w-[1280px] lg:grid-cols-12 lg:grid-rows-[minmax(140px,1.25fr)_minmax(170px,1fr)_minmax(170px,0.9fr)] lg:content-start lg:gap-3 lg:pt-3 2xl:max-w-[1440px] [@media(min-width:1024px)_and_(min-height:960px)]:content-center [@media(min-width:1024px)_and_(max-height:599px)]:h-auto">
@@ -252,7 +257,7 @@ function Home() {
           aria-label="Montadoras"
         >
           <div className="grid h-full min-h-[100px] grid-cols-4 items-center justify-items-center gap-3 px-0 sm:gap-5">
-            {brands.map(brand => <img key={brand} src={`/images/home-premium/montadora-${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply" loading="lazy" />)}
+            {brands.slice(brandPage * 3, brandPage * 3 + 3).map(brand => <img key={brand} src={`/images/logos-montadoras/${brand}.webp`} alt={`Logo ${brand}`} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain mix-blend-multiply animate-in fade-in duration-500" loading="lazy" />)}
             <Link to="/representantes-mapa" aria-label="Representantes pelo Brasil" title="Representantes pelo Brasil" className="flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52]">
               <img src="/images/icones/icone-representantes.webp" alt="Representantes" width={110} height={110} className="block h-auto max-h-[110px] w-full max-w-[135px] object-contain" loading="lazy" />
             </Link>
