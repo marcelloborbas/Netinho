@@ -7060,3 +7060,13 @@ body:has(.catalog-showcase) .catalog-showcase {
     padding-bottom:2px !important;
   }
 }
+
+/* Saudação: descer um pouco mais sem deslocar o fundo. */
+.netinho-home-refresh .netinho-home-hero-copy { transform:translateY(16px) !important; }
+@media(max-width:1023px) {
+  .netinho-home-refresh .netinho-home-hero-copy {
+    transform:none !important;
+    padding-top:18px !important;
+    padding-bottom:0 !important;
+  }
+}
