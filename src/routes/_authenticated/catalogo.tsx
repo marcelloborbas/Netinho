@@ -374,7 +374,7 @@ function Catalog() {
                 style={{ backgroundColor: "rgb(241, 241, 241)" }}
               >
                 {brand === "all" ? (
-                  <span>Todos</span>
+                  <img src="/images/brands/catalogo-todos.webp" alt="Todos os catálogos" loading="lazy" decoding="async" className="h-full max-h-[108px] w-full max-w-[108px] object-contain" />
                 ) : (
                   <img
                     src={brand === "FCO" ? "/images/brands/FCO_logo_web.webp" : "/images/brands/cropped-LOGO-512.png"}
