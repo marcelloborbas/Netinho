@@ -131,6 +131,8 @@ export function NetinhoAssistant() {
     return () => { window.speechSynthesis?.cancel(); loginAudioRef.current?.pause(); };
   }, [pathname, isAuth]);
   if (/^\/callback(\/|$)/.test(pathname)) return null;
+  // As ajudas das páginas internas ficam desativadas até a nova gravação.
+  if (!isAuth) return null;
   const hint = hints.find((item) => item.match.test(pathname));
   const greeting = pathname === "/" ? "Clicando na sua foto, você pode baixar seu cartão de visita, catálogos, flyers, formulários e outros, através do ícone de downloads.\n\nE lembre-se! Para fazer pedidos e vendas, você precisa ter status de Vendedor ou Representante.\n\nUse os atalhos do rodapé para navegar com mais facilidade.\n\nE se precisar de ajuda, é só clicar no WhatsApp, logo acima da sua foto." : hint?.message ?? "Use as opções desta página conforme as permissões do seu perfil. Se precisar de acesso adicional, solicite ao administrador.";
   const speechRefLatest = useRef<() => void>(() => {});
