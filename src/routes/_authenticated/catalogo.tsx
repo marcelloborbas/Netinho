@@ -384,15 +384,15 @@ function Catalog() {
 
       <p className="mb-2 mt-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">2</span>CATEGORIA</p><nav className="catalog-category-filters" aria-label="Categorias de peças">
         <div className="catalog-category-item">
-          <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo !p-0 !overflow-hidden relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" /></button>
+          <button type="button" aria-label="Todas as peças" title="Todas as peças" className="category-with-photo relative" aria-pressed={category === "all"} onClick={() => { setCategory("all"); setHasSelectedCategory(true); setPage(1); }}><img src="/images/categorias/todas%20as%20pe%C3%A7as.webp" alt="Todas as peças" loading="eager" decoding="async" className="catalog-category-photo !w-full !h-full !max-w-none !max-h-none !rounded-none !object-contain" /></button>
           <span className="catalog-category-count">{categoryCounts.total} Itens</span>
         </div>
         {categories.map((name) => {
           const Icon = categoryIcon(name);
           const photo = categoryPhoto(name);
           return <div key={name} className="catalog-category-item">
-            <button type="button" aria-label={displayCategoryName(name)} title={displayCategoryName(name)} className={photo ? "category-with-photo !p-0 !overflow-hidden relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}>
-              {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={35} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={displayCategoryName(name)} loading="lazy" decoding="async" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={35} strokeWidth={1.8} aria-hidden="true" />}
+            <button type="button" aria-label={displayCategoryName(name)} title={displayCategoryName(name)} className={photo ? "category-with-photo relative" : "relative"} aria-pressed={category === name} onClick={() => { setCategory(name); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(true); setPage(1); }}>
+              {photo ? <span className="relative flex h-full w-full items-center justify-center"><Icon size={48} strokeWidth={1.8} aria-hidden="true" className="absolute text-slate-500" /><img src={photo} alt={displayCategoryName(name)} loading="lazy" decoding="async" className="catalog-category-photo relative z-10 !w-full !h-full !max-w-none !max-h-none !rounded-none !object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} /></span> : <Icon size={48} strokeWidth={1.8} aria-hidden="true" />}
             </button>
             <span className="catalog-category-count">{categoryCounts.counts.get(name) ?? 0} Itens</span>
           </div>;

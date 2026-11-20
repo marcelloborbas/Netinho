@@ -370,14 +370,14 @@ function OrderPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 px-1" aria-label="Etapas do pedido">
+      <div className="grid grid-cols-3 gap-2 px-1 sm:gap-3" aria-label="Etapas do pedido">
         {[
           { label: "Cliente", done: !!d.customerId, active: pulseStep === "customer" },
           { label: "Pagamento", done: paymentChosen, active: pulseStep === "payment" },
           { label: "Finalizar", done: false, active: pulseStep === "actions" },
         ].map((step, index) => (
-          <div key={step.label} className={`flex items-center justify-center gap-1.5 rounded-xl border px-1.5 py-2 text-[11px] font-extrabold sm:text-sm ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : step.active ? "netinho-guided-pulse border-red-500 bg-red-50 text-red-800" : "border-slate-200 bg-white text-slate-500"}`}>
-            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] ${step.done ? "bg-emerald-700 text-white" : step.active ? "bg-red-600 text-white" : "bg-slate-200 text-slate-600"}`}>{step.done ? "✓" : index + 1}</span>
+          <div key={step.label} className={`flex min-h-[58px] items-center justify-center gap-2 rounded-xl border px-2 py-3 text-xs font-extrabold sm:text-base ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : step.active ? "netinho-guided-pulse border-red-500 bg-red-50 text-red-800" : "border-slate-200 bg-white text-slate-500"}`}>
+            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs ${step.done ? "bg-emerald-700 text-white" : step.active ? "bg-red-600 text-white" : "bg-slate-200 text-slate-600"}`}>{step.done ? "✓" : index + 1}</span>
             {step.label}
           </div>
         ))}
@@ -391,7 +391,7 @@ function OrderPage() {
             </div>
             <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${d.customerId ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>{d.customerId ? "✓ Selecionado" : "Pendente"}</span>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3">
             <div className="space-y-1.5">
               <Label className="text-sm font-bold text-[#102a52]">Selecione o cliente</Label>
           {selectedCustomer?.order_class && (
@@ -417,7 +417,7 @@ function OrderPage() {
                 });
             }}
           >
-            <SelectTrigger className="h-12 min-w-0 flex-1 rounded-xl border-[#b7c8de] bg-white text-sm font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
+            <SelectTrigger className="h-14 min-w-0 flex-1 rounded-xl border-[#b7c8de] bg-white text-sm font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
               <SelectValue placeholder="Selecione o cliente" />
             </SelectTrigger>
             <SelectContent>
@@ -429,7 +429,7 @@ function OrderPage() {
               ))}
             </SelectContent>
           </Select>
-          <Link to="/novo-cliente" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#21834d] to-[#125b35] px-3 text-center text-xs font-extrabold leading-tight text-white shadow-md hover:from-[#166534] hover:to-[#14532d] sm:px-4 sm:text-sm">
+          <Link to="/novo-cliente" className="inline-flex h-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#21834d] to-[#125b35] px-3 text-center text-sm font-extrabold leading-tight text-white shadow-md hover:from-[#166534] hover:to-[#14532d] sm:px-4 sm:text-base">
             + Novo cliente
           </Link>
           </div>
@@ -451,7 +451,7 @@ function OrderPage() {
             value={paymentChosen ? d.paymentTerm : ""}
             onValueChange={(v) => { draftActions.update({ paymentTerm: v as PaymentTerm, paymentConfirmed: true }); }}
           >
-            <SelectTrigger className="mt-2 h-12 rounded-xl border-[#b7c8de] bg-white font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
+            <SelectTrigger className="mt-2 h-14 rounded-xl border-[#b7c8de] bg-white text-base font-semibold text-[#102a52] shadow-sm focus:ring-2 focus:ring-amber-400">
               <SelectValue placeholder="Selecione a condição de pagamento" />
             </SelectTrigger>
             <SelectContent>
@@ -466,7 +466,7 @@ function OrderPage() {
 
       </section>
 
-      <section className={`rounded-[22px] border-2 p-3 shadow-sm sm:p-4 ${pulseStep === "actions" ? "netinho-guided-pulse border-red-500 bg-red-50" : "border-[#dce5f0] bg-white"}`} aria-label="Etapa 3: ações do pedido">
+      <section className={`rounded-[22px] border-2 p-4 shadow-sm sm:p-5 ${pulseStep === "actions" ? "netinho-guided-pulse border-red-500 bg-red-50" : "border-[#dce5f0] bg-white"}`} aria-label="Etapa 3: ações do pedido">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#a77a08]">Etapa 03 · Finalização</p>
@@ -474,20 +474,20 @@ function OrderPage() {
           </div>
           <span className="shrink-0 rounded-lg bg-[#e9f1fc] px-2.5 py-1 text-xs font-bold text-[#153d6d]">{d.items.length} {d.items.length === 1 ? "peça" : "peças"}</span>
         </div>
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          <Button type="button" className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#ea580c] p-2 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#c2410c] active:scale-95" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
-            <Pencil className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
-            <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Editar pedido</span>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <Button type="button" className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#ea580c] p-3 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#c2410c] active:scale-95" onClick={() => { setActionChosen(true); buttonSound(); setReview(false); document.getElementById("pedido-itens")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+            <Pencil className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" aria-hidden="true" />
+            <span className="whitespace-normal text-xs font-extrabold leading-tight sm:text-base">Editar pedido</span>
           </Button>
-          <Button asChild className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#166534] p-2 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#14532d] active:scale-95">
+          <Button asChild className="flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-lg bg-[#166534] p-3 text-center text-white shadow-md transition-transform hover:scale-[1.02] hover:bg-[#14532d] active:scale-95">
             <Link to="/catalogo" search={{ modo: "venda" }} onClick={() => { setActionChosen(true); buttonSound(); }}>
-              <ShoppingCart className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
-              <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Continuar comprando</span>
+              <ShoppingCart className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" aria-hidden="true" />
+              <span className="whitespace-normal text-xs font-extrabold leading-tight sm:text-base">Continuar comprando</span>
             </Link>
           </Button>
-          <Button type="button" className="netinho-guided-pulse flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#ffe083] bg-gradient-to-b from-[#147bd0] to-[#064c93] p-2 text-center text-white shadow-[0_0_20px_rgba(20,123,208,.55)] transition-transform hover:scale-[1.03] hover:from-[#168be9] hover:to-[#0757a7] active:scale-95 disabled:animate-none disabled:opacity-50" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
-            <ClipboardCheck className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" aria-hidden="true" />
-            <span className="whitespace-normal text-[11px] font-extrabold leading-tight sm:text-sm">Enviar pedido</span>
+          <Button type="button" className="netinho-guided-pulse flex aspect-square h-auto min-w-0 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[#ffe083] bg-gradient-to-b from-[#147bd0] to-[#064c93] p-3 text-center text-white shadow-[0_0_20px_rgba(20,123,208,.55)] transition-transform hover:scale-[1.03] hover:from-[#168be9] hover:to-[#0757a7] active:scale-95 disabled:animate-none disabled:opacity-50" disabled={busy || !d.items.length} onClick={() => { setActionChosen(true); openConfirmation(); }}>
+            <ClipboardCheck className="h-8 w-8 shrink-0 sm:h-10 sm:w-10" aria-hidden="true" />
+            <span className="whitespace-normal text-xs font-extrabold leading-tight sm:text-base">Enviar pedido</span>
           </Button>
         </div>
       </section>
@@ -497,11 +497,11 @@ function OrderPage() {
           const unit = i.prices[d.paymentTerm];
           const net = lineNet(i, d.paymentTerm);
           return (
-            <li key={i.productId} className="surface-card space-y-3 p-4">
+            <li key={i.productId} className="surface-card space-y-4 p-4 sm:p-5">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-display text-lg font-bold">{i.code}</p>
-                  <p className="line-clamp-2 text-xs text-muted-foreground">{i.application}</p>
+                  <p className="font-display text-xl font-bold sm:text-2xl">{i.code}</p>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">{i.application}</p>
                 </div>
                 {!review && (
                   <button
@@ -509,9 +509,9 @@ function OrderPage() {
                     aria-label={`Remover peça ${i.code} do pedido`}
                     title={`Remover peça ${i.code}`}
                     onClick={() => draftActions.removeItem(i.productId)}
-                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-white bg-[#b91c1c] text-white shadow-[0_0_0_2px_#991b1b,0_3px_9px_rgba(0,0,0,.25)] transition-transform hover:scale-105 hover:bg-[#991b1b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
+                    className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-white bg-[#b91c1c] text-white shadow-[0_0_0_2px_#991b1b,0_3px_9px_rgba(0,0,0,.25)] transition-transform hover:scale-105 hover:bg-[#991b1b] focus-visible:outline focus-visible:outline-4 focus-visible:outline-yellow-300"
                   >
-                    <Trash2 className="h-7 w-7 shrink-0 text-white" strokeWidth={3} aria-hidden="true" />
+                    <Trash2 className="h-8 w-8 shrink-0 text-white" strokeWidth={3} aria-hidden="true" />
                   </button>
                 )}
               </div>
@@ -530,9 +530,9 @@ function OrderPage() {
                             quantity: Math.max(1, i.quantity - 1),
                           })
                         }
-                        className="p-2.5"
+                        className="p-3.5"
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-5 w-5" />
                       </button>
                       <input
                         aria-label="Quantidade"
@@ -543,25 +543,25 @@ function OrderPage() {
                             quantity: Math.max(1, parseInt(e.target.value) || 1),
                           })
                         }
-                        className="w-12 bg-transparent text-center font-semibold outline-none"
+                        className="w-16 bg-transparent text-center text-base font-semibold outline-none"
                       />
                       <button
                         aria-label="Aumentar"
                         onClick={() =>
                           draftActions.updateItem(i.productId, { quantity: i.quantity + 1 })
                         }
-                        className="p-2.5"
+                        className="p-3.5"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-5 w-5" />
                       </button>
                     </div>
-                    <label className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <label className="flex items-center gap-1 text-sm text-muted-foreground">
                       Desc. %
                       <Input
                         inputMode="decimal"
                         value={i.discount}
                         title={discountLimit != null ? `Máximo de ${String(discountLimit).replace(".", ",")}%` : undefined}
-                        className="h-10 w-16"
+                        className="h-12 w-20"
                         onChange={(e) =>
                           draftActions.updateItem(i.productId, {
                             discount: Math.min(
@@ -575,11 +575,11 @@ function OrderPage() {
                   </>
                 )}
                 <div className="ml-auto text-right">
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     {brl(unit)}
                     {i.discount > 0 && ` → ${brl(net)}`} un.
                   </p>
-                  <p className="font-display text-xl font-bold">{brl(net * i.quantity)}</p>
+                  <p className="font-display text-2xl font-bold">{brl(net * i.quantity)}</p>
                 </div>
               </div>
             </li>
@@ -595,7 +595,7 @@ function OrderPage() {
         />
       </div>
 
-      <section className="surface-card space-y-1 p-4">
+      <section className="surface-card space-y-1.5 p-4 sm:p-5">
         <Row label="Cliente" value={d.customerName ?? "—"} />
         <Row label="Condição" value={termLabel(d.paymentTerm)} />
         <Row label="Itens / unidades" value={`${d.items.length} / ${t.units}`} />
@@ -650,7 +650,7 @@ function Field({
 }
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between text-sm">
+    <div className="flex justify-between text-base">
       <span className="text-muted-foreground">{label}</span>
       <span className="font-medium">{value}</span>
     </div>
