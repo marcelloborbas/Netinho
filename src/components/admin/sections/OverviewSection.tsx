@@ -1,62 +1,22 @@
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   ChevronRight,
   ClipboardList,
-  Download,
   LayoutDashboard,
-  LoaderCircle,
   Search,
   ShoppingCart,
 } from "lucide-react";
-import { toast } from "sonner";
-import { meQuery } from "@/lib/queries";
 import { ADMIN_SECTIONS } from "@/lib/admin-sections";
-import { exportAdminData } from "@/lib/admin-export";
 import { AdminSectionHeader } from "@/components/admin/AdminSectionHeader";
 
-/** Indicadores, atalhos para todas as seções e exportação dos cadastros. */
+/** Atalhos para as áreas de administração. */
 export function OverviewSection() {
-  const { data: me } = useQuery(meQuery);
-  const [exporting, setExporting] = useState(false);
-  async function handleExport() {
-    if (!me?.isAdmin || exporting) return;
-    setExporting(true);
-    try {
-      const missing = await exportAdminData();
-      if (missing)
-        toast.warning(
-          `PDF gerado parcialmente: ${missing} cadastro(s) indisponível(is). Consulte o resumo da exportação na primeira página.`,
-        );
-      else toast.success("Arquivo PDF preparado para download.");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Falha ao exportar cadastros.");
-    } finally {
-      setExporting(false);
-    }
-  }
   return (
     <div className="space-y-3 text-navy">
       <AdminSectionHeader
         icon={LayoutDashboard}
         title="Visão geral"
-        description="Pedidos do mês sem orçamentos e cancelamentos"
-        actions={
-          <button
-            type="button"
-            disabled={exporting}
-            onClick={() => void handleExport()}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-gold px-4 text-sm font-extrabold text-gold-foreground shadow hover:bg-gold-soft disabled:opacity-60"
-          >
-            {exporting ? (
-              <LoaderCircle size={18} className="animate-spin" aria-hidden="true" />
-            ) : (
-              <Download size={18} aria-hidden="true" />
-            )}
-            {exporting ? "Preparando PDF…" : "Exportar dados em PDF"}
-          </button>
-        }
+        description="Acesse as áreas de gestão e acompanhamento"
       />
       <section
         aria-label="Todas as áreas do painel"
