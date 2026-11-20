@@ -388,9 +388,9 @@ export function PeopleSection() {
 
 /** Linha compacta da lista: foto, nome, perfil, situação, comissão e contato. */
 function PersonSummary({
-  id, name, active, rate, role, phone, uf, region, commercialId, selected, onToggle, actions,
+  id, name, email, active, rate, role, phone, uf, region, commercialId, selected, onToggle, actions,
 }: {
-  id: string; name: string; active: boolean; rate: string; role: string;
+  id: string; name: string; email?: string | null; active: boolean; rate: string; role: string;
   phone?: string | null; uf?: string | null; region?: string | null;
   commercialId?: string; selected: boolean; onToggle: () => void; actions: ReactNode;
 }) {
@@ -446,7 +446,35 @@ function PersonSummary({
       return data as { region?: string | null } | null;
     },
   });
-  const displayPhone = phone || commercialDetails?.phone || "";
+  const { data: alternativePhone } = useQuery({
+    queryKey: ["admin-person-whatsapp-fallback", id, email, commercialId],
+    enabled: !phone?.trim(),
+    retry: false,
+    queryFn: async () => {
+      const normalizedEmail = email?.trim().toLowerCase();
+      if (commercialId) {
+        const { data } = await supabase.from("commercial_representative_details" as never)
+          .select("phone").eq("representative_id", commercialId).maybeSingle();
+        const value = (data as { phone?: string } | null)?.phone?.trim();
+        if (value) return value;
+      }
+      if (normalizedEmail) {
+        const { data: profile } = await supabase.from("representative_profiles")
+          .select("phone").eq("email", normalizedEmail).maybeSingle();
+        if (profile?.phone?.trim()) return profile.phone.trim();
+        const { data: commercial } = await supabase.from("commercial_representatives")
+          .select("id").eq("email", normalizedEmail).maybeSingle();
+        if (commercial?.id) {
+          const { data: details } = await supabase.from("commercial_representative_details" as never)
+            .select("phone").eq("representative_id", commercial.id).maybeSingle();
+          const value = (details as { phone?: string } | null)?.phone?.trim();
+          if (value) return value;
+        }
+      }
+      return "";
+    },
+  });
+  const displayPhone = phone?.trim() || commercialDetails?.phone?.trim() || alternativePhone || "";
   const digits = displayPhone.replace(/\D/g, "");
   const whatsappNumber = digits.length === 10 || digits.length === 11 ? "55" + digits : digits.length >= 12 && digits.startsWith("55") ? digits : "";
   const ddd = areaDdds || (digits.length >= 10 ? digits.slice(digits.startsWith("55") ? 2 : 0, digits.startsWith("55") ? 4 : 2) : "");
@@ -1376,6 +1404,7 @@ function RepresentativeRow({
       <PersonSummary
         id={representative.id}
         name={representative.full_name}
+        email={representative.email}
         active={representative.active}
         rate={
           commissionError
