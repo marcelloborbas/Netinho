@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { accessQuery } from "@/lib/access";
 import { BRAND } from "@/lib/brand";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { HOME_ICON_SIZE, HOME_ICON_STROKE } from "@/components/HomeIconTile";
 
 function clickSound() {
@@ -106,6 +107,7 @@ export function PublicFooter() {
       {access?.level === 1 && <Link role="menuitem" to="/admin" search={{ secao: "cadastros" }} onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><ClipboardCheck size={19}/> Cadastros recebidos</Link>}
       <Link role="menuitem" to="/cartao-visita" onClick={() => { setMenuOpen(false); clickSound(); }} className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold ${isVisitor ? "text-slate-400" : "hover:bg-slate-100"}`}><Contact size={19}/> Cartão de visita</Link>
       <Link role="menuitem" to="/downloads" onClick={() => { setMenuOpen(false); clickSound(); }} className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold ${isVisitor ? "text-slate-400" : "hover:bg-slate-100"}`}><Download size={19}/> Downloads</Link>
+      <a role="menuitem" href={`https://wa.me/${BRAND.phoneDigits}?text=${encodeURIComponent("Olá, Netinho Auto Parts! Preciso de ajuda para encontrar uma peça.")}`} target="_blank" rel="noopener noreferrer" onClick={() => { setMenuOpen(false); clickSound(); }} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><WhatsAppIcon size={19}/> WhatsApp</a>
       <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); window.dispatchEvent(new Event("netinho:lia-help")); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold hover:bg-slate-100"><CircleHelp size={19}/> Ajuda</button>
       {access?.level === 1 && <Link role="menuitem" to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-semibold hover:bg-slate-100"><Settings size={19}/> Administração</Link>}
       {user && <button role="menuitem" type="button" onClick={() => { setMenuOpen(false); clickSound(); void logout(); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-red-700 hover:bg-red-50"><LogOut size={19}/> Sair</button>}
