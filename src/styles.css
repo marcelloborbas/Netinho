@@ -6693,3 +6693,10 @@ body:has(.catalog-showcase) .catalog-showcase {
     width: calc((100% - 20px) / 3) !important;
   }
 }
+
+/* Catálogo > Veículo: fundo branco RGB(255,255,255), sem afetar os demais grupos. */
+.catalog-showcase section[aria-label="Modelos dos veículos"] button,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button > div {
+  background-color: rgb(255, 255, 255) !important;
+  background-image: none !important;
+}
