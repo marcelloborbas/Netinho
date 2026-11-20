@@ -360,36 +360,17 @@ function Catalog() {
       {!searchInput.trim() && <>
       <section className="mt-2" aria-label="Buscar peças por representação">
         <p className="mb-2 border-b border-[#c7d8eb] pb-2 text-sm font-extrabold uppercase tracking-wide text-[#102a52]"><span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-b from-[#ffda5a] to-[#d59a05] text-[#09254d] shadow-sm">1</span>CATÁLOGO</p>
-        <nav className="grid grid-cols-3 gap-2.5" aria-label="Filtro por representação">
-          {(["all", "FCO", "HD"] as const).map((brand) => {
-            const selected = manufacturer === brand;
-            const label = brand === "all" ? "Todos" : brand;
-            return (
-              <button
-                key={brand}
-                type="button"
-                aria-pressed={selected}
-                aria-label={label}
-                disabled={brand !== "FCO"}
-                title={brand === "HD" ? "Em breve: nova representação" : brand === "all" ? "Todos os catálogos indisponível no momento" : `Exibir peças: ${label}`}
-                onClick={() => { if (brand !== "FCO") return; setManufacturer(brand); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
-                className={`flex aspect-square w-full max-w-[120px] items-center justify-center justify-self-center overflow-hidden rounded-xl border ${brand === "HD" ? "p-0" : "px-2 py-2"} text-center text-base font-extrabold text-[#102a52] transition-colors disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] ${selected ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#d9d9d9] hover:border-[#102a52]"}`}
-                style={{ backgroundColor: "rgb(241, 241, 241)" }}
-              >
-                {brand === "all" ? (
-                  <img src="/images/brands/catalogo-todos.webp" alt="Todos os catálogos" loading="lazy" decoding="async" className="h-full max-h-[108px] w-full max-w-[108px] object-contain" />
-                ) : (
-                  <img
-                    src={brand === "FCO" ? "/images/brands/FCO_logo_web.webp" : "/images/brands/catalogo-em-breve.webp"}
-                    alt={brand === "FCO" ? "FCO" : "Em breve: nova representação"}
-                    loading="lazy"
-                    decoding="async"
-                    className={brand === "HD" ? "block h-full w-full max-h-none max-w-none object-cover" : "h-auto max-h-[95%] w-full max-w-[108px] object-contain"}
-                  />
-                )}
-              </button>
-            );
-          })}
+        <nav className="grid grid-cols-1 gap-2.5" aria-label="Filtro por representação">
+          <button
+            type="button"
+            aria-pressed={manufacturer === "FCO"}
+            aria-label="FCO"
+            title="Exibir peças FCO"
+            onClick={() => { setManufacturer("FCO"); setCategory("all"); setVehicleBrand("all"); setVehicleModel("all"); setHasSelectedCategory(false); setPage(1); }}
+            className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-xl border bg-[#f1f1f1] p-1 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#102a52] sm:h-40 ${manufacturer === "FCO" ? "border-[#102a52] ring-2 ring-[#102a52]/40" : "border-[#f1f1f1] hover:border-[#102a52]"}`}
+          >
+            <img src="/images/brands/FCO_logo_web.webp" alt="FCO" loading="lazy" decoding="async" className="block h-full w-full object-contain" />
+          </button>
         </nav>
       </section>
 
