@@ -6949,3 +6949,52 @@ body:has(.catalog-showcase) .catalog-showcase {
 @media(prefers-reduced-motion:reduce){
  .netinho-home-refresh .netinho-home-hero > a[aria-label="Conheça nossos representantes pelo Brasil"] img { animation:none !important; }
 }
+
+/* CATÁLOGO — seleção com relevo suave sem recortar a parte superior.
+   Corrige a regra antiga que zerava o transform e eliminava o efeito. */
+.catalog-showcase nav[aria-label="Filtro por representação"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"],
+.catalog-showcase nav[aria-label="Categorias de peças"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] > div {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"]:not(:disabled),
+.catalog-showcase nav[aria-label="Categorias de peças"] .catalog-category-item > button[aria-pressed="true"],
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] {
+  transform: scale(1.035) translateZ(0) !important;
+  z-index: 5;
+  position: relative;
+  border-color: #102a52 !important;
+  box-shadow: 0 5px 13px rgb(16 42 82 / .22), 0 0 0 2px rgb(16 42 82 / .18) !important;
+}
+.catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"] img,
+.catalog-showcase nav[aria-label="Categorias de peças"] .catalog-category-item > button[aria-pressed="true"] img,
+.catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"] img,
+.catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] img {
+  transform: scale(1.025) !important;
+}
+/* Categoria: a moldura inativa e a sombra ficam exatamente no RGB 241.
+   O botão ativo conserva somente o contorno azul-marinho de seleção. */
+.catalog-showcase nav[aria-label="Categorias de peças"] .catalog-category-item > button:not([aria-pressed="true"]),
+.catalog-showcase nav[aria-label="Categorias de peças"] .catalog-category-item > button:not([aria-pressed="true"]):hover {
+  background-color: rgb(241,241,241) !important;
+  border: 1px solid rgb(241,241,241) !important;
+  outline-color: rgb(241,241,241) !important;
+  box-shadow: none !important;
+  --tw-ring-color: rgb(241 241 241) !important;
+}
+.catalog-showcase nav[aria-label="Categorias de peças"] .catalog-category-item > button[aria-pressed="true"] {
+  background-color: rgb(241,241,241) !important;
+  border-color: #102a52 !important;
+  --tw-ring-color: #102a52 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-showcase nav[aria-label="Filtro por representação"] button[aria-pressed="true"],
+  .catalog-showcase nav[aria-label="Categorias de peças"] button[aria-pressed="true"],
+  .catalog-showcase nav[aria-label="Filtrar peças por montadora"] button[aria-pressed="true"],
+  .catalog-showcase section[aria-label="Modelos dos veículos"] button[aria-pressed="true"] {
+    transform: none !important;
+  }
+}
