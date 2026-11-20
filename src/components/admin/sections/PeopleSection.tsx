@@ -127,7 +127,7 @@ export function PeopleSection() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("commercial_representatives")
-        .select("id,user_id,full_name,email,active")
+        .select("id,user_id,full_name,email,active,phone")
         .order("full_name");
       if (error) throw error;
       return data ?? [];
@@ -463,7 +463,7 @@ function PersonSummary({
           .select("phone").eq("email", normalizedEmail).maybeSingle();
         if (profile?.phone?.trim()) return profile.phone.trim();
         const { data: commercial } = await supabase.from("commercial_representatives")
-          .select("id").eq("email", normalizedEmail).maybeSingle();
+          .select("id,phone").eq("email", normalizedEmail).maybeSingle();\n        if (commercial?.phone?.trim()) return commercial.phone.trim();
         if (commercial?.id) {
           const { data: details } = await supabase.from("commercial_representative_details" as never)
             .select("phone").eq("representative_id", commercial.id).maybeSingle();
@@ -473,7 +473,7 @@ function PersonSummary({
       }
       if (role.startsWith("Representante")) {
         const { data: namedCommercial } = await supabase.from("commercial_representatives")
-          .select("id").eq("full_name", name).maybeSingle();
+          .select("id,phone").eq("full_name", name).maybeSingle();\n        if (namedCommercial?.phone?.trim()) return namedCommercial.phone.trim();
         if (namedCommercial?.id) {
           const { data: details } = await supabase.from("commercial_representative_details" as never)
             .select("phone").eq("representative_id", namedCommercial.id).maybeSingle();
@@ -484,7 +484,7 @@ function PersonSummary({
       return "";
     },
   });
-  const displayPhone = phone?.trim() || commercialDetails?.phone?.trim() || alternativePhone || "";
+  const displayPhone = phone?.trim() || alternativePhone || commercialDetails?.phone?.trim() || "";
   const digits = displayPhone.replace(/\D/g, "");
   const whatsappNumber = digits.length === 10 || digits.length === 11 ? "55" + digits : digits.length >= 12 && digits.startsWith("55") ? digits : "";
   const ddd = areaDdds || (digits.length >= 10 ? digits.slice(digits.startsWith("55") ? 2 : 0, digits.startsWith("55") ? 4 : 2) : "");
