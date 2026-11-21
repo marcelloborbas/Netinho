@@ -189,6 +189,28 @@ function Catalog() {
   const [hasSelectedCategory, setHasSelectedCategory] = useState(false);
   const dq = q; // Filtra a cada tecla, sem aguardar confirmação.
   const [searchFocused, setSearchFocused] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const stored: unknown = JSON.parse(localStorage.getItem("netinho-catalog-recent-searches") || "[]");
+      return Array.isArray(stored) ? stored.filter((item): item is string => typeof item === "string").slice(0, 4) : [];
+    } catch { return []; }
+  });
+  const rememberSearch = (term: string) => {
+    const cleaned = term.trim();
+    if (!cleaned) return;
+    setRecentSearches((previous) => {
+      const next = [cleaned, ...previous.filter((item) => item.toLocaleLowerCase("pt-BR") !== cleaned.toLocaleLowerCase("pt-BR"))].slice(0, 4);
+      try { localStorage.setItem("netinho-catalog-recent-searches", JSON.stringify(next)); } catch { /* storage unavailable */ }
+      return next;
+    });
+  };
+  const chooseRecentSearch = (term: string) => {
+    setSearchInput(term);
+    setQ(term);
+    setPage(1);
+    rememberSearch(term);
+    setSearchFocused(false);
+  };
   const [compared, setCompared] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const [recentCodes, setRecentCodes] = useState<string[]>(() => {
@@ -371,9 +393,19 @@ function Catalog() {
         <label htmlFor="catalog-search-top" className="mb-1 block px-1 text-xs font-extrabold uppercase tracking-wide text-[#102a52]">Procurar peça</label>
         <div className="flex items-center gap-2">
           <Search size={21} className="ml-1 shrink-0 text-[#102a52]" aria-hidden="true" />
-          <input id="catalog-search-top" type="search" value={searchInput} onChange={(event) => { setSearchInput(event.target.value); setQ(event.target.value); setPage(1); }} placeholder="Código, peça, referência ou veículo" autoComplete="off" className="h-11 min-w-0 flex-1 rounded-lg border border-[#c7d8eb] bg-white px-3 text-base text-[#102a52] outline-none focus:border-[#102a52] focus:ring-2 focus:ring-[#d4af37]" />
+          <input id="catalog-search-top" type="search" value={searchInput} onFocus={() => setSearchFocused(true)} onBlur={() => { if (liveResults.length > 0) rememberSearch(searchInput); setSearchFocused(false); }} onKeyDown={(event) => { if (event.key === "Enter") { if (liveResults.length > 0) rememberSearch(searchInput); event.currentTarget.blur(); } }} onChange={(event) => { setSearchInput(event.target.value); setQ(event.target.value); setPage(1); }} placeholder="Código, peça, referência ou veículo" autoComplete="off" className="h-11 min-w-0 flex-1 rounded-lg border border-[#c7d8eb] bg-white px-3 text-base text-[#102a52] outline-none focus:border-[#102a52] focus:ring-2 focus:ring-[#d4af37]" />
           {searchInput && <button type="button" onClick={() => { setSearchInput(""); setQ(""); setPage(1); }} aria-label="Limpar pesquisa" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#e8eef5] text-[#102a52]"><X size={19}/></button>}
         </div>
+        {searchFocused && !searchInput.trim() && recentSearches.length > 0 && (
+          <div className="mt-2 border-t border-[#dce3eb] pt-2">
+            <p className="mb-1 px-1 text-xs font-bold text-[#102a52]">Últimas 4 peças procuradas</p>
+            <div className="flex flex-wrap gap-2">
+              {recentSearches.map((term) => (
+                <button key={term} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => chooseRecentSearch(term)} className="rounded-lg border border-[#c7d8eb] bg-[#f1f1f1] px-3 py-2 text-left text-sm font-semibold text-[#102a52] hover:border-[#d4af37]">{term}</button>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
       {!canSell && (
         <aside role="note" aria-label="Orientação para visitantes" className="netinho-visitor-notice relative isolate w-full overflow-hidden rounded-xl border-2 border-[#ffd447] bg-[#b31320] px-3 py-3 shadow-[0_5px_18px_rgba(140,0,15,0.3)] sm:px-5 sm:py-4" style={{ backgroundColor: "#b31320", color: "#ffe45c" }}>
